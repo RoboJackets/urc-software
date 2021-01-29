@@ -3,7 +3,7 @@
 <package format="3">
   <name>urc_perception</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Package for sensor control and processing.</description>
   <maintainer email="matthew.scott.hannay@gmail.com">matthewhannay</maintainer>
   <license>TODO: License declaration</license>
 

@@ -3,7 +3,7 @@
 <package format="3">
   <name>urc_description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Package for simulation models.</description>
   <maintainer email="matthew.scott.hannay@gmail.com">matthewhannay</maintainer>
   <license>TODO: License declaration</license>
 
