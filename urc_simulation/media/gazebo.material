@@ -1,0 +1,14 @@
+material Gazebo/Texture_desert
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture textures/desert_sand.jpg
+        scale .01 .01
+      }
+    }
+  }
+}
