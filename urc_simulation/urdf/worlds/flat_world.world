@@ -13,12 +13,12 @@
 
     <!-- A global light source -->
     <include>
-      <uri>model://urdf/models/sun</uri>
+      <uri>model://sun</uri>
     </include>
 
     <!-- A ground plane -->
     <!--<include>
-      <uri>model://urdf/models/surface</uri>
+      <uri>model://surface</uri>
     </include> -->
   </world>
 </sdf>

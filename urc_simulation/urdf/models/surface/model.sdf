@@ -30,7 +30,7 @@
         <material>
           <script>
             <uri>model://gazebo.material</uri>
-            <name>Gazebo/Texture_desert</name>
+            <name>Gazebo/Desert</name>
           </script>
         </material>
       </visual>

@@ -38,21 +38,9 @@ install(DIRECTORY
         DESTINATION share/${PROJECT_NAME}/
         )
 
-# Install gazebo models
+# Install gazebo files
 install(DIRECTORY
-        models
-        DESTINATION share/${PROJECT_NAME}/
-        )
-
-# Install gazebo worlds
-install(DIRECTORY
-        worlds
-        DESTINATION share/${PROJECT_NAME}/
-        )
-
-# Instll other gazebo media
-install(DIRECTORY
-        media
+        urdf
         DESTINATION share/${PROJECT_NAME}/
         )
 

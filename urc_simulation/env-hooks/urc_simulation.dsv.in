@@ -1,0 +1,3 @@
+prepend-non-duplicate;GAZEBO_MODEL_PATH;share/urc_simulation/urdf/models
+prepend-non-duplicate;GAZEBO_RESOURCE_PATH;share/urc_simulation/urdf/worlds
+prepend-non-duplicate;GAZEBO_RESOURCE_PATH;share/urc_simulation/udrf/media

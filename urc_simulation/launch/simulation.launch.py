@@ -9,7 +9,7 @@ import os
 def generate_launch_description():
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    pkg_urc_simulation = get_package_share_directory("urc_simulationurc_simulation")
+    pkg_urc_simulation = get_package_share_directory("urc_simulation")
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -17,13 +17,12 @@ def generate_launch_description():
         )
     )
 
-    """
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                         arguments=['-entity', 'world',
-                                   '-file', os.path.join(pkg_urc_simulation, "worlds/flat_world.world")],
+                                   '-file', os.path.join(pkg_urc_simulation, "urdf/worlds/flat_world.world")],
                         output='screen')
-                        """
 
     return LaunchDescription([
-        gazebo
+        gazebo,
+        spawn_entity
     ])
