@@ -12,7 +12,12 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
+  <depend>rclcpp</depend>
+  <depend>gazebo_ros_pkgs</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_model_path="${prefix}/urdf/models"/>
+    <gazebo_ros gazebo_resource_path="${prefix}/urdf/media:${prefix}/urdf/worlds"/>
   </export>
 </package>

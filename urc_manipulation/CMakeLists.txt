@@ -33,3 +33,9 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+# Install launch files.
+install(DIRECTORY
+        launch
+        DESTINATION share/${PROJECT_NAME}/
+        )

@@ -16,10 +16,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(ament_cmake REQUIRED COMPONENTS
+        rclcpp
+        gazebo_ros_pkgs
+        )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -31,5 +31,17 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+# Install launch files.
+install(DIRECTORY
+        launch
+        DESTINATION share/${PROJECT_NAME}/
+        )
+
+# Install gazebo files
+install(DIRECTORY
+        urdf
+        DESTINATION share/${PROJECT_NAME}/
+        )
 
 ament_package()
