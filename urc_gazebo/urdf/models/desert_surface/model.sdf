@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
-  <model name="desert_plane">
+  <model name="desert_surface">
     <static>true</static>
     <link name="link">
       <collision name="collision">
@@ -29,7 +29,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://gazebo.material</uri>
+            <uri>model://desert_surface/materials/scripts/</uri>
+            <uri>model://desert_surface/materials/textures/</uri>
             <name>Gazebo/Desert</name>
           </script>
         </material>

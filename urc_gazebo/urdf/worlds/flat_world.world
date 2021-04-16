@@ -17,8 +17,8 @@
     </include>
 
     <!-- A ground plane -->
-    <!--<include>
-      <uri>model://surface</uri>
-    </include> -->
+    <include>
+      <uri>model://desert_surface</uri>
+    </include>
   </world>
 </sdf>
