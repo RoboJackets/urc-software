@@ -6,5 +6,5 @@ This folder contains research and design documents for the repo.
 
 ## Design Docs
 
-### 2019/2020 Projects
+### 2020/2021 Projects
 * 
