@@ -1,8 +1,5 @@
 name: ci
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
+on: push
 jobs:
   buildAndTest:
     runs-on: ubuntu-20.04
