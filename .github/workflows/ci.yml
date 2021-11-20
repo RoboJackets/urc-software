@@ -1,0 +1,27 @@
+name: ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  buildAndTest:
+    runs-on: ubuntu-20.04
+    container: ros:galactic
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: src/urc-software
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          source /opt/ros/galactic/setup.bash
+          sudo apt-get update
+          rosdep update --rosdistro=galactic
+          rosdep install --from-paths . --ignore-src -y
+      - name: Build
+        shell: bash
+        run: |
+          source /opt/ros/galactic/setup.bash
+          colcon build

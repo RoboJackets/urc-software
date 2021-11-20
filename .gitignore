@@ -1,0 +1,12 @@
+# JetBrains Clion
+*/.idea/
+/.idea/
+
+# VSCode
+.vscode
+
+# CMake
+*/cmake-build-*/
+
+# sublime-text
+*.sublime-workspace
