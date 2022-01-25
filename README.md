@@ -71,7 +71,7 @@ cd <path to where you want to keep the project>
 mkdir -p colcon-urc/src
 ```
 
-#### 5. Clone the repository the colcon environment
+#### 5. Clone the repository into the colcon environment
 ```bash
 cd colcon-urc/src
 ```
