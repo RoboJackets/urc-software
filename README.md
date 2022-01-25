@@ -28,7 +28,7 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
 ## Installation Guide
 
-### 1. Install ROS2
+#### 1. Install ROS2
 
 ```bash
 sudo apt update && sudo apt install curl gnupg2 lsb-release
@@ -44,13 +44,13 @@ sudo apt update
 sudo apt install ros-foxy-desktop
 ```
 
-### 2. Install Colcon
+#### 2. Install Colcon
    
 ```bash
 sudo apt install python3-colcon-common-extensions
 ```
 
-### 3. bashrc Setup
+#### 3. bashrc Setup
 
 ```bash
 echo "source /opt/ros/foxy/setup.bash >> ~/.bashrc
@@ -62,7 +62,7 @@ echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.b
 source ~/.bashrc
 ```
 
-### 4. Create a colcon environment
+#### 4. Create a colcon environment
 
 ```bash
 cd <path to where you want to keep the project>
@@ -71,7 +71,7 @@ cd <path to where you want to keep the project>
 mkdir -p colcon-urc/src
 ```
 
-### 5. Clone the repository the colcon environment
+#### 5. Clone the repository the colcon environment
 ```bash
 cd colcon-urc/src
 ```
@@ -79,7 +79,7 @@ cd colcon-urc/src
 git clone https://github.com/RoboJackets/urc-software.git --recursive
 ```
 
-### 6. Build your workspace
+#### 6. Build your workspace
 ```bash
 cd ..
 ```
@@ -87,7 +87,7 @@ cd ..
 colcon build --symlink-install
 ```
 
-### 7. Source your environment
+#### 7. Source your environment
 ```bash
 . install/setup.bash
 ```
