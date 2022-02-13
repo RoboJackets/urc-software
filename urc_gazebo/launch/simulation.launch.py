@@ -73,6 +73,7 @@ def generate_launch_description():
                 parameters_file_path
             ]
         )
+        
     return LaunchDescription([
         gazebo,
         scan_to_pointcloud

@@ -58,7 +58,7 @@ ament_target_dependencies(${PROJECT_NAME}_components SHARED
 rclcpp_components_register_node(
   ${PROJECT_NAME}_gazebo
   PLUGIN "scan_to_pointcloud::ScanToPointCloud"
-  EXECUTABLE ${PROJECT_NAME}ScanToPointCloud_node
+  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud_node
 )
 
 # Install launch files.

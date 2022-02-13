@@ -7,10 +7,8 @@
 #include <pcl_ros/point_cloud.h>
 #include <pcl_ros/transforms.h>
 #include <sensor_msgs/LaserScan.h>
-
-#include <Quaternion.h>
-#include <Transform.h>
-
+#include <tf2/Quaternion.h>
+#include <tf2/Transform.h>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_marco.hpp>
@@ -32,7 +30,6 @@ private:
   double offset;
 
   void scanCallback(const sensor_msgs::LaserScan::ConstPtr &msg);
-  void spinnerUpdate();
 };
 }
 
