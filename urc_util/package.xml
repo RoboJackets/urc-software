@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>Package for utility functions for codebase.</description>
   <maintainer email="matthew.scott.hannay@gmail.com">matthewhannay</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

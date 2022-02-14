@@ -16,10 +16,75 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(ament_cmake REQUIRED COMPONENTS
+        rclcpp
+        rclcpp_components
+        rclcpp_action
+        gazebo_ros_pkgs
+        tf2_ros
+        sensor_msgs
+        nav_msgs
+        urc_msgs
+        geodesy
+        laser_geometry
+        tf2
+        tf2_ros
+        tf2_eigen
+        )
+
+# Library creation
+add_library(${PROJECT_NAME}_platform SHARED
+  src/scan_to_pointcloud.cpp
+  #add more .cpp files here
+)
+
+# Library creation
+add_library(${PROJECT_NAME}_tests SHARED
+  src/scan_to_pointcloud.cpp
+  #add more .cpp files here
+)
+
+ament_target_dependencies(${PROJECT_NAME}_components SHARED
+  "rclcpp"
+  "rclcpp_components"
+  "rclcpp_action"
+  "gazebo_ros_pkgs"
+  "tf2_ros"
+  "sensor_msgs"
+  "nav_msgs"
+  "urc_msgs"
+  "geodesy"
+  "laser_geometry"
+  "tf2"
+  "tf2_ros"
+  "tf2_eigen"
+)
+
+# Install launch files.
+install(DIRECTORY
+        launch
+        DESTINATION share/${PROJECT_NAME}/
+        )
+
+# Install gazebo files
+install(DIRECTORY
+        urdf
+        DESTINATION share/${PROJECT_NAME}/
+        )
+
+# Install platform library
+install(TARGETS ${PROJECT_NAME}_platform
+  ARCHIVE DESTIVATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}_platform
+)
+
+# Install testing library
+install(TARGETS ${PROJECT_NAME}_tests
+  ARCHIVE DESTIVATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}_tests
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

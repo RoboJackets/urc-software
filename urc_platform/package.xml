@@ -5,12 +5,23 @@
   <version>0.0.0</version>
   <description>Package for directly controlling rover and joystick control.</description>
   <maintainer email="matthew.scott.hannay@gmail.com">matthewhannay</maintainer>
-  <license>TODO: License declaration</license>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rclcpp_action</depend>
+  <depend>gazebo_ros_pkgs</depend>
+  <depend>urc_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_eigen</depend>
+  <depend>geodesy</depend>
+  <depend>laser_geometry</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

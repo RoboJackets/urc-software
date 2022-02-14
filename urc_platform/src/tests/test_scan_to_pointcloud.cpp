@@ -1,5 +1,3 @@
-//todo: port all of this to ROS2
-
 #include <gtest/gtest.h>
 #include <pcl/point_types.h>
 #include <pcl_ros/point_cloud.h>
@@ -8,51 +6,63 @@
 #include <ros/ros.h>
 #include <mocking_utils/mock_subscriber.h>
 
-class TestScanToPointCloud : public testing::Test
+class TestScanToPointCloud : public rclcpp::Node, public testing::Test
 {
 public:
-  TestScanToPointCloud() : mock_pub(node_handle.advertise<pcl::PointCloud<pcl::PointXYZ>>("/pc2", 1))
+  TestScanToPointCloud() 
+  : rclcpp::Node("test_scan_to_pointcloud", options)
   {
+    getParam("min_dist", min_dist);
+    getParam("neighbor_dist", neighbor_dist);
+    getParam("offset", offset);
+    
+    mock_pub = create_publisher<pcl::PointCloud<pcl::PointXYZ>>
+    ("/pc2", rclcpp::SystemDefaultsQoS()));
+
+    mock_sub = create_subscription<pcl::PointCloud<pcl::PointXYZ>>
+    ("/scan", rclcpp::SystemDefaultsQoS(), [this](pcl::PointCloud<pcl::PointXYZ> input)
+    {
+      sub_data = input;
+    });
+  }
+
+  pcl::PointCloud<pcl::PointXYZ> createPointCloudMsg()
+  {
+    pcl::PointCloud<pcl::PointXYZ> cloud;
+    pcl::PointXYZ point(1, 1, 1);
+    cloud.points.push_back(point);
+    cloud.header.frame_id = "/lidar";
+
+    tf::Quaternion quaternion_mag;
+    quaternion_mag.setRPY(0, 0, offset);
+    tf::Transform trans;
+    trans.setRotation(quaternion_mag);
+    pcl_ros::transformPointCloud(cloud, cloud, trans);
+    return cloud;
   }
 
 protected:
-  ros::NodeHandle node_handle;
-  ros::Publisher mock_pub;
+  rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZ>> mock_pub;
+  rclcpp::Subscription<pcl::PointCloud<pcl::PointXYZ> mock_sub;
+  pcl::PointCloud<pcl::PointXYZ> sub_data;
+
+private:
+  double min_dist;
+  double neighbor_dist;
+  double offset;
 };
 
-// slight modification of lines 44-56 of scan_to_pointcloud.cpp
-pcl::PointCloud<pcl::PointXYZ> createPointCloudMsg(double offset)
+TEST_F(TestScanToPointCloud, ParameterTest)
 {
-  pcl::PointCloud<pcl::PointXYZ> cloud;
-  pcl::PointXYZ point(1, 1, 1);
-  cloud.points.push_back(point);
-  cloud.header.frame_id = "/lidar";
-
-  tf::Quaternion quaternion_mag;
-  quaternion_mag.setRPY(0, 0, offset);
-  tf::Transform trans;
-  trans.setRotation(quaternion_mag);
-  pcl_ros::transformPointCloud(cloud, cloud, trans);
-  return cloud;
+  ASSERT_TRUE(min_dist == 0.1);
+  ASSERT_TRUE(neighbor_dist == 0.2);
+  ASSERT_TRUE(offset == 2.35619449019);
 }
 
 TEST_F(TestScanToPointCloud, ComparisonTest)
 {
-  double min_dist;
-  node_handle.getParam("scan_to_pointcloud/min_dist", min_dist);
-  ASSERT_TRUE(min_dist == 0.1);
-
-  double neighbor_dist;
-  node_handle.getParam("scan_to_pointcloud/neighbor_dist", neighbor_dist);
-  ASSERT_TRUE(neighbor_dist == 0.2);
-
-  double offset;
-  node_handle.getParam("scan_to_pointcloud/offset", offset);
-  ASSERT_TRUE(offset == 2.35619449019);
-
-  MockSubscriber<pcl::PointCloud<pcl::PointXYZ>> mock_sub("/pc2");
-  ASSERT_TRUE(mock_sub.waitForPublisher());
-  ASSERT_TRUE(mock_sub.waitForSubscriber(mock_pub));
+  auto future = std::future<pcl::PointCloud<pcl::PointXYZ>>(mock_sub.get_future());
+  mock_pub.publish(createPointCloudMsg());
 
   auto cloudComparer = [](const pcl::PointCloud<pcl::PointXYZ>& p1, const pcl::PointCloud<pcl::PointXYZ>& p2) {
     double difference =
@@ -65,20 +75,25 @@ TEST_F(TestScanToPointCloud, ComparisonTest)
   test_cloud.points.push_back(point);
   test_cloud.header.frame_id = "/lidar";
 
-  mock_pub.publish(createPointCloudMsg(offset));
-  ASSERT_TRUE(mock_sub.spinUntilMessages());
-  const pcl::PointCloud<pcl::PointXYZ>& response_cloud = mock_sub.front();
-  ASSERT_TRUE(response_cloud.size() > 0);
-
-  ASSERT_TRUE(cloudComparer(response_cloud, test_cloud));
+  try
+  {
+    auto published_cloud = future.get();
+  }
+  catch(const std::exception&)
+  {
+    ASSERT_TRUE(false);
+  }
+  
+  ASSERT_TRUE(cloudComparer(published_cloud, test_cloud)); 
 }
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "test_scan_to_pointcloud");
+  rclcpp::init(argc, argc, "scan_to_pointcloud");
+  rclcpp::spin(std::make_shared<TestScanToPointCloud>());
   testing::InitGoogleTest(&argc, argv);
-
+  
   int result = RUN_ALL_TESTS();
-  ros::shutdown();
+  rclcpp::shutdown();
   return result;
 }
