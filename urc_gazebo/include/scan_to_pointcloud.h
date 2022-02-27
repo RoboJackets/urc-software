@@ -1,17 +1,11 @@
-#ifndef SCAN_TO_POINTCLOUD
-#define SCAN_TO_POINTCLOUD
-
-#include <laser_geometry/laser_geometry.h>
-#include <parameter_assertions/assertions.h>
-#include <pcl/point_types.h>
-#include <pcl_ros/point_cloud.h>
-#include <pcl_ros/transforms.h>
-#include <sensor_msgs/LaserScan.h>
-#include <tf2/Quaternion.h>
-#include <tf2/Transform.h>
+#ifndef SCAN_TO_POINTCLOUD_H_
+#define SCAN_TO_POINTCLOUD_H_
 
 #include <rclcpp/rclcpp.hpp>
-#include <rclcpp_components/register_node_marco.hpp>
+#include <laser_geometry/laser_geometry.hpp>
+#include <sensor_msgs/msg/laser_scan.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
 namespace scan_to_pointcloud
 {
@@ -21,18 +15,16 @@ public:
   explicit ScanToPointCloud(const rclcpp::NodeOptions &options);
 
 private:
-  rclcpp::Publisher<pcl::PointCloud<pcl::PointXYZ>> _pointcloud_pub;
-  rclcpp::Subscription<sensor_msgs::LaserScan::ConstPtr> _pointcloud_sub;
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr _pointcloud_pub;
+  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr _pointcloud_sub;
 
   laser_geometry::LaserProjection projection;
   double min_dist;
   double neighbor_dist;
   double offset;
 
-  void scanCallback(const sensor_msgs::LaserScan::ConstPtr &msg);
+  void scanCallback(const sensor_msgs::msg::LaserScan &scanData);
 };
 }
-
-
 
 #endif

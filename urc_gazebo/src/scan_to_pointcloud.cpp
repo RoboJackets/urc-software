@@ -1,5 +1,7 @@
-#include "../include/scan_to_pointcloud.h"
+#include "scan_to_pointcloud.h"
 
+namespace scan_to_pointcloud
+{
 ScanToPointCloud::ScanToPointCloud(const rclcpp::NodeOptions &options)
 : rclcpp::Node("scan_to_pointcloud", options)
 {
@@ -7,17 +9,19 @@ ScanToPointCloud::ScanToPointCloud(const rclcpp::NodeOptions &options)
   get_parameter("neighbor_dist", neighbor_dist);
   get_parameter("offset", offset);
 
-  _pointcloud_pub = create_publisher<pcl::PointCloud<pcl::PointXYZ>>
-  ("/pc2", rclcpp::SystemDefaultsQoS());
+  _pointcloud_pub = create_publisher<sensor_msgs::msg::PointCloud2>
+  ("~/pc2", 
+  rclcpp::SystemDefaultsQoS());
 
-  _pointcloud_sub = create_subscription<sensor_msgs::LaserScan::ConstPtr>
-  ("/scan", rclcpp::SystemDefaultsQoS(), std::bind(&ScanToPointCloud::scanCallback, this, std::placeholders::_1));
-  
+  _pointcloud_sub = create_subscription<sensor_msgs::msg::LaserScan>
+  ("~/scan", 
+  rclcpp::SystemDefaultsQoS(),
+  [this](const sensor_msgs::msg::LaserScan msg){scanCallback(msg);});
 }
 
-void ScanToPointCloud::scanCallback(const sensor_msgs::LaserScan::ConstPtr &msg)
+void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
 {
-  sensor_msgs::LaserScan scanData = *msg;
+  sensor_msgs::msg::LaserScan filteredScan(scanData);
 
   auto rangeIsValid = [&scanData](float range) {
     return !std::isnan(range) && range > scanData.range_min && range < scanData.range_max;
@@ -25,7 +29,7 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::LaserScan::ConstPtr &msg)
 
   for (size_t i = 0; i < scanData.ranges.size(); ++i)
   {
-    float &range = scanData.ranges[i];
+    double range = scanData.ranges[i];
     if (range > scanData.range_max || range < scanData.range_min)
       continue;
     // Too close
@@ -46,22 +50,16 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::LaserScan::ConstPtr &msg)
       range = scanData.range_max + 1;
     }
   }
-  sensor_msgs::PointCloud2 cloud;
-  projection.projectLaser(scanData, cloud);
+
+  sensor_msgs::msg::PointCloud2 cloud;
+  projection.projectLaser(filteredScan, cloud);
   cloud.header.frame_id = "/lidar";
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_for_pub(new pcl::PointCloud<pcl::PointXYZ>());
-
-  fromROSMsg(cloud, *cloud_for_pub); //change
-  tf2::Quaternion quaternion_mag;
-  quaternion_mag.setRPY(0, 0, offset);
-
-  tf2::Transform trans;
-  trans.setRotation(quaternion_mag);
-  pcl_ros::transformPointCloud(*cloud_for_pub, *cloud_for_pub, trans); //see if changes needed
-  _pointcloud_pub.publish(*cloud_for_pub);
+  _pointcloud_pub->publish(cloud);
+}
 }
 
+/*
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argc, "scan_to_pointcloud");
@@ -70,5 +68,6 @@ int main(int argc, char **argv)
   
   return 0;
 }
+*/
 
 RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)

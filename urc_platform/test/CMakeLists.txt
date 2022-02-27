@@ -1,0 +1,2 @@
+ament_add_gtest(test_scan_to_pointcloud test_scan_to_pointcloud.cpp)
+target_link_libraries(test_scan_to_pointcloud ${PROJECT_NAME}_tests)

@@ -14,16 +14,12 @@
 
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
-  <depend>rclcpp_action</depend>
-  <depend>gazebo_ros_pkgs</depend>
   <depend>urc_msgs</depend>
   <depend>std_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
-  <depend>tf2_eigen</depend>
-  <depend>geodesy</depend>
   <depend>laser_geometry</depend>
 
   <export>
