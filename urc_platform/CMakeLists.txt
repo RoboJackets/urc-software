@@ -23,16 +23,16 @@ include_directories(
 )
 
 # Library creation
-add_library(${PROJECT_NAME}_platform SHARED
+#add_library(${PROJECT_NAME} SHARED
   #add more .cpp files here
-)
+#)
 
 set(dependencies
 )
 
-ament_target_dependencies(${PROJECT_NAME}_platform
-  ${dependencies}
-)
+#ament_target_dependencies(${PROJECT_NAME}
+#  ${dependencies}
+#)
 
 # Install launch files.
 install(DIRECTORY
@@ -47,16 +47,15 @@ install(DIRECTORY
         )
 
 # Install library
-install(TARGETS 
-  ${PROJECT_NAME}_platform
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
+#install(TARGETS 
+#  ${PROJECT_NAME}
+#  ARCHIVE DESTINATION lib
+#  LIBRARY DESTINATION lib
+#  RUNTIME DESTINATION lib/${PROJECT_NAME}
+#)
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  find_package(amet_cmake_pytest REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
   find_package(launch_testing_ament_cmake REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake REQUIRED)
@@ -73,7 +72,7 @@ if(BUILD_TESTING)
   # Library creation
   add_library(${PROJECT_NAME}_tests SHARED
     #add more test .cpp files here  
-    test_scan_to_pointcloud.cpp
+    test/test_scan_to_pointcloud.cpp
   )
 
   set(test_dependencies
@@ -108,11 +107,10 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   
   add_subdirectory(test)
-  ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME}_platform)
+ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
 ament_package()

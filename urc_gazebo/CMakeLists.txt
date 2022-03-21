@@ -32,7 +32,7 @@ include_directories(
 )
 
 # Library creation
-add_library(${PROJECT_NAME}_gazebo SHARED
+add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
   #add more .cpp files here
 )
@@ -49,15 +49,15 @@ set(dependencies
   laser_geometry
 )
 
-ament_target_dependencies(${PROJECT_NAME}_gazebo
+ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
 # Node registration
 rclcpp_components_register_node(
-  ${PROJECT_NAME}_gazebo
+  ${PROJECT_NAME}
   PLUGIN "scan_to_pointcloud::ScanToPointCloud"
-  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud_node
+  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
 # Install launch files.
@@ -74,7 +74,7 @@ install(DIRECTORY
 
 # Install library
 install(TARGETS 
-  ${PROJECT_NAME}_gazebo
+  ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
@@ -91,7 +91,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME}_gazebo)
+ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
 ament_package()

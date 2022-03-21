@@ -3,11 +3,13 @@
 namespace scan_to_pointcloud
 {
 ScanToPointCloud::ScanToPointCloud(const rclcpp::NodeOptions &options)
-: rclcpp::Node("scan_to_pointcloud", options)
+: rclcpp::Node("scan_to_pointcloud", options),
+  clock(),
+  tfBuffer_(clock),
+  tfListener_(tfBuffer_)
 {
   get_parameter("min_dist", min_dist);
   get_parameter("neighbor_dist", neighbor_dist);
-  get_parameter("offset", offset);
 
   _pointcloud_pub = create_publisher<sensor_msgs::msg::PointCloud2>
   ("~/pc2", 
@@ -51,23 +53,35 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
     }
   }
 
-  sensor_msgs::msg::PointCloud2 cloud;
-  projection.projectLaser(filteredScan, cloud);
-  cloud.header.frame_id = "/lidar";
+  sensor_msgs::msg::PointCloud2 initial_cloud;
+  projection.projectLaser(filteredScan, initial_cloud);
+  initial_cloud.header.frame_id = "/lidar";
+  sensor_msgs::msg::PointCloud2 transformed_cloud;
 
-  _pointcloud_pub->publish(cloud);
+  geometry_msgs::msg::TransformStamped transform; 
+  try
+  {
+    transform = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
+  }
+  catch (tf2::TransformException &ex)
+  {
+    //look into eventually implementing some kind of ROS2 logging
+    return;
+  }
+
+  tf2::doTransform(initial_cloud, transformed_cloud, transform);
+  _pointcloud_pub->publish(transformed_cloud);
 }
 }
+RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)
 
-/*
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-  rclcpp::init(argc, argc, "scan_to_pointcloud");
+  rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<scan_to_pointcloud::ScanToPointCloud>());
   rclcpp::shutdown();
   
   return 0;
 }
-*/
 
-RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)
+

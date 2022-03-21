@@ -4,7 +4,6 @@ scan_to_pointcloud:
   ros_parameters:
     min_dist: 0.1
     neighbor_dist: 0.2
-    offset: 2.35619449019
 
 control:
   ros_parameters:

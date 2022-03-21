@@ -32,7 +32,7 @@ def generate_launch_description():
 
     scan_to_pointcloud = Node(
             package='urc_gazebo',
-            executable='urc_gazebo_ScanToPointCloud_node',
+            executable='urc_gazebo_ScanToPointCloud',
             output='screen',
             parameters=[
                 parameters_file_path
@@ -41,7 +41,7 @@ def generate_launch_description():
 
     control = Node(
             package='urc_gazebo',
-            executable='urc_gazebo_Control_node',
+            executable='urc_gazebo_Control',
             output='screen',
             parameters=[
                 parameters_file_path
@@ -50,7 +50,7 @@ def generate_launch_description():
 
     magnetometer = Node(
                 package='urc_gazebo',
-                executable='urc_gazebo_Magnetometer_node',
+                executable='urc_gazebo_Magnetometer',
                 output='screen',
                 parameters=[
                    parameters_file_path
@@ -58,7 +58,7 @@ def generate_launch_description():
             )
     ground_truth = Node(
             package='urc_gazebo',
-            executable='urc_gazebo_GroundTruth_node',
+            executable='urc_gazebo_GroundTruth',
             output='screen',
             parameters=[
                 parameters_file_path
@@ -67,7 +67,7 @@ def generate_launch_description():
 
     sim_color_detector = Node(
             package='urc_gazebo',
-            executable='urc_gazebo_SimColorDetector_node',
+            executable='urc_gazebo_SimColorDetector',
             output='screen',
             parameters=[
                 parameters_file_path
