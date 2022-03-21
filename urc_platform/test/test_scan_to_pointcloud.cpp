@@ -35,28 +35,36 @@ public:
 
   sensor_msgs::msg::PointCloud2 createPointCloudMsg()
   {
-    sensor_msgs::msg::PointCloud2 input;
-    input.height = 1;
-    input.width = 3;
-    input.header.frame_id = "/lidar";
-    input.data = {1, 0, 0};
-    sensor_msgs::msg::PointCloud2 output;
+    sensor_msgs::msg::PointCloud2 input_cloud;
+    input_cloud.header.frame_id = "/lidar";
+    input_cloud.data = {1, 0, 0};
+    sensor_msgs::msg::PointCloud2 output_cloud;
 
-    geometry_msgs::msg::TransformStamped transform; 
+    geometry_msgs::msg::TransformStamped transform_stamped; 
     try
     {
-      transform = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
+      transform_stamped = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
+      tf2::doTransform(input_cloud, output_cloud, transform_stamped);
     }
     catch (tf2::TransformException &ex)
     {
       RCLCPP_ERROR(this->get_logger(), "Transformation Error:\n%s", ex.what());
-      return output;
     }
 
-    tf2::doTransform(input, output, transform);
-    return output;
+    return output_cloud;
   }
 
+  
+
+protected:
+  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mock_pub;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr mock_sub;
+  sensor_msgs::msg::PointCloud2 sub_data;
+
+  double min_dist;
+  double neighbor_dist;
+
+private:
   void SetUp()
   {
   }
@@ -69,15 +77,6 @@ public:
   {
   }
 
-protected:
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr mock_pub;
-  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr mock_sub;
-  sensor_msgs::msg::PointCloud2 sub_data;
-
-  double min_dist;
-  double neighbor_dist;
-
-private:
   rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;

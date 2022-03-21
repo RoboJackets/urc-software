@@ -27,10 +27,10 @@ private:
   double min_dist;
   double neighbor_dist;
 
+  rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-  rclcpp::Clock::SharedPtr clock;
-
+  
   void scanCallback(const sensor_msgs::msg::LaserScan &scanData);
 };
 }

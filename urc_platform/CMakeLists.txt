@@ -40,12 +40,6 @@ install(DIRECTORY
         DESTINATION share/${PROJECT_NAME}/
         )
 
-# Install gazebo files
-install(DIRECTORY
-        urdf
-        DESTINATION share/${PROJECT_NAME}/
-        )
-
 # Install library
 #install(TARGETS 
 #  ${PROJECT_NAME}
@@ -55,61 +49,16 @@ install(DIRECTORY
 #)
 
 if(BUILD_TESTING)
-  find_package(ament_cmake_pytest REQUIRED)
-  find_package(launch_testing_ament_cmake REQUIRED)
-  find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake REQUIRED)
-  find_package(rclcpp REQUIRED)
-  find_package(rclcpp_components REQUIRED)
-  find_package(urc_msgs REQUIRED)
-  find_package(std_msgs REQUIRED)
-  find_package(nav_msgs REQUIRED)
-  find_package(sensor_msgs REQUIRED)
-  find_package(tf2 REQUIRED)
-  find_package(tf2_ros REQUIRED)
-  find_package(laser_geometry REQUIRED)
-
-  # Library creation
-  add_library(${PROJECT_NAME}_tests SHARED
-    #add more test .cpp files here  
-    test/test_scan_to_pointcloud.cpp
-  )
-
-  set(test_dependencies
-    rclcpp
-    rclcpp_components
-    urc_msgs
-    std_msgs
-    nav_msgs
-    sensor_msgs
-    tf2
-    tf2_ros
-    laser_geometry
-  )
-
-  ament_target_dependencies(${PROJECT_NAME}_tests
-    ${test_dependencies}
-  )
-
-  install(TARGETS 
-    ${PROJECT_NAME}_tests
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION lib/${PROJECT_NAME}
-  )
-
-  ament_export_libraries(${PROJECT_NAME}_tests)
-  ament_export_dependencies(${test_dependencies})
-
+  #Calls the CMake for the unit tests  
+  add_subdirectory(test)  
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
-  
-  add_subdirectory(test)
 endif()
 
 ament_export_include_directories(include)
+
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 

@@ -58,10 +58,11 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
   initial_cloud.header.frame_id = "/lidar";
   sensor_msgs::msg::PointCloud2 transformed_cloud;
 
-  geometry_msgs::msg::TransformStamped transform; 
+  geometry_msgs::msg::TransformStamped transform_stamped; 
   try
   {
-    transform = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
+    transform_stamped = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
+    tf2::doTransform(initial_cloud, transformed_cloud, transform_stamped);
   }
   catch (tf2::TransformException &ex)
   {
@@ -69,7 +70,6 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
     return;
   }
 
-  tf2::doTransform(initial_cloud, transformed_cloud, transform);
   _pointcloud_pub->publish(transformed_cloud);
 }
 }
