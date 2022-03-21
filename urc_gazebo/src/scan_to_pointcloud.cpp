@@ -65,7 +65,7 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
   }
   catch (tf2::TransformException &ex)
   {
-    //look into eventually implementing some kind of ROS2 logging
+    RCLCPP_ERROR(this->get_logger(), "Transformation Error:\n%s", ex.what());
     return;
   }
 
@@ -75,6 +75,7 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan &scanData)
 }
 RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)
 
+/*
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
@@ -83,5 +84,5 @@ int main(int argc, char** argv)
   
   return 0;
 }
-
+*/
 

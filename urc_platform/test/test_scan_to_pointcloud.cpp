@@ -49,12 +49,24 @@ public:
     }
     catch (tf2::TransformException &ex)
     {
-      //look into implementing some kind of ROS2 logging
-      return;
+      RCLCPP_ERROR(this->get_logger(), "Transformation Error:\n%s", ex.what());
+      return output;
     }
-    tf2::doTransform(input, output, transform);
 
+    tf2::doTransform(input, output, transform);
     return output;
+  }
+
+  void SetUp()
+  {
+  }
+
+  void TearDown()
+  {
+  }
+
+  void TestBody()
+  {
   }
 
 protected:
@@ -66,9 +78,9 @@ protected:
   double neighbor_dist;
 
 private:
+  rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-  rclcpp::Clock::SharedPtr clock;
 };
 
 TEST_F(TestScanToPointCloud, ParameterTest)
