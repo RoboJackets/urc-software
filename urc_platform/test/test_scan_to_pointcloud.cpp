@@ -8,6 +8,7 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_ros/buffer.h>
 #include <tf2/LinearMath/Transform.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <vector>
 
