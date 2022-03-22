@@ -30,9 +30,9 @@ private:
   rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-  
+
   void scanCallback(const sensor_msgs::msg::LaserScan &scanData);
 };
-}
+}  // namespace scan_to_pointcloud
 
 #endif
