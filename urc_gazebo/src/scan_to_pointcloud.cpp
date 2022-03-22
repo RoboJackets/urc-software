@@ -4,8 +4,7 @@ namespace scan_to_pointcloud
 {
 ScanToPointCloud::ScanToPointCloud(const rclcpp::NodeOptions &options)
   : rclcpp::Node("scan_to_pointcloud", options)
-  , clock()
-  , tfBuffer_(clock)
+  , tfBuffer_(this->get_clock())
   , tfListener_(tfBuffer_)
 {
   get_parameter("min_dist", min_dist);

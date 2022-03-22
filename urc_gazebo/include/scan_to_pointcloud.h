@@ -27,7 +27,6 @@ private:
   double min_dist;
   double neighbor_dist;
 
-  rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
 

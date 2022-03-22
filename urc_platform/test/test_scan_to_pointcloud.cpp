@@ -17,8 +17,7 @@ class TestScanToPointCloud : public ::testing::Test, public rclcpp::Node
 public:
   TestScanToPointCloud()
     : rclcpp::Node("test_scan_to_pointcloud")
-    , clock()
-    , tfBuffer_(clock)
+    , tfBuffer_(this->get_clock())
     , tfListener_(tfBuffer_)
   {
     get_parameter("min_dist", min_dist);
@@ -72,7 +71,6 @@ private:
   {
   }
 
-  rclcpp::Clock::SharedPtr clock;
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
 };
