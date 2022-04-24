@@ -105,7 +105,7 @@ sudo rosdep init
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
 ```
-Make sure to call the 'rosdep install' command from the colcon workspace directory.
+Make sure to call the 'rosdep install' command from the colcon workspace directory (/colcon-urc).
 
 ## Contributing
 Join our slack [here!](https://robojackets.slack.com/)
