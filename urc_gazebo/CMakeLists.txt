@@ -63,12 +63,8 @@ rclcpp_components_register_node(
 # Install launch files.
 install(DIRECTORY
         launch
-        DESTINATION share/${PROJECT_NAME}/
-        )
-
-# Install gazebo files
-install(DIRECTORY
         urdf
+        config
         DESTINATION share/${PROJECT_NAME}/
         )
 

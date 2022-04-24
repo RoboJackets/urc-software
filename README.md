@@ -98,5 +98,14 @@ colcon build --symlink-install
 . install/setup.bash
 ```
 
+#### 8. Install and run rosdep
+```branch
+sudo apt install python3-rosdep
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+Make sure to call the 'rosdep install' command from the colcon workspace directory (/colcon-urc).
+
 ## Contributing
 Join our slack [here!](https://robojackets.slack.com/)
