@@ -60,14 +60,9 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
-# Install launch files.
+# Install launch and gazebo files.
 install(DIRECTORY
         launch
-        DESTINATION share/${PROJECT_NAME}/
-        )
-
-# Install gazebo files
-install(DIRECTORY
         urdf
         DESTINATION share/${PROJECT_NAME}/
         )

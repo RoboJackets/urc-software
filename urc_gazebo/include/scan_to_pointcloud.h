@@ -14,24 +14,24 @@
 
 namespace scan_to_pointcloud
 {
-class ScanToPointCloud : public rclcpp::Node
-{
+  class ScanToPointCloud: public rclcpp::Node
+  {
 public:
-  explicit ScanToPointCloud(const rclcpp::NodeOptions &options);
+    explicit ScanToPointCloud(const rclcpp::NodeOptions & options);
 
 private:
-  rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr _pointcloud_pub;
-  rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr _pointcloud_sub;
+    rclcpp::Publisher < sensor_msgs::msg::PointCloud2 > ::SharedPtr _pointcloud_pub;
+    rclcpp::Subscription < sensor_msgs::msg::LaserScan > ::SharedPtr _pointcloud_sub;
 
-  laser_geometry::LaserProjection projection;
-  double min_dist;
-  double neighbor_dist;
+    laser_geometry::LaserProjection projection;
+    double min_dist;
+    double neighbor_dist;
 
-  tf2_ros::Buffer tfBuffer_;
-  tf2_ros::TransformListener tfListener_;
+    tf2_ros::Buffer tfBuffer_;
+    tf2_ros::TransformListener tfListener_;
 
-  void scanCallback(const sensor_msgs::msg::LaserScan &scanData);
-};
+    void scanCallback(const sensor_msgs::msg::LaserScan & scanData);
+  };
 }  // namespace scan_to_pointcloud
 
 #endif
