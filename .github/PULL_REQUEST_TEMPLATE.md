@@ -21,5 +21,5 @@ Fixes #{{ github issue }}
 Expectation: The thing which does the thing does the thing
 
 # Self Checklist
-- [ ] I have formatted my code using `make format`
+- [ ] I have formatted my code using `ament_uncrustify --reformat`
 - [ ] I have tested that the new behaviour works 
