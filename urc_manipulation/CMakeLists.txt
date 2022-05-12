@@ -27,14 +27,15 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
-  
+
   ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_package()
 
 # Install launch files.
-install(DIRECTORY
-        launch
-        DESTINATION share/${PROJECT_NAME}/
-        )
+install(
+  DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)

@@ -16,9 +16,9 @@ class TestScanToPointCloud : public ::testing::Test, public rclcpp::Node
 {
 public:
   TestScanToPointCloud()
-    : rclcpp::Node("test_scan_to_pointcloud")
-    , tfBuffer_(this->get_clock())
-    , tfListener_(tfBuffer_)
+  : rclcpp::Node("test_scan_to_pointcloud"),
+    tfBuffer_(this->get_clock()),
+    tfListener_(tfBuffer_)
   {
     get_parameter("min_dist", min_dist);
     get_parameter("neighbor_dist", neighbor_dist);
@@ -26,24 +26,23 @@ public:
     mock_pub = create_publisher<sensor_msgs::msg::PointCloud2>("/pc2", rclcpp::SystemDefaultsQoS());
 
     mock_sub = create_subscription<sensor_msgs::msg::PointCloud2>(
-        "/scan", rclcpp::SystemDefaultsQoS(), [this](sensor_msgs::msg::PointCloud2 input) { sub_data = input; });
+      "/scan", rclcpp::SystemDefaultsQoS(), [this](sensor_msgs::msg::PointCloud2 input) {
+        sub_data = input;
+      });
   }
 
   sensor_msgs::msg::PointCloud2 createPointCloudMsg()
   {
     sensor_msgs::msg::PointCloud2 input_cloud;
     input_cloud.header.frame_id = "/lidar";
-    input_cloud.data = { 1, 0, 0 };
+    input_cloud.data = {1, 0, 0};
     sensor_msgs::msg::PointCloud2 output_cloud;
 
     geometry_msgs::msg::TransformStamped transform_stamped;
-    try
-    {
+    try {
       transform_stamped = tfBuffer_.lookupTransform("scan", "lidar", rclcpp::Time(0));
       tf2::doTransform(input_cloud, output_cloud, transform_stamped);
-    }
-    catch (tf2::TransformException& ex)
-    {
+    } catch (tf2::TransformException & ex) {
       RCLCPP_ERROR(this->get_logger(), "Transformation Error:\n%s", ex.what());
     }
 
@@ -84,35 +83,30 @@ TEST_F(TestScanToPointCloud, ParameterTest)
 TEST_F(TestScanToPointCloud, ComparisonTest)
 {
   auto cloudComparer = [](std::vector<uint8_t> msg_data, std::vector<uint8_t> test_data) {
-    for (size_t i = 0; i < msg_data.size(); ++i)
-    {
-      if (fabs(msg_data[i]) <= fabs((msg_data[i] - test_data[i]) / 100))
-      {
-        return false;
+      for (size_t i = 0; i < msg_data.size(); ++i) {
+        if (fabs(msg_data[i]) <= fabs((msg_data[i] - test_data[i]) / 100)) {
+          return false;
+        }
       }
-    }
-    return true;
-  };
+      return true;
+    };
 
   mock_pub->publish(createPointCloudMsg());
 
   sensor_msgs::msg::PointCloud2 published_cloud_msg;
-  try
-  {
+  try {
     published_cloud_msg = sub_data;
-  }
-  catch (const std::exception&)
-  {
+  } catch (const std::exception &) {
     ASSERT_TRUE(false);
   }
 
-  std::vector<uint8_t> msg_data = { published_cloud_msg.data };
+  std::vector<uint8_t> msg_data = {published_cloud_msg.data};
 
-  std::vector<uint8_t> test_data = { static_cast<uint8_t>(-1.4142136), 0, 1 };
+  std::vector<uint8_t> test_data = {static_cast<uint8_t>(-1.4142136), 0, 1};
   ASSERT_TRUE(cloudComparer(msg_data, test_data));
 }
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
   rclcpp::spin(std::make_shared<TestScanToPointCloud>());
