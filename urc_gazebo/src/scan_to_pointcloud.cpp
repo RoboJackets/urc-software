@@ -1,4 +1,4 @@
-#include "scan_to_pointcloud.h"
+#include "scan_to_pointcloud.hpp"
 
 namespace scan_to_pointcloud
 {

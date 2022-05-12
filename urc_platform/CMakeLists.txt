@@ -35,13 +35,14 @@ set(dependencies
 #)
 
 # Install launch files.
-install(DIRECTORY
-        launch
-        DESTINATION share/${PROJECT_NAME}/
-        )
+install(
+  DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 # Install library
-#install(TARGETS 
+#install(TARGETS
 #  ${PROJECT_NAME}
 #  ARCHIVE DESTINATION lib
 #  LIBRARY DESTINATION lib
@@ -49,9 +50,9 @@ install(DIRECTORY
 #)
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)  
-  #Calls the CMake for the unit tests  
-  add_subdirectory(test)  
+  find_package(ament_lint_auto REQUIRED)
+  #Calls the CMake for the unit tests
+  add_subdirectory(test)
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
