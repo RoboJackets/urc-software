@@ -3,8 +3,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
-//#include <diagnostic_updater/diagnostic_updater.hpp>
-//#include <diagnostic_updater/publisher.hpp>
+#include <diagnostic_updater/diagnostic_updater.hpp>
+#include <diagnostic_updater/publisher.hpp>
 #include <memory>
 #include <urc_msgs/msg/velocity_pair.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
@@ -18,6 +18,17 @@ public:
     explicit JoystickDriver(const rclcpp::NodeOptions &options);
 
 private: 
+    rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_publisher;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr __joy_subscriber;
+    std::unique_ptr<diagnostic_updater::Updater> udpater_ptr;
+
+    double absoluteMaxVel, maxVel, maxVelIncr;
+    int leftJoyAxis, rightJoyAxis;
+    bool leftInverted, rightInverted;
+
+    void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper& stat);
+    void joyCallback(const sensor_msgs::msg::Joy::ConstPtr& msg);
+
 };
 }
 

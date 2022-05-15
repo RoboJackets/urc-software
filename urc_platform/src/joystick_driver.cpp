@@ -1,5 +1,4 @@
 #include "joystick_driver.hpp"
-#include "urc_msgs/msg/velocity_pair.h"
 
 namespace joystick_driver
 {
