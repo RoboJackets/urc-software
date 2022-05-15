@@ -82,13 +82,11 @@ TEST_F(TestScanToPointCloud, ParameterTest)
 
 TEST_F(TestScanToPointCloud, ComparisonTest)
 {
-  auto cloudComparer = [](std::vector<uint8_t> msg_data, std::vector<uint8_t> test_data) {
-      for (size_t i = 0; i < msg_data.size(); ++i) {
-        if (fabs(msg_data[i]) <= fabs((msg_data[i] - test_data[i]) / 100)) {
-          return false;
-        }
+  auto cloudCheck = [](std::vector<uint8_t> msg_data, std::vector<uint8_t> test_data) {
+      for (size_t i = 0; i < msg_data.size(); ++i) 
+      {
+        EXPECT_NEAR(msg_data[i], test_data[i], 0.001);
       }
-      return true;
     };
 
   mock_pub->publish(createPointCloudMsg());
@@ -102,8 +100,10 @@ TEST_F(TestScanToPointCloud, ComparisonTest)
 
   std::vector<uint8_t> msg_data = {published_cloud_msg.data};
 
+
+  //this is obviously wrong, unsigned can't be negative
   std::vector<uint8_t> test_data = {static_cast<uint8_t>(-1.4142136), 0, 1};
-  ASSERT_TRUE(cloudComparer(msg_data, test_data));
+  cloudCheck(msg_data, test_data);
 }
 
 int main(int argc, char ** argv)
