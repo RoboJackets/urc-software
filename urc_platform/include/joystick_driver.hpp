@@ -20,14 +20,14 @@ public:
 private: 
     rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_publisher;
     rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr __joy_subscriber;
-    std::unique_ptr<diagnostic_updater::Updater> udpater_ptr;
+    std::unique_ptr<diagnostic_updater::Updater> updater_ptr;
 
     double absoluteMaxVel, maxVel, maxVelIncr;
     int leftJoyAxis, rightJoyAxis;
     bool leftInverted, rightInverted;
 
     void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper& stat);
-    void joyCallback(const sensor_msgs::msg::Joy::ConstPtr& msg);
+    void joyCallback(const sensor_msgs::msg::Joy& msg);
 
 };
 }

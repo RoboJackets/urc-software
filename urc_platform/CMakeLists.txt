@@ -21,8 +21,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_ros REQUIRED)
+find_package(diagnostic_updater REQUIRED)
 
 include_directories(
   include
@@ -39,13 +38,19 @@ set(dependencies
   rclcpp_components
   urc_msgs
   std_msgs
-  tf2
-  tf2_ros
   
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
+)
+
+
+# Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "joystick_driver::JoystickDriver"
+  EXECUTABLE ${PROJECT_NAME}_JoystickDriver
 )
 
 # Install launch files.
