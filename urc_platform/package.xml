@@ -13,9 +13,11 @@
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
 
+  <build_depend>urc_msgs</build_depend>
+  <exec_depend>urc_msgs</exec_depend>
+
   <test_depend>rclcpp</test_depend>
   <test_depend>rclcpp_components</test_depend>
-  <test_depend>urc_msgs</test_depend>
   <test_depend>std_msgs</test_depend>
   <test_depend>nav_msgs</test_depend>
   <test_depend>sensor_msgs</test_depend>
