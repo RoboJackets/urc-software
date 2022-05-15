@@ -29,9 +29,10 @@ include_directories(
 )
 
 # Library creation
-#add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
+  src/joystick_driver.cpp
   #add more .cpp files here
-#)
+)
 
 set(dependencies
   rclcpp
@@ -43,9 +44,9 @@ set(dependencies
   
 )
 
-#ament_target_dependencies(${PROJECT_NAME}
-#  ${dependencies}
-#)
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
 
 # Install launch files.
 install(
@@ -55,12 +56,12 @@ install(
 )
 
 # Install library
-#install(TARGETS
-#  ${PROJECT_NAME}
-#  ARCHIVE DESTINATION lib
-#  LIBRARY DESTINATION lib
-#  RUNTIME DESTINATION lib/${PROJECT_NAME}
-#)
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

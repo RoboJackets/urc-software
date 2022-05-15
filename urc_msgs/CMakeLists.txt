@@ -28,7 +28,6 @@ find_package(builtin_interfaces REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
-  DEPENDENCIES builtin_interfaces
 )
 
 
@@ -45,7 +44,7 @@ endif()
 
 ament_export_include_directories(include)
 
-ament_export_libraries(${PROJECT_NAME})
+#ament_export_libraries(${PROJECT_NAME}) <--- This will probably cause issues for someone down the line
 ament_export_dependencies(${dependencies})
 
 ament_package()
