@@ -7,6 +7,8 @@
   <maintainer email="aidan.stickan@gmail.com">a-stickan</maintainer>
   <license>MIT</license>
 
+  <depend>protobuf-dev</depend>
+
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>
