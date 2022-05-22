@@ -1,0 +1,3 @@
+[submodule "urc_platform/nanopb/external/nanopb"]
+	path = urc_platform/nanopb/external/nanopb
+	url = https://github.com/nanopb/nanopb

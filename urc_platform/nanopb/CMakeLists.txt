@@ -1,20 +1,22 @@
 find_package(ament_cmake REQUIRED)
 find_package(Protobuf REQUIRED)
 
-protobuf_generate_cpp(
-  PROTOBUF_SRCS
-  PROTOBUF_HDRS
+set(NANOPB_SRC_ROOT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/external/nanopb)
+set(CMAKE_MODULE_PATH ${NANOPB_SRC_ROOT_FOLDER}/extra)
+find_package(Nanopb REQUIRED)
+
+nanopb_generate_cpp(
+  PROTO_GENERATED_SRCS
+  PROTO_HDRS
   proto/urc.proto
 )
 
 add_library(${PROJECT_NAME} SHARED
-  ${PROTOBUF_HDRS}
-  ${PROTOBUF_SRCS}
+  ${PROTO_HDRS}
+  ${PROTO_GENERATED_SRCS}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  protobuf::libprotobuf
-)
+target_link_libraries(${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
   INTERFACE
@@ -23,4 +25,4 @@ target_include_directories(${PROJECT_NAME}
 )
 
 ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(Protobuf)
+ament_export_dependencies(Nanopb)
