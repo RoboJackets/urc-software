@@ -10,6 +10,7 @@ nanopb_generate_cpp(
   PROTO_HDRS
   proto/urc.proto
 )
+include_directories(${NANOPB_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} SHARED
   ${PROTO_HDRS}
@@ -17,12 +18,6 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 target_link_libraries(${PROJECT_NAME})
-
-target_include_directories(${PROJECT_NAME}
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
-    $<INSTALL_INTERFACE:include>
-)
 
 ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(Nanopb)
