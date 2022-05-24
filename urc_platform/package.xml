@@ -8,7 +8,6 @@
   <license>MIT</license>
 
   <depend>protobuf-dev</depend>
-  <depend>nanopb-dev</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

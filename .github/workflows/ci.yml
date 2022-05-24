@@ -18,7 +18,6 @@ jobs:
         run: |
           source /opt/ros/galactic/setup.bash
           sudo apt-get update
-          git submodule update --init --recursive
           rosdep update --rosdistro=galactic
           rosdep install --from-paths . --ignore-src -y
 
