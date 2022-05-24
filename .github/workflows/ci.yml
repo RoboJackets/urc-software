@@ -1,17 +1,18 @@
-on:
-  push:
-  pull_request:
-  workflow_dispatch:
+name: Build CI
+
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-20.04
     container: ros:galactic
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v2
         with:
+          submodules: recursive
           path: src/urc-software
-          submodules: true
+          
       - name: Install Dependencies
         shell: bash
         run: |
@@ -19,6 +20,7 @@ jobs:
           sudo apt-get update
           rosdep update --rosdistro=galactic
           rosdep install --from-paths . --ignore-src -y
+
       - name: Build
         shell: bash
         run: |
