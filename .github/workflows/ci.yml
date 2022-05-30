@@ -4,8 +4,8 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    container: ros:galactic
+    runs-on: ubuntu-22.04
+    container: ros:humble
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -16,13 +16,13 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          source /opt/ros/galactic/setup.bash
+          source /opt/ros/humble/setup.bash
           sudo apt-get update
-          rosdep update --rosdistro=galactic
+          rosdep update --rosdistro=humble
           rosdep install --from-paths . --ignore-src -y
 
       - name: Build
         shell: bash
         run: |
-          source /opt/ros/galactic/setup.bash
+          source /opt/ros/humble/setup.bash
           colcon build
