@@ -60,6 +60,13 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
+# Install robot spawn file.
+install(
+  PROGRAMS
+  launch/spawn_jessii.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Install launch and gazebo files.
 install(
   DIRECTORY

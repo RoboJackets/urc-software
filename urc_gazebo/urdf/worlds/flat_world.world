@@ -20,5 +20,13 @@
     <include>
       <uri>model://desert_surface</uri>
     </include>
+    
+    <!-- barrels -->
+    <include>
+      <uri>model://barrel</uri>
+      <name>barrel_0</name> <!-- THE NAME MUST BE UNIQUE-->
+      <pose>5.2 29.3 0 0 -0 0</pose>
+    </include>
+    
   </world>
 </sdf>
