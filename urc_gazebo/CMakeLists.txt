@@ -63,7 +63,7 @@ rclcpp_components_register_node(
 # Install robot spawn file.
 install(
   PROGRAMS
-  launch/spawn_jessii.py
+  launch/spawn_wallii.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
