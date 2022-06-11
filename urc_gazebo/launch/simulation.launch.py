@@ -50,14 +50,14 @@ def generate_launch_description():
     	    output='screen'
     
         )
-    #robot_state_publisher = Node(
-    #	    package='robot_state_publisher',
-    #	    executable='robot_state_publisher',
-    #       name='robot_state_publisher',
-    #	    parameters=[
-    #	    	{"robot_description": robot_desc}],
-    #	    output='screen'
-    #    )
+    robot_state_publisher = Node(
+    	    package='robot_state_publisher',
+    	    executable='robot_state_publisher',
+          name='robot_state_publisher',
+    	    parameters=[
+    	    	{"robot_description": robot_desc}],
+    	    output='screen'
+       )
 
     # control = Node(
     #        package='urc_gazebo',
@@ -99,7 +99,7 @@ def generate_launch_description():
         gazebo,
         scan_to_pointcloud,
         spawn_robot,
-        #robot_state_publisher
+        robot_state_publisher,
         # control
         # magnetometer
         # ground_truth
