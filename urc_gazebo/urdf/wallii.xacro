@@ -161,6 +161,162 @@
       </imu>
     </sensor>
   </gazebo>
+  
+  
+  <link name="cam/center">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+
+    
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+      
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+  
+  <joint name="center_cam_joint" type="fixed">
+	<axis xyz="1 0 0"/>
+	<!-- Edit these parameters to change camera orientation -->
+	<origin xyz="0 0 0.05" rpy = "0 0 -.14"/>
+	<parent link="imu"/>
+	<child link="cam/center"/>
+	
+   </joint>
+
+   <gazebo reference="cam/center">
+    <sensor name="center_sensor" type="camera">
+        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/image</namespace>
+          <remapping>~/image_raw:=center_img</remapping>
+          <remapping>~/camera_info:=center_info</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <camera name="cam/center">
+          <distortion>
+            <k1>0.1</k1>
+            <k2>0.2</k2>
+            <k3>0.3</k3>
+            <p1>0.4</p1>
+            <p2>0.5</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+       </camera>
+    </sensor>
+  </gazebo>
+  
+  <link name="cam/left">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+      
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+  
+  <joint name="left_cam_joint" type="fixed">
+	<axis xyz="1 0 0"/>
+	<!-- Edit these parameters to change camera orientation -->
+	<origin xyz="0 0 0.05" rpy = "0 0 1.5"/>
+	<parent link="base_link"/>
+	<child link="cam/left"/>
+   </joint>
+
+   <gazebo reference="cam/left">
+    <sensor name="left_sensor" type="camera">
+        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/image</namespace>
+          <remapping>~/image_raw:=left_img</remapping>
+          <remapping>~/camera_info:=left_info</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <camera name="cam/left">
+          <distortion>
+            <k1>0.1</k1>
+            <k2>0.2</k2>
+            <k3>0.3</k3>
+            <p1>0.4</p1>
+            <p2>0.5</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+       </camera>
+    </sensor>
+  </gazebo>
+  
+  
+  <link name="cam/right">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+      
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+  
+  <joint name="right_cam_joint" type="fixed">
+	<axis xyz="1 0 0"/>
+	<!-- Edit these parameters to change camera orientation -->
+	<origin xyz="0 0 0.05" rpy = "0 0 -1.5"/>
+	<parent link="base_link"/>
+	<child link="cam/right"/>
+   </joint>
+   
+   <gazebo reference="cam/right">
+    <sensor name="right_sensor" type="camera">
+        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <ros>
+          <namespace>/image</namespace>
+          <remapping>~/image_raw:=right_img</remapping>
+          <remapping>~/camera_info:=right_info</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <camera name="cam/right">
+          <distortion>
+            <k1>0.1</k1>
+            <k2>0.2</k2>
+            <k3>0.3</k3>
+            <p1>0.4</p1>
+            <p2>0.5</p2>
+            <center>0.5 0.5</center>
+          </distortion>
+       </camera>
+    </sensor>
+  </gazebo>
+  
+
 
   <!-- body -->
   <link name="body">
@@ -234,6 +390,100 @@
         <frame_name>imu</frame_name>
       </plugin>
     </sensor>
+    
+    <sensor type="camera" name="center_sensor">
+          <!-- Set always_on only sensor, not on plugin -->
+          <always_on>0</always_on>
+
+          <!-- Set update_rate only sensor, not on plugin -->
+          <update_rate>1</update_rate>
+
+          <!-- Use camera, not camera_triggered -->
+          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+            <!-- Change namespace, camera name and topics so:
+                 * Images are published to: /custom_ns/custom_camera/custom_image
+                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
+            -->
+            <ros>
+              <namespace>/image</namespace>
+              <argument>~/image_raw:=center_img</argument>
+              <argument>~/camera_info:=center_info</argument>
+            </ros>
+
+            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+            <camera_name>center_camera</camera_name>
+
+            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+            <frame_name>center_tf</frame_name>
+
+            <hack_baseline>0.07</hack_baseline>
+
+            <!-- No need to repeat distortion parameters or to set autoDistortion -->
+          </plugin>
+        </sensor>
+     
+     <sensor type="camera" name="left_sensor">
+          <!-- Set always_on only sensor, not on plugin -->
+          <always_on>0</always_on>
+
+          <!-- Set update_rate only sensor, not on plugin -->
+          <update_rate>1</update_rate>
+
+          <!-- Use camera, not camera_triggered -->
+          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+            <!-- Change namespace, camera name and topics so:
+                 * Images are published to: /custom_ns/custom_camera/custom_image
+                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
+            -->
+            <ros>
+              <namespace>/image</namespace>
+              <argument>~/image_raw:=left_img</argument>
+              <argument>~/camera_info:=left_info</argument>
+            </ros>
+
+            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+            <camera_name>left_camera</camera_name>
+
+            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+            <frame_name>left_tf</frame_name>
+
+            <hack_baseline>0.07</hack_baseline>
+
+            <!-- No need to repeat distortion parameters or to set autoDistortion -->
+          </plugin>
+        </sensor>
+      
+      <sensor type="camera" name="right_sensor">
+          <!-- Set always_on only sensor, not on plugin -->
+          <always_on>0</always_on>
+
+          <!-- Set update_rate only sensor, not on plugin -->
+          <update_rate>1</update_rate>
+
+          <!-- Use camera, not camera_triggered -->
+          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+            <!-- Change namespace, camera name and topics so:
+                 * Images are published to: /custom_ns/custom_camera/custom_image
+                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
+            -->
+            <ros>
+              <namespace>/image</namespace>
+              <argument>~/image_raw:=right_img</argument>
+              <argument>~/camera_info:=right_info</argument>
+            </ros>
+
+            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+            <camera_name>right_camera</camera_name>
+
+            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+            <frame_name>right_tf</frame_name>
+
+            <hack_baseline>0.07</hack_baseline>
+
+            <!-- No need to repeat distortion parameters or to set autoDistortion -->
+          </plugin>
+        </sensor> 
+  
   </gazebo>
 
 
