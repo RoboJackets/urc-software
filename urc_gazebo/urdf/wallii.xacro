@@ -161,8 +161,60 @@
       </imu>
     </sensor>
   </gazebo>
+
+  <!-- gps -->
+  <link name="gps">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+      
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
   
+   <joint name="gps_joint" type="fixed">
+		<axis xyz="1 0 0"/>
+		<origin xyz="0 0 0.05"/>
+		<parent link="base_link"/>
+		<child link="gps"/>
+	</joint>
+
+  <gazebo reference="gps">
+    <sensor name="gps" type="gps">
+      <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
+          <ros>
+            <namespace>/gps</namespace>
+            <remapping>~/out:=data</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        </plugin>
+        <always_on>true</always_on>
+        <updateRate>100000.0</updateRate>
+        <bodyName>base_link</bodyName>
+        <frameId>base_link</frameId>
+        <topicName>/fix</topicName>
+        <velocityTopicName>/fix_velocity</velocityTopicName>
+        <referenceLatitude>33.774497</referenceLatitude>
+        <referenceLongitude>-84.405001</referenceLongitude>
+        <referenceHeading>90</referenceHeading>
+        <referenceAltitude>309.0</referenceAltitude>
+        <drift>0.001 0.001 0.001</drift>
+        <gaussianNoise>0.0001 0.0001 0.0001</gaussianNoise>
+        <velocityDrift>0 0 0</velocityDrift>
+        <velocityGaussianNoise>0.005 0.005 0.05</velocityGaussianNoise>
+    </sensor>
+  </gazebo>
+
+
   
+  <!-- cameras -->
   <link name="cam/center">
     <visual>
       <geometry>
@@ -315,8 +367,6 @@
        </camera>
     </sensor>
   </gazebo>
-  
-
 
   <!-- body -->
   <link name="body">
@@ -389,7 +439,7 @@
         </ros>
         <frame_name>imu</frame_name>
       </plugin>
-    </sensor>
+    </sensor>    
     
     <sensor type="camera" name="center_sensor">
           <!-- Set always_on only sensor, not on plugin -->
