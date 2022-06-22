@@ -212,6 +212,60 @@
     </sensor>
   </gazebo>
 
+  <!-- Lidar -->
+ <link name="lidar">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+      
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+    
+  <joint name="lidar_joint" type="fixed">
+		<axis xyz="1 0 0"/>
+		<origin xyz="0 0 0.05"/>
+		<parent link="base_link"/>
+		<child link="lidar"/>
+	</joint>
+  
+  <gazebo reference="lidar">
+        <material>Gazebo/Red</material>
+
+        <sensor name="laser" type="ray">
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <min_angle>-3.14</min_angle>
+                        <max_angle>3.14</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>12</max>
+                </range>
+            </ray>
+            <plugin name="laser_controller" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                  <namespace>/lidar</namespace>
+                  <remapping>~/out:=data</remapping>
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frame_name>lidar</frame_name>
+            </plugin>
+        </sensor>
+    </gazebo>
 
   
   <!-- cameras -->
