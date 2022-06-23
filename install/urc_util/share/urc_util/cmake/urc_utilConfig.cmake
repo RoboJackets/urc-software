@@ -1,0 +1,1 @@
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util/ament_cmake_core/urc_utilConfig.cmake

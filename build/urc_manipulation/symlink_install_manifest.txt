@@ -1,0 +1,16 @@
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/package_run_dependencies/urc_manipulation
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/parent_prefix_path/urc_manipulation
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/ament_prefix_path.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/ament_prefix_path.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/path.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/path.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.bash
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.zsh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/packages/urc_manipulation
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/cmake/urc_manipulationConfig.cmake
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/cmake/urc_manipulationConfig-version.cmake
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.xml
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation//launch/.gitkeep

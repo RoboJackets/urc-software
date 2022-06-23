@@ -1,0 +1,645 @@
+[0.182s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.183s] DEBUG:colcon:Parsed command line arguments: Namespace(allow_overriding=[], ament_cmake_args=None, base_paths=['.'], build_base='build', catkin_cmake_args=None, catkin_skip_building_tests=False, cmake_args=None, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, cmake_target=None, cmake_target_skip_unavailable=False, continue_on_error=False, event_handlers=None, executor='parallel', ignore_user_meta=False, install_base='install', log_base=None, log_level=None, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f5ecefdbc40>>, merge_install=False, metas=['./colcon.meta'], packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, parallel_workers=2, paths=None, symlink_install=True, test_result_base=None, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f5ecefdbc40>, verb_name='build', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f5ecefe51f0>)
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.188s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.188s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/robojackets/urc_ws/colcon-urc/src/urc-software'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.189s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.205s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['ignore', 'ignore_ament_install']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'ignore'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'ignore_ament_install'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['colcon_pkg']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'colcon_pkg'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['colcon_meta']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'colcon_meta'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['ros']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'ros'
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['cmake', 'python']
+[0.206s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'cmake'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'python'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extensions ['python_setup_py']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents) by extension 'python_setup_py'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['ignore', 'ignore_ament_install']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'ignore'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'ignore_ament_install'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['colcon_pkg']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'colcon_pkg'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['colcon_meta']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'colcon_meta'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['ros']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'ros'
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['cmake', 'python']
+[0.207s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'cmake'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'python'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extensions ['python_setup_py']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/design) by extension 'python_setup_py'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['ignore', 'ignore_ament_install']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'ignore'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'ignore_ament_install'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['colcon_pkg']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'colcon_pkg'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['colcon_meta']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'colcon_meta'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['ros']
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'ros'
+[0.208s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['cmake', 'python']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'cmake'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'python'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extensions ['python_setup_py']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(documents/research) by extension 'python_setup_py'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['ignore', 'ignore_ament_install']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'ignore'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'ignore_ament_install'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['colcon_pkg']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'colcon_pkg'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['colcon_meta']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'colcon_meta'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['ros']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'ros'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['cmake', 'python']
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'cmake'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'python'
+[0.209s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extensions ['python_setup_py']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external) by extension 'python_setup_py'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extensions ['ignore', 'ignore_ament_install']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'ignore'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'ignore_ament_install'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extensions ['colcon_pkg']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'colcon_pkg'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extensions ['colcon_meta']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'colcon_meta'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extensions ['ros']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'ros'
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extensions ['cmake', 'python']
+[0.210s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'cmake'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(external/nanopb) by extension 'python'
+[0.218s] DEBUG:colcon.colcon_core.package_identification:Package 'external/nanopb' with type 'cmake' and name 'nanopb'
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.218s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extensions ['ignore', 'ignore_ament_install']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extension 'ignore'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extension 'ignore_ament_install'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extensions ['colcon_pkg']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extension 'colcon_pkg'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extensions ['colcon_meta']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extension 'colcon_meta'
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extensions ['ros']
+[0.219s] Level 1:colcon.colcon_core.package_identification:_identify(urc_analysis) by extension 'ros'
+[0.222s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_analysis' with type 'ros.ament_cmake' and name 'urc_analysis'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extensions ['ignore', 'ignore_ament_install']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extension 'ignore'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extension 'ignore_ament_install'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extensions ['colcon_pkg']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extension 'colcon_pkg'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extensions ['colcon_meta']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extension 'colcon_meta'
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extensions ['ros']
+[0.222s] Level 1:colcon.colcon_core.package_identification:_identify(urc_gazebo) by extension 'ros'
+[0.225s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_gazebo' with type 'ros.ament_cmake' and name 'urc_gazebo'
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extensions ['ignore', 'ignore_ament_install']
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extension 'ignore'
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extension 'ignore_ament_install'
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extensions ['colcon_pkg']
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extension 'colcon_pkg'
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extensions ['colcon_meta']
+[0.225s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extension 'colcon_meta'
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extensions ['ros']
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_manipulation) by extension 'ros'
+[0.226s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_manipulation' with type 'ros.ament_cmake' and name 'urc_manipulation'
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extensions ['ignore', 'ignore_ament_install']
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extension 'ignore'
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extension 'ignore_ament_install'
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extensions ['colcon_pkg']
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extension 'colcon_pkg'
+[0.226s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extensions ['colcon_meta']
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extension 'colcon_meta'
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extensions ['ros']
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_msgs) by extension 'ros'
+[0.227s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_msgs' with type 'ros.ament_cmake' and name 'urc_msgs'
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extensions ['ignore', 'ignore_ament_install']
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extension 'ignore'
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extension 'ignore_ament_install'
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extensions ['colcon_pkg']
+[0.227s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extension 'colcon_pkg'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extensions ['colcon_meta']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extension 'colcon_meta'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extensions ['ros']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_navigation) by extension 'ros'
+[0.228s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_navigation' with type 'ros.ament_cmake' and name 'urc_navigation'
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extensions ['ignore', 'ignore_ament_install']
+[0.228s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extension 'ignore'
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extension 'ignore_ament_install'
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extensions ['colcon_pkg']
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extension 'colcon_pkg'
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extensions ['colcon_meta']
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extension 'colcon_meta'
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extensions ['ros']
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_perception) by extension 'ros'
+[0.229s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_perception' with type 'ros.ament_cmake' and name 'urc_perception'
+[0.229s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extensions ['ignore', 'ignore_ament_install']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extension 'ignore'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extension 'ignore_ament_install'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extensions ['colcon_pkg']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extension 'colcon_pkg'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extensions ['colcon_meta']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extension 'colcon_meta'
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extensions ['ros']
+[0.230s] Level 1:colcon.colcon_core.package_identification:_identify(urc_platform) by extension 'ros'
+[0.231s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_platform' with type 'ros.ament_cmake' and name 'urc_platform'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extensions ['ignore', 'ignore_ament_install']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extension 'ignore'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extension 'ignore_ament_install'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extensions ['colcon_pkg']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extension 'colcon_pkg'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extensions ['colcon_meta']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extension 'colcon_meta'
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extensions ['ros']
+[0.231s] Level 1:colcon.colcon_core.package_identification:_identify(urc_util) by extension 'ros'
+[0.232s] DEBUG:colcon.colcon_core.package_identification:Package 'urc_util' with type 'ros.ament_cmake' and name 'urc_util'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extensions ['ignore', 'ignore_ament_install']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extension 'ignore'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extension 'ignore_ament_install'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extensions ['colcon_pkg']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extension 'colcon_pkg'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extensions ['colcon_meta']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extension 'colcon_meta'
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extensions ['ros']
+[0.232s] Level 1:colcon.colcon_core.package_identification:_identify(velodyne_description) by extension 'ros'
+[0.233s] DEBUG:colcon.colcon_core.package_identification:Package 'velodyne_description' with type 'ros.catkin' and name 'velodyne_description'
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.233s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.254s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.257s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 12 installed packages in /home/robojackets/urc_ws/colcon-urc/install
+[0.259s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 282 installed packages in /opt/ros/galactic
+[0.280s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /opt/ros/noetic
+[0.280s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_args' from command line to 'None'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_target' from command line to 'None'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_clean_cache' from command line to 'False'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_clean_first' from command line to 'False'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'cmake_force_configure' from command line to 'False'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'ament_cmake_args' from command line to 'None'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'catkin_cmake_args' from command line to 'None'
+[0.456s] Level 5:colcon.colcon_core.verb:set package 'nanopb' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.456s] DEBUG:colcon.colcon_core.verb:Building package 'nanopb' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/external/nanopb', 'symlink_install': True, 'test_result_base': None}
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_args' from command line to 'None'
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_target' from command line to 'None'
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_clean_cache' from command line to 'False'
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_clean_first' from command line to 'False'
+[0.457s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'cmake_force_configure' from command line to 'False'
+[0.458s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'ament_cmake_args' from command line to 'None'
+[0.458s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'catkin_cmake_args' from command line to 'None'
+[0.458s] Level 5:colcon.colcon_core.verb:set package 'urc_analysis' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.458s] DEBUG:colcon.colcon_core.verb:Building package 'urc_analysis' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_analysis', 'symlink_install': True, 'test_result_base': None}
+[0.458s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_args' from command line to 'None'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_target' from command line to 'None'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_clean_cache' from command line to 'False'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_clean_first' from command line to 'False'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'cmake_force_configure' from command line to 'False'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'ament_cmake_args' from command line to 'None'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'catkin_cmake_args' from command line to 'None'
+[0.459s] Level 5:colcon.colcon_core.verb:set package 'urc_manipulation' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.459s] DEBUG:colcon.colcon_core.verb:Building package 'urc_manipulation' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_manipulation', 'symlink_install': True, 'test_result_base': None}
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_args' from command line to 'None'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_target' from command line to 'None'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[0.460s] Level 5:colcon.colcon_core.verb:set package 'urc_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.460s] DEBUG:colcon.colcon_core.verb:Building package 'urc_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_msgs', 'symlink_install': True, 'test_result_base': None}
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_args' from command line to 'None'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_target' from command line to 'None'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_clean_cache' from command line to 'False'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_clean_first' from command line to 'False'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'cmake_force_configure' from command line to 'False'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'ament_cmake_args' from command line to 'None'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'catkin_cmake_args' from command line to 'None'
+[0.461s] Level 5:colcon.colcon_core.verb:set package 'urc_navigation' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.461s] DEBUG:colcon.colcon_core.verb:Building package 'urc_navigation' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_navigation', 'symlink_install': True, 'test_result_base': None}
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_args' from command line to 'None'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_target' from command line to 'None'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_clean_cache' from command line to 'False'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_clean_first' from command line to 'False'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'cmake_force_configure' from command line to 'False'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'ament_cmake_args' from command line to 'None'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'catkin_cmake_args' from command line to 'None'
+[0.462s] Level 5:colcon.colcon_core.verb:set package 'urc_perception' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.462s] DEBUG:colcon.colcon_core.verb:Building package 'urc_perception' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_perception', 'symlink_install': True, 'test_result_base': None}
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_args' from command line to 'None'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_target' from command line to 'None'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_clean_cache' from command line to 'False'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_clean_first' from command line to 'False'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'cmake_force_configure' from command line to 'False'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'ament_cmake_args' from command line to 'None'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'catkin_cmake_args' from command line to 'None'
+[0.463s] Level 5:colcon.colcon_core.verb:set package 'urc_util' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.463s] DEBUG:colcon.colcon_core.verb:Building package 'urc_util' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_util', 'symlink_install': True, 'test_result_base': None}
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_args' from command line to 'None'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_target' from command line to 'None'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.464s] Level 5:colcon.colcon_core.verb:set package 'velodyne_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.464s] DEBUG:colcon.colcon_core.verb:Building package 'velodyne_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description', 'symlink_install': True, 'test_result_base': None}
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_args' from command line to 'None'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_target' from command line to 'None'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_clean_cache' from command line to 'False'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_clean_first' from command line to 'False'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'cmake_force_configure' from command line to 'False'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'ament_cmake_args' from command line to 'None'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'catkin_cmake_args' from command line to 'None'
+[0.465s] Level 5:colcon.colcon_core.verb:set package 'urc_gazebo' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.465s] DEBUG:colcon.colcon_core.verb:Building package 'urc_gazebo' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_gazebo', 'symlink_install': True, 'test_result_base': None}
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_args' from command line to 'None'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_target' from command line to 'None'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_clean_cache' from command line to 'False'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_clean_first' from command line to 'False'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'cmake_force_configure' from command line to 'False'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'ament_cmake_args' from command line to 'None'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'catkin_cmake_args' from command line to 'None'
+[0.467s] Level 5:colcon.colcon_core.verb:set package 'urc_platform' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.467s] DEBUG:colcon.colcon_core.verb:Building package 'urc_platform' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform', 'merge_install': False, 'path': '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform', 'symlink_install': True, 'test_result_base': None}
+[0.472s] WARNING:colcon.colcon_core.verb:Some selected packages are already built in one or more underlay workspaces:
+	'nanopb' is in: /home/robojackets/urc_ws/colcon-urc/install/nanopb
+	'urc_analysis' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_analysis
+	'urc_manipulation' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_manipulation
+	'urc_msgs' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_msgs
+	'urc_navigation' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_navigation
+	'urc_perception' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_perception
+	'urc_util' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_util
+	'velodyne_description' is in: /home/robojackets/urc_ws/colcon-urc/install/velodyne_description
+	'urc_gazebo' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_gazebo
+	'urc_platform' is in: /home/robojackets/urc_ws/colcon-urc/install/urc_platform
+If a package in a merged underlay workspace is overridden and it installs headers, then all packages in the overlay must sort their include directories by workspace order. Failure to do so may result in build failures or undefined behavior at run time.
+If the overridden package is used by another package in any underlay, then the overriding package in the overlay must be API and ABI compatible or undefined behavior at run time may occur.
+
+If you understand the risks and want to override a package anyways, add the following to the command line:
+	--allow-overriding nanopb urc_analysis urc_gazebo urc_manipulation urc_msgs urc_navigation urc_perception urc_platform urc_util velodyne_description
+
+This may be promoted to an error in a future release of colcon-core.
+[0.472s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.474s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.475s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_msgs' with build type 'ament_cmake'
+[0.475s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_msgs'
+[0.479s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.479s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.479s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.483s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[0.488s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/external/nanopb'
+[0.490s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.490s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.495s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[0.509s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs -- -j2 -l2
+[0.515s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb': /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb -- -j2 -l2
+[0.563s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs -- -j2 -l2
+[0.618s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs
+[0.621s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb' returned '0': /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb -- -j2 -l2
+[0.650s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_msgs)
+[0.654s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs
+[0.657s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs' for CMake module files
+[0.657s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs' for CMake config files
+[0.658s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_msgs', 'cmake_prefix_path')
+[0.658s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.ps1'
+[0.659s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.dsv'
+[0.660s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.sh'
+[0.661s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/bin'
+[0.661s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/lib/pkgconfig/urc_msgs.pc'
+[0.661s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/lib/python3.8/site-packages'
+[0.662s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.ps1'
+[0.665s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.dsv'
+[0.665s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.sh'
+[0.666s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.bash'
+[0.667s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.zsh'
+[0.668s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/colcon-core/packages/urc_msgs)
+[0.681s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb': /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb
+[0.697s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(nanopb)
+[0.699s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb' for CMake module files
+[0.698s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb' returned '0': /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb
+[0.700s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb' for CMake config files
+[0.700s] Level 1:colcon.colcon_core.shell:create_environment_hook('nanopb', 'cmake_prefix_path')
+[0.701s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/cmake_prefix_path.ps1'
+[0.702s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/cmake_prefix_path.dsv'
+[0.703s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/cmake_prefix_path.sh'
+[0.704s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib'
+[0.705s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/bin'
+[0.705s] Level 1:colcon.colcon_core.shell:create_environment_hook('nanopb', 'path')
+[0.705s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/path.ps1'
+[0.706s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/path.dsv'
+[0.707s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/path.sh'
+[0.707s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/pkgconfig/nanopb.pc'
+[0.707s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/python3.8/site-packages'
+[0.707s] Level 1:colcon.colcon_core.shell:create_environment_hook('nanopb', 'pythonpath')
+[0.708s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/pythonpath.ps1'
+[0.709s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/pythonpath.dsv'
+[0.709s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/hook/pythonpath.sh'
+[0.710s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/package.ps1'
+[0.711s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/package.dsv'
+[0.711s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/package.sh'
+[0.712s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/package.bash'
+[0.712s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/nanopb/package.zsh'
+[0.713s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/share/colcon-core/packages/nanopb)
+[0.714s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_analysis' with build type 'ament_cmake'
+[0.714s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_analysis'
+[0.715s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.715s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.720s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[0.725s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_msgs)
+[0.726s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs' for CMake module files
+[0.727s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs' for CMake config files
+[0.727s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_msgs', 'cmake_prefix_path')
+[0.728s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.ps1'
+[0.729s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.dsv'
+[0.729s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/hook/cmake_prefix_path.sh'
+[0.730s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/bin'
+[0.730s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/lib/pkgconfig/urc_msgs.pc'
+[0.730s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/lib/python3.8/site-packages'
+[0.731s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.ps1'
+[0.731s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.dsv'
+[0.732s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.sh'
+[0.732s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.bash'
+[0.733s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/package.zsh'
+[0.733s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/colcon-core/packages/urc_msgs)
+[0.734s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_manipulation' with build type 'ament_cmake'
+[0.734s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_manipulation'
+[0.735s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.735s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.739s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[0.776s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis -- -j2 -l2
+[0.781s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation -- -j2 -l2
+[0.834s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis -- -j2 -l2
+[0.886s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis
+[0.900s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation -- -j2 -l2
+[0.941s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_analysis)
+[0.943s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis' for CMake module files
+[0.943s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis' for CMake config files
+[0.944s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_analysis
+[0.945s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_analysis', 'cmake_prefix_path')
+[0.946s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.ps1'
+[0.946s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.dsv'
+[0.947s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.sh'
+[0.947s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/bin'
+[0.947s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/lib/pkgconfig/urc_analysis.pc'
+[0.947s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/lib/python3.8/site-packages'
+[0.948s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.ps1'
+[0.949s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.dsv'
+[0.949s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.sh'
+[0.949s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.bash'
+[0.950s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.zsh'
+[0.950s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/colcon-core/packages/urc_analysis)
+[0.964s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation
+[0.998s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_manipulation)
+[1.002s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation' for CMake module files
+[1.003s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation
+[1.004s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation' for CMake config files
+[1.005s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_manipulation', 'cmake_prefix_path')
+[1.005s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.ps1'
+[1.006s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.dsv'
+[1.007s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.sh'
+[1.008s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/bin'
+[1.008s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/lib/pkgconfig/urc_manipulation.pc'
+[1.008s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/lib/python3.8/site-packages'
+[1.009s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.ps1'
+[1.009s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.dsv'
+[1.010s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.sh'
+[1.010s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.bash'
+[1.011s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.zsh'
+[1.011s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/colcon-core/packages/urc_manipulation)
+[1.015s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_analysis)
+[1.016s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis' for CMake module files
+[1.017s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis' for CMake config files
+[1.017s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_analysis', 'cmake_prefix_path')
+[1.018s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.ps1'
+[1.018s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.dsv'
+[1.027s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/hook/cmake_prefix_path.sh'
+[1.029s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/bin'
+[1.029s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/lib/pkgconfig/urc_analysis.pc'
+[1.029s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/lib/python3.8/site-packages'
+[1.030s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.ps1'
+[1.031s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.dsv'
+[1.031s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.sh'
+[1.032s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.bash'
+[1.033s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.zsh'
+[1.033s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/colcon-core/packages/urc_analysis)
+[1.034s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_navigation' with build type 'ament_cmake'
+[1.034s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_navigation'
+[1.035s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.035s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.041s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[1.053s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation -- -j2 -l2
+[1.107s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_manipulation)
+[1.113s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation' for CMake module files
+[1.116s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation' for CMake config files
+[1.117s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_manipulation', 'cmake_prefix_path')
+[1.118s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.ps1'
+[1.119s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.dsv'
+[1.120s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/hook/cmake_prefix_path.sh'
+[1.121s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/bin'
+[1.122s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/lib/pkgconfig/urc_manipulation.pc'
+[1.122s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/lib/python3.8/site-packages'
+[1.123s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.ps1'
+[1.124s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.dsv'
+[1.125s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.sh'
+[1.125s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.bash'
+[1.126s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.zsh'
+[1.128s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/colcon-core/packages/urc_manipulation)
+[1.129s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_perception' with build type 'ament_cmake'
+[1.129s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_perception'
+[1.130s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.130s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.135s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[1.143s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation -- -j2 -l2
+[1.149s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception -- -j2 -l2
+[1.195s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation
+[1.236s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception -- -j2 -l2
+[1.252s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_navigation)
+[1.253s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation' for CMake module files
+[1.255s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation
+[1.255s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation' for CMake config files
+[1.255s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_navigation', 'cmake_prefix_path')
+[1.256s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.ps1'
+[1.257s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.dsv'
+[1.257s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.sh'
+[1.258s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/bin'
+[1.258s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/lib/pkgconfig/urc_navigation.pc'
+[1.258s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/lib/python3.8/site-packages'
+[1.259s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.ps1'
+[1.259s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.dsv'
+[1.260s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.sh'
+[1.260s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.bash'
+[1.261s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.zsh'
+[1.261s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/colcon-core/packages/urc_navigation)
+[1.278s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception
+[1.292s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_navigation)
+[1.296s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation' for CMake module files
+[1.296s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation' for CMake config files
+[1.297s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_navigation', 'cmake_prefix_path')
+[1.298s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.ps1'
+[1.298s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.dsv'
+[1.299s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/hook/cmake_prefix_path.sh'
+[1.300s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/bin'
+[1.300s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/lib/pkgconfig/urc_navigation.pc'
+[1.300s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/lib/python3.8/site-packages'
+[1.303s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.ps1'
+[1.304s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.dsv'
+[1.304s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.sh'
+[1.305s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.bash'
+[1.306s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/urc_navigation/package.zsh'
+[1.306s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_navigation/share/colcon-core/packages/urc_navigation)
+[1.307s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_util' with build type 'ament_cmake'
+[1.307s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_util'
+[1.308s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.308s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.313s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[1.317s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_perception)
+[1.319s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception' for CMake module files
+[1.320s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception' for CMake config files
+[1.321s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception
+[1.321s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_perception', 'cmake_prefix_path')
+[1.322s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.ps1'
+[1.323s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.dsv'
+[1.323s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.sh'
+[1.324s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/bin'
+[1.324s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/lib/pkgconfig/urc_perception.pc'
+[1.324s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/lib/python3.8/site-packages'
+[1.325s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.ps1'
+[1.326s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.dsv'
+[1.326s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.sh'
+[1.327s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.bash'
+[1.327s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.zsh'
+[1.328s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/colcon-core/packages/urc_perception)
+[1.337s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util -- -j2 -l2
+[1.365s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_perception)
+[1.366s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception' for CMake module files
+[1.366s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception' for CMake config files
+[1.367s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_perception', 'cmake_prefix_path')
+[1.367s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.ps1'
+[1.368s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.dsv'
+[1.369s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/hook/cmake_prefix_path.sh'
+[1.370s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/bin'
+[1.370s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/lib/pkgconfig/urc_perception.pc'
+[1.370s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/lib/python3.8/site-packages'
+[1.371s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.ps1'
+[1.372s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.dsv'
+[1.372s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.sh'
+[1.373s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.bash'
+[1.374s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/urc_perception/package.zsh'
+[1.374s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_perception/share/colcon-core/packages/urc_perception)
+[1.376s] INFO:colcon.colcon_ros.task.catkin.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description' with build type 'catkin'
+[1.376s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description'
+[1.377s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.377s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.382s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[1.395s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[1.445s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util -- -j2 -l2
+[1.476s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util
+[1.513s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_util)
+[1.515s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util' for CMake module files
+[1.515s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util' returned '0': CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_util
+[1.516s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util' for CMake config files
+[1.517s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_util', 'cmake_prefix_path')
+[1.518s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.ps1'
+[1.519s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.dsv'
+[1.519s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.sh'
+[1.521s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/bin'
+[1.521s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/lib/pkgconfig/urc_util.pc'
+[1.521s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/lib/python3.8/site-packages'
+[1.522s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.ps1'
+[1.522s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.dsv'
+[1.523s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.sh'
+[1.524s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.bash'
+[1.524s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.zsh'
+[1.525s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/colcon-core/packages/urc_util)
+[1.554s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(urc_util)
+[1.557s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util' for CMake module files
+[1.559s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util' for CMake config files
+[1.560s] Level 1:colcon.colcon_core.shell:create_environment_hook('urc_util', 'cmake_prefix_path')
+[1.560s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.ps1'
+[1.561s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.dsv'
+[1.562s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/hook/cmake_prefix_path.sh'
+[1.562s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/bin'
+[1.562s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/lib/pkgconfig/urc_util.pc'
+[1.563s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/lib/python3.8/site-packages'
+[1.563s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.ps1'
+[1.564s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.dsv'
+[1.565s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.sh'
+[1.565s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.bash'
+[1.566s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/urc_util/package.zsh'
+[1.566s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_util/share/colcon-core/packages/urc_util)
+[1.567s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_gazebo' with build type 'ament_cmake'
+[1.567s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_gazebo'
+[1.568s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.569s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.574s] DEBUG:colcon.colcon_core.shell:Ignoring prefix path '/home/robojackets/robojackets_ws/catkin_ws/devel'
+[1.581s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '1': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[1.587s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo -- -j2 -l2
+[1.616s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(velodyne_description)
+[1.618s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description' for CMake module files
+[1.619s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description' for CMake config files
+[1.620s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/bin'
+[1.620s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/lib/pkgconfig/velodyne_description.pc'
+[1.620s] Level 1:colcon.colcon_core.environment:checking '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/lib/python3.8/site-packages'
+[1.621s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.ps1'
+[1.622s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.dsv'
+[1.622s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.sh'
+[1.623s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.bash'
+[1.623s] INFO:colcon.colcon_core.shell:Creating package script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.zsh'
+[1.624s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/colcon-core/packages/velodyne_description)
+[1.712s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[1.713s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[1.713s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '1'
+[1.713s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.723s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.723s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.723s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.747s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.748s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/local_setup.ps1'
+[1.749s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/_local_setup_util_ps1.py'
+[1.751s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/setup.ps1'
+[1.753s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/local_setup.sh'
+[1.754s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/_local_setup_util_sh.py'
+[1.754s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/setup.sh'
+[1.757s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/local_setup.bash'
+[1.757s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/setup.bash'
+[1.760s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/local_setup.zsh'
+[1.760s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/setup.zsh'

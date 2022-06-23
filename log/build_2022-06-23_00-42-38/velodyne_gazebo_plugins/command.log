@@ -1,0 +1,1 @@
+Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins

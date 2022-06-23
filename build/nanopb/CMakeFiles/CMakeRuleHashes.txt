@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+55a55e74c20d80277ebbfc082a94849e CMakeFiles/generate_nanopb_pb2.py
+48adf046fac214031703f551df58b18e nanopb_pb2.py

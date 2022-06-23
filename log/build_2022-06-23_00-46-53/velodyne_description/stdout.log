@@ -1,0 +1,21 @@
+-- Using CATKIN_DEVEL_PREFIX: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/devel
+-- Using CMAKE_PREFIX_PATH: /home/robojackets/urc_ws/colcon-urc/install/urc_util;/home/robojackets/urc_ws/colcon-urc/install/urc_platform;/home/robojackets/urc_ws/colcon-urc/install/urc_perception;/home/robojackets/urc_ws/colcon-urc/install/urc_navigation;/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo;/home/robojackets/urc_ws/colcon-urc/install/urc_msgs;/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation;/home/robojackets/urc_ws/colcon-urc/install/urc_analysis;/home/robojackets/urc_ws/colcon-urc/install/nanopb;/home/robojackets/robojackets_ws/catkin_ws/devel;/opt/ros/noetic
+-- This workspace overlays: /home/robojackets/robojackets_ws/catkin_ws/devel;/opt/ros/noetic
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Using Debian Python package layout
+-- Using empy: /usr/lib/python3/dist-packages/em.py
+-- Using CATKIN_ENABLE_TESTING: ON
+-- Call enable_testing()
+-- Using CATKIN_TEST_RESULTS_DIR: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/test_results
+-- Forcing gtest/gmock from source, though one was otherwise available.
+-- Found gtest sources under '/usr/src/googletest': gtests will be built
+-- Found gmock sources under '/usr/src/googletest': gmock will be built
+-- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") 
+-- Using Python nosetests: /usr/bin/nosetests3
+-- catkin 0.8.10
+-- BUILD_SHARED_LIBS is on
+-- Configuring incomplete, errors occurred!
+See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeOutput.log".
+See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeError.log".

@@ -1,0 +1,21 @@
+[0.040s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb': /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb -- -j2 -l2
+[0.094s] [ 20%] Built target generate_nanopb_pb2.py
+[0.100s] [100%] Built target protobuf-nanopb-static
+[0.116s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb' returned '0': /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb -- -j2 -l2
+[0.158s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb': /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb
+[0.170s] -- Install configuration: ""
+[0.170s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/python3.8/site-packages/proto/nanopb_pb2.py
+[0.170s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/python3.8/site-packages/proto/nanopb.proto
+[0.170s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/python3.8/site-packages/proto/_utils.py
+[0.175s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/bin/nanopb_generator.py
+[0.176s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/bin/protoc-gen-nanopb
+[0.176s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/libprotobuf-nanopb.a
+[0.176s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/cmake/nanopb/nanopb-targets.cmake
+[0.176s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/cmake/nanopb/nanopb-targets-noconfig.cmake
+[0.176s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/cmake/nanopb/nanopb-config.cmake
+[0.177s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/lib/cmake/nanopb/nanopb-config-version.cmake
+[0.177s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/include/pb.h
+[0.177s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/include/pb_common.h
+[0.177s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/include/pb_encode.h
+[0.177s] -- Up-to-date: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/nanopb/include/pb_decode.h
+[0.196s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb' returned '0': /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb

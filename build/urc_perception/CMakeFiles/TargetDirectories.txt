@@ -1,0 +1,9 @@
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/install/strip.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/install/local.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/edit_cache.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/test.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/install.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/list_install_components.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/rebuild_cache.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/urc_perception_uninstall.dir
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_perception/CMakeFiles/uninstall.dir

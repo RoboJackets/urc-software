@@ -1,0 +1,22 @@
+[0.039s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation -- -j2 -l2
+[0.138s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation -- -j2 -l2
+[0.181s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation
+[0.201s] -- Install configuration: ""
+[0.203s] -- Execute custom install script
+[0.206s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/package_run_dependencies/urc_manipulation
+[0.209s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/parent_prefix_path/urc_manipulation
+[0.210s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/ament_prefix_path.sh
+[0.217s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/ament_prefix_path.dsv
+[0.221s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/path.sh
+[0.223s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/environment/path.dsv
+[0.224s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.bash
+[0.225s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.sh
+[0.231s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.zsh
+[0.232s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/local_setup.dsv
+[0.232s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.dsv
+[0.252s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/ament_index/resource_index/packages/urc_manipulation
+[0.253s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/cmake/urc_manipulationConfig.cmake
+[0.254s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/cmake/urc_manipulationConfig-version.cmake
+[0.256s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation/package.xml
+[0.257s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_manipulation/share/urc_manipulation//launch/.gitkeep
+[0.261s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_manipulation

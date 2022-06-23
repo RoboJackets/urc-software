@@ -1,0 +1,54 @@
+[0.027s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo -- -j2 -l2
+[0.157s] [ 50%] Built target urc_gazebo_ScanToPointCloud
+[0.174s] [100%] Built target urc_gazebo
+[0.197s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo' returned '0': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo -- -j2 -l2
+[0.234s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo
+[0.249s] -- Install configuration: ""
+[0.250s] -- Execute custom install script
+[0.251s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/lib/urc_gazebo/urc_gazebo_ScanToPointCloud
+[0.252s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/lib/urc_gazebo/spawn_wallii.py
+[0.253s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//launch/__pycache__/simulation.launch.cpython-38.pyc
+[0.254s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//launch/simulation.launch.py
+[0.255s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//launch/spawn_wallii.py
+[0.256s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/gazebo.material
+[0.257s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/meshes/l_finger.dae
+[0.258s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/meshes/l_finger_color.png
+[0.258s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/meshes/l_finger_tip.dae
+[0.259s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/meshes/l_finger_tip_color.png
+[0.260s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/barrel/meshes/Barrel.png
+[0.260s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/barrel/meshes/barrel.dae
+[0.263s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/barrel/model.config
+[0.264s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/barrel/model.sdf
+[0.264s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/desert_surface/materials/scripts/desert.material
+[0.265s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/desert_surface/materials/textures/desert_sand.jpg
+[0.266s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/desert_surface/model.config
+[0.267s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/desert_surface/model.sdf
+[0.267s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/sun/model.config
+[0.268s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/models/sun/model.sdf
+[0.269s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/walli_inertials.xacro
+[0.270s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/walli_prop.xacro
+[0.271s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/wallii.xacro
+[0.271s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo//urdf/worlds/flat_world.world
+[0.272s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/lib/liburc_gazebo.so
+[0.273s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/library_path.sh
+[0.274s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/library_path.dsv
+[0.279s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/ament_index/resource_index/package_run_dependencies/urc_gazebo
+[0.280s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/ament_index/resource_index/parent_prefix_path/urc_gazebo
+[0.281s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/ament_prefix_path.sh
+[0.282s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/ament_prefix_path.dsv
+[0.282s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/path.sh
+[0.283s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/environment/path.dsv
+[0.284s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/local_setup.bash
+[0.285s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/local_setup.sh
+[0.286s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/local_setup.zsh
+[0.286s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/local_setup.dsv
+[0.287s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/package.dsv
+[0.297s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/ament_index/resource_index/packages/urc_gazebo
+[0.298s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/ament_index/resource_index/rclcpp_components/urc_gazebo
+[0.299s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.300s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/cmake/ament_cmake_export_libraries-extras.cmake
+[0.301s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.301s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/cmake/urc_gazeboConfig.cmake
+[0.302s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/cmake/urc_gazeboConfig-version.cmake
+[0.303s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_gazebo/share/urc_gazebo/package.xml
+[0.307s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo' returned '0': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_gazebo

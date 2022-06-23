@@ -1,0 +1,1 @@
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/ament_cmake_environment_hooks/local_setup.sh

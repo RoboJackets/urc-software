@@ -1,0 +1,22 @@
+[0.017s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins
+[0.051s] CMake Error at CMakeLists.txt:4 (find_package):
+[0.051s]   By not providing "Findcolcon.cmake" in CMAKE_MODULE_PATH this project has
+[0.051s]   asked CMake to find a package configuration file provided by "colcon", but
+[0.051s]   CMake did not find one.
+[0.051s] 
+[0.051s]   Could not find a package configuration file provided by "colcon" with any
+[0.052s]   of the following names:
+[0.052s] 
+[0.052s]     colconConfig.cmake
+[0.052s]     colcon-config.cmake
+[0.052s] 
+[0.052s]   Add the installation prefix of "colcon" to CMAKE_PREFIX_PATH or set
+[0.052s]   "colcon_DIR" to a directory containing one of the above files.  If "colcon"
+[0.052s]   provides a separate development package or SDK, be sure it has been
+[0.052s]   installed.
+[0.052s] 
+[0.052s] 
+[0.053s] -- Configuring incomplete, errors occurred!
+[0.053s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins/CMakeFiles/CMakeOutput.log".
+[0.053s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins/CMakeFiles/CMakeError.log".
+[0.071s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '1': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins

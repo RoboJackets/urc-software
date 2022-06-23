@@ -1,0 +1,16 @@
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/ament_index/resource_index/package_run_dependencies/urc_analysis
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/ament_index/resource_index/parent_prefix_path/urc_analysis
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/environment/ament_prefix_path.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/environment/ament_prefix_path.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/environment/path.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/environment/path.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/local_setup.bash
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/local_setup.sh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/local_setup.zsh
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/local_setup.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.dsv
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/ament_index/resource_index/packages/urc_analysis
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/cmake/urc_analysisConfig.cmake
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/cmake/urc_analysisConfig-version.cmake
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis/package.xml
+/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_analysis/share/urc_analysis//launch/.gitkeep

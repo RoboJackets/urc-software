@@ -1,0 +1,9 @@
+# CMake generated Testfile for 
+# Source directory: /home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform/test
+# Build directory: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(test_scan_to_pointcloud "/usr/bin/python3" "-u" "/opt/ros/galactic/share/ament_cmake_test/cmake/run_test.py" "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test_results/urc_platform/test_scan_to_pointcloud.gtest.xml" "--package-name" "urc_platform" "--output-file" "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/ament_cmake_gtest/test_scan_to_pointcloud.txt" "--command" "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test/test_scan_to_pointcloud" "--gtest_output=xml:/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test_results/urc_platform/test_scan_to_pointcloud.gtest.xml")
+set_tests_properties(test_scan_to_pointcloud PROPERTIES  LABELS "gtest" REQUIRED_FILES "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test/test_scan_to_pointcloud" TIMEOUT "60" WORKING_DIRECTORY "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform/test" _BACKTRACE_TRIPLES "/opt/ros/galactic/share/ament_cmake_test/cmake/ament_add_test.cmake;124;add_test;/opt/ros/galactic/share/ament_cmake_gtest/cmake/ament_add_gtest_test.cmake;86;ament_add_test;/opt/ros/galactic/share/ament_cmake_gtest/cmake/ament_add_gtest.cmake;93;ament_add_gtest_test;/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform/test/CMakeLists.txt;28;ament_add_gtest;/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform/test/CMakeLists.txt;0;")
+subdirs("../gtest")

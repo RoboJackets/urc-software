@@ -1,0 +1,113 @@
+[0.027s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform
+[0.121s] -- The C compiler identification is GNU 9.4.0
+[0.196s] -- The CXX compiler identification is GNU 9.4.0
+[0.202s] -- Check for working C compiler: /usr/bin/cc
+[0.295s] -- Check for working C compiler: /usr/bin/cc -- works
+[0.296s] -- Detecting C compiler ABI info
+[0.387s] -- Detecting C compiler ABI info - done
+[0.401s] -- Detecting C compile features
+[0.402s] -- Detecting C compile features - done
+[0.405s] -- Check for working CXX compiler: /usr/bin/c++
+[0.504s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[0.506s] -- Detecting CXX compiler ABI info
+[0.607s] -- Detecting CXX compiler ABI info - done
+[0.623s] -- Detecting CXX compile features
+[0.623s] -- Detecting CXX compile features - done
+[0.628s] -- Found ament_cmake: 1.1.5 (/opt/ros/galactic/share/ament_cmake/cmake)
+[0.663s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.664s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.732s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.765s] -- Found ament_lint_auto: 0.10.7 (/opt/ros/galactic/share/ament_lint_auto/cmake)
+[0.770s] -- Found ament_cmake_pytest: 1.1.5 (/opt/ros/galactic/share/ament_cmake_pytest/cmake)
+[0.776s] -- Found launch_testing_ament_cmake: 0.17.1 (/opt/ros/galactic/share/launch_testing_ament_cmake/cmake)
+[0.779s] -- Found python_cmake_module: 0.8.1 (/opt/ros/galactic/share/python_cmake_module/cmake)
+[0.807s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3.5") 
+[0.822s] -- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.8.so (found suitable version "3.8.10", minimum required is "3.5") 
+[0.823s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.823s] -- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.8
+[0.823s] -- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.8.so
+[0.846s] -- Found PythonExtra: .so  
+[0.849s] -- Found ament_cmake_gtest: 1.1.5 (/opt/ros/galactic/share/ament_cmake_gtest/cmake)
+[0.853s] -- Found rclcpp: 9.2.1 (/opt/ros/galactic/share/rclcpp/cmake)
+[0.909s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.917s] -- Found rosidl_adapter: 2.2.2 (/opt/ros/galactic/share/rosidl_adapter/cmake)
+[1.020s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+[1.053s] -- Found FastRTPS: /opt/ros/galactic/include  
+[1.143s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.218s] -- Found rmw_implementation_cmake: 3.3.1 (/opt/ros/galactic/share/rmw_implementation_cmake/cmake)
+[1.222s] -- Found rmw_cyclonedds_cpp: 0.22.5 (/opt/ros/galactic/share/rmw_cyclonedds_cpp/cmake)
+[1.248s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[1.249s] -- Looking for pthread.h
+[1.334s] -- Looking for pthread.h - found
+[1.334s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.423s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+[1.424s] -- Looking for pthread_create in pthreads
+[1.493s] -- Looking for pthread_create in pthreads - not found
+[1.493s] -- Looking for pthread_create in pthread
+[1.572s] -- Looking for pthread_create in pthread - found
+[1.572s] -- Found Threads: TRUE  
+[1.739s] -- Found rclcpp_components: 9.2.1 (/opt/ros/galactic/share/rclcpp_components/cmake)
+[1.802s] -- Found urc_msgs: 0.0.0 (/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs/share/urc_msgs/cmake)
+[1.805s] -- Found nav_msgs: 2.2.4 (/opt/ros/galactic/share/nav_msgs/cmake)
+[1.936s] -- Found sensor_msgs: 2.2.4 (/opt/ros/galactic/share/sensor_msgs/cmake)
+[2.015s] -- Found tf2: 0.17.3 (/opt/ros/galactic/share/tf2/cmake)
+[2.026s] -- Found tf2_ros: 0.17.3 (/opt/ros/galactic/share/tf2_ros/cmake)
+[2.344s] -- Found laser_geometry: 2.2.1 (/opt/ros/galactic/share/laser_geometry/cmake)
+[2.357s] -- Found gtest sources under '/opt/ros/galactic/src/gtest_vendor': C++ tests using 'Google Test' will be built
+[2.360s] -- Check if compiler accepts -pthread
+[2.447s] -- Check if compiler accepts -pthread - yes
+[2.564s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.568s] -- Found rosidl_adapter: 2.2.2 (/opt/ros/galactic/share/rosidl_adapter/cmake)
+[2.701s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.763s] -- Found rmw_implementation_cmake: 3.3.1 (/opt/ros/galactic/share/rmw_implementation_cmake/cmake)
+[2.765s] -- Found rmw_cyclonedds_cpp: 0.22.5 (/opt/ros/galactic/share/rmw_cyclonedds_cpp/cmake)
+[2.787s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[3.548s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[3.548s] -- Configured cppcheck include dirs: /home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform/include
+[3.548s] -- Configured cppcheck exclude dirs and/or files: 
+[3.549s] -- Added test 'lint_cmake' to check CMake code style
+[3.550s] -- Added test 'uncrustify' to check C / C++ code style
+[3.550s] -- Configured uncrustify additional arguments: 
+[3.551s] -- Added test 'xmllint' to check XML markup files
+[3.560s] -- Configuring done
+[3.581s] -- Generating done
+[3.584s] -- Build files have been written to: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform
+[3.600s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform' returned '0': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_platform -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform
+[3.604s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform -- -j2 -l2
+[3.653s] [35m[1mScanning dependencies of target gtest_main[0m
+[3.653s] [35m[1mScanning dependencies of target gtest[0m
+[3.683s] [ 16%] [32mBuilding CXX object gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o[0m
+[3.684s] [ 33%] [32mBuilding CXX object gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o[0m
+[4.732s] [ 50%] [32m[1mLinking CXX static library libgtest_main.a[0m
+[4.766s] [ 50%] Built target gtest_main
+[7.000s] [ 66%] [32m[1mLinking CXX static library libgtest.a[0m
+[7.065s] [ 66%] Built target gtest
+[7.075s] [35m[1mScanning dependencies of target test_scan_to_pointcloud[0m
+[7.203s] [ 83%] [32mBuilding CXX object test/CMakeFiles/test_scan_to_pointcloud.dir/test_scan_to_pointcloud.cpp.o[0m
+[16.542s] [100%] [32m[1mLinking CXX executable test_scan_to_pointcloud[0m
+[17.091s] [100%] Built target test_scan_to_pointcloud
+[17.102s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform' returned '0': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform -- -j2 -l2
+[17.132s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform
+[17.142s] -- Install configuration: ""
+[17.143s] -- Execute custom install script
+[17.143s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform//launch/.gitkeep
+[17.153s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/library_path.sh
+[17.162s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/library_path.dsv
+[17.175s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/ament_index/resource_index/package_run_dependencies/urc_platform
+[17.184s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/ament_index/resource_index/parent_prefix_path/urc_platform
+[17.193s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/ament_prefix_path.sh
+[17.202s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/ament_prefix_path.dsv
+[17.210s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/path.sh
+[17.219s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/environment/path.dsv
+[17.228s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/local_setup.bash
+[17.236s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/local_setup.sh
+[17.245s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/local_setup.zsh
+[17.254s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/local_setup.dsv
+[17.265s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/package.dsv
+[17.275s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/ament_index/resource_index/packages/urc_platform
+[17.284s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/cmake/ament_cmake_export_include_directories-extras.cmake
+[17.293s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/cmake/ament_cmake_export_libraries-extras.cmake
+[17.302s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/cmake/urc_platformConfig.cmake
+[17.311s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/cmake/urc_platformConfig-version.cmake
+[17.321s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_platform/share/urc_platform/package.xml
+[17.334s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform' returned '0': AMENT_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_util:/home/robojackets/urc_ws/colcon-urc/install/urc_platform:/home/robojackets/urc_ws/colcon-urc/install/urc_perception:/home/robojackets/urc_ws/colcon-urc/install/urc_navigation:/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo:/home/robojackets/urc_ws/colcon-urc/install/urc_msgs:/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation:/home/robojackets/urc_ws/colcon-urc/install/urc_analysis:/home/robojackets/urc_ws/colcon-urc/install/nanopb:/opt/ros/galactic:/home/robojackets/robojackets_ws/catkin_ws/devel:/opt/ros/noetic /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_platform

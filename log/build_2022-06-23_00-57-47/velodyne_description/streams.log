@@ -1,0 +1,33 @@
+[0.032s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[0.066s] -- Found ament_cmake: 1.1.5 (/opt/ros/galactic/share/ament_cmake/cmake)
+[0.094s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.174s] -- Found rclcpp: 9.2.1 (/opt/ros/galactic/share/rclcpp/cmake)
+[0.184s] CMake Warning (dev) at /opt/ros/galactic/share/ament_cmake_core/cmake/core/list_append_unique.cmake:30 (if):
+[0.184s]   Policy CMP0057 is not set: Support new IN_LIST if() operator.  Run "cmake
+[0.184s]   --help-policy CMP0057" for policy details.  Use the cmake_policy command to
+[0.184s]   set the policy and suppress this warning.
+[0.185s] 
+[0.185s]   IN_LIST will be interpreted as an operator when the policy is set to NEW.
+[0.185s]   Since the policy is not set the OLD behavior will be used.
+[0.185s] Call Stack (most recent call first):
+[0.185s]   /opt/ros/galactic/share/rclcpp/cmake/ament_cmake_export_dependencies-extras.cmake:34 (list_append_unique)
+[0.186s]   /opt/ros/galactic/share/rclcpp/cmake/rclcppConfig.cmake:41 (include)
+[0.186s]   CMakeLists.txt:5 (find_package)
+[0.186s] This warning is for project developers.  Use -Wno-dev to suppress it.
+[0.186s] 
+[0.187s] CMake Error at /opt/ros/galactic/share/ament_cmake_core/cmake/core/list_append_unique.cmake:30 (if):
+[0.187s]   if given arguments:
+[0.187s] 
+[0.187s]     "NOT" "element" "IN_LIST" "rclcpp_INCLUDE_DIRS"
+[0.187s] 
+[0.188s]   Unknown arguments specified
+[0.188s] Call Stack (most recent call first):
+[0.188s]   /opt/ros/galactic/share/rclcpp/cmake/ament_cmake_export_dependencies-extras.cmake:34 (list_append_unique)
+[0.188s]   /opt/ros/galactic/share/rclcpp/cmake/rclcppConfig.cmake:41 (include)
+[0.188s]   CMakeLists.txt:5 (find_package)
+[0.188s] 
+[0.189s] 
+[0.189s] -- Configuring incomplete, errors occurred!
+[0.189s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeOutput.log".
+[0.189s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeError.log".
+[0.216s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '1': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description

@@ -51,5 +51,15 @@
   <material name="tire_mat">
     <color rgba="0 0 0 1"/>
   </material>
+  
+   <!-- Lidar -->
+    <xacro:property name="lidar_pitch" value="0.0"/>
+    <xacro:property name="lidar_x" value="0.127"/>
+    <xacro:property name="lidar_z" value="0.8486"/>
+    <xacro:property name="lidar_hz" value="10"/>
+    <xacro:property name="lidar_samples" value="500"/>
+    <xacro:property name="lidar_support_x_dim" value="0.2"/>
+    <xacro:property name="lidar_support_y_dim" value="0.08"/>
+    <xacro:property name="lidar_support_z_dim" value="0.01"/>
 
 </robot>

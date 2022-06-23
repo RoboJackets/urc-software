@@ -1,0 +1,143 @@
+[0.016s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins
+[0.044s] -- Found ament_cmake: 1.1.5 (/opt/ros/galactic/share/ament_cmake/cmake)
+[0.072s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.141s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.154s] -- Found gazebo_dev: 3.5.2 (/opt/ros/galactic/share/gazebo_dev/cmake)
+[0.169s] -- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.1") 
+[0.178s] -- Checking for module 'bullet>=2.82'
+[0.196s] --   Found bullet, version 2.88
+[0.395s] -- Found ccd: /usr/include (found suitable version "2.0", minimum required is "2.0") 
+[0.474s] -- Found fcl: /usr/include (found suitable version "0.5.0", minimum required is "0.3.2") 
+[0.554s] -- Found assimp: /usr/include (found version "5.0.0") 
+[0.593s] -- Found DART: /usr/include (Required is at least version "6.6") found components: dart 
+[0.643s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0/BoostConfig.cmake (found suitable version "1.71.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time 
+[0.673s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread (found version "3.6.1") 
+[0.682s] -- Looking for ignition-math6 -- found version 6.10.0
+[0.701s] -- Searching for dependencies of ignition-math6
+[0.711s] -- Looking for OGRE...
+[0.712s] -- OGRE_PREFIX_WATCH changed.
+[0.712s] -- Checking for module 'OGRE'
+[0.746s] --   Found OGRE, version 1.9.0
+[0.834s] -- Found Ogre Ghadamon (1.9.0)
+[0.850s] -- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so
+[0.864s] -- Looking for OGRE_Paging...
+[0.885s] -- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so
+[0.885s] -- Looking for OGRE_Terrain...
+[0.897s] -- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so
+[0.897s] -- Looking for OGRE_Property...
+[0.909s] -- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so
+[0.909s] -- Looking for OGRE_RTShaderSystem...
+[0.922s] -- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so
+[0.922s] -- Looking for OGRE_Volume...
+[0.933s] -- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so
+[0.933s] -- Looking for OGRE_Overlay...
+[0.943s] -- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so
+[1.189s] -- Looking for ignition-math6 -- found version 6.10.0
+[1.194s] -- Looking for ignition-transport8 -- found version 8.2.1
+[1.195s] -- Searching for dependencies of ignition-transport8
+[1.217s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread (found suitable version "3.6.1", minimum required is "3") 
+[1.231s] -- Config-file not installed for ZeroMQ -- checking for pkg-config
+[1.246s] -- Checking for module 'libzmq >= 4'
+[1.271s] --   Found libzmq , version 4.3.2
+[1.334s] -- Found ZeroMQ: TRUE (Required is at least version "4") 
+[1.346s] -- Checking for module 'uuid'
+[1.367s] --   Found uuid, version 2.34.0
+[1.417s] -- Found UUID: TRUE  
+[1.420s] -- Looking for ignition-msgs5 -- found version 5.9.0
+[1.421s] -- Searching for dependencies of ignition-msgs5
+[1.441s] -- Looking for ignition-math6 -- found version 6.10.0
+[1.446s] -- Checking for module 'tinyxml2'
+[1.467s] --   Found tinyxml2, version 6.2.0
+[1.521s] -- Looking for ignition-msgs5 -- found version 5.9.0
+[1.525s] -- Looking for ignition-common3 -- found version 3.14.0
+[1.526s] -- Searching for dependencies of ignition-common3
+[1.527s] -- Looking for dlfcn.h - found
+[1.528s] -- Looking for libdl - found
+[1.530s] -- Found DL: TRUE  
+[1.538s] -- Searching for <ignition-common3> component [graphics]
+[1.541s] -- Looking for ignition-common3-graphics -- found version 3.14.0
+[1.542s] -- Searching for dependencies of ignition-common3-graphics
+[1.542s] -- Looking for ignition-math6 -- found version 6.10.0
+[1.546s] -- Looking for ignition-fuel_tools4 -- found version 4.4.0
+[1.547s] -- Searching for dependencies of ignition-fuel_tools4
+[1.650s] -- Found CURL: /usr/lib/x86_64-linux-gnu/libcurl.so (found version "7.68.0")  
+[1.660s] -- Checking for module 'jsoncpp'
+[1.679s] --   Found jsoncpp, version 1.7.4
+[1.729s] -- Found JSONCPP: TRUE  
+[1.736s] -- Checking for module 'libzip'
+[1.758s] --   Found libzip, version 1.5.1
+[1.809s] -- Found ZIP: TRUE  
+[1.810s] -- Looking for ignition-common3 -- found version 3.14.0
+[1.810s] -- Looking for ignition-math6 -- found version 6.10.0
+[1.811s] -- Looking for ignition-msgs5 -- found version 5.9.0
+[1.813s] -- Gazebo version: 11.10
+[1.814s] -- Found gazebo_ros: 3.5.2 (/opt/ros/galactic/share/gazebo_ros/cmake)
+[1.859s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.865s] -- Found rosidl_adapter: 2.2.2 (/opt/ros/galactic/share/rosidl_adapter/cmake)
+[1.961s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.1.1f")  
+[1.989s] -- Found FastRTPS: /opt/ros/galactic/include  
+[2.072s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.138s] -- Found rmw_implementation_cmake: 3.3.1 (/opt/ros/galactic/share/rmw_implementation_cmake/cmake)
+[2.140s] -- Found rmw_cyclonedds_cpp: 0.22.5 (/opt/ros/galactic/share/rmw_cyclonedds_cpp/cmake)
+[2.162s] -- Using RMW implementation 'rmw_cyclonedds_cpp' as default
+[2.345s] -- Found gazebo_msgs: 3.5.2 (/opt/ros/galactic/share/gazebo_msgs/cmake)
+[2.625s] -- Found sensor_msgs: 2.2.4 (/opt/ros/galactic/share/sensor_msgs/cmake)
+[2.710s] -- Found tf2: 0.17.3 (/opt/ros/galactic/share/tf2/cmake)
+[2.823s] -- Configuring done
+[2.870s] -- Generating done
+[2.873s] -- Build files have been written to: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins
+[2.887s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins
+[2.888s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins -- -j2 -l2
+[2.931s] [35m[1mScanning dependencies of target gazebo_ros_velodyne_laser[0m
+[3.103s] [ 50%] [32mBuilding CXX object CMakeFiles/gazebo_ros_velodyne_laser.dir/src/GazeboRosVelodyneLaser.cpp.o[0m
+[10.175s] In file included from [01m[K/opt/ros/galactic/include/rclcpp/client.hpp:40[m[K,
+[10.175s]                  from [01m[K/opt/ros/galactic/include/rclcpp/callback_group.hpp:23[m[K,
+[10.175s]                  from [01m[K/opt/ros/galactic/include/rclcpp/any_executable.hpp:20[m[K,
+[10.175s]                  from [01m[K/opt/ros/galactic/include/rclcpp/memory_strategy.hpp:25[m[K,
+[10.175s]                  from [01m[K/opt/ros/galactic/include/rclcpp/memory_strategies.hpp:18[m[K,
+[10.175s]                  from [01m[K/opt/ros/galactic/include/rclcpp/executor_options.hpp:20[m[K,
+[10.176s]                  from [01m[K/opt/ros/galactic/include/rclcpp/executor.hpp:36[m[K,
+[10.176s]                  from [01m[K/opt/ros/galactic/include/rclcpp/executors/multi_threaded_executor.hpp:26[m[K,
+[10.176s]                  from [01m[K/opt/ros/galactic/include/rclcpp/executors.hpp:21[m[K,
+[10.176s]                  from [01m[K/opt/ros/galactic/include/rclcpp/rclcpp.hpp:156[m[K,
+[10.176s]                  from [01m[K/opt/ros/galactic/include/gazebo_ros/node.hpp:18[m[K,
+[10.176s]                  from [01m[K/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins/include/velodyne_gazebo_plugins/GazeboRosVelodyneLaser.h:53[m[K,
+[10.176s]                  from [01m[K/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins/src/GazeboRosVelodyneLaser.cpp:35[m[K:
+[10.176s] [01m[K/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins/src/GazeboRosVelodyneLaser.cpp:[m[K In member function ‘[01m[Kvirtual void gazebo::GazeboRosVelodyneLaser::Load(gazebo::sensors::SensorPtr, sdf::v9::ElementPtr)[m[K’:
+[10.176s] [01m[K/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins/src/GazeboRosVelodyneLaser.cpp:295:40:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%s[m[K’ expects a matching ‘[01m[Kchar*[m[K’ argument [[01;35m[K-Wformat=[m[K]
+[10.176s]   295 |   RCLCPP_INFO(ros_node_->get_logger(), [01;35m[K"Velodyne %slaser plugin ready"[m[K);
+[10.176s]       |                                        [01;35m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+[10.176s] [01m[K/home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_gazebo_plugins/src/GazeboRosVelodyneLaser.cpp:295:51:[m[K [01;36m[Knote: [m[Kformat string is defined here
+[10.177s]   295 |   RCLCPP_INFO(ros_node_->get_logger(), "Velodyne [01;36m[K%s[m[Klaser plugin ready");
+[10.177s]       |                                                  [01;36m[K~^[m[K
+[10.177s]       |                                                   [01;36m[K|[m[K
+[10.177s]       |                                                   [01;36m[Kchar*[m[K
+[15.582s] [100%] [32m[1mLinking CXX shared library libgazebo_ros_velodyne_laser.so[0m
+[16.528s] [100%] Built target gazebo_ros_velodyne_laser
+[16.545s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins -- -j2 -l2
+[16.575s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins
+[16.584s] -- Install configuration: ""
+[16.585s] -- Execute custom install script
+[16.585s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/library_path.sh
+[16.594s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/library_path.dsv
+[16.603s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/package_run_dependencies/velodyne_gazebo_plugins
+[16.614s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/parent_prefix_path/velodyne_gazebo_plugins
+[16.624s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/ament_prefix_path.sh
+[16.634s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/ament_prefix_path.dsv
+[16.644s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/path.sh
+[16.652s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/path.dsv
+[16.661s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.bash
+[16.670s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.sh
+[16.678s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.zsh
+[16.691s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.dsv
+[16.700s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/package.dsv
+[16.709s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/packages/velodyne_gazebo_plugins
+[16.718s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_libraries-extras.cmake
+[16.727s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_include_directories-extras.cmake
+[16.736s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_dependencies-extras.cmake
+[16.744s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/velodyne_gazebo_pluginsConfig.cmake
+[16.753s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/velodyne_gazebo_pluginsConfig-version.cmake
+[16.761s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/package.xml
+[16.770s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/include/velodyne_gazebo_plugins/GazeboRosVelodyneLaser.h
+[16.778s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/lib/libgazebo_ros_velodyne_laser.so
+[16.789s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins

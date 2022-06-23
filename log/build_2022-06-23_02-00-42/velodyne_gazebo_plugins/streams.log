@@ -1,0 +1,29 @@
+[0.038s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins -- -j2 -l2
+[0.273s] [100%] Built target gazebo_ros_velodyne_laser
+[0.310s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins -- -j2 -l2
+[0.374s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins
+[0.414s] -- Install configuration: ""
+[0.414s] -- Execute custom install script
+[0.415s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/library_path.sh
+[0.415s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/library_path.dsv
+[0.416s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/package_run_dependencies/velodyne_gazebo_plugins
+[0.417s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/parent_prefix_path/velodyne_gazebo_plugins
+[0.418s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/ament_prefix_path.sh
+[0.419s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/ament_prefix_path.dsv
+[0.419s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/path.sh
+[0.420s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/environment/path.dsv
+[0.420s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.bash
+[0.421s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.sh
+[0.421s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.zsh
+[0.422s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/local_setup.dsv
+[0.423s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/package.dsv
+[0.450s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/ament_index/resource_index/packages/velodyne_gazebo_plugins
+[0.451s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_libraries-extras.cmake
+[0.452s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_include_directories-extras.cmake
+[0.452s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.453s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/velodyne_gazebo_pluginsConfig.cmake
+[0.454s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/cmake/velodyne_gazebo_pluginsConfig-version.cmake
+[0.454s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/share/velodyne_gazebo_plugins/package.xml
+[0.465s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/include/velodyne_gazebo_plugins/GazeboRosVelodyneLaser.h
+[0.466s] -- Up-to-date symlink: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_gazebo_plugins/lib/libgazebo_ros_velodyne_laser.so
+[0.473s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_gazebo_plugins

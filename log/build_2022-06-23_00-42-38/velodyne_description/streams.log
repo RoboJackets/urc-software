@@ -1,0 +1,62 @@
+[0.017s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[0.130s] -- The C compiler identification is GNU 9.4.0
+[0.212s] -- The CXX compiler identification is GNU 9.4.0
+[0.221s] -- Check for working C compiler: /usr/bin/cc
+[0.320s] -- Check for working C compiler: /usr/bin/cc -- works
+[0.321s] -- Detecting C compiler ABI info
+[0.413s] -- Detecting C compiler ABI info - done
+[0.431s] -- Detecting C compile features
+[0.431s] -- Detecting C compile features - done
+[0.436s] -- Check for working CXX compiler: /usr/bin/c++
+[0.535s] -- Check for working CXX compiler: /usr/bin/c++ -- works
+[0.536s] -- Detecting CXX compiler ABI info
+[0.648s] -- Detecting CXX compiler ABI info - done
+[0.667s] -- Detecting CXX compile features
+[0.668s] -- Detecting CXX compile features - done
+[0.672s] -- Using CATKIN_DEVEL_PREFIX: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/devel
+[0.673s] -- Using CMAKE_PREFIX_PATH: /home/robojackets/urc_ws/colcon-urc/install/urc_util;/home/robojackets/urc_ws/colcon-urc/install/urc_platform;/home/robojackets/urc_ws/colcon-urc/install/urc_perception;/home/robojackets/urc_ws/colcon-urc/install/urc_navigation;/home/robojackets/urc_ws/colcon-urc/install/urc_gazebo;/home/robojackets/urc_ws/colcon-urc/install/urc_msgs;/home/robojackets/urc_ws/colcon-urc/install/urc_manipulation;/home/robojackets/urc_ws/colcon-urc/install/urc_analysis;/home/robojackets/urc_ws/colcon-urc/install/nanopb;/home/robojackets/robojackets_ws/catkin_ws/devel;/opt/ros/noetic
+[0.674s] -- This workspace overlays: /home/robojackets/robojackets_ws/catkin_ws/devel;/opt/ros/noetic
+[0.676s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.702s] -- Found PythonInterp: /usr/bin/python3 (found suitable version "3.8.10", minimum required is "3") 
+[0.703s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.703s] -- Using Debian Python package layout
+[0.743s] -- Found PY_em: /usr/lib/python3/dist-packages/em.py  
+[0.744s] -- Using empy: /usr/lib/python3/dist-packages/em.py
+[0.887s] -- Using CATKIN_ENABLE_TESTING: ON
+[0.887s] -- Call enable_testing()
+[0.902s] -- Using CATKIN_TEST_RESULTS_DIR: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/test_results
+[1.318s] -- Forcing gtest/gmock from source, though one was otherwise available.
+[1.318s] -- Found gtest sources under '/usr/src/googletest': gtests will be built
+[1.318s] -- Found gmock sources under '/usr/src/googletest': gmock will be built
+[1.352s] -- Found PythonInterp: /usr/bin/python3 (found version "3.8.10") 
+[1.355s] -- Found Threads: TRUE  
+[1.360s] -- Using Python nosetests: /usr/bin/nosetests3
+[1.443s] -- catkin 0.8.10
+[1.443s] -- BUILD_SHARED_LIBS is on
+[1.860s] Traceback (most recent call last):
+[1.860s]   File "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/catkin_generated/generate_cached_setup.py", line 22, in <module>
+[1.860s]     code = generate_environment_script('/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/devel/env.sh')
+[1.860s]   File "/opt/ros/noetic/lib/python3/dist-packages/catkin/environment_cache.py", line 63, in generate_environment_script
+[1.861s]     env_after = ast.literal_eval(output.decode('utf8'))
+[1.861s]   File "/usr/lib/python3.8/ast.py", line 59, in literal_eval
+[1.861s]     node_or_string = parse(node_or_string, mode='eval')
+[1.861s]   File "/usr/lib/python3.8/ast.py", line 47, in parse
+[1.861s]     return compile(source, filename, mode, flags,
+[1.861s]   File "<unknown>", line 1
+[1.861s]     ROS_DISTRO was set to 'galactic' before. Please make sure that the environment does not mix paths from different distributions.
+[1.861s]                ^
+[1.861s] SyntaxError: invalid syntax
+[1.934s] CMake Error at /opt/ros/noetic/share/catkin/cmake/safe_execute_process.cmake:11 (message):
+[1.934s]   execute_process(/usr/bin/python3
+[1.934s]   "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/catkin_generated/generate_cached_setup.py")
+[1.935s]   returned error code 1
+[1.935s] Call Stack (most recent call first):
+[1.937s]   /opt/ros/noetic/share/catkin/cmake/all.cmake:208 (safe_execute_process)
+[1.937s]   /opt/ros/noetic/share/catkin/cmake/catkinConfig.cmake:20 (include)
+[1.938s]   CMakeLists.txt:4 (find_package)
+[1.938s] 
+[1.938s] 
+[1.938s] -- Configuring incomplete, errors occurred!
+[1.938s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeOutput.log".
+[1.938s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeError.log".
+[1.949s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '1': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description

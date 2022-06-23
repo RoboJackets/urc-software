@@ -1,0 +1,46 @@
+[0.016s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[0.055s] -- Found ament_cmake: 1.1.5 (/opt/ros/galactic/share/ament_cmake/cmake)
+[0.083s] -- Using PYTHON_EXECUTABLE: /usr/bin/python3
+[0.178s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.275s] -- Configuring done
+[0.279s] -- Generating done
+[0.281s] -- Build files have been written to: /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description
+[0.288s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[0.289s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description -- -j2 -l2
+[0.341s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --build /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description -- -j2 -l2
+[0.373s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description
+[0.385s] -- Install configuration: ""
+[0.386s] -- Execute custom install script
+[0.387s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/ament_index/resource_index/package_run_dependencies/velodyne_description
+[0.399s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/ament_index/resource_index/parent_prefix_path/velodyne_description
+[0.409s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/environment/ament_prefix_path.sh
+[0.420s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/environment/ament_prefix_path.dsv
+[0.430s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/environment/path.sh
+[0.441s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/environment/path.dsv
+[0.451s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/local_setup.bash
+[0.461s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/local_setup.sh
+[0.470s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/local_setup.zsh
+[0.480s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/local_setup.dsv
+[0.489s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.dsv
+[0.499s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/ament_index/resource_index/packages/velodyne_description
+[0.509s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/cmake/velodyne_descriptionConfig.cmake
+[0.520s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/cmake/velodyne_descriptionConfig-version.cmake
+[0.530s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/package.xml
+[0.544s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/launch/example-launch.py
+[0.557s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/HDL32E_base.dae
+[0.568s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/HDL32E_base.stl
+[0.577s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/HDL32E_scan.dae
+[0.589s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/HDL32E_scan.stl
+[0.600s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_base_1.dae
+[0.610s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_base_1.stl
+[0.623s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_base_2.dae
+[0.634s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_base_2.stl
+[0.647s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_scan.dae
+[0.658s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/meshes/VLP16_scan.stl
+[0.670s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/rviz/example.rviz
+[0.681s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/urdf/HDL-32E.urdf.xacro
+[0.692s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/urdf/VLP-16.urdf.xacro
+[0.702s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/urdf/VLP-32C.urdf.xacro
+[0.711s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/urdf/example.urdf.xacro
+[0.722s] -- Symlinking: /home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description/share/velodyne_description/world/example.world
+[0.739s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '0': CMAKE_PREFIX_PATH=/opt/ros/galactic:${CMAKE_PREFIX_PATH} /usr/bin/cmake --install /home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description

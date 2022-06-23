@@ -1,0 +1,22 @@
+[0.014s] Invoking command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
+[0.052s] CMake Error at CMakeLists.txt:4 (find_package):
+[0.052s]   By not providing "Findcolcon.cmake" in CMAKE_MODULE_PATH this project has
+[0.053s]   asked CMake to find a package configuration file provided by "colcon", but
+[0.053s]   CMake did not find one.
+[0.053s] 
+[0.053s]   Could not find a package configuration file provided by "colcon" with any
+[0.053s]   of the following names:
+[0.054s] 
+[0.054s]     colconConfig.cmake
+[0.054s]     colcon-config.cmake
+[0.054s] 
+[0.054s]   Add the installation prefix of "colcon" to CMAKE_PREFIX_PATH or set
+[0.054s]   "colcon_DIR" to a directory containing one of the above files.  If "colcon"
+[0.054s]   provides a separate development package or SDK, be sure it has been
+[0.055s]   installed.
+[0.058s] 
+[0.058s] 
+[0.059s] -- Configuring incomplete, errors occurred!
+[0.059s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeOutput.log".
+[0.059s] See also "/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/CMakeFiles/CMakeError.log".
+[0.060s] Invoked command in '/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description' returned '1': /usr/bin/cmake /home/robojackets/urc_ws/colcon-urc/src/urc-software/velodyne_description -DCATKIN_INSTALL_INTO_PREFIX_ROOT=0 -DCATKIN_SYMLINK_INSTALL=ON -DCMAKE_INSTALL_PREFIX=/home/robojackets/urc_ws/colcon-urc/src/urc-software/install/velodyne_description
