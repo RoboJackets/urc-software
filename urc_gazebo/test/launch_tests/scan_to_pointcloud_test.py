@@ -11,8 +11,7 @@ import sensor_msgs.msg
 from ament_index_python.packages import get_package_share_directory
 import os
 
-parameters_file_path = os.path.abspath("../../../urc_gazebo/config/urc_gazebo_params.yaml")
-
+parameters_file_path = os.path.join(get_package_share_directory("urc_gazebo"), "config", "urc_gazebo_params.yaml")
 
 @pytest.mark.rostest
 def generate_test_description():
