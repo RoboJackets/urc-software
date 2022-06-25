@@ -6,39 +6,36 @@ import launch_ros.actions
 import launch_testing
 import launch_testing_ros
 import pytest
-
-import rcl_interfaces.srv
-import rcl_interfaces.msg
+import sensor_msgs.msg
 
 from ament_index_python.packages import get_package_share_directory
 import os
 
-parameters_file_path = os.path.join(get_package_share_directory(
-        'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
+parameters_file_path = os.path.abspath("../../../urc_gazebo/config/urc_gazebo_params.yaml")
 
+
+@pytest.mark.rostest
 def generate_test_description():
     return launch.LaunchDescription([
         launch_ros.actions.Node(
-            package = 'urc_gazebo',
-            executable = 'scan_to_pointcloud_node',
-            parameters = [{
+            package='urc_gazebo',
+            executable='scan_to_pointcloud_node',
+            parameters=[{
                 parameters_file_path
             }]
         ),
         launch_testing.actions.ReadyToTest()
     ]), locals()
 
+
 class TestScanToPointCloudNode(unittest.TestCase):
     def setUp(self):
         self.context = rclpy.Context()
-
-        rclpy.init(context = self.context)
-
-        self.node = rclpy.create_node('test_scan_to_pointcloud_node', context = self.context,
-                                        all_undeclared_parameters = True,
-                                        automatically_declare_parameters_from_overrides = True)
+        rclpy.init(context=self.context)
+        self.node = rclpy.create_node('test_scan_to_pointcloud_node', context=self.context,
+                all_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
         self.message_pump = launch_testing_ros.MessagePump(
-            self.node, context = self.context
+            self.node, context=self.context
         )
 
         self.pub = self.node.create_publisher(
@@ -60,8 +57,7 @@ class TestScanToPointCloudNode(unittest.TestCase):
     def tearDown(self):
         self.message_pump.stop()
         self.node.destroy_node()
-        rclpy.shutdown(context = self.context)
-
+        rclpy.shutdown(context=self.context)
 
     def invalidTransform(self):
         pointcloud_msg = sensor_msgs.msg.PointCloud2()
@@ -73,11 +69,11 @@ class TestScanToPointCloudNode(unittest.TestCase):
 
         self.assertIsNotNone(pointcloud_msg)
 
-        self.assertAlmostEqual(
+        self.assertNotAlmostEqual(
             self.received_msg_right.data[0], -1.4142136)
-        self.assertAlmostEqual(
+        self.assertNotAlmostEqual(
             self.received_msg_right.data[0], 0)
-        self.assertAlmostEqual(
+        self.assertNotAlmostEqual(
             self.received_msg_right.data[0], 1)
 
     def validTransform(self):
@@ -90,10 +86,9 @@ class TestScanToPointCloudNode(unittest.TestCase):
 
         self.assertIsNotNone(pointcloud_msg)
 
-        self.assertNotAlmostEqual(
+        self.assertAlmostEqual(
             self.received_msg_right.data[0], -1.4142136)
-        self.assertNotAlmostEqual(
+        self.assertAlmostEqual(
             self.received_msg_right.data[0], 0)
-        self.assertNotAlmostEqual(
+        self.assertAlmostEqual(
             self.received_msg_right.data[0], 1)
-
