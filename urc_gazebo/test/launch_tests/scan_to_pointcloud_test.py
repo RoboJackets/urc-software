@@ -11,18 +11,23 @@ import sensor_msgs.msg
 from ament_index_python.packages import get_package_share_directory
 import os
 
-parameters_file_path = os.path.join(get_package_share_directory("urc_gazebo"), "config", "urc_gazebo_params.yaml")
 
 @pytest.mark.rostest
 def generate_test_description():
-    return launch.LaunchDescription([
-        launch_ros.actions.Node(
+    parameters_file_path = os.path.join(get_package_share_directory(
+        'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
+
+    scan_to_pointcloud = launch_ros.actions.Node(
             package='urc_gazebo',
-            executable='scan_to_pointcloud_node',
-            parameters=[{
+            executable='urc_gazebo_ScanToPointCloud',
+            output='screen',
+            parameters=[
                 parameters_file_path
-            }]
-        ),
+            ]
+        )
+
+    return launch.LaunchDescription([
+        scan_to_pointcloud,
         launch_testing.actions.ReadyToTest()
     ]), locals()
 
@@ -31,8 +36,10 @@ class TestScanToPointCloudNode(unittest.TestCase):
     def setUp(self):
         self.context = rclpy.Context()
         rclpy.init(context=self.context)
-        self.node = rclpy.create_node('test_scan_to_pointcloud_node', context=self.context,
-                all_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
+        self.node = rclpy.create_node(
+            'test_scan_to_pointcloud_node', context=self.context,
+            all_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True
+        )
         self.message_pump = launch_testing_ros.MessagePump(
             self.node, context=self.context
         )
