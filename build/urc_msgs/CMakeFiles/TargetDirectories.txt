@@ -1,9 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/install/local.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/install.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/list_install_components.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/rebuild_cache.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/edit_cache.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/test.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/install/strip.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/urc_msgs_uninstall.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_msgs/CMakeFiles/uninstall.dir

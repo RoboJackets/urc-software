@@ -1,1 +1,0 @@
-rclcpp;rclcpp_components;urc_msgs;std_msgs;nav_msgs;sensor_msgs;tf2;tf2_ros;laser_geometry;gazebo_ros;controller_manager;hardware_interface;pluginlib;robot_state_publisher;joint_state_publisher;gazebo_ros_pkgs;ros2launch;ament_lint_auto;ament_lint_common

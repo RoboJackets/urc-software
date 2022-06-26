@@ -1,1 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/urc_gazebo/launch/spawn_wallii.py

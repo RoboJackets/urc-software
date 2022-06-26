@@ -1,1 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/urc_navigation/ament_cmake_core/urc_navigationConfig.cmake

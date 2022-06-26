@@ -1,8 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/install/strip.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/install.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/list_install_components.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/rebuild_cache.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/edit_cache.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/protobuf-nanopb-static.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/install/local.dir
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/nanopb/CMakeFiles/generate_nanopb_pb2.py.dir

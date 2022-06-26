@@ -1,1 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/ament_cmake_core/velodyne_descriptionConfig.cmake

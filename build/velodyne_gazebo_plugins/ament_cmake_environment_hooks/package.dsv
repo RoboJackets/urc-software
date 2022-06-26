@@ -1,4 +1,0 @@
-source;share/velodyne_gazebo_plugins/local_setup.bash
-source;share/velodyne_gazebo_plugins/local_setup.dsv
-source;share/velodyne_gazebo_plugins/local_setup.sh
-source;share/velodyne_gazebo_plugins/local_setup.zsh

@@ -1,1 +1,0 @@
-/home/robojackets/urc_ws/colcon-urc/src/urc-software/build/velodyne_description/ament_cmake_environment_hooks/local_setup.zsh

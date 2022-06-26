@@ -1,8 +1,0 @@
-[35m[1mScanning dependencies of target urc_gazebo_ScanToPointCloud[0m
-[35m[1mScanning dependencies of target urc_gazebo[0m
-[ 25%] [32mBuilding CXX object CMakeFiles/urc_gazebo_ScanToPointCloud.dir/rclcpp_components/node_main_urc_gazebo_ScanToPointCloud.cpp.o[0m
-[ 50%] [32mBuilding CXX object CMakeFiles/urc_gazebo.dir/src/scan_to_pointcloud.cpp.o[0m
-[ 75%] [32m[1mLinking CXX executable urc_gazebo_ScanToPointCloud[0m
-[ 75%] Built target urc_gazebo_ScanToPointCloud
-[100%] [32m[1mLinking CXX shared library liburc_gazebo.so[0m
-[100%] Built target urc_gazebo
