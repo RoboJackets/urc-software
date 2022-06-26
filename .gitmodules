@@ -1,3 +1,7 @@
+[submodule "external/nanopb"]
+	path = external/nanopb
+	url = https://github.com/nanopb/nanopb
+
 [submodule "external/velodyne_simulator"]
 	path = external/velodyne_simulator
 	url = https://github.com/ToyotaResearchInstitute/velodyne_simulator
