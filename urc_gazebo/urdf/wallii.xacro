@@ -212,11 +212,11 @@
     <joint name="base_link_to_lidar_support" type="fixed">
         <parent link="base_link"/>
         <child link="lidar_support"/>
-        <origin xyz="${lidar_x/2} 0.0 ${lidar_z-lidar_support_z_dim/2}" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
     </joint>
     <!-- collision range = min sensing distance -->
     <!-- gpu does gpu acceleration -->
-    <xacro:VLP-16 parent="lidar_support" name="lidar" topic="/velodyne_points" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
+    <xacro:VLP-16 parent="lidar_support" name="lidar" topic="/scan" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
         <origin xyz="${lidar_x} 0.0 ${lidar_z}" rpy="0 ${lidar_pitch} 0" />
     </xacro:VLP-16>
   
@@ -538,7 +538,22 @@
 
             <!-- No need to repeat distortion parameters or to set autoDistortion -->
           </plugin>
-        </sensor> 
+        </sensor>
+        
+      <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+        <alwaysOn>true</alwaysOn>
+        <update_rate>200.0</update_rate>
+        <ros>
+          <namespace>/ground_truth</namespace>
+          <argument>odom:=state_raw</argument>
+        </ros>
+        <body_name>base_link</body_name>
+        <frame_name>world</frame_name>
+
+        <xyz_offset>0 0 0</xyz_offset>
+        <rpy_offset>0.0 0.0 0.0</rpy_offset>
+        <gaussian_noise>0.00</gaussian_noise>
+      </plugin>
   
   </gazebo>
 
