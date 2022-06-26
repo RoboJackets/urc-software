@@ -38,7 +38,7 @@ class TestScanToPointCloudNode(unittest.TestCase):
         rclpy.init(context=self.context)
         self.node = rclpy.create_node(
             'test_scan_to_pointcloud_node', context=self.context,
-            all_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True
+            allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True
         )
         self.message_pump = launch_testing_ros.MessagePump(
             self.node, context=self.context
@@ -48,15 +48,10 @@ class TestScanToPointCloudNode(unittest.TestCase):
             sensor_msgs.msg.PointCloud2, '/pc2', 1
         )
 
-        self.sub_right = self.node.create_subscription(
-            sensor_msgs.msg.PointCloud2, '/pc2', 1
+        self.sub = self.node.create_subscription(
+            sensor_msgs.msg.PointCloud2, '/pc2', self.callback, 1
         )
-        self.received_msg_right = None
-
-        self.sub_wrong = self.node.create_subscription(
-            sensor_msgs.msg.PointCloud2, '/pc2', 1
-        )
-        self.received_msg_wrong = None
+        self.received_msg = None
 
         self.message_pump.start()
 
@@ -65,36 +60,40 @@ class TestScanToPointCloudNode(unittest.TestCase):
         self.node.destroy_node()
         rclpy.shutdown(context=self.context)
 
-    def invalidTransform(self):
+    def test_0_invalidTransform(self):
         pointcloud_msg = sensor_msgs.msg.PointCloud2()
-        pointcloud_msg.data = [1, 0, 0]
+        pointcloud_msg.data = [12, 12, 12]
 
-        while self.received_msg_right is None:
+        while self.received_msg is None:
             self.pub.publish(pointcloud_msg)
             time.sleep(0.1)
 
         self.assertIsNotNone(pointcloud_msg)
 
         self.assertNotAlmostEqual(
-            self.received_msg_right.data[0], -1.4142136)
+            self.received_msg.data[0], -1)
         self.assertNotAlmostEqual(
-            self.received_msg_right.data[0], 0)
+            self.received_msg.data[1], -1)
         self.assertNotAlmostEqual(
-            self.received_msg_right.data[0], 1)
+            self.received_msg.data[2], -1)
 
-    def validTransform(self):
+    def test_1_validTransform(self):
         pointcloud_msg = sensor_msgs.msg.PointCloud2()
         pointcloud_msg.data = [1, 1, 1]
 
-        while self.received_msg_right is None:
+        while self.received_msg is None:
             self.pub.publish(pointcloud_msg)
             time.sleep(0.1)
 
         self.assertIsNotNone(pointcloud_msg)
 
         self.assertAlmostEqual(
-            self.received_msg_right.data[0], -1.4142136)
+            self.received_msg.data[0], 1)
         self.assertAlmostEqual(
-            self.received_msg_right.data[0], 0)
+            self.received_msg.data[1], 1)
         self.assertAlmostEqual(
-            self.received_msg_right.data[0], 1)
+            self.received_msg.data[2], 1)
+
+    def callback(self, msg):
+        self.received_msg = sensor_msgs.msg.PointCloud2()
+        self.received_msg = msg
