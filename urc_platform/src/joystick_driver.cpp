@@ -11,7 +11,7 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions &options)
     rclcpp::SystemDefaultsQoS());
 
 
-    __joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
+    _joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
     "~/joy", rclcpp::SystemDefaultsQoS(), [this](const sensor_msgs::msg::Joy msg) {
       JoystickDriver::joyCallback(msg);
     });

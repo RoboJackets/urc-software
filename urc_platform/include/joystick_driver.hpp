@@ -19,7 +19,7 @@ public:
 
 private: 
     rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_publisher;
-    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr __joy_subscriber;
+    rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr _joy_subscriber;
     std::unique_ptr<diagnostic_updater::Updater> updater_ptr;
 
     double absoluteMaxVel, maxVel, maxVelIncr;
