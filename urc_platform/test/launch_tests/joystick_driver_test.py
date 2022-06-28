@@ -41,14 +41,9 @@ class TestJoystickDriver(unittest.TestCase):
             self.node, context=self.context
         )
 
-        self.pub = self.node.create_publisher(
-            urc_msgs.msg.VelocityPair, '/motors', 1
+        self.joyPub = self.node.create_publisher(
+            sensor_msgs.msg.Joy, '/joy', 1
         )
-
-        self.joySub = self.node.create_subscription(
-            sensor_msgs.msg.Joy, '/joy', self.joyCallback, 1
-        )
-        self.received_joy_msg = None
 
         self.velocitySub = self.node.create_subscription(
             urc_msgs.msg.VelocityPair, '/motors', self.velocityCallback, 1
@@ -57,25 +52,138 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.message_pump.start()
 
+    def createJoyMsg(self, left, right):
+        joy_msg = sensor_msgs.msg.Joy()
+        joy_msg.axes = [
+            0,
+            left,
+            0,
+            0,
+            right
+        ]
+        joy_msg.buttons = [0] * 4
+
+        return joy_msg
+
     def test_0_fullForward(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(full_speed, full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, 1.0
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, 1.0
+        )
 
     def test_1_fullReverse(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(-full_speed, -full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, -1.0
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, -1.0
+        )
 
     def test_2_spinRight(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(full_speed, -full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, 1.0
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, -1.0
+        )
 
     def test_3_spinLeft(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(-full_speed, full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, -1.0
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, 1.0
+        )
 
     def test_4_halfForward(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(0.5 * full_speed, 0.5 * full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, 0.5
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, 0.5
+        )
 
     def test_5_halfReverse(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(-0.5 * full_speed, -0.5 * full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, -0.5
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, -0.5
+        )
 
     def test_6_halfSpinRight(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(0.5 * full_speed, -0.5 * full_speed))
+            time.sleep(0.1)
+
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, 0.5
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, -0.5
+        )
 
     def test_7_halfSpinLeft(self):
+        full_speed = 1.0
+        while self.received_vel_msg is None:
+            self.joyPub.publish(self.createJoyMsg(-0.5 * full_speed, 0.5 * full_speed))
+            time.sleep(0.1)
 
-    def joyCallback(self, msg):
-        self.recieved_joy_msg = sensor_msgs.msg.Joy()
-        self.recieved_joy_msg = msg
+        self.assertIsNotNone(self.received_vel_msg)
+
+        self.assertAlmostEqual(
+            self.received_vel_msg.left_velocity, -0.5
+        )
+        self.assertAlmostEqual(
+            self.received_vel_msg.right_velocity, 0.5
+        )
 
     def velocityCallback(self, msg):
         self.recieved_vel_msg = urc_msgs.msg.VelocityPair()
