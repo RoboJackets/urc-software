@@ -6,11 +6,8 @@ import launch_ros.actions
 import launch_testing
 import launch_testing_ros
 import pytest
-import sensor_msgs
-import urc_msgs
-
-from ament_index_python.packages import get_package_share_directory
-import os
+import sensor_msgs.msg
+import urc_msgs.msg
 
 
 @pytest.mark.rostest
@@ -55,10 +52,10 @@ class TestJoystickDriver(unittest.TestCase):
     def createJoyMsg(self, left, right):
         joy_msg = sensor_msgs.msg.Joy()
         joy_msg.axes = [
-            0,
+            0.0,
             left,
-            0,
-            0,
+            0.0,
+            0.0,
             right
         ]
         joy_msg.buttons = [0] * 4
