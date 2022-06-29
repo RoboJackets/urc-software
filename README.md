@@ -8,11 +8,11 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 ## Folder Structure
 
  * **urc_analysis**
-    
+    *Nodes used for scientific analysis*
  * **urc_gazebo**
     *Helper nodes used for simulation purposes*
 * **urc_manipulation**
-    
+    *Collection of nodes used for the robotic arm*
 * **urc_msgs**
     *Custom ROS messages used in the various ROS packages*
  * **urc_navigation**
@@ -20,7 +20,7 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
  * **urc_perception**
     *Collection of nodes that form our perception stack*
  * **urc_platform**
-    *Nodes that are platform specific and used to communicate with the hardware, ie. IMU, joystick and motor controller*
+    *Nodes that are platform specific and used to communicate with the hardware, ie. IMU, joystick and motor controller. Also contains all unit tests.*
  * **urc_util**
     *A collection of utility nodes and classes*
  * **documents**
@@ -28,7 +28,9 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
 ## Installation Guide
 
-#### 1. Install ROS2
+### 1. Make sure you are running Ubuntu 22.04!
+
+### 2. Install ROS2
 
 ```bash
 sudo apt install software-properties-common
@@ -47,19 +49,22 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 sudo apt update
 ```
 ```bash
-sudo apt install ros-galactic-desktop
+sudo apt upgrade
+```
+```bash
+sudo apt install ros-humble-desktop-full
 ```
 
-#### 2. Install Colcon
+### 3. Install Colcon
    
 ```bash
 sudo apt install python3-colcon-common-extensions
 ```
 
-#### 3. bashrc Setup
+### 4. bashrc Setup
 
 ```bash
-echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
 ```bash
 echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
@@ -68,7 +73,7 @@ echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.b
 source ~/.bashrc
 ```
 
-#### 4. Create a colcon environment
+### 5. Create a colcon environment
 
 ```bash
 cd <path to where you want to keep the project>
@@ -77,7 +82,7 @@ cd <path to where you want to keep the project>
 mkdir -p colcon-urc/src
 ```
 
-#### 5. Clone the repository into the colcon environment
+### 6. Clone the repository into the colcon environment
 ```bash
 cd colcon-urc/src
 ```
@@ -85,7 +90,7 @@ cd colcon-urc/src
 git clone https://github.com/RoboJackets/urc-software.git --recursive
 ```
 
-#### 6. Build your workspace
+### 7. Build your workspace
 ```bash
 cd ..
 ```
@@ -93,14 +98,14 @@ cd ..
 colcon build --symlink-install
 ```
 
-#### 7. Source your environment
+### 8. Source your environment
 ```bash
 . install/setup.bash
 ```
 
-#### 8. Install and run rosdep
-Make sure to call the 'rosdep install' command from the colcon workspace directory (/colcon-urc)!
-```branch
+### 9. Install and run rosdep
+ Make sure to call the 'rosdep install' command from the colcon workspace directory (/colcon-urc)!
+```bash
 sudo apt install python3-rosdep
 sudo rosdep init
 rosdep update
