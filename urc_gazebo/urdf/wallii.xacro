@@ -545,7 +545,7 @@
         <update_rate>200.0</update_rate>
         <ros>
           <namespace>/ground_truth</namespace>
-          <argument>odom:=state_raw</argument>
+          <remapping>odom:=state_raw</remapping>
         </ros>
         <body_name>base_link</body_name>
         <frame_name>world</frame_name>
