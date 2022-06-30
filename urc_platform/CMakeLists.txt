@@ -17,22 +17,42 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(urc_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(diagnostic_updater REQUIRED)
+find_package(nanopb REQUIRED)
 
 include_directories(
   include
 )
 
-# Library creation
-#add_library(${PROJECT_NAME} SHARED
-  #add more .cpp files here
-#)
-
-set(dependencies
+# Library creationS
+add_library(${PROJECT_NAME} SHARED
+  src/motor_controller.cpp
 )
 
-#ament_target_dependencies(${PROJECT_NAME}
-#  ${dependencies}
-#)
+set(dependencies
+  rclcpp
+  rclcpp_components
+  urc_msgs
+  std_msgs
+  sensor_msgs
+  diagnostic_updater
+  nanopb
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "motor_controller::MotorController"
+  EXECUTABLE ${PROJECT_NAME}_MotorController
+)
 
 # Install launch files.
 install(
@@ -42,17 +62,15 @@ install(
 )
 
 # Install library
-#install(TARGETS
-#  ${PROJECT_NAME}
-#  ARCHIVE DESTINATION lib
-#  LIBRARY DESTINATION lib
-#  RUNTIME DESTINATION lib/${PROJECT_NAME}
-#)
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  #Calls the CMake for the unit tests
-  add_subdirectory(test)
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
