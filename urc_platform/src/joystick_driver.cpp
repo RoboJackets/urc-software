@@ -27,7 +27,6 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 
 void JoystickDriver::joyCallback(const sensor_msgs::msg::Joy & msg)
 {
-
   if (msg.buttons[1]) {
     maxVel -= maxVelIncr;
   } else if (msg.buttons[3]) {
@@ -44,7 +43,6 @@ void JoystickDriver::joyCallback(const sensor_msgs::msg::Joy & msg)
   cmd.header.stamp = this->get_clock()->now();
 
   _cmd_publisher->publish(cmd);
-
 }
 }
 
