@@ -15,14 +15,11 @@ def generate_launch_description():
 
     # todo: make this a launch parameter
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
-	
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'),'urdf/','wallii.xacro')
-    assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in "+str(xacro_file)
+    xacro_file = os.path.join(pkg_urc_gazebo, "urdf/wallii.xacro")
+    assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in " + str(xacro_file)
 
     robot_description_config = xacro.process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
-    
-    #print(robot_desc)
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -42,22 +39,25 @@ def generate_launch_description():
                 parameters_file_path
             ]
         )
-        
+
     spawn_robot = Node(
     	    package='urc_gazebo',
     	    executable='spawn_wallii.py',
-    	    arguments=[robot_desc],
-    	    output='screen'
-    
+            output='screen',
+    	    arguments=[
+                robot_desc
+            ]
         )
+
     robot_state_publisher = Node(
     	    package='robot_state_publisher',
     	    executable='robot_state_publisher',
-          name='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
     	    parameters=[
-    	    	{"robot_description": robot_desc}],
-    	    output='screen'
-       )
+    	    	{"robot_description": robot_desc}
+            ]
+        )
 
     # control = Node(
     #        package='urc_gazebo',
