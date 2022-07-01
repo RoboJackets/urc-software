@@ -15,23 +15,33 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+include_directories(
+  include
+)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 # Install launch files.
-
 install(
   DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
+add_library(${PROJECT_NAME} SHARED
+  src/EthernetSocket.cpp
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
+
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
 
@@ -39,5 +49,3 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
-
-

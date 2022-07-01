@@ -29,7 +29,7 @@ include_directories(
   include
 )
 
-# Library creationS
+# Library creation
 add_library(${PROJECT_NAME} SHARED
   src/motor_controller.cpp
 )
@@ -71,8 +71,10 @@ install(TARGETS
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
+
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
 

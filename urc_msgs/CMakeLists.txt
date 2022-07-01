@@ -22,11 +22,10 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-
-
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
 
@@ -36,17 +35,18 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   builtin_interfaces
 )
 
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
+
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
 
   ament_lint_auto_find_test_dependencies()
 endif()
 
-#ament_export_libraries(${PROJECT_NAME}) <--- This will probably cause issues for someone down the line
+# ament_export_libraries(${PROJECT_NAME}) <--- This will probably cause issues for someone down the line
 ament_export_dependencies(${dependencies})
 ament_package()
