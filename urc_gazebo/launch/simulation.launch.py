@@ -41,21 +41,21 @@ def generate_launch_description():
         )
 
     spawn_robot = Node(
-    	    package='urc_gazebo',
-    	    executable='spawn_wallii.py',
+            package='urc_gazebo',
+            executable='spawn_wallii.py',
             output='screen',
-    	    arguments=[
+            arguments=[
                 robot_desc
             ]
         )
 
     robot_state_publisher = Node(
-    	    package='robot_state_publisher',
-    	    executable='robot_state_publisher',
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
             name='robot_state_publisher',
             output='screen',
-    	    parameters=[
-    	    	{"robot_description": robot_desc}
+            parameters=[
+                {"robot_description": robot_desc}
             ]
         )
 
