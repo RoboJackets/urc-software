@@ -9,15 +9,29 @@ import pytest
 import sensor_msgs.msg
 import urc_msgs.msg
 
+from ament_index_python.packages import get_package_share_directory
+import os
+import yaml
+
 
 @pytest.mark.rostest
 def generate_test_description():
+    parameters_file_path = os.path.join(get_package_share_directory("urc_platform"), "config", "urc_platform_params.yaml")
+    with open(parameters_file_path, 'r') as file:
+        joystick_params = yaml.safe_load(file)['joystick_driver']['ros_parameters']
+
 
     joystick_driver = launch_ros.actions.Node(
             package='urc_platform',
             executable='urc_platform_JoystickDriver',
             output='screen',
-            parameters=[]
+            parameters=[
+                joystick_params
+            ],
+            remappings=[
+                ('/urc_platform_JoystickDriver/joy', '/joy'),
+                ('/urc_platform_JoystickDriver/motors', '/motors')
+            ]
         )
 
     return launch.LaunchDescription([
@@ -183,8 +197,7 @@ class TestJoystickDriver(unittest.TestCase):
         )
 
     def velocityCallback(self, msg):
-        self.recieved_vel_msg = urc_msgs.msg.VelocityPair()
-        self.recieved_vel_msg = msg
+        self.received_vel_msg = msg
 
     def tearDown(self):
         self.message_pump.stop()
