@@ -1,39 +1,41 @@
 #include "EthernetSocket.hpp"
 
-namespace udp = boost::asio::ip::udp;
+namespace ip = boost::asio::ip;
 
 EthernetSocket::EthernetSocket(std::string ip_addr, int port)
 {
     // resolve all possible endpoints
-    udp::resolver resolver(io_service_);
-    udp::resolver::query query(ip_addr, std::to_string(port));
-    udp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    ip::udp::resolver resolver(io_service_);
+    ip::udp::resolver::query query(ip_addr, std::to_string(port));
+    ip::udp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
     // look through endpoints and hit socket's connect() member function until
     // a successful TCP connection is established
-    this->sock_ = std::make_unique<udp::socket>(io_service_);
+    this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
     boost::asio::connect(*sock_, endpoint_iterator);
 }
 
 EthernetSocket::~EthernetSocket()
 {
     // shut down the TCP connection
-    this->sock_->shutdown(udp::socket::shutdown_send);
+    this->sock_->shutdown(ip::udp::socket::shutdown_send);
 }
 
 void EthernetSocket::sendMessage(char *message, size_t len)
 {
     boost::system::error_code error;
-    // Create boost buffer from string and send to TCP endpoint
-    boost::asio::write(*sock_, boost::asio::buffer(message, len), error);
+    int flags;
+    // Create boost buffer from string and send to UDP endpoint
+    sock_->send(boost::asio::buffer(message, len), flags, error);
 }
 
 size_t EthernetSocket::readMessage(unsigned char (&buffer)[256])
 {
     // read data from TCP connection
     boost::system::error_code error;
+    int flags;
 
-    size_t len = sock_->read_some(boost::asio::buffer(buffer, sizeof(buffer) - 1), error);
+    size_t len = sock_->receive(boost::asio::buffer(buffer, sizeof(buffer) - 1), flags, error);
 
     if (error == boost::asio::error::eof) // connection closed by server
         len = 0;

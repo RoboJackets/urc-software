@@ -11,9 +11,7 @@
 #include <urc_msgs/msg/velocity_pair.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include <diagnostic_updater/publisher.hpp>
-#include <urc_util/EthernetSocket.hpp>
 
-// ""Optimal"" solution
 #include "../../external/nanopb/pb_common.h"
 #include "../../external/nanopb/pb_encode.h"
 #include "../../external/nanopb/pb_decode.h"

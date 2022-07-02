@@ -70,7 +70,7 @@ namespace motor_controller
   void MotorController::cmdCallback(const urc_msgs::msg::VelocityPair &msg)
   {
     current_motor_command_ = msg;
-    last_motors_message_ = rclcpp::Node::now();
+    last_motors_message_ = rclcpp::Clock::now();
   }
 
   void MotorController::mc_diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat)
@@ -267,7 +267,7 @@ namespace motor_controller
     encoder_msg.left_velocity = response.speed_l;
     encoder_msg.right_velocity = response.speed_r;
     encoder_msg.duration = response.dt_sec;
-    encoder_msg.header.stamp = rclcpp::Time::now() - rclcpp::Duration(response.dt_sec);
+    encoder_msg.header.stamp = rclcpp::Clock().now() - rclcpp::Duration(response.dt_sec);
 
     _enc_pub.publish(encoder_msg);
   }
