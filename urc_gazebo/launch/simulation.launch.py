@@ -6,6 +6,8 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
 import xacro
+from pathlib import Path
+
 
 
 def generate_launch_description():
@@ -13,13 +15,11 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
 
+    bringup_dir = Path(get_package_share_directory("urc_gazebo"))
+    launch_dir = bringup_dir / "launch"
+
     # todo: make this a launch parameter
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
-    xacro_file = os.path.join(pkg_urc_gazebo, "urdf/wallii.xacro")
-    assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in " + str(xacro_file)
-
-    robot_description_config = xacro.process_file(xacro_file)
-    robot_desc = robot_description_config.toxml()
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -40,24 +40,10 @@ def generate_launch_description():
             ]
         )
 
-    spawn_robot = Node(
-            package='urc_gazebo',
-            executable='spawn_wallii.py',
-            output='screen',
-            arguments=[
-                robot_desc
-            ]
-        )
-
-    robot_state_publisher = Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[
-                {"robot_description": robot_desc}
-            ]
-        )
+    wallii_launch_path = str(launch_dir / "spawn_wallii.py")
+    wallii = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(wallii_launch_path),
+    )
 
     # control = Node(
     #        package='urc_gazebo',
@@ -98,8 +84,7 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         scan_to_pointcloud,
-        spawn_robot,
-        robot_state_publisher,
+        wallii,
         # control
         # magnetometer
         # ground_truth

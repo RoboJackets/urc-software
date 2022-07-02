@@ -1,46 +1,40 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-import sys
-import rclpy
-from gazebo_msgs.srv import SpawnEntity
-from rclpy.node import Node
+from http.server import executable
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+import os
+import xacro
 
 
-class MinimalClientAsync(Node):
-    def __init__(self):
-        super().__init__('minimal_client')
-        self.client = self.create_client(SpawnEntity, '/spawn_entity')
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Service not avaliable, waiting again...')
-        self.req = SpawnEntity.Request()
+def generate_launch_description():
+    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
 
-    def send_request(self):
-        self.req.name = "Wallii"
-        self.req.xml = str(sys.argv[1])
-        self.req.robot_namespace = ""
-        self.req.reference_frame = "world"
-        self.future = self.client.call_async(self.req)
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
 
+    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'),'urdf/','wallii.xacro')
+    assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in "+str(xacro_file)
 
-def main(args=None):
-    rclpy.init(args=args)
-    minimal_client = MinimalClientAsync()
-    minimal_client.send_request()
+    robot_description_config = xacro.process_file(xacro_file)
+    robot_desc = robot_description_config.toxml()
 
-    while rclpy.ok():
-        rclpy.spin_once(minimal_client)
-        if minimal_client.future.done():
-            try:
-                minimal_client.future.result()
-            except Exception as exception:
-                minimal_client.get_logger().info(
-                    'Service call failed %r' % (exception,)
-                )
-            break
+    spawn_robot = Node(
+    	package = 'gazebo_ros',
+        executable = 'spawn_entity.py',
+        arguments = ['-entity', 'wallii', '-topic', '/robot_description']
+    )
+    robot_state_publisher = Node(
+    	    package='robot_state_publisher',
+    	    executable='robot_state_publisher',
+            name='robot_state_publisher',
+    	    parameters=[
+    	    	{"robot_description": robot_desc}],
+    	    output='screen'
+       )
+    return LaunchDescription([
+        robot_state_publisher,
+        spawn_robot
+    ])
 
-    minimal_client.destroy_node()
-    rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()
