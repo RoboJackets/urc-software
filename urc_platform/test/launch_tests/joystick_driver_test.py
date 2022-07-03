@@ -29,8 +29,8 @@ def generate_test_description():
                 joystick_params
             ],
             remappings=[
-                ('/urc_platform_JoystickDriver/joy', '/joy'),
-                ('/urc_platform_JoystickDriver/motors', '/motors')
+                ('/joystick_driver/joy', '/joy'),
+                ('/joystick_driver/motors', '/motors')
             ]
         )
 
