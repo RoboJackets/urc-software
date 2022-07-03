@@ -25,7 +25,7 @@ private:
   int leftJoyAxis, rightJoyAxis;
   bool leftInverted, rightInverted;
 
-  void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper& stat);
+  void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
   void joyCallback(const sensor_msgs::msg::Joy & msg);
 };
 }

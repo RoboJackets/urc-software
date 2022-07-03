@@ -16,10 +16,10 @@ import yaml
 
 @pytest.mark.rostest
 def generate_test_description():
-    parameters_file_path = os.path.join(get_package_share_directory("urc_platform"), "config", "urc_platform_params.yaml")
+    parameters_file_path = os.path.join(get_package_share_directory("urc_platform"),
+                                        "config", "urc_platform_params.yaml")
     with open(parameters_file_path, 'r') as file:
         joystick_params = yaml.safe_load(file)['joystick_driver']['ros_parameters']
-
 
     joystick_driver = launch_ros.actions.Node(
             package='urc_platform',

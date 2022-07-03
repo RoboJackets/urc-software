@@ -10,7 +10,6 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     "~/motors",
     rclcpp::SystemDefaultsQoS());
 
-
   _joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
     "~/joy", rclcpp::SystemDefaultsQoS(), [this](const sensor_msgs::msg::Joy msg) {
       joyCallback(msg);
@@ -20,16 +19,17 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
   updater_ptr->setHardwareID("Joystick");
   updater_ptr->add("Joystick Diagnostic", this, &JoystickDriver::joystick_diagnostic);
 
-  declare_parameter<double>("absoluteMaxVel", absoluteMaxVel);
-  declare_parameter<double>("maxVel", maxVel);
-  declare_parameter<double>("maxVelIncr", maxVelIncr);
-  declare_parameter<int>("leftJoyAxis", leftJoyAxis);
-  declare_parameter<int>("rightJoyAxis", rightJoyAxis);
-  declare_parameter<bool>("leftInverted", leftInverted);
-  declare_parameter<bool>("rightInverted", rightInverted);
+  absoluteMaxVel = declare_parameter<double>("absoluteMaxVel");
+  maxVel = declare_parameter<double>("maxVel");
+  maxVelIncr = declare_parameter<double>("maxVelIncr");
+  leftJoyAxis = declare_parameter<int>("leftJoyAxis");
+  rightJoyAxis = declare_parameter<int>("rightJoyAxis");
+  leftInverted = declare_parameter<bool>("leftInverted");
+  rightInverted = declare_parameter<bool>("rightInverted");
 }
 
-void JoystickDriver::joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper& stat){
+void JoystickDriver::joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat)
+{
   stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Joystick Online");
   stat.add("absolute_max_velocity", absoluteMaxVel);
   stat.add("max_velocity", maxVel);
