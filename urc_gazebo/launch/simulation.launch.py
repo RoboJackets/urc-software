@@ -5,6 +5,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
+import yaml
 from pathlib import Path
 
 
@@ -26,22 +27,24 @@ def generate_launch_description():
         launch_arguments={"world": world_path}.items()
     )
 
+    wallii_launch_path = str(launch_dir / "spawn_wallii.py")
+    wallii = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(wallii_launch_path),
+    )
+
     parameters_file_path = os.path.join(get_package_share_directory(
         'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
+    with open(parameters_file_path, 'r') as file:
+        scan_to_pointcloud_params = yaml.safe_load(file)['scan_to_pointcloud']['ros_parameters']
 
     scan_to_pointcloud = Node(
             package='urc_gazebo',
             executable='urc_gazebo_ScanToPointCloud',
             output='screen',
             parameters=[
-                parameters_file_path
+                scan_to_pointcloud_params
             ]
         )
-
-    wallii_launch_path = str(launch_dir / "spawn_wallii.py")
-    wallii = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(wallii_launch_path),
-    )
 
     # control = Node(
     #        package='urc_gazebo',

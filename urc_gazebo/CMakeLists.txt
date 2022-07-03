@@ -69,11 +69,12 @@ install(
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install launch and gazebo files.
+# Install launch, gazebo, and config files
 install(
   DIRECTORY
   launch
   urdf
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
