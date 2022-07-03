@@ -7,8 +7,8 @@ ScanToPointCloud::ScanToPointCloud(const rclcpp::NodeOptions & options)
   tfBuffer_(this->get_clock()),
   tfListener_(tfBuffer_)
 {
-  get_parameter("min_dist", min_dist);
-  get_parameter("neighbor_dist", neighbor_dist);
+  min_dist = declare_parameter<double>("min_dist");
+  neighbor_dist = declare_parameter<double>("neighbor_dist");
 
   _pointcloud_pub = create_publisher<sensor_msgs::msg::PointCloud2>(
     "~/pc2",

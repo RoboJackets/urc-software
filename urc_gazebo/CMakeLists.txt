@@ -26,6 +26,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(laser_geometry REQUIRED)
+find_package(velodyne_simulator REQUIRED)
 
 include_directories(
   include
@@ -47,6 +48,7 @@ set(dependencies
   tf2
   tf2_ros
   laser_geometry
+  velodyne_simulator
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -60,11 +62,19 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
-# Install launch and gazebo files.
+# Install robot spawn file.
+install(
+  PROGRAMS
+  launch/spawn_wallii.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch, gazebo, and config files
 install(
   DIRECTORY
   launch
   urdf
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 

@@ -10,19 +10,22 @@ import sensor_msgs.msg
 
 from ament_index_python.packages import get_package_share_directory
 import os
+import yaml
 
 
 @pytest.mark.rostest
 def generate_test_description():
     parameters_file_path = os.path.join(get_package_share_directory(
         'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
+    with open(parameters_file_path, 'r') as file:
+        scan_to_pointcloud_params = yaml.safe_load(file)['scan_to_pointcloud']['ros_parameters']
 
     scan_to_pointcloud = launch_ros.actions.Node(
             package='urc_gazebo',
             executable='urc_gazebo_ScanToPointCloud',
             output='screen',
             parameters=[
-                parameters_file_path
+                scan_to_pointcloud_params
             ]
         )
 
