@@ -20,13 +20,13 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
   updater_ptr->setHardwareID("Joystick");
   updater_ptr->add("Joystick Diagnostic", this, &JoystickDriver::joystick_diagnostic);
 
-  get_parameter("absoluteMaxVel", absoluteMaxVel);
-  get_parameter("maxVel", maxVel);
-  get_parameter("maxVelIncr", maxVelIncr);
-  get_parameter("leftJoyAxis", leftJoyAxis);
-  get_parameter("rightJoyAxis", rightJoyAxis);
-  get_parameter("leftInverted", leftInverted);
-  get_parameter("rightInverted", rightInverted);
+  declare_parameter<double>("absoluteMaxVel", absoluteMaxVel);
+  declare_parameter<double>("maxVel", maxVel);
+  declare_parameter<double>("maxVelIncr", maxVelIncr);
+  declare_parameter<int>("leftJoyAxis", leftJoyAxis);
+  declare_parameter<int>("rightJoyAxis", rightJoyAxis);
+  declare_parameter<bool>("leftInverted", leftInverted);
+  declare_parameter<bool>("rightInverted", rightInverted);
 }
 
 void JoystickDriver::joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper& stat){
