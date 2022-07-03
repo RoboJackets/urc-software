@@ -6,16 +6,12 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
 import yaml
-from pathlib import Path
 
 
 def generate_launch_description():
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-
-    bringup_dir = Path(get_package_share_directory("urc_gazebo"))
-    launch_dir = bringup_dir / "launch"
 
     # todo: make this a launch parameter
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
@@ -27,9 +23,10 @@ def generate_launch_description():
         launch_arguments={"world": world_path}.items()
     )
 
-    wallii_launch_path = str(launch_dir / "spawn_wallii.py")
     wallii = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(wallii_launch_path),
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_gazebo, "launch", "spawn_wallii.py")
+        )
     )
 
     parameters_file_path = os.path.join(get_package_share_directory(
@@ -43,6 +40,10 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 scan_to_pointcloud_params
+            ],
+            remappings=[
+                ("/scan_to_pointcloud/pc2", "/pc2"),
+                ("/scan_to_pointcloud/scan", "/scan")
             ]
         )
 
@@ -84,8 +85,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         gazebo,
-        scan_to_pointcloud,
         wallii,
+        scan_to_pointcloud,
         # control
         # magnetometer
         # ground_truth
