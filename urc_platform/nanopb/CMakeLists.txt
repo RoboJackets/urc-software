@@ -14,16 +14,13 @@ add_library(${urc_nanopb} SHARED
   ${PROTO_HDRS}
   ${PROTO_GENERATED_SRCS}
 )
-target_link_libraries(${urc_nanopb}
-  nanopb::libnanopb
-)
-target_include_directories(${urc_nanopb}
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
-    $<INSTALL_INTERFACE:include>
+
+target_include_directories(${urc_nanopb} INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>
 )
 
-ament_export_targets(${urc_nanopb} HAS_LIBRARY_TARGET)
+ament_export_libraries(${urc_nanopb})
 ament_export_dependencies(Nanopb)
 
 install(
