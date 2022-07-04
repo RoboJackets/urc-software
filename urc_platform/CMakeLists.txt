@@ -23,7 +23,7 @@ find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
-find_package(Nanopb REQUIRED)
+find_package(urc_nanopb REQUIRED)
 find_package(urc_util REQUIRED)
 
 include_directories(
@@ -42,7 +42,7 @@ set(dependencies
   std_msgs
   sensor_msgs
   diagnostic_updater
-  Nanopb
+  urc_nanopb
   urc_util
 )
 
@@ -82,8 +82,6 @@ if(BUILD_TESTING)
 
   ament_lint_auto_find_test_dependencies()
 endif()
-
-add_subdirectory(nanopb)
 
 ament_export_include_directories(include)
 

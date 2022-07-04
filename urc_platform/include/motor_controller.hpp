@@ -13,6 +13,9 @@
 #include <diagnostic_updater/publisher.hpp>
 #include <urc_util/ethernet_socket.hpp>
 
+#include <urc_util/EthernetSocket.hpp>
+#include <urc_nanopb/urc.pb.h>
+
 #include "../../external/nanopb/pb_common.h"
 #include "../../external/nanopb/pb_encode.h"
 #include "../../external/nanopb/pb_decode.h"
