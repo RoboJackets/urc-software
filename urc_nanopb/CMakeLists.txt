@@ -32,9 +32,7 @@ add_library(${PROJECT_NAME} SHARED
   ${PROTO_GENERATED_SRCS}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  protobuf::libprotobuf
-)
+target_link_libraries(${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
