@@ -1,16 +1,17 @@
 #ifndef MOTOR_CONTROLLER_H
 #define MOTOR_CONTROLLER_H
 
+#include <memory>
+#include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/time.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
-#include <memory>
-#include <string>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <urc_msgs/msg/velocity_pair.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include <diagnostic_updater/publisher.hpp>
+#include <urc_util/ethernet_socket.hpp>
 
 #include "../../external/nanopb/pb_common.h"
 #include "../../external/nanopb/pb_encode.h"
@@ -69,7 +70,7 @@ namespace motor_controller
         void sendRequest();
         void receiveResponse();
         void publishResponse(const ResponseMessage &response);
-    }
+    };
 }
 
 #endif

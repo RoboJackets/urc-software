@@ -70,7 +70,7 @@ namespace motor_controller
   void MotorController::cmdCallback(const urc_msgs::msg::VelocityPair &msg)
   {
     current_motor_command_ = msg;
-    last_motors_message_ = rclcpp::Clock::now();
+    last_motors_message_ = rclcpp::Clock().now();
   }
 
   void MotorController::mc_diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat)

@@ -1,11 +1,3 @@
-/**
- * An abstraction of boost::ip::tcp to ease communication with
- * ethernet devices
- *
- * date created: December 8th, 2018
- * author: Alejandro Escontrela
- */
-
 #ifndef ETHERNETSOCKET_H
 #define ETHERNETSOCKET_H
 

@@ -1,4 +1,4 @@
-#include "EthernetSocket.hpp"
+#include "ethernet_socket.hpp"
 
 namespace ip = boost::asio::ip;
 

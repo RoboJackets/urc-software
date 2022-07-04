@@ -24,6 +24,7 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(Nanopb REQUIRED)
+find_package(urc_util REQUIRED)
 
 include_directories(
   include
@@ -42,6 +43,7 @@ set(dependencies
   sensor_msgs
   diagnostic_updater
   Nanopb
+  urc_util
 )
 
 ament_target_dependencies(${PROJECT_NAME}
