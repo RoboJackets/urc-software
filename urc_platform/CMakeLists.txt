@@ -56,6 +56,7 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "motor_controller::MotorController"
   EXECUTABLE ${PROJECT_NAME}_MotorController
+)
 
 rclcpp_components_register_node(
   ${PROJECT_NAME}

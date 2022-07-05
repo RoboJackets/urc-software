@@ -12,8 +12,6 @@
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include <diagnostic_updater/publisher.hpp>
 #include <urc_util/ethernet_socket.hpp>
-
-#include <urc_util/ethernet_socket.hpp>
 #include <urc_nanopb/urc.pb.h>
 
 #include "../../external/nanopb/pb_common.h"
@@ -52,12 +50,12 @@ namespace motor_controller
         EthernetSocket socket_;
 
         // subscribers
-        rclcpp::Subscription<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_sub;
+        rclcpp::Subscription<urc_msgs::msg::VelocityPair> _cmd_sub;
 
         // publishers
-        rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _enc_pub;
-        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr _enabled_pub;
-        rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _battery_pub;
+        rclcpp::Publisher<urc_msgs::msg::VelocityPair> _enc_pub;
+        rclcpp::Publisher<std_msgs::msg::Bool> _enabled_pub;
+        rclcpp::Publisher<std_msgs::msg::Float64> _battery_pub;
 
         // diagnostics
         diagnostic_updater::Updater mc_updater_;

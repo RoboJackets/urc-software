@@ -3,7 +3,7 @@
 namespace motor_controller
 {
   MotorController::MotorController(const rclcpp::NodeOptions &options)
-      : rclcpp::Node("motor_controller", options)
+  : rclcpp::Node("motor_controller", options)
   {
     _cmd_sub = create_subscription<urc_msgs::msg::VelocityPair>(
         "~/motors",
@@ -24,27 +24,27 @@ namespace motor_controller
         rclcpp::SystemDefaultsQoS());
 
     // Create server socket
-    get_parameter("ip_addr", ip_addr_);
-    get_parameter("port", tcpport_);
+    ip_addr_ = declare_parameter<std::string>("ip_addr");
+    tcpport_ = declare_parameter<int>("port");
     socket_ = EthernetSocket(ip_addr_, tcpport_);
 
     // Battery variables
-    get_parameter("battery_alpha", battery_alpha_);
-    get_parameter("min_battery_voltage", min_battery_voltage_);
+    battery_alpha_ = declare_parameter<double>("battery_alpha");
+    min_battery_voltage_ = declare_parameter<double>("min_battery_voltage");
     battery_avg_ = min_battery_voltage_;
 
     // PID variables
-    get_parameter("p_l", p_l_);
-    get_parameter("p_r", p_r_);
-    get_parameter("d_l", d_l_);
-    get_parameter("d_r", d_r_);
-    get_parameter("i_r", i_r_);
-    get_parameter("i_l", i_l_);
-    get_parameter("kv_l", kv_l_);
-    get_parameter("kv_r", kv_r_);
+    p_l_ = declare_parameter<double>("p_l");
+    p_r_ = declare_parameter<double>("p_r");
+    d_l_ = declare_parameter<double>("d_l");
+    d_r_ = declare_parameter<double>("d_r");
+    i_r_ = declare_parameter<double>("i_r");
+    i_l_ = declare_parameter<double>("i_l");
+    kv_l_ = declare_parameter<double>("kv_l");
+    kv_r_ = declare_parameter<double>("kv_r");
 
-    get_parameter("watchdog_delay", watchdog_delay_);
-    get_parameter_or("log_period", log_period_, 5.0);
+    watchdog_delay_ = declare_parameter<double>("watchdog_delay");
+    log_period_ = declare_parameter<double>("log_period");
 
     mc_updater_.setHardwareID("Motor Controller");
     mc_updater_.add("MC Diagnostic", this, &MotorController::mc_diagnostic);
@@ -52,7 +52,7 @@ namespace motor_controller
     battery_updater_.setHardwareID("Battery Controller");
     battery_updater_.add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
 
-    get_parameter("frequency", frequency_);
+    frequency_ = declare_parameter<double>("frequency");
     rclcpp::Rate rate(frequency_);
 
     setPID();
