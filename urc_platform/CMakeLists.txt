@@ -33,6 +33,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/motor_controller.cpp
+  src/joystick_driver.cpp
 )
 
 set(dependencies
@@ -50,16 +51,23 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
+# Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "motor_controller::MotorController"
   EXECUTABLE ${PROJECT_NAME}_MotorController
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "joystick_driver::JoystickDriver"
+  EXECUTABLE ${PROJECT_NAME}_JoystickDriver
 )
 
 # Install launch files.
 install(
   DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -82,6 +90,8 @@ if(BUILD_TESTING)
 
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_export_include_directories(msg)
 
 ament_export_include_directories(include)
 

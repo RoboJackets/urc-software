@@ -7,6 +7,12 @@
   <maintainer email="aidan.stickan@gmail.com">a-stickan</maintainer>
   <license>MIT</license>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>urc_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>diagnostic_updater</depend>
   <depend>protobuf-dev</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

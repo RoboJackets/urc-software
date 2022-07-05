@@ -23,9 +23,6 @@ find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs)
 
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
 
@@ -47,6 +44,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# ament_export_libraries(${PROJECT_NAME}) <--- This will probably cause issues for someone down the line
-ament_export_dependencies(${dependencies})
+ament_export_dependencies(rosidl_default_runtime)
 ament_package()

@@ -1,5 +1,3 @@
-#todo: update the parameters
-
 motor_controller:
   ros_parameters:
     ip_addr: "127.0.0.1"
@@ -16,3 +14,13 @@ motor_controller:
     watchdog_delay: 3.0
     frequency: 50.0
     log_period: 5.0
+
+joystick_driver:
+  ros_parameters:
+    absoluteMaxVel: 1.0
+    maxVel: 1.6
+    maxVelIncr: 0.1
+    leftJoyAxis: 1
+    rightJoyAxis: 4
+    leftInverted: False
+    rightInverted: False
