@@ -53,7 +53,6 @@ jobs:
   
   uncrustify:
     name: ament_uncrustify
-    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -66,9 +65,8 @@ jobs:
       - name: Run Uncrustify
         shell: bash
         run: |
-          pwd
           source /opt/ros/humble/setup.bash
-          ament_uncrustify -c ament_code_style.cfg --exclude external/
+          ament_uncrustify -c src/urc-software/ament_code_style.cfg --exclude external/
 
   flake8:
     name: flake8
@@ -85,9 +83,8 @@ jobs:
       - name: Run flake8
         shell: bash
         run: |
-          pwd
           source /opt/ros/humble/setup.bash
-          ament_flake8 --exclude external/
+          ament_flake8 --exclude src/urc-software/external/
   
   xmllint:
     name: ament_xmllint
