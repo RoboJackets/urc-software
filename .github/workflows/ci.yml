@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
+    needs: test
     name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
