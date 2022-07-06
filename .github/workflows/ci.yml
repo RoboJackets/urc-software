@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -19,8 +20,42 @@ jobs:
           source /opt/ros/humble/setup.bash
           sudo apt-get update
 
+      - name: Make ${{ github.base_ref }} branch exist
+        run: |
+          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
+          git checkout -
+
       - name: Build
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
           colcon build
+  
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: src/urc-software
+          
+      - name: Update Dependencies
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          sudo apt-get update
+
+      - name: Make ${{ github.base_ref }} branch exist
+        run: |
+          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
+          git checkout -
+
+      - name: Build
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test
