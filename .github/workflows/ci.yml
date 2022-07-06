@@ -1,5 +1,4 @@
-name: Build, Test, Lint
-
+name: CI
 on: [push, pull_request]
 
 jobs:
@@ -48,9 +47,10 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon build
           colcon test
+          colcon test-result --verbose
   
-  uncrustify:
-    name: ament_uncrustify
+  c++_linting:
+    name: C++ Linting
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
@@ -67,8 +67,8 @@ jobs:
           touch external/AMENT_IGNORE
           ament_uncrustify -c ament_code_style.cfg
 
-  flake8:
-    name: flake8
+  python_linting:
+    name: Python Linting
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
@@ -84,8 +84,8 @@ jobs:
           source /opt/ros/humble/setup.bash
           ament_flake8 --exclude external
   
-  xmllint:
-    name: ament_xmllint
+  build_linting:
+    name: Build Linting
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
@@ -100,3 +100,10 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           ament_xmllint --exclude external
+
+      - name: Run ament_lint_cmake
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          touch external/AMENT_IGNORE
+          ament_lint_cmake
