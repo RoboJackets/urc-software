@@ -49,7 +49,7 @@ jobs:
           colcon test
           colcon test-result --verbose
   
-  c++_linting:
+  cpp_linting:
     name: C++ Linting
     needs: build
     runs-on: ubuntu-22.04
