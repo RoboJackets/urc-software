@@ -47,19 +47,19 @@ namespace motor_controller
         double battery_avg_;
 
         // Ethernet socket of server
-        EthernetSocket socket_;
+        std::unique_ptr<EthernetSocket> socket_;
 
         // subscribers
-        rclcpp::Subscription<urc_msgs::msg::VelocityPair> _cmd_sub;
+        rclcpp::Subscription<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_sub;
 
         // publishers
-        rclcpp::Publisher<urc_msgs::msg::VelocityPair> _enc_pub;
-        rclcpp::Publisher<std_msgs::msg::Bool> _enabled_pub;
-        rclcpp::Publisher<std_msgs::msg::Float64> _battery_pub;
+        rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _enc_pub;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr _enabled_pub;
+        rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _battery_pub;
 
         // diagnostics
-        diagnostic_updater::Updater mc_updater_;
-        diagnostic_updater::Updater battery_updater_;
+        std::unique_ptr<diagnostic_updater::Updater> mc_updater_;
+        std::unique_ptr<diagnostic_updater::Updater> battery_updater_;
 
         double mc_hertz = 0;
 

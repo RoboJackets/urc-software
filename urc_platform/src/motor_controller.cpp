@@ -26,7 +26,7 @@ namespace motor_controller
     // Create server socket
     ip_addr_ = declare_parameter<std::string>("ip_addr");
     tcpport_ = declare_parameter<int>("port");
-    socket_ = EthernetSocket(ip_addr_, tcpport_);
+    socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
 
     // Battery variables
     battery_alpha_ = declare_parameter<double>("battery_alpha");
@@ -46,11 +46,11 @@ namespace motor_controller
     watchdog_delay_ = declare_parameter<double>("watchdog_delay");
     log_period_ = declare_parameter<double>("log_period");
 
-    mc_updater_.setHardwareID("Motor Controller");
-    mc_updater_.add("MC Diagnostic", this, &MotorController::mc_diagnostic);
+    mc_updater_->setHardwareID("Motor Controller");
+    mc_updater_->add("MC Diagnostic", this, &MotorController::mc_diagnostic);
 
-    battery_updater_.setHardwareID("Battery Controller");
-    battery_updater_.add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
+    battery_updater_->setHardwareID("Battery Controller");
+    battery_updater_->add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
 
     frequency_ = declare_parameter<double>("frequency");
     rclcpp::Rate rate(frequency_);
@@ -61,8 +61,8 @@ namespace motor_controller
     {
       sendRequest();
       receiveResponse();
-      mc_updater_.update();
-      battery_updater_.update();
+      mc_updater_->update();
+      battery_updater_->update();
       rate.sleep();
     }
   }
@@ -146,17 +146,17 @@ namespace motor_controller
     // Send PID values via ethernet and recieve response to ensure proper setting
     while (rclcpp::ok() && valid_values)
     {
-      (socket_).sendMessage(reinterpret_cast<char *>(requestbuffer), message_length);
+      (socket_)->sendMessage(reinterpret_cast<char *>(requestbuffer), message_length);
 
       memset(buffer, 0, sizeof(buffer));
-      n = (socket_).readMessage(buffer); // blocks until data is read
+      n = (socket_)->readMessage(buffer); // blocks until data is read
 
       if (n == 0)
       {
         RCLCPP_ERROR(this->get_logger(), "Connection closed by server!");
-        mc_updater_.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Connection Closed by "
+        mc_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Connection Closed by "
                                                                         "server.");
-        battery_updater_.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Lost battery "
+        battery_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Lost battery "
                                                                              "tracking.");
         return;
       }
@@ -170,8 +170,8 @@ namespace motor_controller
       if (!status)
       {
         RCLCPP_ERROR(this->get_logger(), "Decoding failure!");
-        mc_updater_.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Shutting Down.");
-        battery_updater_.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Lost battery "
+        mc_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Shutting Down.");
+        battery_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Lost battery "
                                                                              "tracking.");
         return;
       }
@@ -212,7 +212,7 @@ namespace motor_controller
       return;
     }
 
-    (socket_).sendMessage(reinterpret_cast<char *>(requestbuffer), message_length);
+    (socket_)->sendMessage(reinterpret_cast<char *>(requestbuffer), message_length);
   }
 
   void MotorController::receiveResponse()
@@ -221,7 +221,7 @@ namespace motor_controller
     uint8_t buffer[256]; // buffer to read response into
 
     memset(buffer, 0, sizeof(buffer));
-    response = (socket_).readMessage(buffer);
+    response = (socket_)->readMessage(buffer);
 
     if (response == 0)
     {
@@ -250,7 +250,7 @@ namespace motor_controller
     std_msgs::msg::Float64 battery_msg;
     battery_avg_ = (battery_alpha_ * battery_avg_) + ((1 - battery_alpha_) * response.voltage);
     battery_msg.data = battery_avg_;
-    _battery_pub.publish(battery_msg);
+    _battery_pub->publish(battery_msg);
 
     if (battery_avg_ < min_battery_voltage_)
     {
@@ -259,7 +259,7 @@ namespace motor_controller
 
     std_msgs::msg::Bool enabled_msg;
     enabled_msg.data = response.estop;
-    _enabled_pub.publish(enabled_msg);
+    _enabled_pub->publish(enabled_msg);
 
     // publish encoder feedback
     urc_msgs::msg::VelocityPair encoder_msg;
@@ -269,7 +269,7 @@ namespace motor_controller
     encoder_msg.duration = response.dt_sec;
     encoder_msg.header.stamp = rclcpp::Clock().now() - rclcpp::Duration(response.dt_sec);
 
-    _enc_pub.publish(encoder_msg);
+    _enc_pub->publish(encoder_msg);
   }
 }
 
