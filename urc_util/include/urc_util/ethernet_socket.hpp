@@ -15,60 +15,60 @@
 class EthernetSocket
 {
 public:
-    /**
-    Constructor opens the socket using the tcp v4 protocol and binds it to an
-    endpoint. This endpoint is constructed using the specified ip address and
-    port, providing the socket with a unique address.
+  /**
+  Constructor opens the socket using the tcp v4 protocol and binds it to an
+  endpoint. This endpoint is constructed using the specified ip address and
+  port, providing the socket with a unique address.
 
-    @param[in] ip_addr ip address to communicate with
-    @param[in] port port to communicate through
-    @throw std::runtime_error is socket couldn't open or connect
-    */
-    EthernetSocket(std::string ip_addr, int port);
+  @param[in] ip_addr ip address to communicate with
+  @param[in] port port to communicate through
+  @throw std::runtime_error is socket couldn't open or connect
+  */
+  EthernetSocket(std::string ip_addr, int port);
 
-    /**
-    Shut down the socket
-    */
-    ~EthernetSocket();
+  /**
+  Shut down the socket
+  */
+  ~EthernetSocket();
 
-    /**
-    Transmit a std::string to the endpoint
+  /**
+  Transmit a std::string to the endpoint
 
-    @param[in] msg the string to transmit
-    */
-    void sendMessage(char *message, size_t len);
+  @param[in] msg the string to transmit
+  */
+  void sendMessage(char * message, size_t len);
 
-    /**
-    read a message from the TCP connections
+  /**
+  read a message from the TCP connections
 
-    @return a char array of the characters read
-    */
-    size_t readMessage(unsigned char (&buffer)[256]);
+  @return a char array of the characters read
+  */
+  size_t readMessage(unsigned char (& buffer)[256]);
 
-    /**
-    Getter for IP address
+  /**
+  Getter for IP address
 
-    @return ip address as string
-    */
-    std::string getIP();
+  @return ip address as string
+  */
+  std::string getIP();
 
-    /**
-    Getter for port number
+  /**
+  Getter for port number
 
-    @return port as int
-    */
-    int getPort();
+  @return port as int
+  */
+  int getPort();
 
-    /**
-    Get version of boost used by this library
+  /**
+  Get version of boost used by this library
 
-    @return version number in major_version.minor_version.patch_level format
-    */
-    std::string getBoostVersion();
+  @return version number in major_version.minor_version.patch_level format
+  */
+  std::string getBoostVersion();
 
 private:
-    boost::asio::io_service io_service_;                 // provides core io functionality
-    std::unique_ptr<boost::asio::ip::udp::socket> sock_; // udp connection socket
+  boost::asio::io_service io_service_;                   // provides core io functionality
+  std::unique_ptr<boost::asio::ip::udp::socket> sock_;   // udp connection socket
 };
 
 #endif
