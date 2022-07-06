@@ -23,4 +23,4 @@ COPY . /colcon_ws/src/urc-software
 
 # Install all ROS dependencies that can automatically be installed
 WORKDIR /colcon_ws/src/urc-software
-#RUN /bin/bash -c /colcon_ws/src/urc-software/install_dependencies.sh
+RUN /bin/bash -c /colcon_ws/src/urc-software/install_dependencies.sh

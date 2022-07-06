@@ -1,2 +1,4 @@
+#!/bin/bash
+
 rosdep update
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install -iy --from-paths ../../src
