@@ -44,8 +44,9 @@ jobs:
           source /opt/ros/humble/setup.bash
           sudo apt-get update
 
-      - name: Build
+      - name: Colcon Test
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
+          colcon build
           colcon test
