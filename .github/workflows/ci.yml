@@ -12,7 +12,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-software
           
       - name: Update Dependencies
         shell: bash
@@ -28,7 +27,7 @@ jobs:
   
   test:
     name: Test
-    needs: build
+    # needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -36,7 +35,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-software
           
       - name: Update Dependencies
         shell: bash
@@ -53,7 +51,7 @@ jobs:
   
   uncrustify:
     name: ament_uncrustify
-    needs: build
+    # needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -61,17 +59,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-software
 
       - name: Run Uncrustify
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
-          ament_uncrustify -c src/urc-software/ament_code_style.cfg --exclude src/urc-software/external/
+          ament_uncrustify -c ament_code_style.cfg --exclude external/
 
   flake8:
     name: flake8
-    needs: build
+    # needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -79,17 +76,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-software
 
       - name: Run flake8
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
-          ament_flake8 --exclude src/urc-software/external/
+          ament_flake8 --exclude external/
   
   xmllint:
     name: ament_xmllint
-    needs: build
+    # needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -97,10 +93,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-software
 
       - name: Run xmllint
         shell: bash
         run: |
+          pwd
+          ls
           source /opt/ros/humble/setup.bash
           ament_xmllint --exclude external/
