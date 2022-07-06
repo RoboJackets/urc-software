@@ -20,11 +20,6 @@ jobs:
           source /opt/ros/humble/setup.bash
           sudo apt-get update
 
-      - name: Make ${{ github.base_ref }} branch exist
-        run: |
-          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
-          git checkout -
-
       - name: Build
         shell: bash
         run: |
@@ -48,11 +43,6 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-
-      - name: Make ${{ github.base_ref }} branch exist
-        run: |
-          git checkout -b ${{ github.base_ref }} --track origin/${{ github.base_ref }}
-          git checkout -
 
       - name: Build
         shell: bash
