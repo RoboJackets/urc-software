@@ -61,8 +61,8 @@ namespace motor_controller
     {
       sendRequest();
       receiveResponse();
-      mc_updater_->update();
-      battery_updater_->update();
+      mc_updater_->force_update();
+      battery_updater_->force_update();
       rate.sleep();
     }
   }
@@ -75,7 +75,7 @@ namespace motor_controller
 
   void MotorController::mc_diagnostic(diagnostic_updater::DiagnosticStatusWrapper &stat)
   {
-    stat.summary(diagnostic_msgs::DiagnosticStatus::OK, "Motor Controller Online");
+    stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Motor Controller Online");
     stat.add("Motor Controller Publishing Frequency ", std::to_string(mc_hertz) + " Hz");
   }
 
@@ -83,15 +83,15 @@ namespace motor_controller
   {
     if (battery_avg_ < min_battery_voltage_)
     {
-      stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "Battery voltage dangerously low");
+      stat.summary(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "Battery voltage dangerously low");
     }
     else if (battery_avg_ < (min_battery_voltage_ + 0.25))
     {
-      stat.summary(diagnostic_msgs::DiagnosticStatus::WARN, "Battery voltage low");
+      stat.summary(diagnostic_msgs::msg::DiagnosticStatus::WARN, "Battery voltage low");
     }
     else
     {
-      stat.summary(diagnostic_msgs::DiagnosticStatus::OK, "Battery voltage okay");
+      stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Battery voltage okay");
     }
     stat.add("battery voltage", battery_avg_);
   }
@@ -136,11 +136,11 @@ namespace motor_controller
 
     if (!status)
     {
-      RCLCPP_ERROR(this->get_logger(), "Encoding Failed: \n%s", PB_GET_ERROR(&ostream))
+      RCLCPP_ERROR(this->get_logger(), "Encoding Failed: \n%s", PB_GET_ERROR(&ostream));
       return;
     }
 
-    size_t response;     // Socket response: 0 means connection closed, otherwise n = num bytes read
+    size_t bytes_read;     // Socket response: 0 means connection closed, otherwise n = num bytes read
     uint8_t buffer[256]; // buffer to read response into
 
     // Send PID values via ethernet and recieve response to ensure proper setting
@@ -149,37 +149,37 @@ namespace motor_controller
       (socket_)->sendMessage(reinterpret_cast<char *>(requestbuffer), message_length);
 
       memset(buffer, 0, sizeof(buffer));
-      n = (socket_)->readMessage(buffer); // blocks until data is read
+      bytes_read = (socket_)->readMessage(buffer); // blocks until data is read
 
-      if (n == 0)
+      if (bytes_read == 0)
       {
         RCLCPP_ERROR(this->get_logger(), "Connection closed by server!");
-        mc_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Connection Closed by "
+        mc_updater_->broadcast(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "Failed to send PID. Connection Closed by "
                                                                         "server.");
-        battery_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "Failed to send PID. Lost battery "
+        battery_updater_->broadcast(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "Failed to send PID. Lost battery "
                                                                              "tracking.");
         return;
       }
 
       // Decoding message
-      ResponseMessage response = ResponseMessage_init_zero;
-      pb_istream_t istream = pb_istream_from_buffer(buffer, n);
-      status = pb_decode(&istream, ResponseMessage_fields, &response);
+      ResponseMessage response_msg = ResponseMessage_init_zero;
+      pb_istream_t istream = pb_istream_from_buffer(buffer, bytes_read);
+      status = pb_decode(&istream, ResponseMessage_fields, &response_msg);
 
       /* check for any errors.. */
       if (!status)
       {
         RCLCPP_ERROR(this->get_logger(), "Decoding failure!");
-        mc_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Shutting Down.");
-        battery_updater_->broadcast(diagnostic_msgs::DiagnosticStatus::ERROR, "PID decoding failed. Lost battery "
+        mc_updater_->broadcast(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "PID decoding failed. Shutting Down.");
+        battery_updater_->broadcast(diagnostic_msgs::msg::DiagnosticStatus::ERROR, "PID decoding failed. Lost battery "
                                                                              "tracking.");
         return;
       }
 
-      valid_values = (response.p_l == static_cast<float>(p_l_)) && (response.p_r == static_cast<float>(p_r_)) &&
-                     (response.i_l == static_cast<float>(i_l_)) && (response.i_r == static_cast<float>(i_r_)) &&
-                     (response.d_l == static_cast<float>(d_l_)) && (response.d_r == static_cast<float>(d_r_)) &&
-                     (response.kv_l == static_cast<float>(kv_l_)) && (response.kv_r == static_cast<float>(kv_r_));
+      valid_values = (response_msg.p_l == static_cast<float>(p_l_)) && (response_msg.p_r == static_cast<float>(p_r_)) &&
+                     (response_msg.i_l == static_cast<float>(i_l_)) && (response_msg.i_r == static_cast<float>(i_r_)) &&
+                     (response_msg.d_l == static_cast<float>(d_l_)) && (response_msg.d_r == static_cast<float>(d_r_)) &&
+                     (response_msg.kv_l == static_cast<float>(kv_l_)) && (response_msg.kv_r == static_cast<float>(kv_r_));
 
       rate.sleep();
     }
@@ -208,7 +208,7 @@ namespace motor_controller
 
     if (!status)
     {
-      RCLCPP_ERROR(this->get_logger(), "Encoding Failed: \n%s", PB_GET_ERROR(&ostream))
+      RCLCPP_ERROR(this->get_logger(), "Encoding Failed: \n%s", PB_GET_ERROR(&ostream));
       return;
     }
 
@@ -217,31 +217,31 @@ namespace motor_controller
 
   void MotorController::receiveResponse()
   {
-    size_t response;     // Socket response: 0 means connection closed, otherwise n = num bytes read
+    size_t bytes_read;     // Socket response: 0 means connection closed, otherwise n = num bytes read
     uint8_t buffer[256]; // buffer to read response into
 
     memset(buffer, 0, sizeof(buffer));
-    response = (socket_)->readMessage(buffer);
+    bytes_read = (socket_)->readMessage(buffer);
 
-    if (response == 0)
+    if (bytes_read == 0)
     {
-      RCLCPP_ERROR(this->get_logger(), "Connection Closed by Server!")
+      RCLCPP_ERROR(this->get_logger(), "Connection Closed by Server!");
       return;
     }
 
     // Empty message where the decoded buffer will be stored
-    ResponseMessage response = ResponseMessage_init_zero;
+    ResponseMessage response_msg = ResponseMessage_init_zero;
 
-    pb_istream_t istream = pb_istream_from_buffer(buffer, n);
-    bool status = pb_decode(&istream, ResponseMessage_fields, &response);
+    pb_istream_t istream = pb_istream_from_buffer(buffer, bytes_read);
+    bool status = pb_decode(&istream, ResponseMessage_fields, &response_msg);
 
     if (!status)
     {
-      RCLCPP_ERROR(this->get_logger(), "Decoding Failed: \n%s", PB_GET_ERROR(&istream))
+      RCLCPP_ERROR(this->get_logger(), "Decoding Failed: \n%s", PB_GET_ERROR(&istream));
       return;
     }
 
-    publishResponse(response);
+    publishResponse(response_msg);
   }
 
   void MotorController::publishResponse(const ResponseMessage &response)
@@ -254,7 +254,7 @@ namespace motor_controller
 
     if (battery_avg_ < min_battery_voltage_)
     {
-      RCLCPP_ERROR(this->get_logger(), "Battery voltage dangerously low at %f!", battery_avg_)
+      RCLCPP_ERROR(this->get_logger(), "Battery voltage dangerously low at %f!", battery_avg_);
     }
 
     std_msgs::msg::Bool enabled_msg;
@@ -267,7 +267,7 @@ namespace motor_controller
     encoder_msg.left_velocity = response.speed_l;
     encoder_msg.right_velocity = response.speed_r;
     encoder_msg.duration = response.dt_sec;
-    encoder_msg.header.stamp = rclcpp::Clock().now() - rclcpp::Duration(response.dt_sec);
+    encoder_msg.header.stamp = this->get_clock()->now() - rclcpp::Duration::from_seconds(response.dt_sec);
 
     _enc_pub->publish(encoder_msg);
   }
