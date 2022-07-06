@@ -32,7 +32,7 @@ add_library(${PROJECT_NAME} SHARED
   ${PROTO_GENERATED_SRCS}
 )
 
-target_include_directories(${PROJECT_NAME} 
+target_include_directories(${PROJECT_NAME}
   PUBLIC
     ${NANOPB_INCLUDE_DIRS}
   INTERFACE
@@ -66,5 +66,5 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-  
+
 ament_package()
