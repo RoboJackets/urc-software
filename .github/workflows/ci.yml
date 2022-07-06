@@ -50,3 +50,21 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon build
           colcon test
+  
+  style:
+    name: Style
+    needs: build
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: src/urc-software
+
+      - name: Run Uncrustify
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          ament_uncrustify -c ament_code_style.cfg
