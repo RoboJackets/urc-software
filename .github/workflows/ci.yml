@@ -52,7 +52,7 @@ jobs:
           colcon test
   
   uncrustify:
-    name: Run ament_uncrustify
+    name: ament_uncrustify
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
@@ -66,11 +66,12 @@ jobs:
       - name: Run Uncrustify
         shell: bash
         run: |
+          pwd
           source /opt/ros/humble/setup.bash
           ament_uncrustify -c ament_code_style.cfg --exclude external/
 
   flake8:
-    name: Run ament_flake8
+    name: flake8
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
@@ -84,11 +85,12 @@ jobs:
       - name: Run flake8
         shell: bash
         run: |
+          pwd
           source /opt/ros/humble/setup.bash
           ament_flake8 --exclude external/
   
   xmllint:
-    name: Run ament_xmllint
+    name: ament_xmllint
     needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
