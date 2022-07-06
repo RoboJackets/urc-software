@@ -64,7 +64,8 @@ jobs:
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
-          ament_uncrustify -c ament_code_style.cfg --exclude external
+          touch external/AMENT_IGNORE
+          ament_uncrustify -c ament_code_style.cfg
 
   flake8:
     name: flake8
