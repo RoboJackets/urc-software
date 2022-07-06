@@ -27,7 +27,7 @@ jobs:
   
   test:
     name: Test
-    # needs: build
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -51,7 +51,7 @@ jobs:
   
   uncrustify:
     name: ament_uncrustify
-    # needs: build
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -69,7 +69,7 @@ jobs:
 
   flake8:
     name: flake8
-    # needs: build
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -86,7 +86,7 @@ jobs:
   
   xmllint:
     name: ament_xmllint
-    # needs: build
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
