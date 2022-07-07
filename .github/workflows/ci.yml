@@ -18,11 +18,12 @@ jobs:
           
       - name: Update Dependencies
         shell: bash
+        working-directory: urc-software
         run: |
           ls
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-          bash colcon_ws/src/urc-software/install_dependencies.sh
+          bash install_dependencies.sh
 
       - name: Build
         shell: bash
