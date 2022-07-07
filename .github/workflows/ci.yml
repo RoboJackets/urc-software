@@ -27,6 +27,7 @@ jobs:
         working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
+          . install/setup.bash
           colcon build
   
   test:
