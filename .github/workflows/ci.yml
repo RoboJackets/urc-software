@@ -1,20 +1,20 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+  pull request:
+    types: [opened, reopened]
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
-    defaults:
-      run:
-        working-directory: colcon_ws
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          path: src/urc-sofware
+          path: colcon_ws/src/urc-sofware
           
       - name: Update Dependencies
         shell: bash
@@ -24,6 +24,7 @@ jobs:
 
       - name: Build
         shell: bash
+        working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
           colcon build
