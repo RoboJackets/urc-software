@@ -30,14 +30,7 @@ jobs:
           sudo apt-get install python3-protobuf
           colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
-          colcon build
-
-      - name: Colcon Test
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          colcon test
-          colcon test-result --verbose
+          colcon build && colcon test && colcon test-result --verbose
   
   cpp_linting:
     name: C++ Linting
