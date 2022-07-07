@@ -71,7 +71,7 @@ jobs:
 
       - name: Run Uncrustify
         shell: bash
-        working-directory: colcon_ws/src/urc_software
+        working-directory: urc_software
         run: |
           source /opt/ros/humble/setup.bash
           touch external/AMENT_IGNORE
