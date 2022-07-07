@@ -5,8 +5,8 @@ on:
     types: [opened, reopened]
 
 jobs:
-  buildAndTest:
-    name: Build and Test
+  build:
+    name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -30,8 +30,34 @@ jobs:
           sudo apt-get install python3-protobuf
           colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
-          colcon build && colcon test && colcon test-result --verbose
+          colcon build
   
+  test:
+    name: Test
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: colcon_ws/src/urc-sofware
+          
+      - name: Update Dependencies
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          sudo apt-get update
+
+      - name: Colcon Test
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          sudo apt-get install python3-protobuf
+          colcon build --packages-select nanopb urc_nanopb
+          . install/setup.bash
+          colcon build && colcon test && colcon test-result --verbose
+
   cpp_linting:
     name: C++ Linting
     runs-on: ubuntu-22.04
@@ -45,6 +71,7 @@ jobs:
 
       - name: Run Uncrustify
         shell: bash
+        working-directory: colcon_ws/src/urc_software
         run: |
           source /opt/ros/humble/setup.bash
           touch external/AMENT_IGNORE
