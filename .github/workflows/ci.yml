@@ -19,9 +19,10 @@ jobs:
       - name: Update Dependencies
         shell: bash
         run: |
+          ls
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-          bash install_dependencies.sh
+          bash urc-software/install_dependencies.sh
 
       - name: Build
         shell: bash
