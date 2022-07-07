@@ -22,7 +22,7 @@ jobs:
           ls
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-          bash urc-software/install_dependencies.sh
+          bash colcon_ws/src/urc-software/install_dependencies.sh
 
       - name: Build
         shell: bash
