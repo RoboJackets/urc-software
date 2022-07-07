@@ -107,20 +107,3 @@ jobs:
           source /opt/ros/humble/setup.bash
           touch external/AMENT_IGNORE
           ament_lint_cmake
-
-  gazebo_testing:
-    name: Gazebo Testing
-    needs: build
-    runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Launch gazebo
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          ros2 launch urc_gazebo simulation.launch.py
