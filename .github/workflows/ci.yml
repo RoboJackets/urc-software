@@ -27,6 +27,7 @@ jobs:
         working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
+          sudo apt-get install python3-protobuf
           colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
           colcon build
