@@ -6,11 +6,15 @@ jobs:
     name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
+    defaults:
+      run:
+        working-directory: colcon_ws
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
           submodules: recursive
+          path: src/urc-sofware
           
       - name: Update Dependencies
         shell: bash
