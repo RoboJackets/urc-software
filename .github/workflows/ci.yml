@@ -18,7 +18,7 @@ jobs:
           
       - name: Update Dependencies
         shell: bash
-        working-directory: urc-software
+        working-directory: colcon_ws/src/urc-sofware
         run: |
           ls
           source /opt/ros/humble/setup.bash
