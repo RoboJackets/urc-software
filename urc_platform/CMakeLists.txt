@@ -23,6 +23,8 @@ find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
+find_package(urc_nanopb REQUIRED)
+find_package(urc_util REQUIRED)
 
 include_directories(
   include
@@ -30,8 +32,8 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
+  src/motor_controller.cpp
   src/joystick_driver.cpp
-  #add more .cpp files here
 )
 
 set(dependencies
@@ -41,14 +43,21 @@ set(dependencies
   std_msgs
   sensor_msgs
   diagnostic_updater
+  urc_nanopb
+  urc_util
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
-
 # Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "motor_controller::MotorController"
+  EXECUTABLE ${PROJECT_NAME}_MotorController
+)
+
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"
@@ -73,8 +82,10 @@ install(TARGETS
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
+
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
 
@@ -82,7 +93,6 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(msg)
-add_subdirectory(nanopb)
 
 ament_export_include_directories(include)
 
