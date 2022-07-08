@@ -34,6 +34,7 @@ jobs:
   
   test:
     name: Test
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -60,6 +61,7 @@ jobs:
 
   cpp_linting:
     name: C++ Linting
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -73,12 +75,12 @@ jobs:
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
-          ls
           touch external/AMENT_IGNORE
           ament_uncrustify -c ament_code_style.cfg
 
   python_linting:
     name: Python Linting
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -96,6 +98,7 @@ jobs:
   
   build_linting:
     name: Build Linting
+    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
