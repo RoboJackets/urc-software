@@ -61,7 +61,6 @@ jobs:
 
   cpp_linting:
     name: C++ Linting
-    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -80,7 +79,6 @@ jobs:
 
   python_linting:
     name: Python Linting
-    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
@@ -98,7 +96,6 @@ jobs:
   
   build_linting:
     name: Build Linting
-    needs: build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
     steps:
