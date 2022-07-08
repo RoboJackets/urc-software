@@ -73,8 +73,8 @@ jobs:
         shell: bash
         run: |
           source /opt/ros/humble/setup.bash
-          cd external
-          touch AMENT_IGNORE
+          ls
+          touch external/AMENT_IGNORE
           ament_uncrustify -c ament_code_style.cfg
 
   python_linting:
