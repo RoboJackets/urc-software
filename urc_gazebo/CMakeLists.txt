@@ -35,6 +35,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
+  src/control.cpp
   #add more .cpp files here
 )
 
@@ -60,6 +61,13 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "scan_to_pointcloud::ScanToPointCloud"
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
+)
+
+# Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "control::Control"
+  EXECUTABLE ${PROJECT_NAME}_Control
 )
 
 # Install robot spawn file.
