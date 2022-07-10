@@ -47,14 +47,30 @@ def generate_launch_description():
             ]
         )
 
-    # control = Node(
-    #        package='urc_gazebo',
-    #        executable='urc_gazebo_Control',
-    #        output='screen',
-    #        parameters=[
-    #            parameters_file_path
-    #        ]
-    #    )
+    control = Node(
+            package='urc_gazebo',
+            executable='urc_gazebo_Control',
+            output='screen',
+            parameters=[
+                parameters_file_path
+            ],
+            remappings=[
+                ("/control/right_wheel_shock_controller/command",
+                    "/right_wheel_shock_controller/command"),
+                ("/control/left_wheel_shock_controller/command",
+                    "/left_wheel_shock_controller/command"),
+
+                ("/control/right_wheel_effort_controller/command",
+                    "/right_wheel_effort_controller/command"),
+                ("/control/left_wheel_effort_controller/command",
+                    "/left_wheel_effort_controller/command"),
+
+                ("/control/robot_enabled", "/robot_enabled"),
+                ("/control/encoders", "/encoders"),
+                ("/control/motors", "/motors"),
+                ("/control/joint_states", "/joint_states")
+            ]
+        )
 
     # magnetometer = Node(
     #            package='urc_gazebo',
@@ -87,7 +103,7 @@ def generate_launch_description():
         gazebo,
         wallii,
         scan_to_pointcloud,
-        # control
+        control
         # magnetometer
         # ground_truth
         # sim_color_detector

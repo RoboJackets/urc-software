@@ -35,7 +35,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
-  #add more .cpp files here
+  src/control.cpp
 )
 
 set(dependencies
@@ -55,11 +55,23 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "scan_to_pointcloud::ScanToPointCloud"
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "control::Control"
+  EXECUTABLE ${PROJECT_NAME}_Control
 )
 
 # Install robot spawn file.
@@ -77,7 +89,6 @@ install(
   config
   DESTINATION share/${PROJECT_NAME}/
 )
-
 
 # Install library
 install(TARGETS
@@ -100,6 +111,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
+
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
