@@ -51,6 +51,10 @@ set(dependencies
   velodyne_simulator
 )
 
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
 target_include_directories(${PROJECT_NAME}
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -70,11 +74,6 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_Control
 )
 
-ament_export_include_directories(include)
-ament_target_dependencies(${PROJECT_NAME} ${dependencies})
-ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(${dependencies})
-
 # Install robot spawn file.
 install(
   PROGRAMS
@@ -90,7 +89,6 @@ install(
   config
   DESTINATION share/${PROJECT_NAME}/
 )
-
 
 # Install library
 install(TARGETS
@@ -111,5 +109,10 @@ if(BUILD_TESTING)
 
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_export_include_directories(include)
+
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(${dependencies})
 
 ament_package()
