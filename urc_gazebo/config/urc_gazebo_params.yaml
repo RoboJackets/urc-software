@@ -15,7 +15,7 @@ control:
     speed_I_right: 0.0
     wheel_radius: 0.3
     max_effort: 4.0
-    rate: 60.0
+    rate_var: 60.0
 
 magnetometer:
   ros_parameters:

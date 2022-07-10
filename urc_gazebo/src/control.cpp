@@ -1,37 +1,10 @@
-#include "include/control.hpp"
+#include "control.hpp"
 
 namespace control
 {
 Control::Control(const rclcpp::NodeOptions & options)
 : rclcpp::Node("motor_controller", options)
 {
-    //left wheel pubs
-    left_wheel_effort_publisher = create_publisher<std_msgs::Float64>(
-        "~/left_wheel_effort_controller/command",
-        rclcpp::SystemDefaultsQoS());
-    right_wheel_effort_publisher = create_publisher<std_msgs::Float64>(
-        "~/right_wheel_effort_controller/command",
-        rclcpp::SystemDefaultsQoS());
-
-    //right wheel pubs
-    right_wheel_shock_publisher = create_publisher<std_msgs::Float64>(
-        "~/right_wheel_shock_controller/command",
-        rclcpp::SystemDefaultsQoS());
-    left_wheel_shock_publisher = create_publisher<std_msgs::Float64>(
-        "~/left_wheel_shock_controller/command",
-        rclcpp::SystemDefaultsQoS());
-
-    //wheel speed pub
-    wheel_speed_publisher = create_publisher<urc_msgs::msg::VelocityPair>(
-        "~/encoders",
-        rclcpp::SystemDefaultsQoS());
-
-    //Indicates the robot is running
-    enabled_pub = create_publisher<std_msgs::Bool>(
-        "~/robot_enabled",
-        rclcpp::SystemDefaultsQoS());
-    enabledCheck();
-
     speed_P_left = declare_parameter<double>("speed_P_left");
     speed_P_right = declare_parameter<double>("speed_P_right");
     speed_D_left = declare_parameter<double>("speed_D_left");
@@ -40,7 +13,36 @@ Control::Control(const rclcpp::NodeOptions & options)
     speed_I_right = declare_parameter<double>("speed_I_right");
     wheel_radius = declare_parameter<double>("wheel_radius");
     max_effort = declare_parameter<double>("max_effort");
-    rate = declare_parameter<double>("rate");
+    rate_var = declare_parameter<double>("rate_var");
+    
+    //Initialize shocks
+    right_wheel_shock_publisher = create_publisher<std_msgs::msg::Float64>(
+        "~/right_wheel_shock_controller/command",
+        rclcpp::SystemDefaultsQoS());
+    left_wheel_shock_publisher = create_publisher<std_msgs::msg::Float64>(
+        "~/left_wheel_shock_controller/command",
+        rclcpp::SystemDefaultsQoS());
+    setShockPoint();
+
+    //Indicates the robot is running
+    enabled_pub = create_publisher<std_msgs::msg::Bool>(
+        "~/robot_enabled",
+        rclcpp::SystemDefaultsQoS());
+    indicateEnabled();
+
+
+    //wheel effort pubs
+    left_wheel_effort_publisher = create_publisher<std_msgs::msg::Float64>(
+        "~/left_wheel_effort_controller/command",
+        rclcpp::SystemDefaultsQoS());
+    right_wheel_effort_publisher = create_publisher<std_msgs::msg::Float64>(
+        "~/right_wheel_effort_controller/command",
+        rclcpp::SystemDefaultsQoS());
+
+    //wheel speed pub
+    wheel_speed_publisher = create_publisher<urc_msgs::msg::VelocityPair>(
+        "~/encoders",
+        rclcpp::SystemDefaultsQoS());
 
     //speed and state subs
     speed_sub = create_subscription<urc_msgs::msg::VelocityPair>(
@@ -55,7 +57,7 @@ Control::Control(const rclcpp::NodeOptions & options)
     runPID();
 }
 
-void Control::speedCallback(const urc_msgs::velocity_pair &msg)
+void Control::speedCallback(const urc_msgs::msg::VelocityPair &msg)
 {
     speed_set_point_left = msg.left_velocity;
     speed_set_point_right = msg.right_velocity;
@@ -76,60 +78,77 @@ void Control::jointStateCallback(const sensor_msgs::msg::JointState &msg)
     }
 }
 
+void Control::setShockPoint()
+{
+    std_msgs::msg::Float64 shock_set_point;
+    shock_set_point.data = 0.0;
+    right_wheel_shock_publisher->publish(shock_set_point);
+    left_wheel_shock_publisher->publish(shock_set_point);
+}
+
 void Control::indicateEnabled()
 {
-    std_msgs::Bool enabled_msg;
+    std_msgs::msg::Bool enabled_msg;
     enabled_msg.data = true;
-    enabled_pub.publish(enabled_msg);
+    enabled_pub->publish(enabled_msg);
 }
 
 void Control::runPID()
 {
-    prev_time = rclcpp::Time::now();
-    ros::Rate{rate_var};
+    prev_time = this->get_clock()->now();
+    rclcpp::Rate rate(rate_var);
 
     while (rclcpp::ok())
     {
-        current_time = rclcpp::Time::now();
-        double dt = current_time.toSec() - prev_time.toSec();
+        //calculate downtime
+        current_time = this->get_clock()->now();
+        double downtime = current_time.seconds() - prev_time.seconds();
         prev_time = current_time;
 
+        //calculate left wheel effort
         double error_left = speed_set_point_left - speed_measured_left;
-        double dError_left = (error_left - speed_last_error_left) / dt;
+        double dError_left = (error_left - speed_last_error_left) / downtime;
         speed_left_error_accum += error_left;
         speed_last_error_left = error_left;
 
-        effort_left += speed_P_left * error_left + speed_D_left * dError_left + speed_I_left * speed_left_error_accum;
+        effort_left += 
+            speed_P_left * error_left + speed_D_left * dError_left + speed_I_left * speed_left_error_accum;
 
+        //calculator right wheel effort
         double error_right = speed_set_point_right - speed_measured_right;
-        double dError_right = (error_right - speed_last_error_right) / dt;
+        double dError_right = (error_right - speed_last_error_right) / downtime;
         speed_right_error_accum += error_right;
         speed_last_error_right = error_right;
 
         effort_right +=
             speed_P_right * error_right + speed_D_right * dError_right + speed_I_right * speed_right_error_accum;
 
+
+        //reasonable bounds for effort
         effort_right = std::min(max_effort, std::max(-max_effort, effort_right));
         effort_left = std::min(max_effort, std::max(-max_effort, effort_left));
 
-        std_msgs::Float64 left_wheel_message;
-        std_msgs::Float64 right_wheel_message;
+        //publication of effort messages
+        std_msgs::msg::Float64 left_wheel_message;
+        std_msgs::msg::Float64 right_wheel_message;
 
         left_wheel_message.data = effort_left;
         right_wheel_message.data = effort_right;
 
-        left_wheel_effort_publisher.publish(left_wheel_message);
-        right_wheel_effort_publisher.publish(right_wheel_message);
-        igvc_msgs::velocity_pair speed_measured;
+        left_wheel_effort_publisher->publish(left_wheel_message);
+        right_wheel_effort_publisher->publish(right_wheel_message);
+
+        urc_msgs::msg::VelocityPair speed_measured;
         speed_measured.left_velocity = speed_measured_left;
         speed_measured.right_velocity = speed_measured_right;
-        now = rclcpp::Time::now();
-        rclcpp::Duration duration = now - prev;
-        speed_measured.duration = duration.toSec();
-        speed_measured.header.stamp = ros::Time::now();
-        wheel_speed_publisher.publish(speed_measured);
+        current_time = this->get_clock()->now();
+        rclcpp::Duration duration = current_time - prev_time;
+        speed_measured.duration = duration.seconds();
+        speed_measured.header.stamp = this->get_clock()->now();
+        wheel_speed_publisher->publish(speed_measured);
+
         rate.sleep();
-        prev = now;
+        prev_time = current_time;
     }
 }
 
