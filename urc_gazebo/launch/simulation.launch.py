@@ -46,7 +46,6 @@ def generate_launch_description():
                 ("/scan_to_pointcloud/scan", "/scan")
             ]
         )
-
     control = Node(
             package='urc_gazebo',
             executable='urc_gazebo_Control',

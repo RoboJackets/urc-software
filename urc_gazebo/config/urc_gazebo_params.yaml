@@ -22,7 +22,12 @@ magnetometer:
 
 ground_truth:
   ros_parameters:
-
+    x_noise_std_dev: 0.0
+    y_noise_std_dev: 0.0
+    z_noise_std_dev: 0.0
+    roll_noise_std_dev: 0.0
+    pitch_noise_std_dev: 0.0
+    yaw_noise_std_dev: 0.0
 sim_color_detector:
   ros_parameters:
 
