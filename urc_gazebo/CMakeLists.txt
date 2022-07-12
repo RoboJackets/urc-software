@@ -74,6 +74,12 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_Control
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "ground_truth::GroundTruth"
+  EXECUTABLE ${PROJECT_NAME}_GroundTruth
+)
+
 # Install robot spawn file.
 install(
   PROGRAMS
