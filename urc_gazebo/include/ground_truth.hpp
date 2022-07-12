@@ -13,20 +13,33 @@
 
 namespace ground_truth
 {
-class GroundTruth : public rclcpp::Node
-{
-public:
-  explicit Ground_truth();
+  class GroundTruth : public rclcpp::Node
+  {
+  public:
+    explicit Ground_truth();
 
-private:
-  rclcppp::Subscription<>::SharedPtr _ground_truth_sub;
-  rclcpp::Publisher<>::SharedPtr _ground_truth_pub;
-   
-  void groundTruthCallback(const nav_msgs::Odometry::ConstPtr& msg);
-  void odomCallback(const nav_msgs::Odometry::ConstPtr& msg); 
-  void utmCallback(const ros::TimerEvent& event, const tf::Transform& odom_to_utm);
+  private:
+    nav_msgs::Odometry _og_pose;
+    ros::Time _last_estimate;
 
-};
+    rclcppp::Subscription<nav_msgs::Odometry>::SharedPtr _ground_truth_sub;
+    rclcpp::Subscription<nav_msgs::Odometry>::SharedPtr _estimate_sub;
+    rclcpp::Publisher<nav_msgs::Odometry>::SharedPtr _ground_truth_pub;
+
+    // TODO set this as a launch file parameter
+    double longitude = -84.405001;
+    double latitude = 33.774497;
+
+    double utm_x, utm_y;
+
+    tf::Transform utm_to_odom;
+
+    ros::Timer utm_timer;
+
+    void groundTruthCallback(const nav_msgs::Odometry::ConstPtr &msg);
+    void odomCallback(const nav_msgs::Odometry::ConstPtr &msg);
+    void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
+  };
 } // namespace ground_truth
 
 #endif
