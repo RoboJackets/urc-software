@@ -7,7 +7,7 @@ def generate_launch_description():
         name="rosbridge",
         executable="rosbridge_websocket.py",
         parameters=[
-            {"port" : 8080}
+            {"port" : 9090}
         ]
     )
 
