@@ -17,10 +17,10 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rosbridge_suite REQUIRED)
+find_package(rosbridge_server REQUIRED)
 
 set(dependencies
-  rosbridge_suite
+  rosbridge_server
 )
 
 # Install launch files.
