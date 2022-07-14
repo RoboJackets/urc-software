@@ -1,5 +1,3 @@
-import * as ROSLIB from 'http://static.robotwebtools.org/roslibjs/current/roslib.min.js';
-
 // Joystick publication
 // --------------------
 
