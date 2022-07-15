@@ -11,10 +11,10 @@ function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
         axes: [
             0.0,
-            gamepad[0].axes[0],
+            gamepad.axes[1],
             0.0,
             0.0,
-            gamepad[0].axes[0]
+            gamepad.axes[3]
         ],
         buttons: [
             gamepad.buttons[0],
@@ -28,7 +28,7 @@ function publishMovementInput(gamepad) {
 }
 
 
-// Controller functionality
+// Controller/Joystick functionality
 // -----------------------
 
 window.addEventListener("gamepadconnected", event => {
@@ -46,26 +46,31 @@ const joystickDisplay = document.getElementById('joystick-display');
 setInterval(function() {
     var gamepad_list = navigator.getGamepads();
     
-    // controller
+    // controller (rover movement)
     if (gamepad_list[0]) {
         const gamepadState = {
             id : gamepad_list[0].id,
             axes: [
-                gamepad_list[0].axes[0].toFixed(2),
-                gamepad_list[0].axes[1].toFixed(2),
-                gamepad_list[0].axes[2].toFixed(2),
-                gamepad_list[0].axes[3].toFixed(2)
+                //left stick
+                gamepad_list[0].axes[0].toFixed(2), // -1 left, 1 right
+                gamepad_list[0].axes[1].toFixed(2),  // -1 up, 1 down
+
+                //right stick
+                gamepad_list[0].axes[2].toFixed(2), // -1 left, 1 right
+                gamepad_list[0].axes[3].toFixed(2)  // -1 up, 1 down
             ],
             buttons: [
                 { button_0 : gamepad_list[0].buttons[0].pressed },
-                { button_1 : gamepad_list[0].buttons[1].pressed },
+                { button_1 : gamepad_list[0].buttons[1].pressed }, // increase vel
                 { button_2 : gamepad_list[0].buttons[2].pressed },
-                { button_3 : gamepad_list[0].buttons[3].pressed }
+                { button_3 : gamepad_list[0].buttons[3].pressed }  // decrease vel
             ]
         }
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
         publishMovementInput(gamepad_list[0]);
     }
+    
+    // joystick (arm movement)
     if (gamepad_list[1]) {
         const joystickState = {
             id : gamepad_list[1].id,
