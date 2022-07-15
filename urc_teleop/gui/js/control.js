@@ -7,7 +7,7 @@ const joy_publisher = new ROSLIB.Topic({
   messageType : 'sensor_msgs/msg/Joy'
 });
 
-function publishInput(gamepad) {
+function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
         axes: [
             0.0,
@@ -42,6 +42,7 @@ window.addEventListener("gamepaddisconnected", event => {
 });
 
 const gamepadDisplay = document.getElementById('gamepad-display');
+const joystickDisplay = document.getElementById('joystick-display');
 setInterval(function() {
     var gamepad_list = navigator.getGamepads();
     
@@ -63,6 +64,19 @@ setInterval(function() {
             ]
         }
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
-        publishInput(gamepad_list[0])
+        publishMovementInput(gamepad_list[0]);
+    }
+    if (gamepad_list[1]) {
+        const joystickState = {
+            id : gamepads[1].id,
+            axes: [
+                gamepads[1].axes[0].toFixed(2)
+            ],
+            buttons: [
+                { button_0 : gamepads[1].buttons[0].pressed }
+            ]
+        }
+        joystickDisplay.textContent = JSON.stringify(joystickState, null, 2);
+        //publishArmInput(gamepad_list[1])
     }
 }, 17)
