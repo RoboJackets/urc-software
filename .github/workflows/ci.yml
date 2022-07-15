@@ -28,7 +28,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get install python3-protobuf
-          colcon build --packages-select nanopb urc_nanopb urc_teleop
+          colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
           colcon build
   
@@ -56,7 +56,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get install python3-protobuf
-          colcon build --packages-select nanopb urc_nanopb urc_teleop
+          colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
           colcon build && colcon test && colcon test-result --verbose
 
