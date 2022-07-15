@@ -9,7 +9,7 @@ const joy_publisher = new ROSLIB.Topic({
 
 function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
-        axes: Float32Array([
+        axes: new Float32Array([
             0.0,
             gamepad.axes[1],
             0.0,
