@@ -49,18 +49,18 @@ setInterval(function() {
     // controller
     if (gamepad_list[0]) {
         const gamepadState = {
-            id : gamepads[0].id,
+            id : gamepad_list[0].id,
             axes: [
-                gamepads[0].axes[0].toFixed(2),
-                gamepads[0].axes[1].toFixed(2),
-                gamepads[0].axes[2].toFixed(2),
-                gamepads[0].axes[3].toFixed(2)
+                gamepad_list[0].axes[0].toFixed(2),
+                gamepad_list[0].axes[1].toFixed(2),
+                gamepad_list[0].axes[2].toFixed(2),
+                gamepad_list[0].axes[3].toFixed(2)
             ],
             buttons: [
-                { button_0 : gamepads[0].buttons[0].pressed },
-                { button_1 : gamepads[0].buttons[1].pressed },
-                { button_2 : gamepads[0].buttons[2].pressed },
-                { button_3 : gamepads[0].buttons[3].pressed }
+                { button_0 : gamepad_list[0].buttons[0].pressed },
+                { button_1 : gamepad_list[0].buttons[1].pressed },
+                { button_2 : gamepad_list[0].buttons[2].pressed },
+                { button_3 : gamepad_list[0].buttons[3].pressed }
             ]
         }
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
@@ -68,12 +68,12 @@ setInterval(function() {
     }
     if (gamepad_list[1]) {
         const joystickState = {
-            id : gamepads[1].id,
+            id : gamepad_list[1].id,
             axes: [
-                gamepads[1].axes[0].toFixed(2)
+                gamepad_list[1].axes[0].toFixed(2)
             ],
             buttons: [
-                { button_0 : gamepads[1].buttons[0].pressed }
+                { button_0 : gamepad_list[1].buttons[0].pressed }
             ]
         }
         joystickDisplay.textContent = JSON.stringify(joystickState, null, 2);
