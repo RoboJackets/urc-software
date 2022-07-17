@@ -55,7 +55,7 @@ void JoystickDriver::joyCallback(const sensor_msgs::msg::Joy & msg)
       } else if (f < -1.0) {
         return -1.0;
       } else if (std::fabs(f) <= 0.001) {
-        return 0.0;
+        return 10.0;
       } else {
         return f;
       }

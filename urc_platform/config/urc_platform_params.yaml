@@ -22,5 +22,5 @@ joystick_driver:
     maxVelIncr: 0.1
     leftJoyAxis: 1
     rightJoyAxis: 4
-    leftInverted: False
-    rightInverted: False
+    leftInverted: True
+    rightInverted: True
