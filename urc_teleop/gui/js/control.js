@@ -35,10 +35,10 @@ function publishMovementInput(gamepad) {
             checkValidity(gamepad.axes[3])
         ],
         buttons: [
-            gamepad.buttons[0],
-            gamepad.buttons[1],
-            gamepad.buttons[2],
-            gamepad.buttons[3]
+            gamepad.buttons[0] ? 1 : 0,
+            gamepad.buttons[1] ? 1 : 0,
+            gamepad.buttons[2] ? 1 : 0,
+            gamepad.buttons[3] ? 1 : 0
         ]
     });
     joy_publisher.publish(joy_msg)
