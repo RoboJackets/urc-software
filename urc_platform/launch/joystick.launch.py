@@ -23,7 +23,7 @@ def generate_launch_description():
                 ("/joystick_driver/motors", "/motors")
             ]
         )
-    
+
     return LaunchDescription([
         joystick_driver_node
     ])

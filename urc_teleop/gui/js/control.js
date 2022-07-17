@@ -1,6 +1,24 @@
 // Joystick publication
 // --------------------
 
+
+// This function is to eliminate an error when integer value
+// floats are passed into rosbridge
+function checkValidity(num) {
+    if (num.toFixed(2) == 1.0) {
+        return 99.9;
+    }
+    else if (num.toFixed(2) == 0.0) {
+        return 0.000001;
+    }
+    else if (num.toFixed(2) == -1.0) {
+        return -99.9;
+    }
+    else {
+        return num;
+    }
+}
+
 const joy_publisher = new ROSLIB.Topic({
   ros : ros,
   name : '/joy',
@@ -10,11 +28,11 @@ const joy_publisher = new ROSLIB.Topic({
 function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
         axes: [
-            Math.fround(0.0),
-            Math.fround(gamepad.axes[1]),
-            Math.fround(0.0),
-            Math.fround(0.0),
-            Math.fround(gamepad.axes[3])
+            checkValidity(0.0),
+            checkValidity(gamepad.axes[1]),
+            checkValidity(0.0),
+            checkValidity(0.0),
+            checkValidity(gamepad.axes[3])
         ],
         buttons: [
             gamepad.buttons[0],
@@ -23,13 +41,13 @@ function publishMovementInput(gamepad) {
             gamepad.buttons[3]
         ]
     });
-
     joy_publisher.publish(joy_msg)
 }
 
 
 // Controller/Joystick functionality
 // -----------------------
+
 
 window.addEventListener("gamepadconnected", event => {
     console.log('Gamepad connected!');
@@ -43,6 +61,8 @@ window.addEventListener("gamepaddisconnected", event => {
 
 const gamepadDisplay = document.getElementById('gamepad-display');
 const joystickDisplay = document.getElementById('joystick-display');
+
+// Checks the gamepad inputs every 17 ms, publishes inputs across rosbridge
 setInterval(function() {
     var gamepad_list = navigator.getGamepads();
     
@@ -71,17 +91,17 @@ setInterval(function() {
     }
     
     // joystick (arm movement)
-    if (gamepad_list[1]) {
-        const joystickState = {
-            id : gamepad_list[1].id,
-            axes: [
-                gamepad_list[1].axes[0].toFixed(2)
-            ],
-            buttons: [
-                { button_0 : gamepad_list[1].buttons[0].pressed }
-            ]
-        }
-        joystickDisplay.textContent = JSON.stringify(joystickState, null, 2);
+    //if (gamepad_list[1]) {
+    //    const joystickState = {
+    //        id : gamepad_list[1].id,
+    //        axes: [
+    //            gamepad_list[1].axes[0].toFixed(2)
+    //        ],
+    //        buttons: [
+    //            { button_0 : gamepad_list[1].buttons[0].pressed }
+    //        ]
+    //    }
+    //    joystickDisplay.textContent = JSON.stringify(joystickState, null, 2);
         //publishArmInput(gamepad_list[1])
-    }
+    //}
 }, 17)
