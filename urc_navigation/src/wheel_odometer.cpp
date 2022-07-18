@@ -36,11 +36,12 @@ namespace wheel_odometer
         float deltaTheta = angularVelocity * deltaT;
         float velocity = (rightVelocity + leftVelocity) / 2;
 
-        geometry_msgs::Vector3 linearVelocities;
+        geometry_msgs::msg::Vector3 linearVelocities;
         linearVelocities.z = 0;
 
         if (fabs(rightVelocity - leftVelocity) > 1e-4)
-        { // 1e-4 is the point where less of a difference is straight
+        {
+            // 1e-4 is the point where less of a difference is straight
             linearVelocities.y = velocity * sin(deltaTheta);
             linearVelocities.x = velocity * cos(deltaTheta);
         }
@@ -72,7 +73,7 @@ namespace wheel_odometer
         // enter message info for global position
         odom.pose.pose.position.x = x;
         odom.pose.pose.position.y = y;
-        odom.pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
+        odom.pose.pose.orientation = WheelOdometer::createQuaternionMsgFromYaw(yaw);
 
         // Row-major representation of the 6x6 covariance matrix
         // The orientation parameters use a fixed-axis representation.
@@ -96,6 +97,15 @@ namespace wheel_odometer
 
         // set time then publish
         odom.header.stamp = this->get_clock()->now();
-        _odomtery_pub->publish(odom);
+        _odometry_pub->publish(odom);
+    }
+
+    geometry_msgs::msg::Vector3Stamped createQuaternionMsgFromYaw(double yaw)
+    {
+        tf2::Quaternion q;
+        q.setRPY(0, 0, yaw);
+        return tf2::toMsg(q);
     }
 }
+
+RCLCPP_COMPONENTS_REGISTER_NODE(wheel_odometer::WheelOdometer)
