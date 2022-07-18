@@ -99,3 +99,5 @@ namespace wheel_odometer
         _odomtery_pub->publish(odom);
     }
 }
+
+RCLCPP_COMPONENTS_REGISTER_NODE(wheel_odometer::WheelOdometer)

@@ -17,14 +17,68 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(urc_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+include_directories(
+  include
+)
+
+# Library creation
+add_library(${PROJECT_NAME} SHARED
+  src/wheel_odometer.cpp
+)
+
+set(dependencies
+  rclcpp
+  rclcpp_components
+  urc_msgs
+  std_msgs
+  nav_msgs
+  geometry_msgs
+  tf2_ros
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+# Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "wheel_odometer::WheelOdometer"
+  EXECUTABLE ${PROJECT_NAME}_WheelOdometer
+)
+
+# Install launch files.
+install(
+  DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install library
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
+
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
 
