@@ -1,16 +1,11 @@
 # Description
 
-{{ State the context of this PR }}
-
 This PR does the following:
 - Thing 1
 - Thing 2
 - Thing 3
 
 Fixes #{{ github issue }}
-
-## Design Documents
-[Link](link-to-design-doc)
 
 # Testing steps (If relevant)
 ## Test Case 1
