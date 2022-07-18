@@ -40,7 +40,6 @@ set(dependencies
   rclcpp
   rclcpp_components
   urc_msgs
-  std_msgs
   nav_msgs
   geometry_msgs
   tf2_ros

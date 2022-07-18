@@ -12,12 +12,9 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>
-  <depend>urc_util</depend>
-  <depend>std_msgs</depend>
   <depend>nav_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>diagnostic_updater</depend>
-  <depend>urc_nanopb</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>  
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
