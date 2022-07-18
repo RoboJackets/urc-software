@@ -14,15 +14,11 @@ def generate_launch_description():
     # launch odometry here
 
     ekf_localization_node = Node(
-            package='urc_localization',
+            package='urc_navigation',
             executable='urc_localization_EkfLocalization',
             output='screen',
             parameters=[
                 ekf_localization_node_params
-            ],
-            remappings=[
-                ("/joystick_driver/joy", "/joy"),
-                ("/joystick_driver/motors", "/motors")
             ]
         )
 
