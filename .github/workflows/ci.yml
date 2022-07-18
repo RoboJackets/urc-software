@@ -1,27 +1,124 @@
-name: ci
+name: CI
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch:
+    types: [ opened, synchronize, closed ]
+  push:
+    branches-ignore:
+      - master
+
 jobs:
   build:
-    runs-on: ubuntu-20.04
-    container: ros:galactic
+    name: Build
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repo
+        uses: actions/checkout@v2
         with:
-          path: src/urc-software
-      - name: Install Dependencies
+          submodules: recursive
+          path: colcon_ws/src/urc-software
+          
+      - name: Update Dependencies
         shell: bash
         run: |
-          source /opt/ros/galactic/setup.bash
+          source /opt/ros/humble/setup.bash
           sudo apt-get update
-          rosdep update --rosdistro=galactic
-          rosdep install --from-paths . --ignore-src -y
+
       - name: Build
         shell: bash
+        working-directory: colcon_ws
         run: |
-          source /opt/ros/galactic/setup.bash
+          source /opt/ros/humble/setup.bash
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
+
+          colcon build --packages-select nanopb urc_nanopb
+          . install/setup.bash
           colcon build
+  
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: colcon_ws/src/urc-software
+          
+      - name: Update Dependencies
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          sudo apt-get update
+
+      - name: Colcon Test
+        shell: bash
+        working-directory: colcon_ws
+        run: |
+          source /opt/ros/humble/setup.bash
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
+          
+          colcon build --packages-select nanopb urc_nanopb
+          . install/setup.bash
+          colcon build && colcon test && colcon test-result --verbose
+
+  cpp_linting:
+    name: C++ Linting
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Run Uncrustify
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          touch external/AMENT_IGNORE
+          ament_uncrustify -c ament_code_style.cfg
+
+  python_linting:
+    name: Python Linting
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Run flake8
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          ament_flake8 --exclude external
+  
+  build_linting:
+    name: Build Linting
+    runs-on: ubuntu-22.04
+    container: robojackets/urc-baseimage:humble
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Run xmllint
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          ament_xmllint --exclude external
+
+      - name: Run ament_lint_cmake
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          touch external/AMENT_IGNORE
+          ament_lint_cmake

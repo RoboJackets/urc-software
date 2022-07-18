@@ -26,6 +26,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(laser_geometry REQUIRED)
+find_package(velodyne_simulator REQUIRED)
 
 include_directories(
   include
@@ -34,7 +35,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
-  #add more .cpp files here
+  src/control.cpp
 )
 
 set(dependencies
@@ -47,10 +48,17 @@ set(dependencies
   tf2
   tf2_ros
   laser_geometry
+  velodyne_simulator
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
+)
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 # Node registration
@@ -60,20 +68,30 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
-# Install launch files.
-install(DIRECTORY
-        launch
-        DESTINATION share/${PROJECT_NAME}/
-        )
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "control::Control"
+  EXECUTABLE ${PROJECT_NAME}_Control
+)
 
-# Install gazebo files
-install(DIRECTORY
-        urdf
-        DESTINATION share/${PROJECT_NAME}/
-        )
+# Install robot spawn file.
+install(
+  PROGRAMS
+  launch/spawn_wallii.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# Install launch, gazebo, and config files
+install(
+  DIRECTORY
+  launch
+  urdf
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 # Install library
-install(TARGETS 
+install(TARGETS
   ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
@@ -82,15 +100,18 @@ install(TARGETS
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  #Calls the CMake for the unit tests
+  add_subdirectory(test)
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
-  
+
   ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_export_include_directories(include)
+
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 

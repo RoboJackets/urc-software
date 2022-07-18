@@ -1,16 +1,11 @@
 # Description
 
-{{ State the context of this PR }}
-
 This PR does the following:
 - Thing 1
 - Thing 2
 - Thing 3
 
 Fixes #{{ github issue }}
-
-## Design Documents
-[Link](link-to-design-doc)
 
 # Testing steps (If relevant)
 ## Test Case 1
@@ -21,5 +16,5 @@ Fixes #{{ github issue }}
 Expectation: The thing which does the thing does the thing
 
 # Self Checklist
-- [ ] I have formatted my code using `make format`
-- [ ] I have tested that the new behaviour works 
+- [ ] I have formatted my code using `ament_uncrustify --reformat`
+- [ ] I have tested that the new behavior works 
