@@ -17,9 +17,18 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(robot_localization REQUIRED)
+
+set(dependencies
+  robot_localization
+)
+
+# Install launch files.
+install(
+  DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -31,11 +40,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_dependencies(${dependencies})
 ament_package()
-
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
-)
