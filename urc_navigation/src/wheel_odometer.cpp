@@ -1,4 +1,6 @@
 #include "wheel_odometer.hpp"
+#include "tf2/transform_datatypes.h"
+#include "tf2_geometry_msgs.h"
 
 namespace wheel_odometer
 {
