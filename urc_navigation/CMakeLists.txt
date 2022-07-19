@@ -53,6 +53,12 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
@@ -64,7 +70,6 @@ rclcpp_components_register_node(
 install(
   DIRECTORY
   launch
-  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -88,11 +93,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_export_include_directories(include)
 
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
-)
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(${dependencies})
+
+ament_package()
