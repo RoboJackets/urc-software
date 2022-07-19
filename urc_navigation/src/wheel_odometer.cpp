@@ -1,4 +1,6 @@
 #include "wheel_odometer.hpp"
+#include "tf2/transform_datatypes.h"
+#include "tf2_geometry_msgs.h"
 
 namespace wheel_odometer
 {
@@ -87,8 +89,6 @@ void WheelOdometer::enc_callback(const urc_msgs::msg::VelocityPair &msg)
                             1e-6, 1e-6, 1e6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e6, 1e-6, 1e-6,
                             1e-6, 1e-6, 1e-6, 1e-6, 1e6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e-6, 1e6};
 
-    // setting sequence of message
-    odom.header.seq = seq++;
     // setting reference frames
     odom.header.frame_id = "odom";
     odom.child_frame_id = "base_footprint";
@@ -97,9 +97,9 @@ void WheelOdometer::enc_callback(const urc_msgs::msg::VelocityPair &msg)
     _odometry_pub->publish(odom);
 }
 
-geometry_msgs::msg::Vector3Stamped createQuaternionMsgFromYaw(double yaw)
+geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw)
 {
-    tf2::LinearMath::Quaternion q;
+    tf2::Quaternion q;
     q.setRPY(0, 0, yaw);
     return tf2::toMsg(q);
 }

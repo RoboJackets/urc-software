@@ -30,7 +30,7 @@ private:
     float yaw;
 
     void enc_callback(const urc_msgs::msg::VelocityPair &msg);
-    geometry_msgs::msg::Vector3Stamped createQuaternionMsgFromYaw(double yaw);
+    geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw);
 };
 }
 
