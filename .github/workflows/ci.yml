@@ -1,8 +1,11 @@
 name: CI
 on:
-  push:
   pull_request:
-    types: [opened, reopened]
+    branches: [ master ]
+    types: [ opened, synchronize, closed ]
+  push:
+    branches-ignore:
+      - master
 
 jobs:
   build:
@@ -27,7 +30,9 @@ jobs:
         working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
-          sudo apt-get install python3-protobuf
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
+
           colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
           colcon build
@@ -55,7 +60,9 @@ jobs:
         working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
-          sudo apt-get install python3-protobuf
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
+          
           colcon build --packages-select nanopb urc_nanopb
           . install/setup.bash
           colcon build && colcon test && colcon test-result --verbose

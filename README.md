@@ -31,6 +31,8 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
     *Collection of nodes that form our perception stack*
  * **urc_platform**
     *Nodes that are platform specific and used to communicate with the hardware, ie. IMU, joystick and motor controller*
+ * **urc_teleop**
+    *Rosbridge nodes and web interface for teleoperation*
  * **urc_util**
     *A collection of utility nodes and classes*
 
@@ -38,11 +40,11 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
 ## Installation Instructions
 
-[Ubuntu 22.04 Installation Instructions](documents/helpers/ubuntu_installation.md)
+[Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
 
-[Windows Subsystem for Linux (WSL) Installation Instructions](documents/helpers/wsl_installation.md)
+[Windows Subsystem for Linux (WSL) Installation Instructions](documents/installation/wsl_installation.md)
 
-[Docker Installation Instructions](documents/helpers/docker_installation.md)
+[Docker Installation Instructions](documents/installation/docker_installation.md)
 
 ---
 
