@@ -16,7 +16,7 @@ namespace ground_truth
   class GroundTruth : public rclcpp::Node
   {
   public:
-    explicit Ground_truth();
+    explicit GroundTruth(const rclcpp::NodeOptions & options);
 
   private:
     nav_msgs::Odometry _og_pose;

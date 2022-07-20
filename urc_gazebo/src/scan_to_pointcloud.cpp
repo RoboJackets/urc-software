@@ -71,13 +71,3 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan & scanData
 
 RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)
 
-/*
-int main(int argc, char** argv)
-{
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<scan_to_pointcloud::ScanToPointCloud>());
-  rclcpp::shutdown();
-
-  return 0;
-}
-*/
