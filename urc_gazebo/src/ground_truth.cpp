@@ -25,59 +25,59 @@ namespace ground_truth
 
 
     _ground_truth_sub = create_subscription<nav_msgs::Odometry>(
-      "~/ground_truth/state_raw", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::Odometry msg){
+      "~/ground_truth/state_raw", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg){
         groundTruthCallback(msg);
       });
 
     _estimate_sub = create_subscription<nav_msgs::Odometry>(
-      "~/odometry/filtered", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::Odometry msg){
+      "~/odometry/filtered", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg){
         odomCallback(msg);
-      })
+      });
 
     _ground_truth_pub = create_publisher<nav_msgs::Odometry>(
       "~/ground_truth",
       rclcpp::SystemDefaultsQoS());
 
     utm_to_odom.setOrigin(
-        tf::Vector3(utm_x - g_og_pose.pose.pose.position.x, utm_y - g_og_pose.pose.pose.position.y, 0.0));
-    utm_to_odom.setRotation(tf::createQuaternionFromYaw(M_PI));
+        tf2::Vector3(utm_x - g_og_pose.pose.pose.position.x, utm_y - g_og_pose.pose.pose.position.y, 0.0));
+    utm_to_odom.setRotation(tf2::createQuaternionFromYaw(M_PI));
 
     // this will probably error
-    utm_timer = rclcpp::create_timer(ros::Duration(1.0), boost::bind(utm_callback, _1, utm_to_odom.inverse()));
+    utm_timer = rclcpp::create_timer(rclcpp::Duration(1.0), std::bind(utm_callback, _1, utm_to_odom.inverse()));
   }
 
-  void GroundTruth::groundTruthCallback(const nav_msgs::Odometry::ConstPtr &msg)
+  void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
   {
     // get the starting location as the origin
     if (g_og_pose.header.stamp.toSec() == 0)
     {
-      g_og_pose.pose = msg->pose;
-      g_og_pose.header = msg->header;
-      g_og_pose.pose.pose.position.x = msg->pose.pose.position.x + x_distribution(engine);
-      g_og_pose.pose.pose.position.y = msg->pose.pose.position.y + y_distribution(engine);
-      g_og_pose.pose.pose.position.z = msg->pose.pose.position.z + z_distribution(engine);
+      g_og_pose.pose = msg.pose;
+      g_og_pose.header = msg.header;
+      g_og_pose.pose.pose.position.x = msg.pose.pose.position.x + x_distribution(engine);
+      g_og_pose.pose.pose.position.y = msg.pose.pose.position.y + y_distribution(engine);
+      g_og_pose.pose.pose.position.z = msg.pose.pose.position.z + z_distribution(engine);
       RCLCPP_INFO(this->get_logger(), "setting g_og_pose to " << g_og_pose.pose.pose.position.x << ", "
                   << g_og_pose.pose.pose.position.y << ", " << g_og_pose.pose.pose.position.z);
     }
     else
     {
       nav_msgs::Odometry result;
-      result.pose = msg->pose;
+      result.pose = msg.pose;
 
       // use the initial location as an offset (makes the starting location 0, 0)
-      result.pose.pose.position.x = msg->pose.pose.position.x - g_og_pose.pose.pose.position.x + x_distribution(engine);
-      result.pose.pose.position.y = msg->pose.pose.position.y - g_og_pose.pose.pose.position.y + y_distribution(engine);
-      result.pose.pose.position.z = msg->pose.pose.position.z - g_og_pose.pose.pose.position.z + z_distribution(engine);
-      result.twist = msg->twist;
+      result.pose.pose.position.x = msg.pose.pose.position.x - g_og_pose.pose.pose.position.x + x_distribution(engine);
+      result.pose.pose.position.y = msg.pose.pose.position.y - g_og_pose.pose.pose.position.y + y_distribution(engine);
+      result.pose.pose.position.z = msg.pose.pose.position.z - g_og_pose.pose.pose.position.z + z_distribution(engine);
+      result.twist = msg.twist;
 
       // set up the correct header
-      result.header = msg->header;
+      result.header = msg.header;
       result.child_frame_id = "base_footprint";
       result.header.frame_id = "odom";
 
-      tf::Quaternion quat(msg->pose.pose.orientation.x, msg->pose.pose.orientation.y, msg->pose.pose.orientation.z,
-                          msg->pose.pose.orientation.w);
-      tf::Matrix3x3 m(quat);
+      tf2::Quaternion quat(msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z,
+                          msg.pose.pose.orientation.w);
+      tf2::Matrix3x3 m(quat);
       double roll, pitch, yaw;
       m.getRPY(roll, pitch, yaw);
       result.pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(
@@ -85,7 +85,7 @@ namespace ground_truth
       quat = tf::createQuaternionFromRPY(roll, pitch, yaw);
 
       tf::Vector3 pos;
-      tf::quaternionMsgToTF(msg->pose.pose.orientation, quat);
+      tf::quaternionMsgToTF(msg.pose.pose.orientation, quat);
       tf::pointMsgToTF(result.pose.pose.position, pos);
 
       // publish odom message
@@ -93,23 +93,23 @@ namespace ground_truth
 
       // publish transform for tf if there has not been a update from the localization node in the last second
       // since it also publishes the same transform
-      if (std::fabs(msg->header.stamp.toSec() - g_last_estimate.toSec()) > 1.0)
+      if (std::fabs(msg.header.stamp.toSec() - g_last_estimate.toSec()) > 1.0)
       {
         static tf::TransformBroadcaster br;
         tf::Transform transform{ quat, pos };
-        br.sendTransform(tf::StampedTransform(transform, msg->header.stamp, "odom", "base_footprint"));
+        br.sendTransform(tf::StampedTransform(transform, msg.header.stamp, "odom", "base_footprint"));
 
         tf::Transform utm_to_odom;
       }
     }
   }
 
-  void GroundTruth::odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
+  void GroundTruth::odomCallback(const nav_msgs::msg::Odometry & msg)
   {
-    _last_estimate = msg->header.stamp;
+    _last_estimate = msg.header.stamp;
   }
 
-  void GroundTruth::utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm)
+  void GroundTruth::utmCallback(const rclcpp::TimerEvent & event, const tf2::Transform & odom_to_utm)
   {
     static tf::TransformBroadcaster br;
     static tf::TransformListener tf_listener;
