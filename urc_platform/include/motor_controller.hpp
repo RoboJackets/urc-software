@@ -36,12 +36,12 @@ private:
   double p_l_, p_r_, d_l_, d_r_, i_l_, i_r_;
   double kv_l_, kv_r_;
 
-  std::string ip_addr_;              // server ip address
-  int tcpport_;                      // server tcp tcp port
-  double min_battery_voltage_;       // min battery voltage before warnings
-  double log_period_;                // Period for logging messages
-  double frequency_;                 // communicate frequency_ with the mbed
-  double battery_alpha_;             // alpha value for voltage exponentially weighted moving average
+  std::string ip_addr_;          // server ip address
+  int tcpport_;                  // server tcp tcp port
+  double min_battery_voltage_;   // min battery voltage before warnings
+  double log_period_;            // Period for logging messages
+  double frequency_;             // communicate frequency_ with the mbed
+  double battery_alpha_;         // alpha value for voltage exponentially weighted moving average
 
   // current battery voltage
   double battery_avg_;
