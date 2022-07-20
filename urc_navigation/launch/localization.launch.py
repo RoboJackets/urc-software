@@ -20,10 +20,11 @@ def generate_launch_description():
         )
     )
 
-    # launch ekf localization
+    # launch ekf localization node
     ekf_localization_node = Node(
-            package='urc_navigation',
-            executable='urc_localization_EkfLocalization',
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
             output='screen',
             parameters=[
                 ekf_localization_node_params
