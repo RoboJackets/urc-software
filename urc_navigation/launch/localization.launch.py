@@ -1,4 +1,6 @@
 from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
@@ -11,8 +13,14 @@ def generate_launch_description():
     with open(parameters_file_path, 'r') as file:
         ekf_localization_node_params = yaml.safe_load(file)['ekf_localization']['ros_parameters']
 
-    # launch odometry here
+    # launch odometry
+    wheel_odometer_node = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('urc_navigation'), "launch", "wheel_odometer.launch.py")
+        )
+    )
 
+    # launch ekf localization
     ekf_localization_node = Node(
             package='urc_navigation',
             executable='urc_localization_EkfLocalization',
@@ -25,5 +33,6 @@ def generate_launch_description():
     # launch quaternion to rpy here
 
     return LaunchDescription([
-        ekf_localization_node
+        ekf_localization_node,
+        wheel_odometer_node
     ])
