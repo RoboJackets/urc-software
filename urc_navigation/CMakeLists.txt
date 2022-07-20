@@ -70,6 +70,7 @@ rclcpp_components_register_node(
 install(
   DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
