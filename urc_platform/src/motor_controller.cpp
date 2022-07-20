@@ -133,7 +133,7 @@ void MotorController::setPID()
     return;
   }
 
-  size_t bytes_read;       // Socket response: 0 means connection closed, otherwise n = num bytes read
+  size_t bytes_read;     // Socket response: 0 means connection closed, otherwise n = num bytes read
   uint8_t buffer[256];   // buffer to read response into
 
   // Send PID values via ethernet and recieve response to ensure proper setting
@@ -215,7 +215,7 @@ void MotorController::sendRequest()
 
 void MotorController::receiveResponse()
 {
-  size_t bytes_read;       // Socket response: 0 means connection closed, otherwise n = num bytes read
+  size_t bytes_read;     // Socket response: 0 means connection closed, otherwise n = num bytes read
   uint8_t buffer[256];   // buffer to read response into
 
   memset(buffer, 0, sizeof(buffer));
