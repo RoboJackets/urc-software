@@ -23,8 +23,6 @@ private:
   rclcpp::Subscription<urc_msgs::msg::VelocityPair>::SharedPtr _enc_sub;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _odometry_pub;
 
-  std::unique_ptr<tf2_ros::TransformBroadcaster> _tf_broadcaster;
-
   double wheel_sep;
 
   float x;
