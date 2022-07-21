@@ -1,22 +1,17 @@
 from launch import LaunchDescription
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
-import os
-import yaml
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    parameters_file_path = os.path.join(get_package_share_directory(
-        'urc_navigation'), 'config', 'urc_navigation_params.yaml')
-    with open(parameters_file_path, 'r') as file:
-        wheel_odometer_params = yaml.safe_load(file)['wheel_odometer']['ros_parameters']
-
     wheel_odometer_node = Node(
             package='urc_navigation',
             executable='urc_navigation_WheelOdometer',
             output='screen',
             parameters=[
-                wheel_odometer_params
+                PathJoinSubstitution([FindPackageShare('urc_navigation'), 'config',
+                                     'wheel_odometer_params.yaml'])
             ],
             remappings=[
                 ("/wheel_odometer/encoders", "/encoders"),

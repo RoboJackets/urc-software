@@ -1,9 +1,9 @@
 ekf_localization:
-  ros_parameters:
+  ros__parameters:
     # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
     # computation until it receives at least one message from one of the inputs. It will then run continuously at the
     # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-    frequency: 30
+    frequency: 30.0
 
     # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
     # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
@@ -122,8 +122,8 @@ ekf_localization:
     # required. Data is specified at the level of pose and twist variables, rather than for each variable in isolation.
     # For messages that have both pose and twist data, the parameter specifies to which part of the message we are applying
     # the thresholds.
-    #odom0_pose_rejection_threshold: 5
-    #odom0_twist_rejection_threshold: 1
+    #odom0_pose_rejection_threshold: 5.0
+    #odom0_twist_rejection_threshold: 1.0
 
     # Further input parameter examples
     odom1: /odometry/gps
@@ -135,7 +135,7 @@ ekf_localization:
     odom1_differential: false
     odom1_relative: false
     odom1_queue_size: 2
-    #odom1_pose_rejection_threshold: 2
+    #odom1_pose_rejection_threshold: 2.0
     #odom1_twist_rejection_threshold: 0.2
     odom1_nodelay: false
 
@@ -196,39 +196,39 @@ ekf_localization:
     # to be larger, which will cause the filter to trust the incoming measurement more during correction. The values are
     # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
     # unspecified.
-    process_noise_covariance: [ .6,   0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    .6,   0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    .1,   0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    .1,   0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    .1,   0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    .3,   0,     0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    .1,    0,     0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     .1,    0,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,    .1,    0,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,   .1,    0,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,   .1,    0,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,   .5,    0,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,   .1,    0,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,   .1,    0,
-                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    .1]
+    process_noise_covariance: [ .6,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    .6,     0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    .1,     0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    .1,     0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    .1,     0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    .3,     0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    .1,      0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     .1,      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,    .1,      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,   .1,      0.0,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,     .1,    0.0,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,     .5,    0.0,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,     .1,    0.0,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,     .1,    0.0,
+                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    .1]
 
     # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
     # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
     # question. Users should take care not to use large values for variables that will not be measured directly. The values
     # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
     #if unspecified.
-    initial_estimate_covariance: [ 1,    0,    0,      0,      0,      0,     0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    1,    0,      0,      0,      0,     0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    1e-6,   0,      0,      0,     0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      1e-6,   0,      0,     0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      1e-6,   0,     0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      1e-6,  0,      0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     1e-6,   0,      0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      1e-6,   0,     0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      1e-6,  0,     0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     1e-6,  0,     0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     0,     1e-6,  0,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     0,     0,     1,     0,     0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     0,     0,     0,     1e-6,  0,     0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     0,     0,     0,     0,     1e-6,  0,
-                                   0,    0,    0,      0,      0,      0,     0,      0,      0,     0,     0,     0,     0,     0,     1e-6]
+    initial_estimate_covariance: [ 1.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    1.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    1e-6,     0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      1e-6,     0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      1e-6,     0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      1e-6,    0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     1e-6,     0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      1e-6,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      1e-6,    0.0,     0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     1e-6,    0.0,     0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     1e-6,    0.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     1.0,     0.0,     0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     1e-6,    0.0,     0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     1e-6,    0.0,
+                                   0.0,    0.0,    0.0,      0.0,      0.0,      0.0,     0.0,      0.0,      0.0,     0.0,     0.0,     0.0,     0.0,     0.0,     1e-6]

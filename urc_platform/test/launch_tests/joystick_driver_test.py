@@ -3,30 +3,25 @@ import unittest
 import rclpy
 import launch
 import launch_ros.actions
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 import launch_testing
 import launch_testing_ros
 import pytest
 import sensor_msgs.msg
 import urc_msgs.msg
 
-from ament_index_python.packages import get_package_share_directory
-import os
-import yaml
-
 
 @pytest.mark.rostest
 def generate_test_description():
-    parameters_file_path = os.path.join(get_package_share_directory("urc_platform"),
-                                        "config", "urc_platform_params.yaml")
-    with open(parameters_file_path, 'r') as file:
-        joystick_params = yaml.safe_load(file)['joystick_driver']['ros_parameters']
 
     joystick_driver = launch_ros.actions.Node(
             package='urc_platform',
             executable='urc_platform_JoystickDriver',
             output='screen',
             parameters=[
-                joystick_params
+                PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
+                                     'joystick_driver_params.yaml'])
             ],
             remappings=[
                 ('/joystick_driver/joy', '/joy'),

@@ -1,24 +1,17 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
+from launch.substitutions import PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
-import os
-import yaml
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    parameters_file_path = os.path.join(get_package_share_directory(
-        'urc_navigation'), 'config', 'ekf_localization_node_params.yaml')
-    with open(parameters_file_path, 'r') as file:
-        ekf_localization_node_params = yaml.safe_load(file)['ekf_localization']['ros_parameters']
 
     # launch odometry
-    wheel_odometer_node = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('urc_navigation'), "launch", "wheel_odometer.launch.py")
-        )
-    )
+    wheel_odometer_node = IncludeLaunchDescription(PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
+                                 'wheel_odometer.launch.py'])))
 
     # launch ekf localization node
     ekf_localization_node = Node(
@@ -27,7 +20,8 @@ def generate_launch_description():
             name='ekf_filter_node',
             output='screen',
             parameters=[
-                ekf_localization_node_params
+                PathJoinSubstitution([FindPackageShare('urc_navigation'), 'config',
+                                     'ekf_localization_node_params.yaml'])
             ]
         )
 
