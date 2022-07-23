@@ -18,20 +18,6 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-install(
-  PROGRAMS
-  multiclass_segmentation/multiclass_segmentation.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  multiclass_segmentation
-  DESTINATION share/${PROJECT_NAME}/
-)
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the copyright linker
