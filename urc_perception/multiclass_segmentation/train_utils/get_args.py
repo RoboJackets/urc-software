@@ -1,9 +1,8 @@
 import argparse
 
-
 def get_args():
     # Training settings.
-    ap = argparse.ArgumentParser(description="IGVC multi-class segmentation.")
+    ap = argparse.ArgumentParser(description="URC multi-class segmentation.")
     ap.add_argument(
         "-train_images",
         "--train_images",
