@@ -3,7 +3,7 @@
 namespace control
 {
 Control::Control(const rclcpp::NodeOptions & options)
-: rclcpp::Node("motor_controller", options)
+: rclcpp::Node("control", options)
 {
   speed_P_left = declare_parameter<double>("speed_P_left");
   speed_P_right = declare_parameter<double>("speed_P_right");

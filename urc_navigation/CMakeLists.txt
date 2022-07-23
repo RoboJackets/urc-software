@@ -17,6 +17,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(robot_localization REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
@@ -39,6 +40,7 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 set(dependencies
+  robot_localization
   rclcpp
   rclcpp_components
   urc_msgs

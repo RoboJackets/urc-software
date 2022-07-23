@@ -3,28 +3,23 @@ import rclpy
 import launch
 import launch_ros.actions
 import launch_testing
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 import launch_testing_ros
 import pytest
 import urc_msgs.msg
 
-from ament_index_python.packages import get_package_share_directory
-import os
-import yaml
-
 
 @pytest.mark.rostest
 def generate_test_description():
-    parameters_file_path = os.path.join(get_package_share_directory("urc_platform"),
-                                        "config", "urc_platform_params.yaml")
-    with open(parameters_file_path, 'r') as file:
-        motor_controller_params = yaml.safe_load(file)['motor_controller']['ros_parameters']
 
     motor_controller = launch_ros.actions.Node(
             package='urc_platform',
             executable='urc_platform_MotorController',
             output='screen',
             parameters=[
-                motor_controller_params
+                PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
+                                     'motor_controller_params.yaml'])
             ],
             remappings=[
                 ('/motor_controller/motors', '/motors'),
