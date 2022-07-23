@@ -171,19 +171,19 @@ class SegmentationModel(object):
 
 
 if __name__ == '__main__':
-    rclpy.init_node('multiclass_segmentation')
+    node = rclpy.Node('multiclass_segmentation')
 
     # Read params.
-    camera_names = rclpy.get_param('~camera_names')
-    segmentation_topic = rclpy.get_param('~segmentation_topic')
+    camera_names = node.get_parameter('camera_names')
+    segmentation_topic = node.get_parameter('segmentation_topic')
 
-    model_path = rclpy.get_param('~model_path')
-    force_cpu = rclpy.get_param('~force_cpu')
-    encoder = rclpy.get_param('~encoder', 'efficientnet-b3')
-    encoder_weights = rclpy.get_param('~encoder_weights', 'imagenet')
+    model_path = node.get_parameter('model_path')
+    force_cpu = node.get_parameter('force_cpu')
+    encoder = node.get_parameter('encoder', 'efficientnet-b3')
+    encoder_weights = node.get_parameter('encoder_weights', 'imagenet')
 
-    image_resize_width = rclpy.get_param('~image_resize_width')
-    image_resize_height = rclpy.get_param('~image_resize_height')
+    image_resize_width = node.get_parameter('image_resize_width')
+    image_resize_height = node.get_parameter('image_resize_height')
 
     SegmentationModel(camera_names,
                       segmentation_topic,
@@ -196,6 +196,8 @@ if __name__ == '__main__':
                       )
 
     try:
-        rclpy.spin()
+        rclpy.spin(node)
     except KeyboardInterrupt:
-        rclpy.logerr("Shutting down")
+        node.get_logger().error("Shutting down")
+        node.destroy_node()
+        rclpy.shutdown()
