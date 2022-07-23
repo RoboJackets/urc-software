@@ -14,15 +14,6 @@ def save_result(predictions, test_data, save_path):
     num_rand_results = num_results - 2
     rand_nums = np.random.randint(low, high, num_rand_results)
 
-    """
-    The results specifically include images 30 and 141 as
-    they are images containing multiple lines and barrels.
-    Hence, they would be strong indicators of performance.
-    Can add certain samples specific to datasets
-    """
-    # rand_nums = np.insert(rand_nums, 0, 30)
-    # rand_nums = np.insert(rand_nums, 0, 141)
-
     # Save the image, mask, and predicted mask for sample test data
     predictions_path = os.path.join(save_path, "predictions")
     Path(predictions_path).mkdir(parents=True, exist_ok=True)
