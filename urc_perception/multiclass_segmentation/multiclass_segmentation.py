@@ -4,7 +4,6 @@ from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import CameraInfo
 from cv_bridge import CvBridge
 import rclpy
-from rclpy.node import Node
 import cv2
 import functools
 import numpy as np
@@ -18,28 +17,24 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 
-class MulticlassSegmentation(Node):
-    def __init__(self):
-        super().__init__('multiclass_segmentation',
-                         allow_undeclared_parameters=True,
-                         automatically_declare_parameters_from_overrides=True)
+class SegmentationModel(object):
+    
+    # Segmentation for line detection
+
+    def __init__(
+            self,
+            camera_names,
+            publisher_topic,
+            **kwargs):
 
         self.bridge = CvBridge()
 
-        self.camera_names = self.get_parameter('camera_names')._value
-        self.segmentation_topic = self.get_parameter('segmentation_topic')._value
+        self.force_cpu = kwargs["force_cpu"]
+        self.encoder = kwargs["encoder"]
+        self.encoder_weights = kwargs["encoder_weights"]
+        self.resize_width = kwargs["resize_width"]
+        self.resize_height = kwargs["resize_height"]
 
-        self.model_path = self.get_parameter('model_path')._value
-        self.force_cpu = self.get_parameter('force_cpu')._value
-        self.encoder = self.get_parameter('encoder')._value
-        self.encoder_weights = self.get_parameter('encoder_weights')._value
-
-        self.image_resize_width = self.get_parameter('image_resize_width')._value
-        self.image_resize_height = self.get_parameter('image_resize_height')._value
-
-        self.segmentationModel()
-
-    def segmentationModel(self):
         # Set up U-Net with EfficientNet backbone pretrained on ImageNet
         if self.force_cpu:
             DEVICE = 'cpu'
@@ -56,7 +51,7 @@ class MulticlassSegmentation(Node):
 
         # Load weights from file
         bestModel = torch.load(
-            self.model_path,
+            kwargs["model_filename"],
             map_location=torch.device(DEVICE)
         )
         self.model.load_state_dict(bestModel['model_state_dict'])
@@ -64,8 +59,9 @@ class MulticlassSegmentation(Node):
         if torch.cuda.is_available() and not self.force_cpu:
             self.model.cuda()
         elif ((torch.cuda.is_available() is False) and self.force_cpu):
-            self.get_logger().error(f"Conflict with device and cuda! Device: {DEVICE}, \
-                CUDA: {torch.cuda.is_available()}")
+            rclpy.logerr(f"Conflict with device and cuda! Device: {DEVICE}, \
+                CUDA: {torch.cuda.is_available()}"
+                         )
             sys.exit()
 
         self.model.eval()
@@ -74,8 +70,8 @@ class MulticlassSegmentation(Node):
         self.subscribers = []
         self.im_publishers = {}
 
-        for camera_name in self.camera_names:
-            self.get_logger().info(f"Setting up {camera_name}.")
+        for camera_name in camera_names:
+            rclpy.loginfo(f"Setting up {camera_name}.")
             try:
                 cam_info_topic = os.path.join(camera_name, "/raw/camera_info")
                 camera_info = rclpy.wait_for_message(
@@ -83,33 +79,34 @@ class MulticlassSegmentation(Node):
                     CameraInfo,
                     timeout=5
                 )
-            except Exception:
-                self.get_logger().info(f"Camera info for {camera_name} not available!")
+            except rclpy.ROSException:
+                rclpy.logerr(f"Camera info for {camera_name} not available.")
                 sys.exit()
-            self.get_logger().info(camera_info)
+            rclpy.loginfo(camera_info)
 
             # Create image publishers.
-            cam_img_topic = os.path.join(camera_name, self.segmentation_topic)
-            self.im_publishers[camera_name] = self.create_publisher(
-                ImMsg, cam_img_topic, 1
+            cam_img_topic = os.path.join(camera_name, publisher_topic)
+            self.im_publishers[camera_name] = rclpy.Publisher(
+                cam_img_topic,
+                ImMsg,
+                queue_size=1
             )
 
             print(f"Finished setting up {camera_name}.")
 
-        for camera_name in self.camera_names:
+        for camera_name in camera_names:
             # Use the same callback for every camera.
             cam_img_topic = os.path.join(camera_name, "raw/image/compressed")
             self.subscribers.append(
-                self.create_subscription(
-                    CompressedImage,
-                    cam_img_topic,
-                    functools.partial(self.image_cb, camera_name),
-                    queue_size=1,
-                    buff_size=10**8
-                )
+                rclpy.Subscriber(cam_img_topic,
+                                 CompressedImage,
+                                 functools.partial(self.image_cb, camera_name),
+                                 queue_size=1,
+                                 buff_size=10**8
+                                 )
             )
 
-        self.get_logger().info('Line detector is running.')
+        rclpy.loginfo('Line detector is running.')
 
     def image_cb(self, camera_name, data):
         # Track inference time.
@@ -152,6 +149,15 @@ class MulticlassSegmentation(Node):
             cv2.COLOR_GRAY2BGR
         )
 
+        # Multiclass Segmentation Visualization
+        # lineMask = np.all(colorImg == [2, 2, 2], axis=2)
+        # colorImg[lineMask] = [255, 255, 255]
+        # barrelMask = np.all(colorImg == [1, 1, 1], axis=2)
+        # colorImg[barrelMask] = [0, 255, 0]
+        # msg_out = self.bridge.cv2_to_imgmsg(colorImg, 'bgr8')
+        # msg_out.header.stamp = data.header.stamp
+        # self.im_publishers[camera_name].publish(msg_out)
+
         # Producing Binary Mask for lines
         lineMask = np.all(colorImg == [2, 2, 2], axis=2)
         colorImg[lineMask] = [255, 255, 255]
@@ -161,15 +167,35 @@ class MulticlassSegmentation(Node):
         self.im_publishers[camera_name].publish(msg_out)
 
         end = timer()
-        self.get_logger().info(f"inference time: {end - start}")
+        rclpy.loginfo(f"inference time: {end - start}")
 
 
 if __name__ == '__main__':
-    rclpy.init()
-    node = MulticlassSegmentation()
+    rclpy.init_node('multiclass_segmentation')
+
+    # Read params.
+    camera_names = rclpy.get_param('~camera_names')
+    segmentation_topic = rclpy.get_param('~segmentation_topic')
+
+    model_path = rclpy.get_param('~model_path')
+    force_cpu = rclpy.get_param('~force_cpu')
+    encoder = rclpy.get_param('~encoder', 'efficientnet-b3')
+    encoder_weights = rclpy.get_param('~encoder_weights', 'imagenet')
+
+    image_resize_width = rclpy.get_param('~image_resize_width')
+    image_resize_height = rclpy.get_param('~image_resize_height')
+
+    SegmentationModel(camera_names,
+                      segmentation_topic,
+                      model_filename=model_path,
+                      force_cpu=force_cpu,
+                      encoder=encoder,
+                      encoder_weights=encoder_weights,
+                      resize_width=image_resize_width,
+                      resize_height=image_resize_height
+                      )
+
     try:
-        rclpy.spin(node)
+        rclpy.spin()
     except KeyboardInterrupt:
-        node.get_logger().error("Shutting down")
-        node.destroy_node()
-        rclpy.shutdown()
+        rclpy.logerr("Shutting down")
