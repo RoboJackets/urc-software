@@ -12,8 +12,6 @@ Add image once model is trained!
 --->
 
 ## Folder Structure 
-
-+ **UNetWithEfficientNet.ipynb**: implements the training and testing of the neural network in a notebook
   
 + **data_loaders.py**: defines the Torch data loaders
   

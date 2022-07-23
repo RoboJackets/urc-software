@@ -12,8 +12,8 @@ def generate_launch_description():
         executable="multiclass_segmentation.py",
         output="screen",
         parameters=[
-            PathJoinSubstitution([FindPackageShare('urc_perception'), 'config',
-                                     'multiclass_segmentation_params.yaml'])
+            PathJoinSubstitution([FindPackageShare('urc_perception'), 'multiclass_segmentation',
+                                 'config', 'multiclass_segmentation_params.yaml'])
         ]
     )
 
