@@ -40,10 +40,7 @@ def softmax_helper(x):
 
 
 class CrossentropyND(nn.CrossEntropyLoss):
-    """
-    Network has to have NO NONLINEARITY!
-    """
-
+    # Network has to have NO NONLINEARITY!
     def forward(self, inp, target):
         target = target.long()
         num_classes = inp.size()[1]
@@ -68,16 +65,19 @@ class CrossentropyND(nn.CrossEntropyLoss):
 
 def get_tp_fp_fn(net_output, gt, axes=None, mask=None, square=False):
     """
-    net_output must be (b, c, x, y(, z)))
+    net_output must be (b, c, x, y(, z))).
+
     gt must be a label map (shape (b, 1, x, y(, z))
      or shape (b, x, y(, z)))
      or one hot encoding (b, c, x, y(, z))
     if mask is provided it must have shape (b, 1, x, y(, z)))
+
     :param net_output:
     :param gt:
     :param axes:
     :param mask: mask must be 1 for valid pixels and 0 for invalid pixels
     :param square: if True then fp, tp and fn will be squared before summation
+
     :return:
     """
     if axes is None:
@@ -176,5 +176,5 @@ class DC_and_CE_loss(nn.Module):
         if self.aggregate == "sum":
             result = ce_loss + dc_loss
         else:
-            raise NotImplementedError("did not work")
+            raise NotImplementedError("Did not work")
         return result

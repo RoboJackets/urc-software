@@ -1,46 +1,25 @@
-import json
 import numpy as np
-import matplotlib.pyplot as plt
-import argparse
-import pickle
-import cv2
-from tqdm import tqdm
 import yaml
 import os
 
 # Import utilities for Torch
-from typing import List
-from pathlib import Path
 import torch
-from torch.utils.data import Dataset
-import collections
 from torch.utils.data import DataLoader
 
 # Import model building and training utilities
 import segmentation_models_pytorch as smp
-from torch import nn
-from catalyst.contrib.nn import DiceLoss, IoULoss
 from torch import optim
 import catalyst
 from catalyst import utils
 from torch.optim import AdamW
-
-from catalyst.contrib.nn import RAdam, Lookahead
 from catalyst.dl import SupervisedRunner
+from catalyst.dl.callbacks import CriterionCallback, MulticlassDiceMetricCallback
 
-from catalyst.dl.callbacks import (
-    DiceCallback,
-    IouCallback,
-    CriterionCallback,
-    AccuracyCallback,
-    MulticlassDiceMetricCallback,
-)
 
 # Import dataset and data loaders
 from data_utils.segmentation_dataset import SegmentationDataset
 from data_utils.data_loaders import get_loaders
-import train_utils.helper_operations
-from train_utils.helper_operations import CrossentropyND, DC_and_CE_loss
+from train_utils.helper_operations import CrossentropyND
 from train_utils.get_args import get_args
 from train_utils.save import save_result
 

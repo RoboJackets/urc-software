@@ -21,7 +21,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 class MulticlassSegmentation(Node):
     def __init__(self):
         super().__init__('multiclass_segmentation',
-            allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
+                         allow_undeclared_parameters=True,
+                         automatically_declare_parameters_from_overrides=True)
 
         self.bridge = CvBridge()
 
@@ -82,7 +83,7 @@ class MulticlassSegmentation(Node):
                     CameraInfo,
                     timeout=5
                 )
-            except:
+            except Exception:
                 self.get_logger().info(f"Camera info for {camera_name} not available!")
                 sys.exit()
             self.get_logger().info(camera_info)
@@ -168,7 +169,7 @@ if __name__ == '__main__':
     node = MulticlassSegmentation()
     try:
         rclpy.spin(node)
-    except:
+    except KeyboardInterrupt:
         node.get_logger().error("Shutting down")
         node.destroy_node()
         rclpy.shutdown()
