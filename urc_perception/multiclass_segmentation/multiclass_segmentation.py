@@ -20,20 +20,21 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/../")
 
 class MulticlassSegmentation(Node):
     def __init__(self):
-        super().__init__('multiclass_segmentation')
+        super().__init__('multiclass_segmentation',
+            allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True)
 
         self.bridge = CvBridge()
 
-        self.camera_names = self.get_parameter('camera_names')
-        self.segmentation_topic = self.get_parameter('segmentation_topic')
+        self.camera_names = self.get_parameter('camera_names')._value
+        self.segmentation_topic = self.get_parameter('segmentation_topic')._value
 
-        self.model_path = self.get_parameter('model_path')
-        self.force_cpu = self.get_parameter('force_cpu')
-        self.encoder = self.get_parameter('encoder', 'efficientnet-b3')
-        self.encoder_weights = self.get_parameter('encoder_weights', 'imagenet')
+        self.model_path = self.get_parameter('model_path')._value
+        self.force_cpu = self.get_parameter('force_cpu')._value
+        self.encoder = self.get_parameter('encoder')._value
+        self.encoder_weights = self.get_parameter('encoder_weights')._value
 
-        self.image_resize_width = self.get_parameter('image_resize_width')
-        self.image_resize_height = self.get_parameter('image_resize_height')
+        self.image_resize_width = self.get_parameter('image_resize_width')._value
+        self.image_resize_height = self.get_parameter('image_resize_height')._value
 
         self.segmentationModel()
 
@@ -163,7 +164,7 @@ class MulticlassSegmentation(Node):
 
 
 if __name__ == '__main__':
-    rclpy.init(context=rclpy.Context())
+    rclpy.init()
     node = MulticlassSegmentation()
     try:
         rclpy.spin(node)
