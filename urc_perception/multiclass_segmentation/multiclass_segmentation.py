@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from sensor_msgs.msg import Image as ImMsg
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import CameraInfo
