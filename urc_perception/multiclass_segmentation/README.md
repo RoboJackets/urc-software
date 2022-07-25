@@ -12,20 +12,35 @@ Add image once model is trained!
 --->
 
 ## Folder Structure 
-  
-+ **data_loaders.py**: defines the Torch data loaders
-  
-+ **helper_operations.py**: defines multiple operations used for loss and metric calculations
-  
-+ **make_dataset.py**: converts folders of images and masks into .npy files
-  
+
++ **multiclass_segmentation.py**: launches the multiclass segmentation rclpy node
 + **requirements.txt**: lists dependencies
-  
-+ **segmentation_dataset.py**: defines the utilized dataset
-  
-+ **split_data.py**: splits images and masks into training and testing sets
-  
 + **train.py**: implements, trains, and tests the model
++ **urc_multiunet.ipynb**: for training use with Google colab
+
+### config
+
++ **multiclass_segmentation_params.yaml**: parameters for the multiclass segmentation node
++ **urc.yaml**: parameters related to training and testing the model
+
+### data_utils
+
++ **data_loaders.py**: defines the Torch data loaders
++ **make_dataset.py**: converts folders of images and masks into .npy files
++ **segmentation_dataset.py**: defines the utilized dataset
++ **split_data.py**: splits images and masks into training and testing sets
+
+### jupyter_notebook
+
++ **UNetWithEfficientNet.ipynb**: implements the training and testing of the neural network in a notebook
+
+### train_utils
+
++ **get_args.py**: parses arguments for training
++ **helper_operations.py**: defines multiple operations used for loss and metric calculations
++ **save.py**: saves the image, mask, and predicted mask
+
+
 
 ## Build Instructions 
 
