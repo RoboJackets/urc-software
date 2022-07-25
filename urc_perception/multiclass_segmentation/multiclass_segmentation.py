@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
+=======
+>>>>>>> 26740e2 (CMake fix)
 from sensor_msgs.msg import Image as ImMsg
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import CameraInfo
