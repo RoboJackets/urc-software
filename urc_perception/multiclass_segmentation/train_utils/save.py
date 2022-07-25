@@ -18,7 +18,7 @@ def save_result(predictions, test_data, save_path):
     predictions_path = os.path.join(save_path, "predictions")
     Path(predictions_path).mkdir(parents=True, exist_ok=True)
     for num in tqdm(rand_nums):
-        fig = plt.figure(figsize=(10, 4))
+        plt.figure(figsize=(10, 4))
         # Show and save image
         plt.subplot(1, 3, 1)
         image = np.asarray(test_data[num]["image"])

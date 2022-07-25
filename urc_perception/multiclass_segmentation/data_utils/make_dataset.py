@@ -1,7 +1,6 @@
 import json
 import numpy as np
 from PIL import Image, ImageDraw
-import matplotlib.pyplot as plt
 import cv2
 import glob
 from operator import itemgetter
@@ -12,7 +11,7 @@ import os.path
 
 
 def json_to_numpy_mask(shapes, width, height):
-    """Converts JSON labels with pixel classifications into NumPy arrays"""
+    """Convert JSON labels with pixel classifications into NumPy arrays."""
     img = Image.new("L", (width, height), 0)
     for shape in shapes:
         if shape["label"] == "barrel":
@@ -26,7 +25,7 @@ def json_to_numpy_mask(shapes, width, height):
 
 
 def create_dataset(path_to_folder, file_type):
-    """Organizes a collection of images or JSON files into a NumPy array"""
+    """Organizes a collection of images or JSON files into a NumPy array."""
     all_data = []
 
     if file_type == "images":
@@ -37,14 +36,14 @@ def create_dataset(path_to_folder, file_type):
         if file_type == "images":
             # Ensure every image has a mask
             corr_json = temp_name[:-3] + "json"
-            if os.path.exists(corr_json) == False:
+            if not os.path.exists(corr_json):
                 continue
             temp_data = cv2.imread(temp_name)
         elif file_type == "json":
             f = open(temp_name, encoding="utf-8")
             # Ensure every mask has an image
             corr_png = temp_name[:-4] + "png"
-            if os.path.exists(corr_png) == False:
+            if not os.path.exists(corr_png):
                 continue
             loaded = json.load(f)
             temp_data = json_to_numpy_mask(loaded["shapes"], 640, 480)

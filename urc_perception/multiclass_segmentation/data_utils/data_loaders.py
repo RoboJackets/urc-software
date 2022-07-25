@@ -1,8 +1,6 @@
 import numpy as np
 from typing import List
 from pathlib import Path
-from torch.utils.data import Dataset
-import torch
 import collections
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
@@ -20,9 +18,7 @@ def get_loaders(
     num_workers: int = 4,
     im_size: tuple = (480, 640),
 ) -> dict:
-
-    """Creates Torch dataloaders"""
-
+    """Create Torch dataloaders."""
     indices = np.arange(len(images))
 
     # Split training and validation data
