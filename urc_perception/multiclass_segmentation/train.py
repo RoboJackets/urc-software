@@ -35,7 +35,7 @@ def main():
 
     # print out yaml file configuration
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    yaml_path = os.path.join(dir_path, "config/igvc.yaml")
+    yaml_path = os.path.join(dir_path, "config/urc.yaml")
     ARCH = yaml.safe_load(open(yaml_path, "r"))
 
     # Set a seed for reproducibility

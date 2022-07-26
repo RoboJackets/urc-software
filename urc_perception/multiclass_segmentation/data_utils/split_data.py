@@ -16,7 +16,7 @@ if __name__ == "__main__":
         "-dir",
         "--dir",
         required=True,
-        help="igvc_dataset location"
+        help="urc_dataset location"
     )
     args = vars(ap.parse_args())
 
