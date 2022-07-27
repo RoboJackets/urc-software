@@ -27,20 +27,6 @@ def generate_launch_description():
         )
     )
 
-    scan_to_pointcloud = Node(
-            package='urc_gazebo',
-            executable='urc_gazebo_ScanToPointCloud',
-            output='screen',
-            parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-                                     'scan_to_pointcloud_params.yaml'])
-            ],
-            remappings=[
-                ("/scan_to_pointcloud/pc2", "/pc2"),
-                ("/scan_to_pointcloud/scan", "/scan")
-            ]
-        )
-
     control = Node(
             package='urc_gazebo',
             executable='urc_gazebo_Control',
@@ -67,16 +53,6 @@ def generate_launch_description():
             ]
         )
 
-    # magnetometer = Node(
-    #            package='urc_gazebo',
-    #            executable='urc_gazebo_Magnetometer',
-    #            output='screen',
-    #            parameters=[
-    #               PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-    #                                    'magnetometer_params.yaml'])
-    #            ]
-    #        )
-
     # ground_truth = Node(
     #        package='urc_gazebo',
     #        executable='urc_gazebo_GroundTruth',
@@ -100,9 +76,7 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         wallii,
-        scan_to_pointcloud,
-        control
-        # magnetometer
-        # ground_truth
+        control,
+        # ground_truth,
         # sim_color_detector
     ])
