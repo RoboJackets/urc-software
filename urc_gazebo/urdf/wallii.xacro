@@ -249,7 +249,7 @@
 
    <gazebo reference="cam/center">
     <sensor name="center_sensor" type="camera">
-        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <plugin name="center_sensor" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=center_img</remapping>
@@ -299,7 +299,7 @@
 
    <gazebo reference="cam/left">
     <sensor name="left_sensor" type="camera">
-        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <plugin name="left_sensor" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=left_img</remapping>
@@ -350,7 +350,7 @@
    
    <gazebo reference="cam/right">
     <sensor name="right_sensor" type="camera">
-        <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+        <plugin name="right_sensor" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=right_img</remapping>
@@ -455,7 +455,7 @@
           <update_rate>1</update_rate>
 
           <!-- Use camera, not camera_triggered -->
-          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+          <plugin name="center_sensor" filename="libgazebo_ros_camera.so">
             <!-- Change namespace, camera name and topics so:
                  * Images are published to: /custom_ns/custom_camera/custom_image
                  * Camera info is published to: /custom_ns/custom_camera/custom_info 
@@ -486,7 +486,7 @@
           <update_rate>1</update_rate>
 
           <!-- Use camera, not camera_triggered -->
-          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+          <plugin name="left_sensor" filename="libgazebo_ros_camera.so">
             <!-- Change namespace, camera name and topics so:
                  * Images are published to: /custom_ns/custom_camera/custom_image
                  * Camera info is published to: /custom_ns/custom_camera/custom_info 
@@ -517,7 +517,7 @@
           <update_rate>1</update_rate>
 
           <!-- Use camera, not camera_triggered -->
-          <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+          <plugin name="right_sensor" filename="libgazebo_ros_camera.so">
             <!-- Change namespace, camera name and topics so:
                  * Images are published to: /custom_ns/custom_camera/custom_image
                  * Camera info is published to: /custom_ns/custom_camera/custom_info 

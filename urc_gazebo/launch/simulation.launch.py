@@ -1,19 +1,17 @@
-# from http.server import executable <----- commented out for flake8
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
-import yaml
 
 
 def generate_launch_description():
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-
-    # todo: make this a launch parameter
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
 
     gazebo = IncludeLaunchDescription(
@@ -29,6 +27,7 @@ def generate_launch_description():
         )
     )
 
+<<<<<<< HEAD
     parameters_file_path = os.path.join(get_package_share_directory(
         'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
     with open(parameters_file_path, 'r') as file:
@@ -46,12 +45,15 @@ def generate_launch_description():
                 ("/scan_to_pointcloud/scan", "/scan")
             ]
         )
+=======
+>>>>>>> origin/master
     control = Node(
             package='urc_gazebo',
             executable='urc_gazebo_Control',
             output='screen',
             parameters=[
-                parameters_file_path
+                PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
+                                     'control_params.yaml'])
             ],
             remappings=[
                 ("/control/right_wheel_shock_controller/command",
@@ -71,21 +73,13 @@ def generate_launch_description():
             ]
         )
 
-    # magnetometer = Node(
-    #            package='urc_gazebo',
-    #            executable='urc_gazebo_Magnetometer',
-    #            output='screen',
-    #            parameters=[
-    #               parameters_file_path
-    #            ]
-    #        )
-
     # ground_truth = Node(
     #        package='urc_gazebo',
     #        executable='urc_gazebo_GroundTruth',
     #        output='screen',
     #        parameters=[
-    #            parameters_file_path
+    #            PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
+    #                                  'ground_truth_params.yaml'])
     #        ]
     #    )
 
@@ -94,16 +88,15 @@ def generate_launch_description():
     #        executable='urc_gazebo_SimColorDetector',
     #        output='screen',
     #        parameters=[
-    #            parameters_file_path
+    #            PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
+    #                                 'sim_color_detector_params.yaml'])
     #        ]
     #    )
 
     return LaunchDescription([
         gazebo,
         wallii,
-        scan_to_pointcloud,
-        control
-        # magnetometer
-        # ground_truth
+        control,
+        # ground_truth,
         # sim_color_detector
     ])

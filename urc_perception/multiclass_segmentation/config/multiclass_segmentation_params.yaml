@@ -1,0 +1,10 @@
+multiclass_segmentation:
+  ros__parameters:
+    camera_names: ["/cam/center", "/cam/left", "/cam/right"]
+    force_cpu: True
+    segmentation_topic: "segmented/image" 
+    model_path: "Allan/Please/Add/Details"
+    encoder: "efficientnet-b3"
+    encoder_weights: "imagenet"
+    image_resize_width: 416
+    image_resize_height: 416
