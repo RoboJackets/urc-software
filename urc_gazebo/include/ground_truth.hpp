@@ -45,6 +45,8 @@ namespace ground_truth
 
     tf2_ros::Buffer tfBuffer_;
     tf2_ros::TransformListener tfListener_;
+    
+    static tf2_ros::TransformBroadcaster br;
 
     nav_msgs::msg::Odometry g_og_pose;
     rclcpp::Time g_last_estimate;

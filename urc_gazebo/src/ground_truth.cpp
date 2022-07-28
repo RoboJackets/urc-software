@@ -49,7 +49,7 @@ namespace ground_truth
   void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
   {
     // get the starting location as the origin
-    if (g_og_pose.header.stamp.seconds() == 0)
+    if (g_og_pose.header.stamp.sec == 0)
     {
       g_og_pose.pose = msg.pose;
       g_og_pose.header = msg.header;
@@ -80,25 +80,26 @@ namespace ground_truth
       double roll, pitch, yaw;
       m.getRPY(roll, pitch, yaw);
 
-      tf2::Quaternion tempQuat
+      tf2::Quaternion tempQuat;
       tempQuat.setRPY(roll + roll_distribution(engine), pitch + pitch_distribution(engine), yaw + yaw_distribution(engine));
-      result.pose.pose.orientation = tempQuat;
-      quat.setRPY(roll,pitch,yaw)
+      
+      result.pose.pose.orientation = toMsg(tempQuat);
+      quat.setRPY(roll,pitch,yaw);
 
       tf2::Vector3 pos;
       tf2::fromMsg(msg.pose.pose.orientation, quat);
       tf2::fromMsg(result.pose.pose.position, pos);
 
       // publish odom message
-      _ground_truth_pub.publish(result);
+      _ground_truth_pub->publish(result);
 
       // publish transform for tf if there has not been a update from the localization node in the last second
       // since it also publishes the same transform
-      if (std::fabs(msg.header.stamp.toSec() - g_last_estimate.toSec()) > 1.0)
+      if (std::fabs(msg.header.stamp.sec - g_last_estimate.seconds()) > 1.0)
       {
-        static tf2::TransformBroadcaster br;
+
         geometry_msgs::msg::TransformStamped transform_stamped;
-        transform_stamped = this->tfBuffer_.lookupTransform("odom", "base_footprint", rclcpp::Time(0))
+        transform_stamped = this->tfBuffer_.lookupTransform("odom", "base_footprint", rclcpp::Time(0));
         br.sendTransform(transform_stamped);
 
         tf2::Transform utm_to_odom;
