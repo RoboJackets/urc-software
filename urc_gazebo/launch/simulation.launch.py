@@ -27,26 +27,6 @@ def generate_launch_description():
         )
     )
 
-<<<<<<< HEAD
-    parameters_file_path = os.path.join(get_package_share_directory(
-        'urc_gazebo'), 'config', 'urc_gazebo_params.yaml')
-    with open(parameters_file_path, 'r') as file:
-        scan_to_pointcloud_params = yaml.safe_load(file)['scan_to_pointcloud']['ros_parameters']
-
-    scan_to_pointcloud = Node(
-            package='urc_gazebo',
-            executable='urc_gazebo_ScanToPointCloud',
-            output='screen',
-            parameters=[
-                scan_to_pointcloud_params
-            ],
-            remappings=[
-                ("/scan_to_pointcloud/pc2", "/pc2"),
-                ("/scan_to_pointcloud/scan", "/scan")
-            ]
-        )
-=======
->>>>>>> origin/master
     control = Node(
             package='urc_gazebo',
             executable='urc_gazebo_Control',
