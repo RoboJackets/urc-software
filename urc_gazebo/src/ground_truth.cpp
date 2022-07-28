@@ -141,7 +141,7 @@ namespace ground_truth
 //       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
 //     }
 //   }
-// } // namespace ground_truth
+//  
+} // namespace ground_truth
+RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)
 
-  RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)
-}
