@@ -70,7 +70,3 @@ void ScanToPointCloud::scanCallback(const sensor_msgs::msg::LaserScan & scanData
 }  // namespace scan_to_pointcloud
 
 RCLCPP_COMPONENTS_REGISTER_NODE(scan_to_pointcloud::ScanToPointCloud)
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
