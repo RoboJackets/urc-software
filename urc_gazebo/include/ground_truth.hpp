@@ -22,53 +22,53 @@
 
 namespace ground_truth
 {
-  class GroundTruth : public rclcpp::Node
-  {
-  public:
-    explicit GroundTruth(const rclcpp::NodeOptions & options);
+class GroundTruth : public rclcpp::Node
+{
+public:
+  explicit GroundTruth(const rclcpp::NodeOptions & options);
 
-  private:
-    nav_msgs::msg::Odometry _og_pose;
-    rclcpp::Time _last_estimate;
+private:
+  nav_msgs::msg::Odometry _og_pose;
+  rclcpp::Time _last_estimate;
 
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_sub;
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _estimate_sub;
-    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_pub;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_sub;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _estimate_sub;
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_pub;
 
-    // TODO set this as a launch file parameter
-    double longitude = -84.405001;
-    double latitude = 33.774497;
+  // TODO set this as a launch file parameter
+  double longitude = -84.405001;
+  double latitude = 33.774497;
 
-    double utm_x, utm_y;
+  double utm_x, utm_y;
 
-    tf2::Transform utm_to_odom;
+  tf2::Transform utm_to_odom;
 
-    tf2_ros::Buffer tfBuffer_;
-    tf2_ros::TransformListener tfListener_;
-    
-    static tf2_ros::TransformBroadcaster br;
+  tf2_ros::Buffer tfBuffer_;
+  tf2_ros::TransformListener tfListener_;
 
-    nav_msgs::msg::Odometry g_og_pose;
-    rclcpp::Time g_last_estimate;
+  static tf2_ros::TransformBroadcaster br;
 
-    double x_noise_std_dev; 
-    double y_noise_std_dev; 
-    double z_noise_std_dev; 
-    double roll_noise_std_dev; 
-    double pitch_noise_std_dev; 
-    double yaw_noise_std_dev;
-    std::default_random_engine engine;
-    std::normal_distribution<double> x_distribution;
-    std::normal_distribution<double> y_distribution;
-    std::normal_distribution<double> z_distribution;
-    std::normal_distribution<double> roll_distribution;
-    std::normal_distribution<double> pitch_distribution;
-    std::normal_distribution<double> yaw_distribution;
+  nav_msgs::msg::Odometry g_og_pose;
+  rclcpp::Time g_last_estimate;
 
-    void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
-    void odomCallback(const nav_msgs::msg::Odometry & msg);
-    //void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
-  };
+  double x_noise_std_dev;
+  double y_noise_std_dev;
+  double z_noise_std_dev;
+  double roll_noise_std_dev;
+  double pitch_noise_std_dev;
+  double yaw_noise_std_dev;
+  std::default_random_engine engine;
+  std::normal_distribution<double> x_distribution;
+  std::normal_distribution<double> y_distribution;
+  std::normal_distribution<double> z_distribution;
+  std::normal_distribution<double> roll_distribution;
+  std::normal_distribution<double> pitch_distribution;
+  std::normal_distribution<double> yaw_distribution;
+
+  void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
+  void odomCallback(const nav_msgs::msg::Odometry & msg);
+  //void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
+};
 } // namespace ground_truth
 
 #endif
