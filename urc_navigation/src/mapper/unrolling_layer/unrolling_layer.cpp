@@ -7,7 +7,7 @@ PLUGINLIB_EXPORT_CLASS(unrolling_layer::UnrollingLayer, costmap_2d::Layer)
 namespace unrolling_layer
 {
 UnrollingLayer::UnrollingLayer(const rclcpp::NodeOptions & options)
-: rclcpp::Node("joystick_driver", options)
+: rclcpp::Node("unrolling_layer", options)
 {
   topic = declare_parameter<std::string>("topic");
 }
@@ -16,11 +16,19 @@ void UnrollingLayer::onInitialize()
 {
   matchSize();
   initTranslator();
-  initPubSub();
 
-  bool track_unknown = nh_.param("track_unknown_space", false);
+  map_sub_ = create_subcription<nav_msgs::OccupancyGridConstPtr>(
+    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::OccupancyGridConstPtr &msg) {
+      incomingMap(msg);
+    });
 
-  default_value_ = track_unknown ? costmap_2d::NO_INFORMATION : costmap_2d::FREE_SPACE;
+  map_update_sub_ = create_subscription<map_msgs::OccupancyGridUpdateConstPtr>(
+    topic + "_updates", rclcpp::SystemDefaultsQoS(), [this](const map_msgs::OccupancyGridUpdateConstPtr &msg) {
+      incomingUpdate(msg);
+    });
+
+  bool track_unknown = declare_parameter<bool>("track_unknown_space", false);
+  default_value_ = (track_unknown) ? costmap_2d::NO_INFORMATION : costmap_2d::FREE_SPACE;
 
   current_ = true;
 }
@@ -38,15 +46,6 @@ void UnrollingLayer::initTranslator()
   translator[inflated_msg_cost] = costmap_2d::INSCRIBED_INFLATED_OBSTACLE;
   translator[lethal_msg_cost] = costmap_2d::LETHAL_OBSTACLE;
   translator[unknown_msg_cost] = costmap_2d::NO_INFORMATION;
-}
-
-void UnrollingLayer::initPubSub()
-{
-  if (map_update_sub_.getTopic() != ros::names::resolve(topic))
-  {
-    map_sub_ = nh_.subscribe(topic, 1, &UnrollingLayer::incomingMap, this);
-    map_update_sub_ = nh_.subscribe(topic + "_updates", 1, &UnrollingLayer::incomingUpdate, this);
-  }
 }
 
 void UnrollingLayer::incomingMap(const nav_msgs::OccupancyGridConstPtr& map)

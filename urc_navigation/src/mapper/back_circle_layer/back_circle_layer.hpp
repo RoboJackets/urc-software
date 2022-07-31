@@ -13,10 +13,10 @@
 
 namespace back_circle_layer
 {
-class BackCircleLayer : public costmap_2d::CostmapLayer
+class BackCircleLayer : public rclcpp::Node, public costmap_2d::CostmapLayer
 {
 public:
-  BackCircleLayer();
+  explicit BackCircleLayer(const rclcpp::NodeOptions & options);
 
   void onInitialize() override;
 
@@ -28,12 +28,9 @@ public:
   std::vector<double> xVals, yVals;
 
 private:
-  void initPubSub();
-  void costmapCallback(const igvc_msgs::BackCircleResponse::ConstPtr& msg);
+  void costmapCallback(const urc_msgs::msg::BackCircleResponse & msg);
 
-  ros::NodeHandle nh_;
-  ros::NodeHandle private_nh_;
-  ros::Subscriber back_circle_sub_;
+  rclcpp::Subscriber<urc_msgs::msg::BackCircleResponse> back_circle_sub_;
 };
 }  // namespace back_circle_layer
 

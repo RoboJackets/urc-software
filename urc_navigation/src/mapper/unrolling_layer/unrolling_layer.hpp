@@ -21,10 +21,6 @@ public:
   void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;
 
 private:
-  /**
-   * Initializes the ROS publishers and subscribers
-   */
-  void initPubSub();
 
   /**
    * Initializes the translation array to translate from 0-100 (nav_msgs::OccupancyGrid) to 0-255 (costmap_2d)
@@ -82,10 +78,9 @@ private:
    */
   void updateMap(const std::vector<int8_t>& map, const UpdateMapMetadata& metadata);
 
-  ros::NodeHandle nh_;
-  ros::NodeHandle private_nh_;
-  ros::Subscriber map_sub_;
-  ros::Subscriber map_update_sub_;
+  rclcpp::Subscriber<nav_msgs::OccupancyGridConstPtr> map_sub_;
+  rclcpp::Subscriber<map_msgs::OccupancyGridUpdateConstPtr> map_update_sub_;
+  
   std::array<uint8_t, std::numeric_limits<char>::max()> translator;
 
   std::string topic;

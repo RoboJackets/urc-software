@@ -5,7 +5,8 @@ PLUGINLIB_EXPORT_CLASS(back_circle_layer::BackCircleLayer, costmap_2d::Layer)
 
 namespace back_circle_layer
 {
-BackCircleLayer::BackCircleLayer() : private_nh_("~")
+BackCircleLayer::BackCircleLayer(const rclcpp::NodeOptions & options)
+: rclcpp::Node("joystick_driver", options)
 {
 }
 
@@ -14,7 +15,12 @@ BackCircleLayer::BackCircleLayer() : private_nh_("~")
 void BackCircleLayer::onInitialize()
 {
   matchSize();
-  initPubSub();
+
+  back_circle_sub_ = create_subscription<urc_msgs::msg::BackCircleResponse>(
+    "/back_circle_response", rclcpp::SystemDefaultsQoS(), [this](const urc_msgs::msg::BackCircleResponse msg) {
+      costmapCallback(msg);
+  });
+
   current_ = true;
 }
 
@@ -43,16 +49,11 @@ void BackCircleLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int min_i,
   }
 }
 
-void BackCircleLayer::initPubSub()
-{
-  back_circle_sub_ = nh_.subscribe("/back_circle_response", 1, &BackCircleLayer::costmapCallback, this);
-}
-
-void BackCircleLayer::costmapCallback(const igvc_msgs::BackCircleResponse::ConstPtr &msg)
+void BackCircleLayer::costmapCallback(const urc_msgs::msg::BackCircleResponse &msg)
 {
   xVals = msg->x;
   yVals = msg->y;
-  ROS_INFO_STREAM(msg);
+  RCLCPP_INFO_STREAM(this->get_logger(), msg);
 }
 
 }  // namespace back_circle_layer
