@@ -6,8 +6,10 @@ PLUGINLIB_EXPORT_CLASS(unrolling_layer::UnrollingLayer, costmap_2d::Layer)
 
 namespace unrolling_layer
 {
-UnrollingLayer::UnrollingLayer() : private_nh_{ "~" }, config_{ private_nh_ }
+UnrollingLayer::UnrollingLayer(const rclcpp::NodeOptions & options)
+: rclcpp::Node("joystick_driver", options)
 {
+  topic = declare_parameter<std::string>("topic");
 }
 
 void UnrollingLayer::onInitialize()
@@ -40,10 +42,10 @@ void UnrollingLayer::initTranslator()
 
 void UnrollingLayer::initPubSub()
 {
-  if (map_update_sub_.getTopic() != ros::names::resolve(config_.topic))
+  if (map_update_sub_.getTopic() != ros::names::resolve(topic))
   {
-    map_sub_ = nh_.subscribe(config_.topic, 1, &UnrollingLayer::incomingMap, this);
-    map_update_sub_ = nh_.subscribe(config_.topic + "_updates", 1, &UnrollingLayer::incomingUpdate, this);
+    map_sub_ = nh_.subscribe(topic, 1, &UnrollingLayer::incomingMap, this);
+    map_update_sub_ = nh_.subscribe(topic + "_updates", 1, &UnrollingLayer::incomingUpdate, this);
   }
 }
 

@@ -10,10 +10,10 @@
 
 namespace unrolling_layer
 {
-class UnrollingLayer : public costmap_2d::CostmapLayer
+class UnrollingLayer : public rclcpp::Node, public costmap_2d::CostmapLayer
 {
 public:
-  UnrollingLayer();
+  explicit UnrollingLayer(const rclcpp::NodeOptions & options);
 
   void onInitialize() override;
   void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
@@ -88,7 +88,7 @@ private:
   ros::Subscriber map_update_sub_;
   std::array<uint8_t, std::numeric_limits<char>::max()> translator;
 
-  UnrollingLayerConfig config_;
+  std::string topic;
   std::optional<nav_msgs::MapMetaData> current_metadata_;
 
   size_t min_map_x_;
