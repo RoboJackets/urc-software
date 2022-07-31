@@ -3,16 +3,14 @@
 namespace gridmap_layer
 {
 GridmapLayer::GridmapLayer(const std::vector<std::string>& layers)
-: map_{ layers },
-  dirty_min_idx_{ std::numeric_limits<int>::max(), std::numeric_limits<int>::max() },
-  dirty_max_idx_{ std::numeric_limits<int>::min(), std::numeric_limits<int>::min() }
+: map_{ layers }
 {
+  resetDirty();
 }
 
 GridmapLayer::GridmapLayer()
-: dirty_min_idx_{ std::numeric_limits<int>::max(), std::numeric_limits<int>::max() },
-  dirty_max_idx_{ std::numeric_limits<int>::min(), std::numeric_limits<int>::min() }
 {
+  resetDirty();
 }
 
 void GridmapLayer::onInitialize()
@@ -35,6 +33,12 @@ void GridmapLayer::updateBounds(double robot_x, double robot_y, double robot_yaw
 
   *min_y = std::min(*min_y, min_pos[1]);
   *max_y = std::max(*max_y, max_pos[1]);
+}
+
+void GridmapLayer::resetDirty()
+{
+  dirty_min_idx_ = { std::numeric_limits<int>::max(), std::numeric_limits<int>::max() };
+  dirty_max_idx_ = { std::numeric_limits<int>::min(), std::numeric_limits<int>::min() };
 }
 
 void GridmapLayer::touch(const grid_map::Index& index)

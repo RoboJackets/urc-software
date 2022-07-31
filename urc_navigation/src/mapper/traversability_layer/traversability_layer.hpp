@@ -13,7 +13,7 @@
 
 namespace traversability_layer
 {
-class TraversabilityLayer : public gridmap_layer::GridmapLayer
+class TraversabilityLayer : public rclcpp::Node, public gridmap_layer::GridmapLayer
 {
 public:
   TraversabilityLayer();

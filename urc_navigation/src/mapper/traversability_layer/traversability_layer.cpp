@@ -40,7 +40,7 @@ TraversabilityLayer::TraversabilityLayer()
     "/slope/gridmap", rclcpp::SystemDefaultsQoS(), [this](const grid_map_msgs::GridMap &msg) {
       slopeMapCallback(msg);
     });
-    
+
   costmap_pub_ = create_publisher<nav_msgs::OccupancyGrid>(
     costmap_topic,
     rclcpp::SystemDefaultsQoS());
@@ -66,15 +66,16 @@ void TraversabilityLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int mi
   uchar *line_array = costmap_2d_.getCharMap();
   unsigned int span = master_grid.getSizeInCellsX();
 
-  for (int j = min_j; j < max_j; j++)
+  for (int j = min_j; j < max_j; ++j)
   {
     unsigned int it = j * span + min_i;
-    for (int i = min_i; i < max_i; i++)
+    for (int i = min_i; i < max_i; ++i)
     {
       unsigned char old_cost = master_array[it];
-      if (old_cost == costmap_2d::NO_INFORMATION || old_cost < line_array[it])
+      if (old_cost == costmap_2d::NO_INFORMATION || old_cost < line_array[it]) {
         master_array[it] = line_array[it];
-      it++;
+      }
+      ++it;
     }
   }
 }
