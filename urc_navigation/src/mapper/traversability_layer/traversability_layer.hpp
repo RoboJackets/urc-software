@@ -1,6 +1,7 @@
 #ifndef SRC_TRAVERSABILITY_LAYER_H
 #define SRC_TRAVERSABILITY_LAYER_H
 
+#include <rclcpp/rclcpp.hpp>
 #include <costmap_2d/GenericPluginConfig.h>
 #include <costmap_2d/layer.h>
 #include <costmap_2d/layered_costmap.h>
@@ -23,16 +24,12 @@ public:
                     double* max_y) override;
 
 private:
-  ros::NodeHandle private_nh_;
   TraversabilityLayerConfig config_;
 
-  ros::Subscriber slope_sub_;
-  ros::Publisher costmap_pub_;
+  rclcpp::Subscriber slope_sub_;
+  rclcpp::Publisher costmap_pub_;
 
   costmap_2d::Costmap2D costmap_2d_{};
-
-  void initGridmap();
-  void initPubSub();
 
   void slopeMapCallback(const grid_map_msgs::GridMap& slope_map_msg);
 

@@ -4,4 +4,5 @@
 
 [submodule "external/grid_map"]
 	path = external/grid_map
-	url = https://github.com/ANYbotics/grid_map/tree/ros2
+	url = https://github.com/ANYbotics/grid_map/tree/master
+	branch = ros2
