@@ -2,6 +2,7 @@
 #define SRC_GRIDMAP_LAYER_H
 
 #include <costmap_2d/layer.h>
+#include <optional>
 #include <grid_map_ros/grid_map_ros.hpp>
 
 namespace gridmap_layer
@@ -19,7 +20,6 @@ public:
 
 protected:
   void touch(const grid_map::Index& index);
-  void resetDirty();
   std::optional<grid_map::SubmapIterator> getDirtyIterator() const;
 
   grid_map::Index dirty_min_idx_;

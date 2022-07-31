@@ -1,3 +1,7 @@
 [submodule "external/nanopb"]
 	path = external/nanopb
 	url = https://github.com/nanopb/nanopb
+
+[submodule "external/grid_map"]
+	path = external/grid_map
+	url = https://github.com/ANYbotics/grid_map/tree/ros2

@@ -2,14 +2,17 @@
 
 namespace gridmap_layer
 {
-GridmapLayer::GridmapLayer(const std::vector<std::string>& layers) : map_{ layers }
+GridmapLayer::GridmapLayer(const std::vector<std::string>& layers)
+: map_{ layers },
+  dirty_min_idx_{ std::numeric_limits<int>::max(), std::numeric_limits<int>::max() },
+  dirty_max_idx_{ std::numeric_limits<int>::min(), std::numeric_limits<int>::min() }
 {
-  resetDirty();
 }
 
 GridmapLayer::GridmapLayer()
+: dirty_min_idx_{ std::numeric_limits<int>::max(), std::numeric_limits<int>::max() },
+  dirty_max_idx_{ std::numeric_limits<int>::min(), std::numeric_limits<int>::min() }
 {
-  resetDirty();
 }
 
 void GridmapLayer::onInitialize()
@@ -18,12 +21,12 @@ void GridmapLayer::onInitialize()
   enabled_ = true;
 }
 
-void GridmapLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y,
-                                double* max_x, double* max_y)
+void GridmapLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
+                                double * max_x, double * max_y)
 {
   grid_map::Position min_pos;
   grid_map::Position max_pos;
-  // min_idx is max_pos since indexes increases going down and right
+  // min_idx is max_pos since indexes increase going down and right
   map_.getPosition(dirty_min_idx_, max_pos);
   map_.getPosition(dirty_max_idx_, min_pos);
 
@@ -43,16 +46,11 @@ void GridmapLayer::touch(const grid_map::Index& index)
   dirty_max_idx_[1] = std::max(dirty_max_idx_[1], index[1]);
 }
 
-void GridmapLayer::resetDirty()
-{
-  dirty_min_idx_ = { std::numeric_limits<int>::max(), std::numeric_limits<int>::max() };
-  dirty_max_idx_ = { std::numeric_limits<int>::min(), std::numeric_limits<int>::min() };
-}
-
 std::optional<grid_map::SubmapIterator> GridmapLayer::getDirtyIterator() const
 {
-  if (dirty_min_idx_[0] == std::numeric_limits<int>::max())
-    return std::nullopt;
+  if (dirty_min_idx_[0] == std::numeric_limits<int>::max()) {
+    return std::nullopt_t;
+  }
 
   const grid_map::Index& start_index = dirty_min_idx_;
   const int size_x = dirty_max_idx_[0] - dirty_min_idx_[0] + 1;
