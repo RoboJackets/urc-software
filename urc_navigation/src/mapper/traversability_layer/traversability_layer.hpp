@@ -24,10 +24,31 @@ public:
                     double* max_y) override;
 
 private:
-  TraversabilityLayerConfig config_;
+  double untraversable_probability;
+  double slope_threshold;
+  double logodd_increment;
+  
+  double resolution;
+  double length_x;
+  double length_y;
 
-  rclcpp::Subscriber slope_sub_;
-  rclcpp::Publisher costmap_pub_;
+  double max_occupancy;
+  double min_occupancy;
+
+  std::string frame_id;
+  std::string costmap_topic;
+
+  double occupied_threshold;
+
+  struct
+  {
+    std::string map_topic;
+    bool enabled;
+  } debug;
+  
+  
+  rclcpp::Subscriber<grid_map_msgs::GridMap>::SharedPtr slope_sub_;
+  rclcpp::Publisher<nav_msgs::OccupancyGrid>::SharedPtr costmap_pub_;
 
   costmap_2d::Costmap2D costmap_2d_{};
 

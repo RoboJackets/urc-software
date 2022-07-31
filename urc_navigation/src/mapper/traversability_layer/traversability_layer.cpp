@@ -8,24 +8,42 @@ PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, costmap_2d::La
 namespace traversability_layer
 {
 TraversabilityLayer::TraversabilityLayer()
-  : GridmapLayer({ "logodds", "probability" }), private_nh_("~"), config_(private_nh_)
+  : rclcpp::Node("joystick_driver", options),
+    GridmapLayer({ "logodds", "probability" }),
 {
-  initGridmap();
-  initPubSub();
-}
+  untraversable_probability = declare_parameter<double>("untraversable_probability");
+  slope_threshold = declare_parameter<double>("slope_threshold");
+  logodd_increment = probability_utils::toLogOdds(untraversable_probability);
+  
+  resolution = declare_parameter<double>("resolution");
+  length_x = declare_parameter<double>("length_x");
+  length_y = declare_parameter<double>("length_y");
 
-void TraversabilityLayer::initGridmap()
-{
-  map_.setFrameId(config_.map.frame_id);
-  grid_map::Length dimensions{ config_.map.length_x, config_.map.length_y };
-  map_.setGeometry(dimensions, config_.map.resolution);
+  max_occupancy = declare_parameter<double>("max_occupancy");
+  min_occupancy = declare_parameter<double>("min_occupancy");
+
+  frame_id = declare_parameter<std::string>("untraversable_probability");
+  costmap_topic = declare_parameter<std::string>("untraversable_probability");
+
+  occupied_threshold = declare_parameter<double>("untraversable_probability");
+
+  debug.map_topic = declare_parameter<std::string>("debug/map_topic");
+  debug.enabled = declare_parameter<bool>("debug/enabled");
+  
+  // Initialize gridmap
+  map_.setFrameId(frame_id);
+  grid_map::Length dimensions{ length_x, length_y };
+  map_.setGeometry(dimensions, resolution);
   map_.get("logodds").setZero();
-}
 
-void TraversabilityLayer::initPubSub()
-{
-  slope_sub_ = private_nh_.subscribe("/slope/gridmap", 1, &TraversabilityLayer::slopeMapCallback, this);
-  costmap_pub_ = private_nh_.advertise<nav_msgs::OccupancyGrid>(config_.map.costmap_topic, 1);
+  slope_sub_ = create_subscription<grid_map_msgs::GridMap>(
+    "/slope/gridmap", rclcpp::SystemDefaultsQoS(), [this](const grid_map_msgs::GridMap &msg) {
+      slopeMapCallback(msg);
+    });
+    
+  costmap_pub_ = create_publisher<nav_msgs::OccupancyGrid>(
+    costmap_topic,
+    rclcpp::SystemDefaultsQoS());
 }
 
 void TraversabilityLayer::onInitialize()
@@ -38,7 +56,7 @@ void TraversabilityLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int mi
 {
   matchCostmapDims(master_grid);
   transferToCostmap();
-  if (config_.map.debug.enabled)
+  if (debug.enabled)
   {
     publishCostmap();
   }
@@ -89,13 +107,13 @@ void TraversabilityLayer::slopeMapCallback(const grid_map_msgs::GridMap &slope_m
       map_.getIndex(pos, map_index);
       touch(map_index);
       float *logodd = &map_.at("logodds", map_index);
-      if (slope > config_.slope_threshold)
+      if (slope > slope_threshold)
       {
-        *logodd = std::min(*logodd + config_.logodd_increment, config_.map.max_occupancy);
+        *logodd = std::min(*logodd + logodd_increment, map.max_occupancy);
       }
       else
       {
-        *logodd = std::max(*logodd - config_.logodd_increment, config_.map.min_occupancy);
+        *logodd = std::max(*logodd - logodd_increment, map.min_occupancy);
       }
     }
   }
@@ -140,7 +158,7 @@ void TraversabilityLayer::publishCostmap()
 
   double resolution = costmap_2d_.getResolution();
 
-  msg.header.frame_id = config_.map.frame_id;
+  msg.header.frame_id = frame_id;
   msg.header.stamp = ros::Time::now();
   msg.info.resolution = resolution;
 
@@ -197,7 +215,7 @@ void TraversabilityLayer::updateStaticWindow()
     float probability = probability_utils::fromLogOdds(log_odds);
     size_t linear_index = grid_map::getLinearIndexFromIndex(*it, map_.getSize(), false);
 
-    if (probability > config_.map.occupied_threshold)
+    if (probability > occupied_threshold)
     {
       char_map[num_cells - linear_index - 1] = costmap_2d::LETHAL_OBSTACLE;
     }
@@ -235,7 +253,7 @@ void TraversabilityLayer::updateRollingWindow()
 
     const size_t linear_idx = x_idx + y_idx * cells_x;
 
-    if (probability > config_.map.occupied_threshold)
+    if (probability > occupied_threshold)
     {
       char_map[linear_idx] = costmap_2d::LETHAL_OBSTACLE;
     }
