@@ -16,7 +16,7 @@ namespace traversability_layer
 class TraversabilityLayer : public rclcpp::Node, public gridmap_layer::GridmapLayer
 {
 public:
-  TraversabilityLayer();
+  explicit TraversabilityLayer(const rclcpp::NodeOptions & options);
 
   void onInitialize() override;
   void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;

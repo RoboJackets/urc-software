@@ -7,10 +7,11 @@ PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, costmap_2d::La
 
 namespace traversability_layer
 {
-TraversabilityLayer::TraversabilityLayer()
+TraversabilityLayer::TraversabilityLayer(const rclcpp::NodeOptions & options)
   : rclcpp::Node("joystick_driver", options),
-    GridmapLayer({ "logodds", "probability" }),
+    gridmap_layer::GridmapLayer({ "logodds", "probability" })
 {
+  // Initialize parameters
   untraversable_probability = declare_parameter<double>("untraversable_probability");
   slope_threshold = declare_parameter<double>("slope_threshold");
   logodd_increment = probability_utils::toLogOdds(untraversable_probability);
@@ -155,12 +156,12 @@ void TraversabilityLayer::publishCostmap()
 {
   nav_msgs::OccupancyGrid msg;
 
-  boost::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(costmap_2d_.getMutex()));
+  std::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(costmap_2d_.getMutex()));
 
   double resolution = costmap_2d_.getResolution();
 
   msg.header.frame_id = frame_id;
-  msg.header.stamp = ros::Time::now();
+  msg.header.stamp = rclcpp::Time::now();
   msg.info.resolution = resolution;
 
   msg.info.width = costmap_2d_.getSizeInCellsX();
