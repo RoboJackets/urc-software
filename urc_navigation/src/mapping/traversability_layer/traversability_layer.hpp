@@ -1,15 +1,16 @@
 #ifndef SRC_TRAVERSABILITY_LAYER_H
 #define SRC_TRAVERSABILITY_LAYER_H
 
+#include "gridmap_layer/gridmap_layer.hpp"
+
 #include <rclcpp/rclcpp.hpp>
-#include <costmap_2d/GenericPluginConfig.h>
-#include <costmap_2d/layer.h>
-#include <costmap_2d/layered_costmap.h>
-
+#include <nav2_costmap_2d/GenericPluginConfig.h>
+#include <nav2_costmap_2d/layer.h>
+#include <nav2_costmap_2d/layered_costmap.h>
 #include <grid_map_ros/grid_map_ros.hpp>
-
-#include "gridmap_layer.h"
-#include "traversability_layer_config.h"
+#include <pluginlib/class_list_macros.h>
+#include <grid_map_ros/GridMapRosConverter.hpp>
+#include <mapper/probability_utils.h>
 
 namespace traversability_layer
 {

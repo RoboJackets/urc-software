@@ -1,9 +1,7 @@
-#include "traversability_layer.h"
-#include <pluginlib/class_list_macros.h>
-#include <grid_map_ros/GridMapRosConverter.hpp>
-#include <mapper/probability_utils.h>
+#include "traversability_layer.hpp"
 
-PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, costmap_2d::Layer)
+
+PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, nav2_costmap_2d::Layer)
 
 namespace traversability_layer
 {
@@ -182,10 +180,10 @@ void TraversabilityLayer::publishCostmap()
   {
     switch (data[i])
     {
-      case costmap_2d::FREE_SPACE:
+      case nav2_costmap_2d::FREE_SPACE:
         msg.data[i] = 0;
         break;
-      case costmap_2d::LETHAL_OBSTACLE:
+      case nav2_costmap_2d::LETHAL_OBSTACLE:
         msg.data[i] = 100;
         break;
       default:
@@ -219,11 +217,11 @@ void TraversabilityLayer::updateStaticWindow()
 
     if (probability > occupied_threshold)
     {
-      char_map[num_cells - linear_index - 1] = costmap_2d::LETHAL_OBSTACLE;
+      char_map[num_cells - linear_index - 1] = nav2_costmap_2d::LETHAL_OBSTACLE;
     }
     else
     {
-      char_map[num_cells - linear_index - 1] = costmap_2d::FREE_SPACE;
+      char_map[num_cells - linear_index - 1] = nav2_costmap_2d::FREE_SPACE;
     }
   }
 }
@@ -257,11 +255,11 @@ void TraversabilityLayer::updateRollingWindow()
 
     if (probability > occupied_threshold)
     {
-      char_map[linear_idx] = costmap_2d::LETHAL_OBSTACLE;
+      char_map[linear_idx] = nav2_costmap_2d::LETHAL_OBSTACLE;
     }
     else
     {
-      char_map[linear_idx] = costmap_2d::FREE_SPACE;
+      char_map[linear_idx] = nav2_costmap_2d::FREE_SPACE;
     }
 
     if (y_idx == 0)

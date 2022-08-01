@@ -21,7 +21,7 @@ find_package(robot_localization REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -44,7 +44,7 @@ set(dependencies
   rclcpp
   rclcpp_components
   urc_msgs
-  nav_msgs
+  nav2_msgs
   geometry_msgs
   tf2
   tf2_ros

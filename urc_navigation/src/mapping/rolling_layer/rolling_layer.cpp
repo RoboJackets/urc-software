@@ -1,18 +1,23 @@
-#include "rolling_layer.h"
-#include <pluginlib/class_list_macros.h>
+#include "rolling_layer.hpp"
+
 
 PLUGINLIB_EXPORT_CLASS(rolling_layer::RollingLayer, costmap_2d::Layer)
 
 namespace rolling_layer
 {
-RollingLayer::RollingLayer() : private_nh_("~"), config_(private_nh_)
+RollingLayer::RollingLayer(const rclcpp::NodeOptions & options)
+: rclcpp::Node("rolling_layer", options)
 {
+  topic = declare_parameter<std::string>("topic");
 }
 
 void RollingLayer::onInitialize()
 {
   matchSize();
-  initPubSub();
+  costmap_sub_ = create_subcription<nav_msgs::OccupancyGridConstPtr>(
+    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::OccupancyGridConstPtr &msg) {
+      costmapCallback(msg);
+    });
   current_ = true;
 }
 
@@ -41,11 +46,6 @@ void RollingLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int min_i, in
       master_array[it] = line_array[it];
     }
   }
-}
-
-void RollingLayer::initPubSub()
-{
-  costmap_sub_ = nh_.subscribe(config_.topic, 1, &RollingLayer::costmapCallback, this);
 }
 
 void RollingLayer::costmapCallback(const nav_msgs::OccupancyGridConstPtr &map)

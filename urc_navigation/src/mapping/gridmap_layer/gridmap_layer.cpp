@@ -1,4 +1,4 @@
-#include "gridmap_layer.h"
+#include "gridmap_layer.hpp"
 
 namespace gridmap_layer
 {

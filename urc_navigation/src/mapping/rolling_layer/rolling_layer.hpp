@@ -1,16 +1,16 @@
 #ifndef SRC_ROLLING_LAYER_H
 #define SRC_ROLLING_LAYER_H
 
-#include <ros/ros.h>
-#include <costmap_2d/costmap_layer.h>
-#include <costmap_2d/layered_costmap.h>
-#include <nav_msgs/OccupancyGrid.h>
+#include <rclcpp/rclcpp.hpp>
+#include <nav2_costmap_2d/layer.hpp>
+#include <nav2_costmap_2d/layered_costmap.hpp>
+#include <nav2_msgs/occupancy_grid.hpp>
 #include <map_msgs/OccupancyGridUpdate.h>
-#include "rolling_layer_config.h"
+#include <pluginlib/class_list_macros.h>
 
 namespace rolling_layer
 {
-class RollingLayer : public costmap_2d::CostmapLayer
+class RollingLayer : public rclcpp::Node, public nav2_costmap_2d::Layer
 {
 public:
   RollingLayer();
@@ -20,15 +20,11 @@ public:
   void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;
 
 private:
-  void initPubSub();
+  std::string topic;
 
   void costmapCallback(const nav_msgs::OccupancyGridConstPtr& map);
 
-  ros::NodeHandle nh_;
-  ros::NodeHandle private_nh_;
-  ros::Subscriber costmap_sub_;
-
-  RollingLayerConfig config_;
+  rclcpp::Subscriber<nav_msgs::OccupancyGridConstPtr> costmap_sub_;
 };
 }  // namespace rolling_layer
 

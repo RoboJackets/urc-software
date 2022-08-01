@@ -11,11 +11,11 @@
 
   <depend>robot_localization</depend>
   <depend>nav2_costmap_2d</depend>
+  <depend>nav2_msgs</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>
-  <depend>nav_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>

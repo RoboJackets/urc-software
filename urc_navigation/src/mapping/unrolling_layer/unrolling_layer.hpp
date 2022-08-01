@@ -1,16 +1,17 @@
 #ifndef SRC_UNROLLING_LAYER_H
 #define SRC_UNROLLING_LAYER_H
 
-#include <costmap_2d/costmap_layer.h>
-#include <costmap_2d/layered_costmap.h>
+#include <rclcpp/rclcpp.hpp>
+#include <nav2_costmap_2d/costmap_layer.h>
+#include <nav2_costmap_2d/layered_costmap.h>
 #include <map_msgs/OccupancyGridUpdate.h>
-#include <nav_msgs/OccupancyGrid.h>
-#include <ros/ros.h>
-#include "unrolling_layer_config.h"
+#include <nav2_msgs/OccupancyGrid.h>
+#include <nav2_msgs/OccupancyGrid.h>
+#include <pluginlib/class_list_macros.h>
 
 namespace unrolling_layer
 {
-class UnrollingLayer : public rclcpp::Node, public costmap_2d::CostmapLayer
+class UnrollingLayer : public rclcpp::Node, public nav2_costmap_2d::Layer
 {
 public:
   explicit UnrollingLayer(const rclcpp::NodeOptions & options);

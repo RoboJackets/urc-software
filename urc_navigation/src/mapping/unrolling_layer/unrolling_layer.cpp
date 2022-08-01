@@ -1,6 +1,4 @@
-#include "unrolling_layer.h"
-#include <nav_msgs/OccupancyGrid.h>
-#include <pluginlib/class_list_macros.h>
+#include "unrolling_layer.hpp"
 
 PLUGINLIB_EXPORT_CLASS(unrolling_layer::UnrollingLayer, costmap_2d::Layer)
 

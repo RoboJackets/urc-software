@@ -1,13 +1,13 @@
 #ifndef SRC_GRIDMAP_LAYER_H
 #define SRC_GRIDMAP_LAYER_H
 
-#include <costmap_2d/layer.h>
+#include <nav2_costmap_2d/layer.hpp>
 #include <optional>
 #include <grid_map_ros/grid_map_ros.hpp>
 
 namespace gridmap_layer
 {
-class GridmapLayer : public costmap_2d::Layer
+class GridmapLayer : public nav2_costmap_2d::Layer
 {
 public:
   GridmapLayer(const std::vector<std::string>& layers);
