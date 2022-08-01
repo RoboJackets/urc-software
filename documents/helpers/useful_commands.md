@@ -18,7 +18,7 @@ Solution: Check for typos and incorrect method usage
 
 ---
 ```bash
-colcon build –packages-select <name of package>
+colcon build --packages-select <name of package>
 ```
 Builds a specific package
 
@@ -76,7 +76,7 @@ Shows what is being published to a given topic
 
 ---
 ```bash
-rosdep update && rosdep install –from-paths src –ignore-src -r -y
+rosdep update && rosdep install --from-paths src --ignore-src -r -y
 ```
 
 Initializes all rosdep packages, enabling CMake to integrate and use them
@@ -176,7 +176,7 @@ Updates submodule metadata (the URL you linked in .gitmodules)
 
 ---
 ```bash
-git submodule update –init
+git submodule update --init
 ```
 
 Initializes and pulls any changes for every submodule. Use this if you are missing a specific submodule package during build!
@@ -186,7 +186,7 @@ Initializes and pulls any changes for every submodule. Use this if you are missi
 # Linting/Formatting:
 
 ```bash
-ament_uncrustify –reformat
+ament_uncrustify --reformat
 ```
 
 Automatically reformats all .cpp and .hpp files to ensure they match the rules laid out by ament_code_style.cfg
