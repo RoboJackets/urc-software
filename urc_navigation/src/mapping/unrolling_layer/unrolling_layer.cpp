@@ -15,18 +15,18 @@ void UnrollingLayer::onInitialize()
   matchSize();
   initTranslator();
 
-  map_sub_ = create_subcription<nav_msgs::OccupancyGridConstPtr>(
-    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::OccupancyGridConstPtr &msg) {
+  map_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       incomingMap(msg);
     });
 
-  map_update_sub_ = create_subscription<map_msgs::OccupancyGridUpdateConstPtr>(
-    topic + "_updates", rclcpp::SystemDefaultsQoS(), [this](const map_msgs::OccupancyGridUpdateConstPtr &msg) {
+  map_update_sub_ = create_subscription<map_msgs::msg::OccupancyGridUpdate>(
+    topic + "_updates", rclcpp::SystemDefaultsQoS(), [this](const map_msgs::msg::OccupancyGridUpdate &msg) {
       incomingUpdate(msg);
     });
 
   bool track_unknown = declare_parameter<bool>("track_unknown_space", false);
-  default_value_ = (track_unknown) ? costmap_2d::NO_INFORMATION : costmap_2d::FREE_SPACE;
+  default_value_ = (track_unknown) ? nav2_costmap_2d::NO_INFORMATION : nav2_costmap_2d::FREE_SPACE;
 
   current_ = true;
 }
@@ -38,7 +38,7 @@ void UnrollingLayer::initTranslator()
   constexpr uint8_t lethal_msg_cost = 100;
   constexpr uint8_t unknown_msg_cost = -1;
 
-  translator.fill(costmap_2d::FREE_SPACE);
+  translator.fill(nav2_costmap_2d::FREE_SPACE);
 
   translator[free_space_msg_cost] = costmap_2d::FREE_SPACE;
   translator[inflated_msg_cost] = costmap_2d::INSCRIBED_INFLATED_OBSTACLE;
@@ -46,22 +46,22 @@ void UnrollingLayer::initTranslator()
   translator[unknown_msg_cost] = costmap_2d::NO_INFORMATION;
 }
 
-void UnrollingLayer::incomingMap(const nav_msgs::OccupancyGridConstPtr& map)
+void UnrollingLayer::incomingMap(const nav_msgs::msg::OccupancyGrid& map)
 {
-  current_metadata_ = map->info;
+  current_metadata_ = map.info;
 
   // We need to translate indices from update to our costmap
-  const uint32_t length_x = map->info.width;
-  const uint32_t length_y = map->info.height;
+  const uint32_t length_x = map.info.width;
+  const uint32_t length_y = map.info.height;
 
-  const auto origin_x = static_cast<double>(map->info.origin.position.x);
-  const auto origin_y = static_cast<double>(map->info.origin.position.y);
+  const auto origin_x = static_cast<double>(map.info.origin.position.x);
+  const auto origin_y = static_cast<double>(map.info.origin.position.y);
 
   auto update_metadata = calculateMapMetadata(length_x, length_y, origin_x, origin_y);
-  updateMap(map->data, update_metadata);
+  updateMap(map.data, update_metadata);
 }
 
-void UnrollingLayer::incomingUpdate(const map_msgs::OccupancyGridUpdateConstPtr& map)
+void UnrollingLayer::incomingUpdate(const map_msgs::msg::OccupancyGridUpdate& map)
 {
   if (!current_metadata_)
   {
@@ -69,15 +69,15 @@ void UnrollingLayer::incomingUpdate(const map_msgs::OccupancyGridUpdateConstPtr&
   }
 
   // We need to translate indices from update to our costmap
-  const uint32_t length_x = map->width;
-  const uint32_t length_y = map->height;
+  const uint32_t length_x = map.width;
+  const uint32_t length_y = map.height;
 
   const auto resolution = static_cast<double>(current_metadata_->resolution);
   const auto origin_x = static_cast<double>(current_metadata_->origin.position.x);
   const auto origin_y = static_cast<double>(current_metadata_->origin.position.y);
 
-  const auto update_origin_x = origin_x + (map->x * resolution);
-  const auto update_origin_y = origin_y + (map->y * resolution);
+  const auto update_origin_x = origin_x + (map.x * resolution);
+  const auto update_origin_y = origin_y + (map.y * resolution);
 
   auto update_metadata = calculateMapMetadata(length_x, length_y, update_origin_x, update_origin_y);
 
@@ -192,7 +192,7 @@ void UnrollingLayer::updateBounds(double robot_x, double robot_y, double robot_y
   max_map_y_ = 0;
 }
 
-void UnrollingLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j)
+void UnrollingLayer::updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j)
 {
   uint8_t* master_array = master_grid.getCharMap();
   uint8_t* line_array = getCharMap();

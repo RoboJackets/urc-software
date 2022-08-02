@@ -2,12 +2,11 @@
 #define SRC_UNROLLING_LAYER_H
 
 #include <rclcpp/rclcpp.hpp>
-#include <nav2_costmap_2d/costmap_layer.h>
-#include <nav2_costmap_2d/layered_costmap.h>
-#include <map_msgs/OccupancyGridUpdate.h>
-#include <nav2_msgs/OccupancyGrid.h>
-#include <nav2_msgs/OccupancyGrid.h>
-#include <pluginlib/class_list_macros.h>
+#include <nav2_costmap_2d/costmap_layer.hpp>
+#include <nav2_costmap_2d/layered_costmap.hpp>
+#include <map_msgs/msg/occupancy_grid_update.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
+#include <pluginlib/class_list_macros.hpp>
 
 namespace unrolling_layer
 {
@@ -16,10 +15,13 @@ class UnrollingLayer : public rclcpp::Node, public nav2_costmap_2d::Layer
 public:
   explicit UnrollingLayer(const rclcpp::NodeOptions & options);
 
-  void onInitialize() override;
-  void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y) override;
-  void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;
+  virtual void onInitialize();
+  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
+                    double* max_y);
+  virtual void updateCosts(nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j, int max_i, int max_j);
+
+  // ""elegant"" C++
+  virtual ~UnrollingLayer() throw();
 
 private:
 
@@ -32,13 +34,13 @@ private:
    * Callback for a OccupancyGridConstPtr message
    * @param map
    */
-  void incomingMap(const nav_msgs::OccupancyGridConstPtr& map);
+  void incomingMap(const nav_msgs::msg::OccupancyGrid& map);
 
   /**
    * Callback for a OccupancyGridUpdateConstPtr message
    * @param map
    */
-  void incomingUpdate(const map_msgs::OccupancyGridUpdateConstPtr& map);
+  void incomingUpdate(const map_msgs::msg::OccupancyGridUpdate& map);
 
   /**
    * Updates min_map_x_, max_map_x_ etc. with the passed in start and end coordinates in cells
@@ -79,13 +81,13 @@ private:
    */
   void updateMap(const std::vector<int8_t>& map, const UpdateMapMetadata& metadata);
 
-  rclcpp::Subscriber<nav_msgs::OccupancyGridConstPtr> map_sub_;
-  rclcpp::Subscriber<map_msgs::OccupancyGridUpdateConstPtr> map_update_sub_;
+  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
+  rclcpp::Subscription<map_msgs::msg::OccupancyGridUpdate>::SharedPtr map_update_sub_;
   
   std::array<uint8_t, std::numeric_limits<char>::max()> translator;
 
   std::string topic;
-  std::optional<nav_msgs::MapMetaData> current_metadata_;
+  std::optional<nav_msgs::msg::MapMetaData> current_metadata_;
 
   size_t min_map_x_;
   size_t min_map_y_;

@@ -14,8 +14,8 @@ RollingLayer::RollingLayer(const rclcpp::NodeOptions & options)
 void RollingLayer::onInitialize()
 {
   matchSize();
-  costmap_sub_ = create_subcription<nav_msgs::OccupancyGridConstPtr>(
-    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::OccupancyGridConstPtr &msg) {
+  costmap_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+    topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       costmapCallback(msg);
     });
   current_ = true;
@@ -31,7 +31,7 @@ void RollingLayer::updateBounds(double robot_x, double robot_y, double robot_yaw
   *max_y = getOriginY() + getSizeInMetersY();
 }
 
-void RollingLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int min_i, int min_j, int max_i, int max_j)
+void RollingLayer::updateCosts(nav2_costmap_2d::Costmap2D &master_grid, int min_i, int min_j, int max_i, int max_j)
 {
   uint8_t *master_array = master_grid.getCharMap();
   uint8_t *line_array = getCharMap();
@@ -48,13 +48,13 @@ void RollingLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int min_i, in
   }
 }
 
-void RollingLayer::costmapCallback(const nav_msgs::OccupancyGridConstPtr &map)
+void RollingLayer::costmapCallback(const nav_msgs::msg::OccupancyGrid &map)
 {
   double local_origin_x = getOriginX();
   double local_origin_y = getOriginY();
-  double resolution = map->info.resolution;
-  double global_origin_x = map->info.origin.position.x;
-  double global_origin_y = map->info.origin.position.y;
+  double resolution = map.info.resolution;
+  double global_origin_x = map.info.origin.position.x;
+  double global_origin_y = map.info.origin.position.y;
 
   size_t global_start_index_x = (local_origin_x - global_origin_x) / resolution + 1;
   size_t global_start_index_y = (local_origin_y - global_origin_y) / resolution + 1;
@@ -67,18 +67,18 @@ void RollingLayer::costmapCallback(const nav_msgs::OccupancyGridConstPtr &map)
     for (size_t local_index_x = 0; local_index_x < getSizeInCellsX(); local_index_x++)
     {
       size_t global_index_x = global_start_index_x + local_index_x;
-      char global_data = map->data[global_index_y * map->info.width + global_index_x];
+      char global_data = map.data[global_index_y * map.info.width + global_index_x];
       if (global_data == -1)
       {
-        charmap[local_index_y * getSizeInCellsX() + local_index_x] = costmap_2d::NO_INFORMATION;
+        charmap[local_index_y * getSizeInCellsX() + local_index_x] = nav2_costmap_2d::NO_INFORMATION;
       }
       else if (global_data == 100)
       {
-        charmap[local_index_y * getSizeInCellsX() + local_index_x] = costmap_2d::LETHAL_OBSTACLE;
+        charmap[local_index_y * getSizeInCellsX() + local_index_x] = nav2_costmap_2d::LETHAL_OBSTACLE;
       }
       else
       {
-        charmap[local_index_y * getSizeInCellsX() + local_index_x] = costmap_2d::FREE_SPACE;
+        charmap[local_index_y * getSizeInCellsX() + local_index_x] = nav2_costmap_2d::FREE_SPACE;
       }
     }
   }

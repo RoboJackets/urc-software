@@ -12,7 +12,9 @@
   <depend>robot_localization</depend>
   <depend>nav2_costmap_2d</depend>
   <depend>nav2_msgs</depend>
+  <depend>map_msgs</depend>
   <depend>pluginlib</depend>
+  <depend>grid_map_ros</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>
