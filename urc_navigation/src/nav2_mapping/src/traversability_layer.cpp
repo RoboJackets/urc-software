@@ -1,8 +1,5 @@
 #include "traversability_layer.hpp"
 
-
-PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, nav2_costmap_2d::Layer)
-
 namespace traversability_layer
 {
 TraversabilityLayer::TraversabilityLayer(const rclcpp::NodeOptions & options)
@@ -51,7 +48,7 @@ void TraversabilityLayer::onInitialize()
   matchCostmapDims(*layered_costmap_->getCostmap());
 }
 
-void TraversabilityLayer::updateCosts(costmap_2d::Costmap2D &master_grid, int min_i, int min_j, int max_i, int max_j)
+void TraversabilityLayer::updateCosts(nav2_costmap_2d::Costmap2D &master_grid, int min_i, int min_j, int max_i, int max_j)
 {
   matchCostmapDims(master_grid);
   transferToCostmap();
@@ -119,7 +116,7 @@ void TraversabilityLayer::slopeMapCallback(const grid_map_msgs::GridMap &slope_m
   }
 }
 
-void TraversabilityLayer::matchCostmapDims(const costmap_2d::Costmap2D &master_grid)
+void TraversabilityLayer::matchCostmapDims(const nav2_costmap_2d::Costmap2D &master_grid)
 {
   unsigned int cells_x = master_grid.getSizeInCellsX();
   unsigned int cells_y = master_grid.getSizeInCellsY();
@@ -192,7 +189,7 @@ void TraversabilityLayer::publishCostmap()
     }
   }
 
-  costmap_pub_.publish(msg);
+  costmap_pub_->publish(msg);
 }
 
 void TraversabilityLayer::updateStaticWindow()
@@ -274,3 +271,7 @@ void TraversabilityLayer::updateRollingWindow()
   }
 }
 }  // namespace traversability_layer
+
+// This is the macro allowing a traversability_layer::TraversabilityLayer class
+// to be registered in order to be dynamically loadable of base type nav2_costmap_2d::Layer.
+PLUGINLIB_EXPORT_CLASS(traversability_layer::TraversabilityLayer, nav2_costmap_2d::Layer)

@@ -1,8 +1,5 @@
 #include "rolling_layer.hpp"
 
-
-PLUGINLIB_EXPORT_CLASS(rolling_layer::RollingLayer, costmap_2d::Layer)
-
 namespace rolling_layer
 {
 RollingLayer::RollingLayer(const rclcpp::NodeOptions & options)
@@ -84,3 +81,7 @@ void RollingLayer::costmapCallback(const nav_msgs::msg::OccupancyGrid &map)
   }
 }
 }  // namespace rolling_layer
+
+// This is the macro allowing a rolling_layer::RollingLayer class
+// to be registered in order to be dynamically loadable of base type nav2_costmap_2d::Layer.
+PLUGINLIB_EXPORT_CLASS(rolling_layer::RollingLayer, nav2_costmap_2d::Layer)

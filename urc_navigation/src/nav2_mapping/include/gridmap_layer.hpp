@@ -10,13 +10,13 @@ namespace gridmap_layer
 class GridmapLayer : public nav2_costmap_2d::Layer
 {
 public:
-  GridmapLayer(const std::vector<std::string>& layers);
-  GridmapLayer();
+  explicit GridmapLayer(const std::vector<std::string>& layers);
+  explicit GridmapLayer();
 
-  void onInitialize() override;
-  void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y) override;
-  void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override = 0;
+  virtual void onInitialize();
+  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
+                    double* max_y);
+  void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override = 0;
 
 protected:
   void touch(const grid_map::Index& index);

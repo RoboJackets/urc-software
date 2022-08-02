@@ -17,34 +17,34 @@ set(dependencies
 
 # Traversability layer plugin
 add_library(traversability_layer SHARED
-    traversability_layer/traversability_layer.cpp
-    traversability_layer/traversability_layer.hpp
-    gridmap_layer/gridmap_layer.cpp
-    gridmap_layer/gridmap_layer.hpp
+    src/traversability_layer.cpp
+    src/gridmap_layer.cpp
 )
+target_include_directories(traversability_layer include)
 pluginlib_export_plugin_description_file(nav2_costmap_2d back_circle_layer/back_circle_layer_plugin.xml)
 ament_target_dependencies(traversability_layer ${dependencies})
 
 # Rolling layer plugin
 add_library(rolling_layer SHARED
-    rolling_layer/rolling_layer.cpp
-    rolling_layer/rolling_layer.hpp
+    src/rolling_layer.cpp
 )
+target_include_directories(rolling_layer include)
 pluginlib_export_plugin_description_file(nav2_costmap_2d rolling_layer/rolling_layer_plugin.xml)
 ament_target_dependencies(rolling_layer ${dependencies})
 
 # Unrolling layer plugin
 add_library(unrolling_layer SHARED
-    unrolling_layer.cpp
-    unrolling_layer.hpp
+    src/unrolling_layer.cpp
 )
+target_include_directories(unrolling_layer include)
 pluginlib_export_plugin_description_file(nav2_costmap_2d unrolling_layer/unrolling_layer_plugin.xml)
 ament_target_dependencies(unrolling_layer ${dependencies})
 
-# Installing plugins
-install(
-    TARGETS line_layer traversability_layer rolling_layer
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION lib/${PROJECT_NAME}
+# Installing libraries
+install(TARGETS 
+    line_layer
+    traversability_layer 
+    rolling_layer
+    
+    DESTINATION lib
 )

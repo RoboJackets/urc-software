@@ -4,11 +4,10 @@
 #include "gridmap_layer/gridmap_layer.hpp"
 
 #include <rclcpp/rclcpp.hpp>
-#include <nav2_costmap_2d/GenericPluginConfig.h>
 #include <nav2_costmap_2d/layer.hpp>
 #include <nav2_costmap_2d/layered_costmap.hpp>
-#include <grid_map_ros/grid_map_ros.hpp>
 #include <pluginlib/class_list_macros.hpp>
+#include <grid_map_ros/grid_map_ros.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
 #include <mapper/probability_utils.h>
 
@@ -19,10 +18,10 @@ class TraversabilityLayer : public rclcpp::Node, public gridmap_layer::GridmapLa
 public:
   explicit TraversabilityLayer(const rclcpp::NodeOptions & options);
 
-  void onInitialize() override;
-  void updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;
-  void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y) override;
+  virtual void onInitialize();
+  virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;
+  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
+                    double* max_y);
 
 private:
   double untraversable_probability;
@@ -51,11 +50,11 @@ private:
   rclcpp::Subscriber<grid_map_msgs::GridMap>::SharedPtr slope_sub_;
   rclcpp::Publisher<nav_msgs::OccupancyGrid>::SharedPtr costmap_pub_;
 
-  costmap_2d::Costmap2D costmap_2d_{};
+  nav2_costmap_2d::Costmap2D costmap_2d_{};
 
   void slopeMapCallback(const grid_map_msgs::GridMap& slope_map_msg);
 
-  void matchCostmapDims(const costmap_2d::Costmap2D& master_grid);
+  void matchCostmapDims(const nav2_costmap_2d::Costmap2D& master_grid);
 
   void transferToCostmap();
 

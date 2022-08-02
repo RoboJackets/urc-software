@@ -1,7 +1,5 @@
 #include "unrolling_layer.hpp"
 
-PLUGINLIB_EXPORT_CLASS(unrolling_layer::UnrollingLayer, costmap_2d::Layer)
-
 namespace unrolling_layer
 {
 UnrollingLayer::UnrollingLayer(const rclcpp::NodeOptions & options)
@@ -210,3 +208,7 @@ void UnrollingLayer::updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int mi
 }
 
 }  // namespace unrolling_layer
+
+// This is the macro allowing an unrolling_layer::UnrollingLayer class
+// to be registered in order to be dynamically loadable of base type nav2_costmap_2d::Layer.
+PLUGINLIB_EXPORT_CLASS(unrolling_layer::UnrollingLayer, nav2_costmap_2d::Layer)
