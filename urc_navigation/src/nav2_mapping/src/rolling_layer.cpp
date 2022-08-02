@@ -2,19 +2,20 @@
 
 namespace rolling_layer
 {
-RollingLayer::RollingLayer(const rclcpp::NodeOptions & options)
-: rclcpp::Node("rolling_layer", options)
+RollingLayer::RollingLayer()
 {
-  topic = declare_parameter<std::string>("topic");
 }
 
 void RollingLayer::onInitialize()
 {
+  auto node = node_.lock();
   matchSize();
-  costmap_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+  topic = node->declare_parameter<std::string>("topic");
+  costmap_sub_ = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
     topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       costmapCallback(msg);
     });
+
   current_ = true;
 }
 

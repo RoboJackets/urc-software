@@ -2,28 +2,28 @@
 
 namespace unrolling_layer
 {
-UnrollingLayer::UnrollingLayer(const rclcpp::NodeOptions & options)
-: rclcpp::Node("unrolling_layer", options)
+UnrollingLayer::UnrollingLayer()
 {
   topic = declare_parameter<std::string>("topic");
 }
 
 void UnrollingLayer::onInitialize()
 {
+  auto node = node_.lock();
   matchSize();
   initTranslator();
 
-  map_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+  map_sub_ = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
     topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       incomingMap(msg);
     });
 
-  map_update_sub_ = create_subscription<map_msgs::msg::OccupancyGridUpdate>(
+  map_update_sub_ = node->create_subscription<map_msgs::msg::OccupancyGridUpdate>(
     topic + "_updates", rclcpp::SystemDefaultsQoS(), [this](const map_msgs::msg::OccupancyGridUpdate &msg) {
       incomingUpdate(msg);
     });
 
-  bool track_unknown = declare_parameter<bool>("track_unknown_space", false);
+  bool track_unknown = node->declare_parameter<bool>("track_unknown_space", false);
   default_value_ = (track_unknown) ? nav2_costmap_2d::NO_INFORMATION : nav2_costmap_2d::FREE_SPACE;
 
   current_ = true;

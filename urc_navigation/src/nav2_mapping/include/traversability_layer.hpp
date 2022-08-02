@@ -13,10 +13,10 @@
 
 namespace traversability_layer
 {
-class TraversabilityLayer : public rclcpp::Node, public gridmap_layer::GridmapLayer
+class TraversabilityLayer : public gridmap_layer::GridmapLayer
 {
 public:
-  explicit TraversabilityLayer(const rclcpp::NodeOptions & options);
+  explicit TraversabilityLayer();
 
   virtual void onInitialize();
   virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) override;

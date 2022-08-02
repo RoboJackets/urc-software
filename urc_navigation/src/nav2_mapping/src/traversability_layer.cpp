@@ -2,49 +2,55 @@
 
 namespace traversability_layer
 {
-TraversabilityLayer::TraversabilityLayer(const rclcpp::NodeOptions & options)
-  : rclcpp::Node("joystick_driver", options),
+TraversabilityLayer::TraversabilityLayer()
     gridmap_layer::GridmapLayer({ "logodds", "probability" })
 {
+}
+
+void TraversabilityLayer::onInitialize()
+{
+  auto node = node_.lock();
+  GridmapLayer::onInitialize();
+
   // Initialize parameters
-  untraversable_probability = declare_parameter<double>("untraversable_probability");
-  slope_threshold = declare_parameter<double>("slope_threshold");
+  untraversable_probability = node->declare_parameter<double>("untraversable_probability");
+  slope_threshold = node->declare_parameter<double>("slope_threshold");
   logodd_increment = probability_utils::toLogOdds(untraversable_probability);
   
-  resolution = declare_parameter<double>("resolution");
-  length_x = declare_parameter<double>("length_x");
-  length_y = declare_parameter<double>("length_y");
+  resolution = node->declare_parameter<double>("resolution");
+  length_x = node->declare_parameter<double>("length_x");
+  length_y = node->declare_parameter<double>("length_y");
 
-  max_occupancy = declare_parameter<double>("max_occupancy");
-  min_occupancy = declare_parameter<double>("min_occupancy");
+  max_occupancy = node->declare_parameter<double>("max_occupancy");
+  min_occupancy = node->declare_parameter<double>("min_occupancy");
 
-  frame_id = declare_parameter<std::string>("untraversable_probability");
-  costmap_topic = declare_parameter<std::string>("untraversable_probability");
+  frame_id = node->declare_parameter<std::string>("untraversable_probability");
+  costmap_topic = node->declare_parameter<std::string>("untraversable_probability");
 
-  occupied_threshold = declare_parameter<double>("untraversable_probability");
+  occupied_threshold = node->declare_parameter<double>("untraversable_probability");
 
-  debug.map_topic = declare_parameter<std::string>("debug/map_topic");
-  debug.enabled = declare_parameter<bool>("debug/enabled");
+  debug.map_topic = node->declare_parameter<std::string>("debug/map_topic");
+  debug.enabled = node->declare_parameter<bool>("debug/enabled");
   
+
   // Initialize gridmap
   map_.setFrameId(frame_id);
   grid_map::Length dimensions{ length_x, length_y };
   map_.setGeometry(dimensions, resolution);
   map_.get("logodds").setZero();
 
-  slope_sub_ = create_subscription<grid_map_msgs::GridMap>(
+
+  // Initialize publisher/subscriber
+  slope_sub_ = node->create_subscription<grid_map_msgs::GridMap>(
     "/slope/gridmap", rclcpp::SystemDefaultsQoS(), [this](const grid_map_msgs::GridMap &msg) {
       slopeMapCallback(msg);
     });
-
-  costmap_pub_ = create_publisher<nav_msgs::OccupancyGrid>(
+  costmap_pub_ = node->create_publisher<nav_msgs::OccupancyGrid>(
     costmap_topic,
     rclcpp::SystemDefaultsQoS());
-}
 
-void TraversabilityLayer::onInitialize()
-{
-  GridmapLayer::onInitialize();
+
+
   matchCostmapDims(*layered_costmap_->getCostmap());
 }
 
