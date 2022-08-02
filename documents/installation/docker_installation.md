@@ -73,6 +73,20 @@ Once you have it, click on the Remote Explorer tab. You should see the container
 
 To launch the container in VSCode, right click the container and select `Attach to Container`. This will open VSCode in the Docker container.
 
+### 5b. Launch Docker Container Using Command Line
+
+To run a Docker container in the command line, run
+
+```bash
+docker start -i urc_software_container
+```
+
+If you want to open another terminal if the Docker container is still running, run
+
+```bash
+docker attach urc_software_container
+```
+
 ## 6. Finish Setup
 
 In its current state, the Docker container is not quite ready for building the `urc-software` codebase. 
