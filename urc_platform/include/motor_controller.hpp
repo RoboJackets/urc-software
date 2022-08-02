@@ -71,6 +71,8 @@ private:
   void sendRequest();
   void receiveResponse();
   void publishResponse(const ResponseMessage & response);
+
+  bool poll();
 };
 }
 

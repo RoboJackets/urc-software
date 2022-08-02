@@ -7,6 +7,7 @@ motor_controller:
     p_l: 0.0
     p_r: 0.0
     d_l: 0.0
+    d_r: 0.0
     i_r: 0.0
     i_l: 0.0
     kv_l: 32.0

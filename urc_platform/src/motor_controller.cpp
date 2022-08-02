@@ -1,5 +1,7 @@
 #include "motor_controller.hpp"
 
+#define NODE_MAIN_LOGGER_NAME "urc_platform_MotorController"
+
 namespace motor_controller
 {
 MotorController::MotorController(const rclcpp::NodeOptions & options)
@@ -23,45 +25,52 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
     "~/battery",
     rclcpp::SystemDefaultsQoS());
 
-  // Create server socket
-  ip_addr_ = declare_parameter<std::string>("ip_addr");
-  tcpport_ = declare_parameter<int>("port");
-  socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
 
-  // Battery variables
-  battery_alpha_ = declare_parameter<double>("battery_alpha");
-  min_battery_voltage_ = declare_parameter<double>("min_battery_voltage");
-  battery_avg_ = min_battery_voltage_;
+  // // Create server socket
+  // ip_addr_ = declare_parameter<std::string>("ip_addr");
+  // tcpport_ = declare_parameter<int>("port");
+  // socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
 
-  // PID variables
-  p_l_ = declare_parameter<double>("p_l");
-  p_r_ = declare_parameter<double>("p_r");
-  d_l_ = declare_parameter<double>("d_l");
-  d_r_ = declare_parameter<double>("d_r");
-  i_r_ = declare_parameter<double>("i_r");
-  i_l_ = declare_parameter<double>("i_l");
-  kv_l_ = declare_parameter<double>("kv_l");
-  kv_r_ = declare_parameter<double>("kv_r");
+  // // Battery variables
+  // battery_alpha_ = declare_parameter<double>("battery_alpha");
+  // min_battery_voltage_ = declare_parameter<double>("min_battery_voltage");
+  // battery_avg_ = min_battery_voltage_;
 
-  watchdog_delay_ = declare_parameter<double>("watchdog_delay");
-  log_period_ = declare_parameter<double>("log_period");
+  // // PID variables
+  // p_l_ = declare_parameter<double>("p_l");
+  // p_r_ = declare_parameter<double>("p_r");
+  // d_l_ = declare_parameter<double>("d_l");
+  // d_r_ = declare_parameter<double>("d_r");
+  // i_r_ = declare_parameter<double>("i_r");
+  // i_l_ = declare_parameter<double>("i_l");
+  // kv_l_ = declare_parameter<double>("kv_l");
+  // kv_r_ = declare_parameter<double>("kv_r");
 
-  mc_updater_->setHardwareID("Motor Controller");
-  mc_updater_->add("MC Diagnostic", this, &MotorController::mc_diagnostic);
+  // watchdog_delay_ = declare_parameter<double>("watchdog_delay");
+  // log_period_ = declare_parameter<double>("log_period");
 
-  battery_updater_->setHardwareID("Battery Controller");
-  battery_updater_->add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
+  // mc_updater_->setHardwareID("Motor Controller");
+  // mc_updater_->add("MC Diagnostic", this, &MotorController::mc_diagnostic);
+
+  // battery_updater_->setHardwareID("Battery Controller");
+  // battery_updater_->add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
 
   frequency_ = declare_parameter<double>("frequency");
   rclcpp::Rate rate(frequency_);
 
-  setPID();
+  int i = 0;
 
   while (rclcpp::ok()) {
-    sendRequest();
-    receiveResponse();
-    mc_updater_->force_update();
-    battery_updater_->force_update();
+
+
+    urc_msgs::msg::VelocityPair encoder_msg;
+
+    encoder_msg.left_velocity = i++;
+    encoder_msg.right_velocity = -1 * (i++);
+    encoder_msg.header.stamp = this->get_clock()->now();
+
+    _enc_pub->publish(encoder_msg);
+    
     rate.sleep();
   }
 }
@@ -262,11 +271,57 @@ void MotorController::publishResponse(const ResponseMessage & response)
   encoder_msg.left_velocity = response.speed_l;
   encoder_msg.right_velocity = response.speed_r;
   encoder_msg.duration = response.dt_sec;
-  encoder_msg.header.stamp = this->get_clock()->now() - rclcpp::Duration::from_seconds(
-    response.dt_sec);
+  encoder_msg.header.stamp = this->get_clock()->now() - rclcpp::Duration::from_seconds(response.dt_sec);
 
-  _enc_pub->publish(encoder_msg);
+  // _enc_pub->publish(encoder_msg);
+}
+
+bool MotorController::poll() {
+  // If we haven't configured the server (MCU), just exit
+
+  // Loop
+  // (1) Wait for packets to be received with timeout
+  //      Send in a pointer to a VelocityPair message
+  // int rc = input_->getPacket(&scan->packets[i], config_.time_offset);
+  // if (rc == 1) break;       // got a full packet?
+  // if (rc < 0) return false; // end of file reached?
+  // if (rc == 0) continue;    //timeout?
+
+  // Publish the packet to the topic
+  return true;
 }
 }
 
 RCLCPP_COMPONENTS_REGISTER_NODE(motor_controller::MotorController)
+
+int main(int argc, char** argv)
+{
+  // // velodyne driver code:
+  // ros::init(argc, argv, "velodyne_node");
+  // ros::NodeHandle node;
+  // ros::NodeHandle private_nh("~");
+
+  // // start the driver
+  // velodyne_driver::VelodyneDriver dvr(node, private_nh);
+
+  // // loop until shut down or end of file
+  // while(ros::ok())
+  // {
+  //   // poll device until end of file
+  //   bool polled_ = dvr.poll();
+  //   if (!polled_)
+  //     ROS_ERROR_THROTTLE(1.0, "Velodyne - Failed to poll device.");
+
+  //   ros::spinOnce();
+  // }
+
+  // return 0;
+
+  auto args = rclcpp::init_and_remove_ros_arguments(argc, argv);
+  rclcpp::Logger logger = rclcpp::get_logger(NODE_MAIN_LOGGER_NAME);
+  rclcpp::executors::SingleThreadedExecutor exec;
+  
+  exec.spin();
+
+  return 0;
+}
