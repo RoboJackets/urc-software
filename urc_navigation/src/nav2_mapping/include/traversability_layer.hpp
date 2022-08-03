@@ -1,8 +1,7 @@
 #ifndef SRC_TRAVERSABILITY_LAYER_H
 #define SRC_TRAVERSABILITY_LAYER_H
 
-#include "gridmap_layer/gridmap_layer.hpp"
-
+#include "gridmap_layer.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <nav2_costmap_2d/layer.hpp>
 #include <nav2_costmap_2d/layered_costmap.hpp>
