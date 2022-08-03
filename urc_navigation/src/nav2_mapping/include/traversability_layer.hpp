@@ -68,7 +68,7 @@ private:
   } debug;
   
   
-  rclcpp::Subscriber<grid_map_msgs::msg::GridMap>::SharedPtr slope_sub_;
+  rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr slope_sub_;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_pub_;
 
   nav2_costmap_2d::Costmap2D costmap_2d_{};
