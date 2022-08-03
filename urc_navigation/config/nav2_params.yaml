@@ -253,17 +253,17 @@ global_costmap:
       traversability_layer:
         plugin: "traversability_layer::TraversabilityLayer"
         map:
-        frame_id: "odom"
-        resolution: 0.1
-        length_x: 200
-        length_y: 200
-        occupied_threshold: 0.5
-        max_occupancy: 0.99
-        min_occupancy: 0.01
-        costmap_topic: "/slope/costmap"
-        debug:
-            map_topic: "/slope/debug"
-            enabled: false
+          frame_id: "odom"
+          resolution: 0.1
+          length_x: 200
+          length_y: 200
+          occupied_threshold: 0.5
+          max_occupancy: 0.99
+          min_occupancy: 0.01
+          costmap_topic: "/slope/costmap"
+          debug:
+              map_topic: "/slope/debug"
+              enabled: false
         untraversable_probability: 0.8
         slope_threshold: 0.30
       always_send_full_costmap: True

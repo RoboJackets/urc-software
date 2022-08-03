@@ -29,9 +29,8 @@
   <test_depend>ament_lint_common</test_depend>
 
   <export>
-    <costmap_2d plugin="${prefix}/src/nav2_mapping/rolling_layer_plugin.xml" />
-    <costmap_2d plugin="${prefix}/src/nav2_mapping/traversability_layer_plugin.xml" />
-    <costmap_2d plugin="${prefix}/src/nav2_mapping/unrolling_layer_plugin.xml" />
+    <costmap_2d plugin="${prefix}/src/nav2_mapping/rolling_layer_plugin.xml"/>
+    <costmap_2d plugin="${prefix}/src/nav2_mapping/traversability_layer_plugin.xml"/>
     <build_type>ament_cmake</build_type>
   </export>
 </package>
