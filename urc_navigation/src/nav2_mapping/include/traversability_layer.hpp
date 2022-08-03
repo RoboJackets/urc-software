@@ -9,7 +9,7 @@
 #include <pluginlib/class_list_macros.hpp>
 #include <grid_map_ros/grid_map_ros.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
-#include <mapper/probability_utils.h>
+#include <urc_util/probability_utils.hpp>
 
 namespace traversability_layer
 {

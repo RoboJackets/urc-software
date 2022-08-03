@@ -15,7 +15,7 @@ void TraversabilityLayer::onInitialize()
   // Initialize parameters
   untraversable_probability = node->declare_parameter<double>("untraversable_probability");
   slope_threshold = node->declare_parameter<double>("slope_threshold");
-  logodd_increment = probability_utils::toLogOdds(untraversable_probability);
+  logodd_increment = urc_util::toLogOdds(untraversable_probability);
   
   resolution = node->declare_parameter<double>("resolution");
   length_x = node->declare_parameter<double>("length_x");
@@ -215,7 +215,7 @@ void TraversabilityLayer::updateStaticWindow()
   for (auto it = *optional_it; !it.isPastEnd(); ++it)
   {
     const auto &log_odds = map_.get("logodds")((*it)[0], (*it)[1]);
-    float probability = probability_utils::fromLogOdds(log_odds);
+    float probability = urc_util::fromLogOdds(log_odds);
     size_t linear_index = grid_map::getLinearIndexFromIndex(*it, map_.getSize(), false);
 
     if (probability > occupied_threshold)
@@ -252,7 +252,7 @@ void TraversabilityLayer::updateRollingWindow()
   for (grid_map::SubmapIterator it{ map_, start_index, submap_buffer_size }; !it.isPastEnd(); ++it)
   {
     const auto &log_odds = map_.get("logodds")((*it)[0], (*it)[1]);
-    float probability = probability_utils::fromLogOdds(log_odds);
+    float probability = urc_util::fromLogOdds(log_odds);
 
     const size_t linear_idx = x_idx + y_idx * cells_x;
 

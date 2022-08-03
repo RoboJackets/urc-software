@@ -5,6 +5,7 @@ find_package(nav2_msgs REQUIRED)
 find_package(map_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(grid_map_ros REQUIRED)
+find_package(urc_util REQUIRED)
 
 set(dependencies
     rclcpp
@@ -13,6 +14,7 @@ set(dependencies
     map_msgs
     grid_map_ros
     pluginlib
+    urc_util
 )
 
 # Traversability layer plugin
