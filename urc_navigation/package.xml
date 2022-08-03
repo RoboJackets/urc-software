@@ -12,6 +12,7 @@
   <depend>robot_localization</depend>
   <depend>nav2_costmap_2d</depend>
   <depend>nav2_msgs</depend>
+  <depend>nav2_bringup</depend>
   <depend>map_msgs</depend>
   <depend>pluginlib</depend>
   <depend>grid_map_ros</depend>
