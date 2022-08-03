@@ -34,19 +34,10 @@ target_include_directories(rolling_layer PRIVATE include)
 pluginlib_export_plugin_description_file(nav2_costmap_2d rolling_layer_plugin.xml)
 ament_target_dependencies(rolling_layer ${dependencies})
 
-# Unrolling layer plugin
-add_library(unrolling_layer SHARED
-    src/unrolling_layer.cpp
-)
-target_include_directories(unrolling_layer PRIVATE include)
-pluginlib_export_plugin_description_file(nav2_costmap_2d unrolling_layer_plugin.xml)
-ament_target_dependencies(unrolling_layer ${dependencies})
-
 # Installing libraries
 install(TARGETS 
     traversability_layer 
     rolling_layer
-    unrolling_layer
     
     DESTINATION lib
 )

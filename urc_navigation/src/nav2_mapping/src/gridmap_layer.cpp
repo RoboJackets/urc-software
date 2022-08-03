@@ -53,7 +53,7 @@ void GridmapLayer::touch(const grid_map::Index& index)
 std::optional<grid_map::SubmapIterator> GridmapLayer::getDirtyIterator() const
 {
   if (dirty_min_idx_[0] == std::numeric_limits<int>::max()) {
-    return std::nullopt_t;
+    return std::nullopt;
   }
 
   const grid_map::Index& start_index = dirty_min_idx_;

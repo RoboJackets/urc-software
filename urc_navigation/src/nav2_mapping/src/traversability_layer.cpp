@@ -3,7 +3,7 @@
 namespace traversability_layer
 {
 TraversabilityLayer::TraversabilityLayer()
-    gridmap_layer::GridmapLayer({ "logodds", "probability" })
+: gridmap_layer::GridmapLayer({ "logodds", "probability" })
 {
 }
 
@@ -15,7 +15,7 @@ void TraversabilityLayer::onInitialize()
   // Initialize parameters
   untraversable_probability = node->declare_parameter<double>("untraversable_probability");
   slope_threshold = node->declare_parameter<double>("slope_threshold");
-  logodd_increment = urc_util::toLogOdds(untraversable_probability);
+  logodd_increment = probability_utils::toLogOdds(untraversable_probability);
   
   resolution = node->declare_parameter<double>("resolution");
   length_x = node->declare_parameter<double>("length_x");
@@ -41,14 +41,13 @@ void TraversabilityLayer::onInitialize()
 
 
   // Initialize publisher/subscriber
-  slope_sub_ = node->create_subscription<grid_map_msgs::GridMap>(
-    "/slope/gridmap", rclcpp::SystemDefaultsQoS(), [this](const grid_map_msgs::GridMap &msg) {
+  slope_sub_ = node->create_subscription<grid_map_msgs::msg::GridMap>(
+    "/slope/gridmap", rclcpp::SystemDefaultsQoS(), [this](const grid_map_msgs::msg::GridMap &msg) {
       slopeMapCallback(msg);
     });
-  costmap_pub_ = node->create_publisher<nav_msgs::OccupancyGrid>(
+  costmap_pub_ = node->create_publisher<nav_msgs::msg::OccupancyGrid>(
     costmap_topic,
     rclcpp::SystemDefaultsQoS());
-
 
 
   matchCostmapDims(*layered_costmap_->getCostmap());
@@ -74,7 +73,7 @@ void TraversabilityLayer::updateCosts(nav2_costmap_2d::Costmap2D &master_grid, i
     for (int i = min_i; i < max_i; ++i)
     {
       unsigned char old_cost = master_array[it];
-      if (old_cost == costmap_2d::NO_INFORMATION || old_cost < line_array[it]) {
+      if (old_cost == nav2_costmap_2d::NO_INFORMATION || old_cost < line_array[it]) {
         master_array[it] = line_array[it];
       }
       ++it;
@@ -93,7 +92,7 @@ void TraversabilityLayer::updateBounds(double robot_x, double robot_y, double ro
   }
 }
 
-void TraversabilityLayer::slopeMapCallback(const grid_map_msgs::GridMap &slope_map_msg)
+void TraversabilityLayer::slopeMapCallback(const grid_map_msgs::msg::GridMap &slope_map_msg)
 {
   current_ = true;
   grid_map::GridMap slope_map;
@@ -112,11 +111,11 @@ void TraversabilityLayer::slopeMapCallback(const grid_map_msgs::GridMap &slope_m
       float *logodd = &map_.at("logodds", map_index);
       if (slope > slope_threshold)
       {
-        *logodd = std::min(*logodd + logodd_increment, map.max_occupancy);
+        *logodd = std::min(*logodd + logodd_increment, max_occupancy);
       }
       else
       {
-        *logodd = std::max(*logodd - logodd_increment, map.min_occupancy);
+        *logodd = std::max(*logodd - logodd_increment, min_occupancy);
       }
     }
   }
@@ -155,14 +154,14 @@ void TraversabilityLayer::transferToCostmap()
 
 void TraversabilityLayer::publishCostmap()
 {
-  nav_msgs::OccupancyGrid msg;
+  nav_msgs::msg::OccupancyGrid msg;
 
-  std::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(costmap_2d_.getMutex()));
+  std::unique_lock<nav2_costmap_2d::Costmap2D::mutex_t> lock(*(costmap_2d_.getMutex()));
 
   double resolution = costmap_2d_.getResolution();
 
   msg.header.frame_id = frame_id;
-  msg.header.stamp = rclcpp::Time::now();
+  msg.header.stamp = rclcpp::Clock().now();
   msg.info.resolution = resolution;
 
   msg.info.width = costmap_2d_.getSizeInCellsX();
@@ -215,7 +214,7 @@ void TraversabilityLayer::updateStaticWindow()
   for (auto it = *optional_it; !it.isPastEnd(); ++it)
   {
     const auto &log_odds = map_.get("logodds")((*it)[0], (*it)[1]);
-    float probability = urc_util::fromLogOdds(log_odds);
+    float probability = probability_utils::fromLogOdds(log_odds);
     size_t linear_index = grid_map::getLinearIndexFromIndex(*it, map_.getSize(), false);
 
     if (probability > occupied_threshold)
@@ -252,7 +251,7 @@ void TraversabilityLayer::updateRollingWindow()
   for (grid_map::SubmapIterator it{ map_, start_index, submap_buffer_size }; !it.isPastEnd(); ++it)
   {
     const auto &log_odds = map_.get("logodds")((*it)[0], (*it)[1]);
-    float probability = urc_util::fromLogOdds(log_odds);
+    float probability = probability_utils::fromLogOdds(log_odds);
 
     const size_t linear_idx = x_idx + y_idx * cells_x;
 

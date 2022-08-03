@@ -14,7 +14,7 @@ void RollingLayer::onInitialize()
   costmap_sub_ = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
     topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       costmapCallback(msg);
-    });
+  });
 
   current_ = true;
 }
