@@ -101,6 +101,4 @@ ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
-add_subdirectory(src/nav2_mapping)
-
 ament_package()

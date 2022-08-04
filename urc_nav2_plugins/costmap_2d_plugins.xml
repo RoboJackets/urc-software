@@ -1,0 +1,16 @@
+<class_libraries>
+    <library path="rolling_layer">
+        <class type="rolling_layer::RollingLayer" base_class_type="nav2_costmap_2d::Layer">
+          <description>
+            Layer that transfers data from global costmap to local costmap.
+          </description>
+        </class>
+    </library>
+    <library path="traversability_layer">
+        <class type="traversability_layer::TraversabilityLayer" base_class_type="nav2_costmap_2d::Layer">
+          <description>
+            Layer that that performs occupancy grid mapping, using gridmap as the backing data structure.
+          </description>
+        </class>
+    </library>
+</class_libraries>
