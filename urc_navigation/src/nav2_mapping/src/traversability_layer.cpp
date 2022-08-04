@@ -24,10 +24,10 @@ void TraversabilityLayer::onInitialize()
   max_occupancy = node->declare_parameter<double>("max_occupancy");
   min_occupancy = node->declare_parameter<double>("min_occupancy");
 
-  frame_id = node->declare_parameter<std::string>("untraversable_probability");
-  costmap_topic = node->declare_parameter<std::string>("untraversable_probability");
+  frame_id = node->declare_parameter<std::string>("frame_id");
+  costmap_topic = node->declare_parameter<std::string>("costmap_topic");
 
-  occupied_threshold = node->declare_parameter<double>("untraversable_probability");
+  occupied_threshold = node->declare_parameter<double>("occupied_threshold");
 
   debug.map_topic = node->declare_parameter<std::string>("debug/map_topic");
   debug.enabled = node->declare_parameter<bool>("debug/enabled");
