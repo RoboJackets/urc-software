@@ -10,7 +10,7 @@ void RollingLayer::onInitialize()
 {
   auto node = node_.lock();
   matchSize();
-  topic = node->declare_parameter<std::string>("topic");
+  topic = node->declare_parameter<std::string>(name_ + ".topic");
   costmap_sub_ = node->create_subscription<nav_msgs::msg::OccupancyGrid>(
     topic, rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::OccupancyGrid &msg) {
       costmapCallback(msg);

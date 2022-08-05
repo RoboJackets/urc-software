@@ -63,4 +63,8 @@ std::optional<grid_map::SubmapIterator> GridmapLayer::getDirtyIterator() const
 
   return grid_map::SubmapIterator{ map_, start_index, buffer_size };
 }
+
+GridmapLayer::~GridmapLayer()
+{
+}
 }  // namespace gridmap_layer

@@ -13,24 +13,24 @@ void TraversabilityLayer::onInitialize()
   GridmapLayer::onInitialize();
 
   // Initialize parameters
-  untraversable_probability = node->declare_parameter<double>("untraversable_probability");
-  slope_threshold = node->declare_parameter<double>("slope_threshold");
+  untraversable_probability = node->declare_parameter<double>(name_ + ".untraversable_probability");
+  slope_threshold = node->declare_parameter<double>(name_ + ".slope_threshold");
   logodd_increment = probability_utils::toLogOdds(untraversable_probability);
   
-  resolution = node->declare_parameter<double>("resolution");
-  length_x = node->declare_parameter<double>("length_x");
-  length_y = node->declare_parameter<double>("length_y");
+  resolution = node->declare_parameter<double>(name_ + ".resolution");
+  length_x = node->declare_parameter<double>(name_ + ".length_x");
+  length_y = node->declare_parameter<double>(name_ + ".length_y");
 
-  max_occupancy = node->declare_parameter<double>("max_occupancy");
-  min_occupancy = node->declare_parameter<double>("min_occupancy");
+  max_occupancy = node->declare_parameter<double>(name_ + ".max_occupancy");
+  min_occupancy = node->declare_parameter<double>(name_ + ".min_occupancy");
 
-  frame_id = node->declare_parameter<std::string>("frame_id");
-  costmap_topic = node->declare_parameter<std::string>("costmap_topic");
+  frame_id = node->declare_parameter<std::string>(name_ + ".frame_id");
+  costmap_topic = node->declare_parameter<std::string>(name_ + ".costmap_topic");
 
-  occupied_threshold = node->declare_parameter<double>("occupied_threshold");
+  occupied_threshold = node->declare_parameter<double>(name_ + ".occupied_threshold");
 
-  debug.map_topic = node->declare_parameter<std::string>("debug/map_topic");
-  debug.enabled = node->declare_parameter<bool>("debug/enabled");
+  debug.map_topic = node->declare_parameter<std::string>(name_ + ".debug/map_topic");
+  debug.enabled = node->declare_parameter<bool>(name_ + ".debug/enabled");
   
 
   // Initialize gridmap
