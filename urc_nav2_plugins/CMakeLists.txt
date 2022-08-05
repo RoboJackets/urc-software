@@ -56,10 +56,10 @@ ament_target_dependencies(rolling_layer ${dependencies})
 
 
 # Installing plugin libraries
-install(TARGETS 
-    traversability_layer 
+install(TARGETS
+    traversability_layer
     rolling_layer
-    
+
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin

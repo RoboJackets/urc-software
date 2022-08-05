@@ -28,19 +28,25 @@ public:
    * For more details, see "Layered Costmaps for Context-Sensitive Navigation",
    * by Lu et. Al, IROS 2014.
    */
-  virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
+  virtual void updateCosts(
+    nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j,
+    int max_i, int max_j);
 
   /**
    * @brief Actually update the underlying costmap, only within the bounds
    *        calculated during UpdateBounds().
    */
-  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y);
+  virtual void updateBounds(
+    double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
+    double * max_x,
+    double * max_y);
 
-  virtual void reset() {
+  virtual void reset()
+  {
     return;
   }
-  virtual bool isClearable() {
+  virtual bool isClearable()
+  {
     return false;
   }
 
@@ -48,7 +54,7 @@ private:
   double untraversable_probability;
   double slope_threshold;
   double logodd_increment;
-  
+
   double resolution;
   int length_x;
   int length_y;
@@ -66,16 +72,16 @@ private:
     std::string map_topic;
     bool enabled;
   } debug;
-  
-  
+
+
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr slope_sub_;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_pub_;
 
   nav2_costmap_2d::Costmap2D costmap_2d_{};
 
-  void slopeMapCallback(const grid_map_msgs::msg::GridMap& slope_map_msg);
+  void slopeMapCallback(const grid_map_msgs::msg::GridMap & slope_map_msg);
 
-  void matchCostmapDims(const nav2_costmap_2d::Costmap2D& master_grid);
+  void matchCostmapDims(const nav2_costmap_2d::Costmap2D & master_grid);
 
   void transferToCostmap();
 

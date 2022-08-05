@@ -2,8 +2,8 @@
 
 namespace gridmap_layer
 {
-GridmapLayer::GridmapLayer(const std::vector<std::string>& layers)
-: map_{ layers }
+GridmapLayer::GridmapLayer(const std::vector<std::string> & layers)
+: map_{layers}
 {
   resetDirty();
 }
@@ -19,8 +19,9 @@ void GridmapLayer::onInitialize()
   enabled_ = true;
 }
 
-void GridmapLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
-                                double * max_x, double * max_y)
+void GridmapLayer::updateBounds(
+  double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
+  double * max_x, double * max_y)
 {
   grid_map::Position min_pos;
   grid_map::Position max_pos;
@@ -37,11 +38,11 @@ void GridmapLayer::updateBounds(double robot_x, double robot_y, double robot_yaw
 
 void GridmapLayer::resetDirty()
 {
-  dirty_min_idx_ = { std::numeric_limits<int>::max(), std::numeric_limits<int>::max() };
-  dirty_max_idx_ = { std::numeric_limits<int>::min(), std::numeric_limits<int>::min() };
+  dirty_min_idx_ = {std::numeric_limits<int>::max(), std::numeric_limits<int>::max()};
+  dirty_max_idx_ = {std::numeric_limits<int>::min(), std::numeric_limits<int>::min()};
 }
 
-void GridmapLayer::touch(const grid_map::Index& index)
+void GridmapLayer::touch(const grid_map::Index & index)
 {
   dirty_min_idx_[0] = std::min(dirty_min_idx_[0], index[0]);
   dirty_max_idx_[0] = std::max(dirty_max_idx_[0], index[0]);
@@ -56,11 +57,11 @@ std::optional<grid_map::SubmapIterator> GridmapLayer::getDirtyIterator() const
     return std::nullopt;
   }
 
-  const grid_map::Index& start_index = dirty_min_idx_;
+  const grid_map::Index & start_index = dirty_min_idx_;
   const int size_x = dirty_max_idx_[0] - dirty_min_idx_[0] + 1;
   const int size_y = dirty_max_idx_[1] - dirty_min_idx_[1] + 1;
-  const grid_map::Index buffer_size{ size_x, size_y };
+  const grid_map::Index buffer_size{size_x, size_y};
 
-  return grid_map::SubmapIterator{ map_, start_index, buffer_size };
+  return grid_map::SubmapIterator{map_, start_index, buffer_size};
 }
 }  // namespace gridmap_layer

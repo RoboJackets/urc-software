@@ -5,13 +5,13 @@
 
 namespace probability_utils
 {
-template <typename T>
+template<typename T>
 T toLogOdds(T probability)
 {
   return std::log(probability / (1 - probability));
 }
 
-template <typename T>
+template<typename T>
 T fromLogOdds(T logodds)
 {
   return 1.0 - (1.0 / (1 + std::exp(logodds)));

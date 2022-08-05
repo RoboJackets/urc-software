@@ -16,7 +16,7 @@ namespace gridmap_layer
 class GridmapLayer : public nav2_costmap_2d::Layer
 {
 public:
-  explicit GridmapLayer(const std::vector<std::string>& layers);
+  explicit GridmapLayer(const std::vector<std::string> & layers);
   explicit GridmapLayer();
 
   // Essentially a constructor
@@ -30,17 +30,21 @@ public:
    * For more details, see "Layered Costmaps for Context-Sensitive Navigation",
    * by Lu et. Al, IROS 2014.
    */
-  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y);
+  virtual void updateBounds(
+    double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
+    double * max_x,
+    double * max_y);
 
   /**
    * @brief Pure virtual function to update the underlying costmap, only within
    *        the bounds calculated during UpdateBounds().
    */
-  virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) = 0;
+  virtual void updateCosts(
+    nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j,
+    int max_i, int max_j) = 0;
 
 protected:
-  void touch(const grid_map::Index& index);
+  void touch(const grid_map::Index & index);
   void resetDirty();
   std::optional<grid_map::SubmapIterator> getDirtyIterator() const;
 

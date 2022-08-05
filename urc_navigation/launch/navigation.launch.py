@@ -16,7 +16,7 @@ def generate_launch_description():
 
     lifecycle_nodes = ['controller_server',
                        'planner_server',
-                       #'recoveries_server',
+                       # 'recoveries_server',
                        'bt_navigator',
                        'waypoint_follower']
 
@@ -58,7 +58,8 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'params_file',
-            default_value=os.path.join(get_package_share_directory('urc_navigation'), 'config', 'nav2_params.yaml'),
+            default_value=os.path.join(get_package_share_directory('urc_navigation'),
+                                       'config', 'nav2_params.yaml'),
             description='Full path to the ROS2 parameters file to use'),
 
         Node(
@@ -77,7 +78,7 @@ def generate_launch_description():
             parameters=[configured_params],
             remappings=remappings),
 
-        #Node(
+        # Node(
         #    package='nav2_recoveries',
         #    executable='recoveries_server',
         #    name='recoveries_server',

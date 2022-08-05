@@ -28,26 +28,32 @@ public:
    * For more details, see "Layered Costmaps for Context-Sensitive Navigation",
    * by Lu et. Al, IROS 2014.
    */
-  virtual void updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x, double* min_y, double* max_x,
-                    double* max_y);
+  virtual void updateBounds(
+    double robot_x, double robot_y, double robot_yaw, double * min_x, double * min_y,
+    double * max_x,
+    double * max_y);
 
   /**
    * @brief Actually update the underlying costmap, only within the bounds
    *        calculated during UpdateBounds().
    */
-  virtual void updateCosts(nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j, int max_i, int max_j);
+  virtual void updateCosts(
+    nav2_costmap_2d::Costmap2D & master_grid, int min_i, int min_j,
+    int max_i, int max_j);
 
-  virtual void reset() {
+  virtual void reset()
+  {
     return;
   }
-  virtual bool isClearable() {
+  virtual bool isClearable()
+  {
     return false;
   }
 
 private:
   std::string topic;
 
-  void costmapCallback(const nav_msgs::msg::OccupancyGrid& map);
+  void costmapCallback(const nav_msgs::msg::OccupancyGrid & map);
 
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_sub_;
 };
