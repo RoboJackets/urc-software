@@ -50,8 +50,8 @@ private:
   double logodd_increment;
   
   double resolution;
-  double length_x;
-  double length_y;
+  int length_x;
+  int length_y;
 
   double max_occupancy;
   double min_occupancy;

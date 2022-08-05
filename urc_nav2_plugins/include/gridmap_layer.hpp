@@ -10,6 +10,9 @@
 
 namespace gridmap_layer
 {
+/*
+* Abstract class providing a GridmapLayer framework for nav2_costmap_2d layers
+*/
 class GridmapLayer : public nav2_costmap_2d::Layer
 {
 public:
@@ -31,12 +34,10 @@ public:
                     double* max_y);
 
   /**
-   * @brief Actually update the underlying costmap, only within the bounds
-   *        calculated during UpdateBounds().
+   * @brief Pure virtual function to update the underlying costmap, only within
+   *        the bounds calculated during UpdateBounds().
    */
-  virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
-
-  virtual ~GridmapLayer() = 0;
+  virtual void updateCosts(nav2_costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j) = 0;
 
 protected:
   void touch(const grid_map::Index& index);

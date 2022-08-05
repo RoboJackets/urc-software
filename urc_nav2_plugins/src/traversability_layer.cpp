@@ -17,20 +17,20 @@ void TraversabilityLayer::onInitialize()
   slope_threshold = node->declare_parameter<double>(name_ + ".slope_threshold");
   logodd_increment = probability_utils::toLogOdds(untraversable_probability);
   
-  resolution = node->declare_parameter<double>(name_ + ".resolution");
-  length_x = node->declare_parameter<double>(name_ + ".length_x");
-  length_y = node->declare_parameter<double>(name_ + ".length_y");
+  resolution = node->declare_parameter<double>(name_ + ".map.resolution");
+  length_x = node->declare_parameter<int>(name_ + ".map.length_x");
+  length_y = node->declare_parameter<int>(name_ + ".map.length_y");
 
-  max_occupancy = node->declare_parameter<double>(name_ + ".max_occupancy");
-  min_occupancy = node->declare_parameter<double>(name_ + ".min_occupancy");
+  max_occupancy = node->declare_parameter<double>(name_ + ".map.max_occupancy");
+  min_occupancy = node->declare_parameter<double>(name_ + ".map.min_occupancy");
 
-  frame_id = node->declare_parameter<std::string>(name_ + ".frame_id");
-  costmap_topic = node->declare_parameter<std::string>(name_ + ".costmap_topic");
+  frame_id = node->declare_parameter<std::string>(name_ + ".map.frame_id");
+  costmap_topic = node->declare_parameter<std::string>(name_ + ".map.costmap_topic");
 
-  occupied_threshold = node->declare_parameter<double>(name_ + ".occupied_threshold");
+  occupied_threshold = node->declare_parameter<double>(name_ + ".map.occupied_threshold");
 
-  debug.map_topic = node->declare_parameter<std::string>(name_ + ".debug/map_topic");
-  debug.enabled = node->declare_parameter<bool>(name_ + ".debug/enabled");
+  debug.map_topic = node->declare_parameter<std::string>(name_ + ".map.debug.map_topic");
+  debug.enabled = node->declare_parameter<bool>(name_ + ".map.debug.enabled");
   
 
   // Initialize gridmap
