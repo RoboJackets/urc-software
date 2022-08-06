@@ -38,7 +38,7 @@ be sure to describe that here. If your solution requires more research to implem
 what kind of topics you need look at. Link any research papers/articles that you find here.
 
 **Of course, if you have _any_ questions or concerns, feel free to bring them up at any time.
-If you ever feel lost or don't know what to do or work on, Oswin or any old software member
+If you ever feel lost or don't know what to do or work on, Vivek, Aidan, or any other boomer software member
 can help you out. You are not expected to know every technical detail about the project. Expressing
 what you don't know will make it easier to do research and ask for help.** 
 

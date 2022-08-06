@@ -1,19 +1,17 @@
-# Design Docs
+# Major Design Presentations
 
-## 2020/2021 Projects
+Every major design decision is required to have an accompanying presentation for the PR. The presentation should include:
+* Background on the task/purpose
+* Major technologies/packages/libraries used
+* Research/reference resources
+* A clear explanation of why that design was chosen
+* Any future development to be done on the task
 
-* **Mapping & Navigation**
-    *
+[RJ General Slides Theme](https://docs.google.com/presentation/d/14omGRc-cdEDDEFdOUnVKgbbW5EMFX9UyO-QmpGfILho/edit?usp=sharing)
 
-* **Perception**
-    * 
 
-* **Simulation**
-    * 
+Below is a collection of past presentations for major additions to the URC software stack.
 
-* **Other**
-    * 
+## 2022 - 2023
 
-## Templates
-
-* [New Member Projects](new_member_project.md)
+* ### [Teleoperations Stack](https://docs.google.com/presentation/d/14omGRc-cdEDDEFdOUnVKgbbW5EMFX9UyO-QmpGfILho/edit?usp=sharing)
