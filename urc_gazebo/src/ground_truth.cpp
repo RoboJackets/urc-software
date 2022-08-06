@@ -2,6 +2,7 @@
 
 namespace ground_truth
 {
+
   GroundTruth::GroundTruth(const rclcpp::NodeOptions &options)
   : rclcpp::Node("ground_truth", options),
     tfBuffer_(this->get_clock()),
@@ -116,47 +117,42 @@ namespace ground_truth
         tf2::Transform utm_to_odom;
       }
       */
-      
-      
+      }
     }
-  }
+      
+      
 
-  void GroundTruth::odomCallback(const nav_msgs::msg::Odometry & msg)
-  {
-    _last_estimate = msg.header.stamp;
-  }
 
-   void GroundTruth::utmCallback()
-   {
-   /*
-     static tf2_ros::TransformBroadcaster br;
-     static tf2_ros::TransformListener tf_listener;
-     geometry_msgs::msg::TransformStamped transform_stamped;
-     static bool enabled = true;
+//   void GroundTruth::utmCallback(const rclcpp::TimerEvent & event, const tf2::Transform & odom_to_utm)
+//   {
+//     static tf::TransformBroadcaster br;
+//     static tf::TransformListener tf_listener;
+//     geometry_msgs::msg::TransformStamped transform_stamped;
+//     static bool enabled = true;
 
-     if (enabled)
-     {
-       bool found = true;
-       try
-       {
-         tf_listener.lookupTransform("odom", "utm", ros::Time(0), transform);
-       }
-       catch (const tf::TransformException &ex)
-       {
-         found = false;
-       }
+//     if (enabled)
+//     {
+//       bool found = true;
+//       try
+//       {
+//         tf_listener.lookupTransform("odom", "utm", ros::Time(0), transform);
+//       }
+//       catch (const tf::TransformException &ex)
+//       {
+//         found = false;
+//       }
 
-       if (found && transform.getRotation() != odom_to_utm.getRotation() &&
-           transform.getOrigin() != odom_to_utm.getOrigin())
-       {
-         RCLCPP_WARN(this->get_logger(), "Another odom -> utm tf2 broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
-         enabled = false;
-         return;
-       }
-       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
-     }
-     */
-   }
-  
+//       if (found && transform.getRotation() != odom_to_utm.getRotation() &&
+//           transform.getOrigin() != odom_to_utm.getOrigin())
+//       {
+//         RCLCPP_WARN(this->get_logger(), "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
+//         enabled = false;
+//         return;
+//       }
+//       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
+//     }
+//   }
+//
+
 } // namespace ground_truth
 RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)
