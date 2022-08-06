@@ -38,12 +38,21 @@ namespace ground_truth
       "~/ground_truth",
       rclcpp::SystemDefaultsQoS());
 
-    // utm_to_odom.setOrigin(
-    //     tf2::Vector3(utm_x - g_og_pose.pose.pose.position.x, utm_y - g_og_pose.pose.pose.position.y, 0.0));
-    // utm_to_odom.setRotation(tf2::createQuaternionFromYaw(M_PI));
+    utm_to_odom.setOrigin(
+         tf2::Vector3(utm_x - g_og_pose.pose.pose.position.x, utm_y - g_og_pose.pose.pose.position.y, 0.0));
+    utm_to_odom.setRotation(createQuaternionMsgFromYaw(M_PI));
 
-    // this will probably error
-    // utm_timer = rclcpp::create_timer(rclcpp::Duration(1.0), std::bind(utm_callback, _1, utm_to_odom.inverse()));
+    rclcpp::Clock ros_clock(RCL_ROS_TIME);
+    //rclcpp::create_timer(this, ros_clock, std::chrono::milliseconds(1), std::bind(&GroundTruth::utmCallback, this));
+ 
+  }
+  
+  tf2::Quaternion GroundTruth::createQuaternionMsgFromYaw(double yaw)
+  {
+  tf2::Quaternion q;
+  q.setRPY(0,0,yaw);
+  //return tf2::toMsg(q);
+  return q;
   }
 
   void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
@@ -93,6 +102,8 @@ namespace ground_truth
       // publish odom message
       _ground_truth_pub->publish(result);
 
+
+      /*
       // publish transform for tf if there has not been a update from the localization node in the last second
       // since it also publishes the same transform
       if (std::fabs(msg.header.stamp.sec - g_last_estimate.seconds()) > 1.0)
@@ -104,6 +115,9 @@ namespace ground_truth
 
         tf2::Transform utm_to_odom;
       }
+      */
+      
+      
     }
   }
 
@@ -112,36 +126,37 @@ namespace ground_truth
     _last_estimate = msg.header.stamp;
   }
 
-//   void GroundTruth::utmCallback(const rclcpp::TimerEvent & event, const tf2::Transform & odom_to_utm)
-//   {
-//     static tf::TransformBroadcaster br;
-//     static tf::TransformListener tf_listener;
-//     geometry_msgs::msg::TransformStamped transform_stamped;
-//     static bool enabled = true;
+   void GroundTruth::utmCallback()
+   {
+   /*
+     static tf2_ros::TransformBroadcaster br;
+     static tf2_ros::TransformListener tf_listener;
+     geometry_msgs::msg::TransformStamped transform_stamped;
+     static bool enabled = true;
 
-//     if (enabled)
-//     {
-//       bool found = true;
-//       try
-//       {
-//         tf_listener.lookupTransform("odom", "utm", ros::Time(0), transform);
-//       }
-//       catch (const tf::TransformException &ex)
-//       {
-//         found = false;
-//       }
+     if (enabled)
+     {
+       bool found = true;
+       try
+       {
+         tf_listener.lookupTransform("odom", "utm", ros::Time(0), transform);
+       }
+       catch (const tf::TransformException &ex)
+       {
+         found = false;
+       }
 
-//       if (found && transform.getRotation() != odom_to_utm.getRotation() &&
-//           transform.getOrigin() != odom_to_utm.getOrigin())
-//       {
-//         RCLCPP_WARN(this->get_logger(), "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
-//         enabled = false;
-//         return;
-//       }
-//       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
-//     }
-//   }
-//  
+       if (found && transform.getRotation() != odom_to_utm.getRotation() &&
+           transform.getOrigin() != odom_to_utm.getOrigin())
+       {
+         RCLCPP_WARN(this->get_logger(), "Another odom -> utm tf2 broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
+         enabled = false;
+         return;
+       }
+       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
+     }
+     */
+   }
+  
 } // namespace ground_truth
 RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)
-

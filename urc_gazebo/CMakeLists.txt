@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
   src/control.cpp
   src/ground_truth.cpp
+  src/monkey.cpp
 )
 
 set(dependencies
@@ -73,6 +74,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "control::Control"
   EXECUTABLE ${PROJECT_NAME}_Control
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "monkey::Monkey"
+  EXECUTABLE ${PROJECT_NAME}_Monkey
 )
 
 rclcpp_components_register_node(

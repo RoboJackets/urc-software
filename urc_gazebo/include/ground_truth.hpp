@@ -46,7 +46,7 @@ namespace ground_truth
     tf2_ros::Buffer tfBuffer_;
     tf2_ros::TransformListener tfListener_;
     
-    static tf2_ros::TransformBroadcaster br;
+    //static tf2_ros::TransformBroadcaster br; //Causing problems?
 
     nav_msgs::msg::Odometry g_og_pose;
     rclcpp::Time g_last_estimate;
@@ -65,10 +65,11 @@ namespace ground_truth
     std::normal_distribution<double> pitch_distribution;
     std::normal_distribution<double> yaw_distribution;
 
+    tf2::Quaternion createQuaternionMsgFromYaw(double yaw);
     void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
     void odomCallback(const nav_msgs::msg::Odometry & msg);
-    //void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
+    void utmCallback();
   };
 } // namespace ground_truth
-
 #endif
+
