@@ -28,7 +28,10 @@ namespace ground_truth
     yaw_distribution = std::normal_distribution<double>(0, yaw_noise_std_dev);
 
 
-    _ground_truth_sub = create_subscription<nav_msgs::msg::Odometry>("~/ground_truth/state_raw", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg) {groundTruthCallback(msg);});
+    _ground_truth_sub = create_subscription<nav_msgs::msg::Odometry>(
+      "~/state_raw", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg) {
+        groundTruthCallback(msg);
+      });
 
     _estimate_sub = create_subscription<nav_msgs::msg::Odometry>(
       "~/odometry/filtered", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg){
