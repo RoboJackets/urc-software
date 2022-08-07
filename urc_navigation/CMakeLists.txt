@@ -22,6 +22,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(grid_map_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
@@ -37,6 +38,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/wheel_odometer.cpp
+  src/traversability_filter.cpp
 )
 
 set(dependencies
@@ -49,6 +51,7 @@ set(dependencies
   tf2
   tf2_ros
   tf2_geometry_msgs
+  grid_map_ros
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -66,6 +69,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "wheel_odometer::WheelOdometer"
   EXECUTABLE ${PROJECT_NAME}_WheelOdometer
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "traversability_filter::TraversabilityFilter"
+  EXECUTABLE ${PROJECT_NAME}_TraversabilityFilter
 )
 
 # Install launch files.

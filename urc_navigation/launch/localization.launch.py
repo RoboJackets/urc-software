@@ -23,11 +23,15 @@ def generate_launch_description():
                 PathJoinSubstitution([FindPackageShare('urc_navigation'), 'config',
                                      'ekf_localization_node_params.yaml'])
             ]
-        )
+    )
 
-    # launch quaternion to rpy here
+    # launch traversability filter
+    traversability_filter_node = IncludeLaunchDescription(PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
+                                 'traversability_filter.launch.py'])))
 
     return LaunchDescription([
         ekf_localization_node,
-        wheel_odometer_node
+        wheel_odometer_node,
+        traversability_filter_node
     ])
