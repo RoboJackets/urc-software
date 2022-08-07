@@ -6,3 +6,7 @@
 	path = external/grid_map
 	url = https://github.com/ANYbotics/grid_map
 	branch = ros2
+[submodule "external/elevation_mapping"]
+	path = external/elevation_mapping
+	url = https://github.com/ANYbotics/elevation_mapping
+	branch = ros2
