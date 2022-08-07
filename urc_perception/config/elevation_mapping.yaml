@@ -1,0 +1,72 @@
+# ROBOT PARAMETERS
+input_sources:
+  ground_truth_cloud: # A name to identify the input source
+    type: pointcloud # Supported types: pointcloud
+    topic: "/lidar/filtered"
+    queue_size: 1
+    publish_on_update: true # Whether to publish the elevation map after a callback from this source.
+    sensor_processor:
+      type: laser
+      min_radius: 0.018
+      beam_angle: 0.0006
+      beam_constant: 0.0015
+map_frame_id: "odom"
+robot_base_frame_id: "base_footprint"
+robot_pose_with_covariance_topic: "/odometry/pose_with_cov_stamped"
+robot_pose_cache_size: 200
+track_point_frame_id: "elevation_mapping_center"
+track_point_x: 0.0
+track_point_y: 0.0
+track_point_z: 0.0
+
+# MAP PARAMETERS
+length_in_x: 6.0
+length_in_y: 6.0
+position_x: 0.0
+position_y: 0.0
+resolution: 0.04
+min_variance: 0.000009
+max_variance: 0.01
+mahalanobis_distance_threshold: 2.5
+multi_height_noise: 0.0000009
+fused_map_publishing_rate: 0
+enable_visibility_cleanup: false
+
+# FILTERING
+postprocessor_pipeline:
+  - name: buffer_normalizer
+      type: gridMapFilters/BufferNormalizerFilter
+
+  # Delete unneeded layers.
+  - name: delete_original_layers
+    type: gridMapFilters/DeletionFilter
+    params:
+        layers: [horizontal_variance_x, horizontal_variance_y, horizontal_variance_xy,
+                  color, time, standard_deviation, horizontal_standard_deviation, two_sigma_bound] # List of layers.
+
+  # Boxblur as an alternative to the inpaint and radial blurring filter above.
+  - name: boxblur
+    type: gridMapFilters/SlidingWindowMathExpressionFilter
+    params:
+        input_layer: elevation
+        output_layer: elevation_smooth
+        expression: meanOfFinites(elevation)
+        compute_empty_cells: true
+        edge_handling: crop # options: inside, crop, empty, mean
+        window_size: 5 # optional
+
+  # Compute surface normals.
+  - name: surface_normals
+    type: gridMapFilters/NormalVectorsFilter
+    params:
+        input_layer: elevation_smooth
+        output_layers_prefix: normal_vectors_
+        radius: 0.05
+        normal_vector_positive_axis: z
+
+  # Compute slope from surface normal.
+  - name: slope
+    type: gridMapFilters/MathExpressionFilter
+    params:
+        output_layer: slope
+        expression: acos(normal_vectors_z)

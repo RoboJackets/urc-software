@@ -29,6 +29,7 @@ install(
   DIRECTORY
   launch
   multiclass_segmentation
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
