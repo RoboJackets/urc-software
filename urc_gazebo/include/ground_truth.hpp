@@ -50,8 +50,8 @@ private:
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
     
-  //static tf2_ros::TransformBroadcaster br; //Causing problems?
-  static tf2_ros::TransformBroadcaster br;
+  static tf2_ros::TransformBroadcaster br; //Causing problems?
+
 
 
   nav_msgs::msg::Odometry g_og_pose;
