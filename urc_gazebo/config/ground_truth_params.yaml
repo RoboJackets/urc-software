@@ -1,2 +1,4 @@
 ground_truth:
   ros__parameters:
+    longitude: -84.405001
+    latitude: 33.774497

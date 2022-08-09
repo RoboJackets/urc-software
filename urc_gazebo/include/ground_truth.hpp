@@ -10,12 +10,11 @@
 //#include <robot_localization/navsat_conversions.h>
 //
 #include <std_msgs/msg/float64.hpp>
-//
 #include <tf2/transform_datatypes.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <tf2_ros/transform_broadcaster.h>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <tf2/LinearMath/Vector3.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2_ros/buffer.h>
@@ -31,17 +30,16 @@ public:
   explicit GroundTruth(const rclcpp::NodeOptions & options);
 
 private:
-  nav_msgs::msg::Odometry _og_pose;
-  rclcpp::Time _last_estimate;
+  nav_msgs::msg::Odometry og_pose;
+  rclcpp::Time last_estimate;
 
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _estimate_sub;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_pub;
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _banana_pub;
 
-  // TODO set this as a launch file parameter
-  double longitude = -84.405001;
-  double latitude = 33.774497;
+  double longitude;
+  double latitude;
 
   double utm_x, utm_y;
 
@@ -49,13 +47,7 @@ private:
 
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-    
-  static tf2_ros::TransformBroadcaster br; //Causing problems?
-
-
-
-  nav_msgs::msg::Odometry g_og_pose;
-  rclcpp::Time g_last_estimate;
+  std::unique_ptr<tf2_ros::TransformBroadcaster> br; //Causing problems?
 
   double x_noise_std_dev;
   double y_noise_std_dev;
@@ -71,11 +63,11 @@ private:
   std::normal_distribution<double> pitch_distribution;
   std::normal_distribution<double> yaw_distribution;
 
-    tf2::Quaternion createQuaternionMsgFromYaw(double yaw);
-    void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
-    void odomCallback(const nav_msgs::msg::Odometry & msg);
-    void utmCallback();
-    //void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
+  tf2::Quaternion createQuaternionMsgFromYaw(double yaw);
+  void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
+  void odomCallback(const nav_msgs::msg::Odometry & msg);
+  void utmCallback();
+  //void utmCallback(const ros::TimerEvent &event, const tf::Transform &odom_to_utm);
 };
 } // namespace ground_truth
 #endif
