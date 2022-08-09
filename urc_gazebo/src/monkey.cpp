@@ -6,12 +6,15 @@ Monkey::Monkey(const rclcpp::NodeOptions & options)
 : rclcpp::Node("monkey", options)
 {
 
-  testpub = create_publisher<std_msgs::msg::Bool>(
+  testpub = create_publisher<std_msgs::msg::Float64>(
     "~/banana",
     rclcpp::SystemDefaultsQoS());
-    std_msgs::msg::Bool enabled_msg;
-    enabled_msg.data = true;
-    testpub->publish(enabled_msg);
+    
+    while(rclcpp::ok()) {
+    std_msgs::msg::Float64 testmessage;
+    testmessage.data = testnum;
+    testpub->publish(testmessage);
+    }
 }
 
 } // namespace monkey

@@ -29,7 +29,7 @@ namespace ground_truth
 
 
     _ground_truth_sub = create_subscription<nav_msgs::msg::Odometry>(
-      "~/state_raw", rclcpp::SystemDefaultsQoS(), [this](const nav_msgs::msg::Odometry msg) {
+      "~/state_raw", rclcpp::SensorDataQoS(), [this](const nav_msgs::msg::Odometry msg) {
         groundTruthCallback(msg);
       });
 
@@ -41,6 +41,10 @@ namespace ground_truth
     _ground_truth_pub = create_publisher<nav_msgs::msg::Odometry>(
       "~/ground_truth",
       rclcpp::SystemDefaultsQoS());
+      
+    _banana_pub = create_publisher<std_msgs::msg::Float64>(
+      "~/banana",
+      rclcpp::SystemDefaultsQoS());
 
     utm_to_odom.setOrigin(
          tf2::Vector3(utm_x - g_og_pose.pose.pose.position.x, utm_y - g_og_pose.pose.pose.position.y, 0.0));
@@ -48,6 +52,7 @@ namespace ground_truth
 
     rclcpp::Clock ros_clock(RCL_ROS_TIME);
     //rclcpp::create_timer(this, ros_clock, std::chrono::milliseconds(1), std::bind(&GroundTruth::utmCallback, this));
+ 
  
   }
   
@@ -61,6 +66,7 @@ namespace ground_truth
 
   void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
   {
+
     // get the starting location as the origin
     if (g_og_pose.header.stamp.sec == 0)
     {
@@ -70,6 +76,8 @@ namespace ground_truth
       g_og_pose.pose.pose.position.y = msg.pose.pose.position.y + y_distribution(engine);
       g_og_pose.pose.pose.position.z = msg.pose.pose.position.z + z_distribution(engine);
       RCLCPP_INFO(this->get_logger(), "setting g_og_pose to %f,%f,%f", g_og_pose.pose.pose.position.x,g_og_pose.pose.pose.position.y,g_og_pose.pose.pose.position.z);
+      //TEST CODE, DOES NOT AFFECT MAIN LOGIC
+      
     }
     else
     {
@@ -99,14 +107,13 @@ namespace ground_truth
       result.pose.pose.orientation = toMsg(tempQuat);
       quat.setRPY(roll,pitch,yaw);
 
-      tf2::Vector3 pos;
-      tf2::fromMsg(msg.pose.pose.orientation, quat);
-      tf2::fromMsg(result.pose.pose.position, pos);
+      //tf2::Vector3 pos;
+      //tf2::fromMsg(msg.pose.pose.orientation, quat);
+      //tf2::fromMsg(result.pose.pose.position, pos);
 
       // publish odom message
       _ground_truth_pub->publish(result);
-
-
+      
       /*
       // publish transform for tf if there has not been a update from the localization node in the last second
       // since it also publishes the same transform
@@ -121,6 +128,7 @@ namespace ground_truth
       }
       */
       }
+      
     }
       
       

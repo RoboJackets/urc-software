@@ -8,6 +8,9 @@
 #include <geometry_msgs/msg/vector3.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 //#include <robot_localization/navsat_conversions.h>
+//
+#include <std_msgs/msg/float64.hpp>
+//
 #include <tf2/transform_datatypes.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -34,6 +37,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _estimate_sub;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_pub;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _banana_pub;
 
   // TODO set this as a launch file parameter
   double longitude = -84.405001;

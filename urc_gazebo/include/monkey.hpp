@@ -5,7 +5,7 @@
 #include <rclcpp/time.hpp>
 #include <rclcpp/timer.hpp>
 #include <rclcpp/duration.hpp>
-#include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/float64.hpp>
 //#include <geometry_msgs/msg/vector3.hpp>
 //#include <nav_msgs/msg/odometry.hpp>
 /*
@@ -30,7 +30,8 @@ public:
   explicit Monkey(const rclcpp::NodeOptions & options);
 
 private:
-    rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr testpub;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr testpub;
+    double testnum = 69.0;
 
 };
 } // namespace monkey
