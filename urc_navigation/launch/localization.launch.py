@@ -30,7 +30,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
                                  'traversability_filter.launch.py'])))
 
-
+    '''
     # launch octomap server
     octomap_server_node = Node(
             package='octomap_server',
@@ -49,7 +49,8 @@ def generate_launch_description():
     octomap_to_gridmap_node = IncludeLaunchDescription(PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
                                  'octomap_to_gridmap.launch.py'])))
-
+    '''
+    
     return LaunchDescription([
         ekf_localization_node,
         wheel_odometer_node,

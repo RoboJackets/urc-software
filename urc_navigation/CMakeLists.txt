@@ -80,11 +80,11 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_TraversabilityFilter
 )
 
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "octomap_to_gridmap:OctomapToGridmap"
-  EXECUTABLE ${PROJECT_NAME}_OctomapToGridmap
-)
+#rclcpp_components_register_node(
+#  ${PROJECT_NAME}
+#  PLUGIN "octomap_to_gridmap:OctomapToGridmap"
+#  EXECUTABLE ${PROJECT_NAME}_OctomapToGridmap
+#)
 # Install launch files.
 install(
   DIRECTORY
