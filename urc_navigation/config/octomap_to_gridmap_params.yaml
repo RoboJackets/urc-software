@@ -1,0 +1,8 @@
+octomap_to_gridmap:
+  ros__parameters:
+    min_x: .nan
+    min_y: .nan
+    max_x: .nan
+    max_y: .nan
+    min_z: .nan
+    max_z: .nan

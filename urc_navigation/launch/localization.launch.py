@@ -30,8 +30,29 @@ def generate_launch_description():
             PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
                                  'traversability_filter.launch.py'])))
 
+
+    # launch octomap server
+    octomap_server_node = Node(
+            package='octomap_server',
+            executable='octomap_server_node',
+            name='octomap_server',
+            output='screen',
+            parameters=[
+                PathJoinSubstitution([FindPackageShare('urc_navigation'), 'config',
+                                     'ocotmap_server_node_params.yaml'])
+            ],
+            remappings=[
+                ('cloud_in', '~/pc2'),
+            ]
+    )
+
+    octomap_to_gridmap_node = IncludeLaunchDescription(PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
+                                 'octomap_to_gridmap.launch.py'])))
+
     return LaunchDescription([
         ekf_localization_node,
         wheel_odometer_node,
-        traversability_filter_node
+        traversability_filter_node,
+        octomap_server_node
     ])

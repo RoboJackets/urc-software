@@ -27,6 +27,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(octomap REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -53,6 +54,7 @@ set(dependencies
   tf2_ros
   tf2_geometry_msgs
   grid_map_ros
+  octomap
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -78,6 +80,11 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_TraversabilityFilter
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "octomap_to_gridmap:OctomapToGridmap"
+  EXECUTABLE ${PROJECT_NAME}_OctomapToGridmap
+)
 # Install launch files.
 install(
   DIRECTORY

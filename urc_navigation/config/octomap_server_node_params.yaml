@@ -1,0 +1,12 @@
+octomap_server:
+  ros__parameters:
+    resolution: 
+      frame_id: "map"
+      sensor_model/hit: 0.8
+      sensor_model/miss: 0.3
+      sensor_model/max_range: 20.0
+      occupancy_min_z: 0.8
+      occupancy_max_z: 10.0
+      pointcloud_min_z: 0.8
+      pointcloud_max_z: 10.0
+      latch: true
