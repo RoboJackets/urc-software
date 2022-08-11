@@ -19,6 +19,7 @@
   <depend>tf2_ros</depend>
   <depend>tf2_geometry_msgs</depend>  
   <depend>grid_map_ros</depend>
+  <depend>grid_map_octomap</depend>
   <depend>octomap</depend>
 
   <test_depend>ament_lint_auto</test_depend>

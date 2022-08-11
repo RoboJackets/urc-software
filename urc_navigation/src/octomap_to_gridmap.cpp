@@ -3,17 +3,23 @@
 namespace octomap_to_gridmap
 {
 OctomapToGridmap::OctomapToGridmap(const rclcpp::NodeOptions & options)
-: rclcpp::Node("octomap_to_gridmap", options)
+: rclcpp::Node("octomap_to_gridmap", options),
+  map_(grid_map::GridMap({"elevation"}))
 {
+  minX_ = declare_parameter<float>("min_x", NAN);
+  maxX_ = declare_parameter<float>("max_x", NAN);
+  minY_ = declare_parameter<float>("min_y", NAN);
+  maxY_ = declare_parameter<float>("max_y", NAN);
+  minZ_ = declare_parameter<float>("min_z", NAN);
+  maxZ_ = declare_parameter<float>("max_z", NAN);
+  
   octomap_sub_ = create_subscription<octomap_msgs::msg::Octomap>(
-    "~/octomap_full"
-    rclcpp::SystemDefaultsQoS(), [this](const octomap_msgs::msg::Octomap message) {
+    "~/octomap_full", rclcpp::SystemDefaultsQoS(), [this](const octomap_msgs::msg::Octomap::SharedPtr message) {
         octomapCallback(message);
     });
 
   gridmap_pub_ = create_publisher<grid_map_msgs::msg::GridMap>(
     "~/slope/gridmap", rclcpp::QoS(1).transient_local());
-
 }
 
 void OctomapToGridmap::octomapCallback(const octomap_msgs::msg::Octomap::SharedPtr message)
@@ -27,8 +33,14 @@ void OctomapToGridmap::octomapCallback(const octomap_msgs::msg::Octomap::SharedP
 
   octomap::OcTree * octomap = nullptr;
   octomap::AbstractOcTree * tree = octomap_msgs::msgToMap(message->map);
+  if (tree) {
+    octomap = dynamic_cast<octomap::OcTree *>(tree);
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Failed to call convert Octomap.");
+    return;
+  }
 
-  id_map::Position3 min_bound;
+  grid_map::Position3 min_bound;
   grid_map::Position3 max_bound;
   octomap->getMetricMin(min_bound(0), min_bound(1), min_bound(2));
   octomap->getMetricMax(max_bound(0), max_bound(1), max_bound(2));
@@ -65,4 +77,4 @@ void OctomapToGridmap::octomapCallback(const octomap_msgs::msg::Octomap::SharedP
 }
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(pointcloud_to_gridmap::PointcloudToGridmap)
+RCLCPP_COMPONENTS_REGISTER_NODE(octomap_to_gridmap::OctomapToGridmap)

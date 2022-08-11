@@ -23,11 +23,13 @@ find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(grid_map_ros REQUIRED)
+find_package(grid_map_octomap REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(octomap REQUIRED)
+find_package(octomap_msgs REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -40,7 +42,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/wheel_odometer.cpp
   src/traversability_filter.cpp
-  src/pointcloud_to_gridmap.cpp
+  src/octomap_to_gridmap.cpp
 )
 
 set(dependencies
@@ -54,7 +56,9 @@ set(dependencies
   tf2_ros
   tf2_geometry_msgs
   grid_map_ros
+  grid_map_octomap
   octomap
+  octomap_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -80,11 +84,12 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_TraversabilityFilter
 )
 
-#rclcpp_components_register_node(
-#  ${PROJECT_NAME}
-#  PLUGIN "octomap_to_gridmap:OctomapToGridmap"
-#  EXECUTABLE ${PROJECT_NAME}_OctomapToGridmap
-#)
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "octomap_to_gridmap:OctomapToGridmap"
+  EXECUTABLE ${PROJECT_NAME}_OctomapToGridmap
+)
+
 # Install launch files.
 install(
   DIRECTORY
