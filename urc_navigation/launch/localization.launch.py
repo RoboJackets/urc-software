@@ -50,10 +50,9 @@ def generate_launch_description():
             PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
                                  'octomap_to_gridmap.launch.py'])))
     '''
-    
+
     return LaunchDescription([
         ekf_localization_node,
         wheel_odometer_node,
         traversability_filter_node,
-        octomap_server_node
     ])

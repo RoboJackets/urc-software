@@ -7,7 +7,7 @@
 #include <grid_map_ros/grid_map_ros.hpp>
 
 #include <grid_map_msgs/msg/grid_map.hpp>
-#include <octomap_msgs/srv/get_octomap.hpp>
+#include <octomap_msgs/msg/octomap.hpp>
 
 namespace octomap_to_gridmap
 {
@@ -18,7 +18,7 @@ public:
 
 private:
 
-  rclcpp::Subscription<octomap_msgs::srv::GetOctomap>::SharedPtr octomap_client_;
+  rclcpp::Subscription<octomap_msgs::msg::Octomap>::SharedPtr octomap_sub_;
   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr gridmap_pub_;
 
   void octomapCallback(const octomap_msgs::msg::Octomap::SharedPtr message);
