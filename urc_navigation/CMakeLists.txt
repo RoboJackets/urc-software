@@ -39,6 +39,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/wheel_odometer.cpp
   src/traversability_filter.cpp
+  src/pointcloud_to_gridmap.cpp
 )
 
 set(dependencies

@@ -4,7 +4,6 @@
 #include <nav2_costmap_2d/layer.hpp>
 #include <optional>
 #include <grid_map_ros/grid_map_ros.hpp>
-#include <grid_map_ros/grid_map_ros.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <grid_map_ros/GridMapRosConverter.hpp>
 
