@@ -60,6 +60,10 @@ def generate_launch_description():
            parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
                                      'ground_truth_params.yaml'])
+           ],
+           remappings=[
+                ("/ground_truth/odometry/filtered", "/odometry/filtered"),
+                ("/ground_truth/ground_truth", "/ground_truth")
            ]
            
        )

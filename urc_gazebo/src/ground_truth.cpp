@@ -109,7 +109,7 @@ namespace ground_truth
 
       geometry_msgs::msg::Vector3Stamped pos;
       tf2::fromMsg(msg.pose.pose.orientation, quat);
-      //tf2::convert(result.pose.pose.position, pos);
+      //tf2::fromMsg(result.pose.pose.position, pos);
 
       // publish odom message
       _ground_truth_pub->publish(result);
