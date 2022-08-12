@@ -67,7 +67,7 @@ private:
   tf2::Quaternion createQuaternionMsgFromYaw(double yaw);
   void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
   void odomCallback(const nav_msgs::msg::Odometry & msg);
-  void utmCallback(rclcpp::Clock clock, const tf2::Transform & odom_to_utm);
+  void utmCallback(const tf2::Transform & odom_to_utm);
 };
 } // namespace ground_truth
 #endif

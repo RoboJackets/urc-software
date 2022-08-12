@@ -53,10 +53,11 @@ namespace ground_truth
     
     //TODO convert to ros2, this uses the utmcallback
     //ros::Timer utm_timer = nh.createTimer(ros::Duration(1.0), boost::bind(utm_callback, _1, utm_to_odom.inverse()));
-    
-    //rclcpp::Clock clock;
-    //rclcpp::Time utm_timer = rclcpp::create_wall_timer(std::chrono::milliseconds(10), std::bind(utmCallback, std::placeholders::_1, utm_to_odom.inverse()));
-    
+
+    rclcpp::Time utm_timer = this->create_wall_timer(std::chrono::milliseconds(10),
+      [this](const tf2::Transform & odom_to_utm){
+        utmCallback(utm_to_odom.inverse());
+      });
   }
   
   tf2::Quaternion GroundTruth::createQuaternionMsgFromYaw(double yaw)
@@ -143,7 +144,7 @@ namespace ground_truth
    }
    
    
-   void GroundTruth::utmCallback(rclcpp::Clock clock, const tf2::Transform & odom_to_utm)
+   void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
    {
      tf2_ros::TransformListener tf_listener(tfBuffer_);
      geometry_msgs::msg::TransformStamped transform_stamped;
@@ -173,7 +174,7 @@ namespace ground_truth
        geometry_msgs::msg::TransformStamped tMsg;
        tMsg.header.frame_id = "odom";
        tMsg.child_frame_id = "utm";
-       tMsg.header.stamp = clock.now();
+       tMsg.header.stamp = this->get_clock()->now();
        tMsg.transform = toMsg(odom_to_utm);
        br->sendTransform(tMsg);
 
