@@ -100,12 +100,12 @@ namespace ground_truth
       tf2::Quaternion tempQuat;
       tempQuat.setRPY(roll + roll_distribution(engine), pitch + pitch_distribution(engine), yaw + yaw_distribution(engine));
       
-      result.pose.pose.orientation = toMsg(tempQuat);
+      result.pose.pose.orientation = tf2::toMsg(tempQuat);
       quat.setRPY(roll,pitch,yaw);
 
-      tf2::Vector3 pos;
+      geometry_msgs::msg::Vector3Stamped pos;
       tf2::fromMsg(msg.pose.pose.orientation, quat);
-      tf2::fromMsg(result.pose.pose.position, pos);
+      tf2::convert(result.pose.pose.position, pos);
 
       // publish odom message
       _ground_truth_pub->publish(result);
@@ -119,8 +119,8 @@ namespace ground_truth
         transformMsg.header.frame_id = "odom";
         transformMsg.child_frame_id = "base_footprint";
         transformMsg.header.stamp = this->get_clock()->now();
-        transformMsg.transform.translation = toMsg(pos);
-        transformMsg.transform.rotation = toMsg(quat);
+        transformMsg.transform.translation = pos.vector;
+        transformMsg.transform.rotation = tf2::toMsg(quat);
 	      
         br->sendTransform(transformMsg);
 
