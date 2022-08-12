@@ -33,7 +33,7 @@ namespace ground_truth
 
 
     _ground_truth_sub = create_subscription<nav_msgs::msg::Odometry>(
-      "~/ground_truth/state_raw", rclcpp::SensorDataQoS(), [this](const nav_msgs::msg::Odometry msg) {
+      "~/state_raw", rclcpp::SensorDataQoS(), [this](const nav_msgs::msg::Odometry msg) {
         groundTruthCallback(msg);
       });
 
@@ -46,13 +46,17 @@ namespace ground_truth
       "~/ground_truth",
       rclcpp::SystemDefaultsQoS());
       
-    _banana_pub = create_publisher<std_msgs::msg::Float64>(
-      "~/banana",
-      rclcpp::SystemDefaultsQoS());
 
     utm_to_odom.setOrigin(
          tf2::Vector3(utm_x - og_pose.pose.pose.position.x, utm_y - og_pose.pose.pose.position.y, 0.0));
     utm_to_odom.setRotation(createQuaternionMsgFromYaw(M_PI));
+    
+    //TODO convert to ros2, this uses the utmcallback
+    //ros::Timer utm_timer = nh.createTimer(ros::Duration(1.0), boost::bind(utm_callback, _1, utm_to_odom.inverse()));
+    
+    //rclcpp::Clock clock;
+    //rclcpp::Time utm_timer = rclcpp::create_wall_timer(std::chrono::milliseconds(10), std::bind(utmCallback, std::placeholders::_1, utm_to_odom.inverse()));
+    
   }
   
   tf2::Quaternion GroundTruth::createQuaternionMsgFromYaw(double yaw)
@@ -103,9 +107,9 @@ namespace ground_truth
       result.pose.pose.orientation = toMsg(tempQuat);
       quat.setRPY(roll,pitch,yaw);
 
-      tf2::Vector3 pos;
+      geometry_msgs::msg::Vector3Stamped pos;
       tf2::fromMsg(msg.pose.pose.orientation, quat);
-      tf2::fromMsg(result.pose.pose.position, pos);
+      //tf2::convert(result.pose.pose.position, pos);
 
       // publish odom message
       _ground_truth_pub->publish(result);
@@ -115,25 +119,32 @@ namespace ground_truth
       // since it also publishes the same transform
       if (std::fabs(msg.header.stamp.sec - last_estimate.seconds()) > 1.0)
       {
+        
         geometry_msgs::msg::TransformStamped transformMsg;
         transformMsg.header.frame_id = "odom";
         transformMsg.child_frame_id = "base_footprint";
         transformMsg.header.stamp = this->get_clock()->now();
-        transformMsg.transform.translation = toMsg(pos);
+        transformMsg.transform.translation = pos.vector;
         transformMsg.transform.rotation = toMsg(quat);
 	      
-        br->sendTransform(transformMsg);
+        //br->sendTransform(transformMsg);
 
-        //tf2::Transform utm_to_odom;
+        tf2::Transform utm_to_odom;
+        
       }
+      
     }
   }
-      
-/*
-   void GroundTruth::utmCallback(const rclcpp::TimerEvent & event, const tf2::Transform & odom_to_utm)
+     
+   void GroundTruth::odomCallback(const nav_msgs::msg::Odometry & msg)
    {
-     static tf::TransformBroadcaster br;
-     static tf::TransformListener tf_listener;
+     last_estimate = msg.header.stamp;
+   }
+   
+   
+   void GroundTruth::utmCallback(rclcpp::Clock clock, const tf2::Transform & odom_to_utm)
+   {
+     tf2_ros::TransformListener tf_listener(tfBuffer_);
      geometry_msgs::msg::TransformStamped transform_stamped;
      static bool enabled = true;
 
@@ -142,24 +153,32 @@ namespace ground_truth
        bool found = true;
        try
        {
-         tf_listener.lookupTransform("odom", "utm", ros::Time(0), transform);
+         tfBuffer_.lookupTransform("odom", "utm", rclcpp::Time(0));
        }
-       catch (const tf::TransformException &ex)
+       catch (const tf2::TransformException &ex)
        {
          found = false;
        }
-
-       if (found && transform.getRotation() != odom_to_utm.getRotation() &&
-           transform.getOrigin() != odom_to_utm.getOrigin())
+       
+       if (found && transform_stamped.transform.rotation != toMsg(odom_to_utm.getRotation()) &&
+           transform_stamped.transform.translation.x != odom_to_utm.getOrigin().getX() &&
+           transform_stamped.transform.translation.y != odom_to_utm.getOrigin().getY() &&
+           transform_stamped.transform.translation.z != odom_to_utm.getOrigin().getZ()   )
        {
          RCLCPP_WARN(this->get_logger(), "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
          enabled = false;
          return;
        }
-       br.sendTransform(tf::StampedTransform(odom_to_utm, event.current_real, "odom", "utm"));
+       geometry_msgs::msg::TransformStamped tMsg;
+       tMsg.header.frame_id = "odom";
+       tMsg.child_frame_id = "utm";
+       tMsg.header.stamp = clock.now();
+       tMsg.transform = toMsg(odom_to_utm);
+       br->sendTransform(tMsg);
+
      }
    }
-*/
+
 
 } // namespace ground_truth
 RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)

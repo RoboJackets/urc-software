@@ -60,19 +60,10 @@ def generate_launch_description():
            parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
                                      'ground_truth_params.yaml'])
-           ],
-           remappings=[
-                ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw"),
-                ("/ground_truth/odometry/filtered", "/odometry/filtered"),
-                ("/ground_truth/ground_truth", "/ground_truth")
            ]
+           
        )
        
-    monkey = Node(
-           package='urc_gazebo',
-           executable='urc_gazebo_Monkey',
-           output='screen'
-       )
 
     # sim_color_detector = Node(
     #        package='urc_gazebo',
@@ -88,7 +79,6 @@ def generate_launch_description():
         gazebo,
         wallii,
         control,
-        ground_truth,
-        monkey
+        ground_truth
         # sim_color_detector
     ])
