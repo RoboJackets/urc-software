@@ -65,7 +65,7 @@ docker container create -i -t --name=urc_software_container robojackets/urc-base
 
 You can launch your newly created Docker container using the command line or VSCode.
 
-### 5a. Launch Docker Conatiner Using VSCode
+### 5a. Launch Docker Container Using VSCode
 
 First, make sure that you have the `Remote - Containers` extension installed.
 
