@@ -63,7 +63,8 @@ def generate_launch_description():
            ],
            remappings=[
                 ("/ground_truth/odometry/filtered", "/odometry/filtered"),
-                ("/ground_truth/ground_truth", "/ground_truth")
+                ("/ground_truth/ground_truth", "/ground_truth"),
+                ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw")
            ]
            
        )

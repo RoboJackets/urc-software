@@ -45,7 +45,7 @@ private:
 
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> broadcaster; //Causing problems?
+  std::unique_ptr<tf2_ros::TransformBroadcaster> broadcaster;
 
   double x_noise_std_dev;
   double y_noise_std_dev;
@@ -72,4 +72,5 @@ private:
   void utmCallback(const tf2::Transform & odom_to_utm);
 };
 } // namespace ground_truth
+
 #endif
