@@ -19,8 +19,13 @@ RUN mkdir -p /colcon_ws
 WORKDIR /colcon_ws
 RUN mkdir -p src
 
-COPY . /colcon_ws/src/urc-software
+# COPY . /colcon_ws/src/urc-software
 
 # Install all ROS dependencies that can automatically be installed
-WORKDIR /colcon_ws/src/urc-software
-RUN /bin/bash -c /colcon_ws/src/urc-software/install_dependencies.sh
+# WORKDIR /colcon_ws/src/urc-software
+# RUN /bin/bash -c /colcon_ws/src/urc-software/install_dependencies.sh
+
+# sudo docker build -t urc_software .
+# sudo docker run -i -t urc_software
+
+# docker run -i -t urc_software --mount type=bind,source="$(pwd)"/urc-software,target=/colcon_ws/src
