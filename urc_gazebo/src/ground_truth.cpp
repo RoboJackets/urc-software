@@ -8,6 +8,8 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
   tfBuffer_(this->get_clock()),
   tfListener_(tfBuffer_)
 {
+  broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+  
   longitude = declare_parameter<double>("longitude");
   latitude = declare_parameter<double>("latitude");
 
@@ -67,7 +69,6 @@ tf2::Quaternion GroundTruth::createQuaternionMsgFromYaw(double yaw)
 
 void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
 {
-
   // get the starting location as the origin
   if (og_pose.header.stamp.sec == 0) {
     og_pose.pose = msg.pose;
@@ -96,6 +97,7 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     result.child_frame_id = "base_footprint";
     result.header.frame_id = "odom";
 
+    // get roll, pitch, and yaw from msg
     tf2::Quaternion quat(msg.pose.pose.orientation.x, msg.pose.pose.orientation.y,
       msg.pose.pose.orientation.z,
       msg.pose.pose.orientation.w);
@@ -103,20 +105,13 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
 
+    // set up orientation
     tf2::Quaternion tempQuat;
     tempQuat.setRPY(
       roll + roll_distribution(engine), pitch + pitch_distribution(
         engine), yaw + yaw_distribution(engine));
-
     result.pose.pose.orientation = tf2::toMsg(tempQuat);
-    quat.setRPY(roll, pitch, yaw);
-
-    geometry_msgs::msg::Vector3Stamped pos;
-    tf2::fromMsg(msg.pose.pose.orientation, quat);
-    pos.vector.x = result.pose.pose.position.x;
-    pos.vector.y = result.pose.pose.position.y;
-    pos.vector.z = result.pose.pose.position.z;
-
+    
     // publish odom message
     _ground_truth_pub->publish(result);
 
@@ -124,21 +119,23 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     // publish transform for tf if there has not been a update from the localization node in the last second
     // since it also publishes the same transform
     if (std::fabs(msg.header.stamp.sec - last_estimate.seconds()) > 1.0) {
+      quat.setRPY(roll, pitch, yaw);
+      tf2::fromMsg(msg.pose.pose.orientation, quat);
+      
+      geometry_msgs::msg::Vector3 pos;
+      pos.x = result.pose.pose.position.x;
+      pos.y = result.pose.pose.position.y;
+      pos.z = result.pose.pose.position.z;
 
       geometry_msgs::msg::TransformStamped transformMsg;
       transformMsg.header.frame_id = "odom";
       transformMsg.child_frame_id = "base_footprint";
       transformMsg.header.stamp = this->get_clock()->now();
-      transformMsg.transform.translation = pos.vector;
+      transformMsg.transform.translation = pos;
       transformMsg.transform.rotation = toMsg(quat);
 
-      //giving problemms
-      br->sendTransform(transformMsg);
-
-      tf2::Transform utm_to_odom;
-
+      broadcaster->sendTransform(transformMsg);
     }
-
   }
 }
 
@@ -178,8 +175,7 @@ void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
     tMsg.child_frame_id = "utm";
     tMsg.header.stamp = this->get_clock()->now();
     tMsg.transform = toMsg(odom_to_utm);
-    br->sendTransform(tMsg);
-
+    broadcaster->sendTransform(tMsg);
   }
 }
 

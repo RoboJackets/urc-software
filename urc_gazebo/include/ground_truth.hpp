@@ -36,8 +36,8 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr _estimate_sub;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr _ground_truth_pub;
 
-  double longitude = -84.405001;
-  double latitude = 33.774497;
+  double longitude;
+  double latitude;
 
   double utm_x, utm_y;
 
@@ -45,7 +45,7 @@ private:
 
   tf2_ros::Buffer tfBuffer_;
   tf2_ros::TransformListener tfListener_;
-  std::unique_ptr<tf2_ros::TransformBroadcaster> br; //Causing problems?
+  std::unique_ptr<tf2_ros::TransformBroadcaster> broadcaster; //Causing problems?
 
   double x_noise_std_dev;
   double y_noise_std_dev;
