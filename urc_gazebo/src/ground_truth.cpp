@@ -22,7 +22,7 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
   pitch_noise_std_dev = declare_parameter<double>("pitch_noise_std_dev", 0.0);
   yaw_noise_std_dev = declare_parameter<double>("yaw_noise_std_dev", 0.0);
 
-  std::default_random_engine engine(std::random_device{} ());
+  std::default_random_engine engine(std::random_device{}());
   x_distribution = std::normal_distribution<double>(0, x_noise_std_dev);
   y_distribution = std::normal_distribution<double>(0, y_noise_std_dev);
   z_distribution = std::normal_distribution<double>(0, z_noise_std_dev);
