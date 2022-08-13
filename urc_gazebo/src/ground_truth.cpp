@@ -10,8 +10,8 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
 {
   broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
   
-  longitude = declare_parameter<double>("longitude");
-  latitude = declare_parameter<double>("latitude");
+  longitude = declare_parameter<double>("longitude", -84.405001);
+  latitude = declare_parameter<double>("latitude", 33.774497);
 
   //noise variables
   x_noise_std_dev = declare_parameter<double>("x_noise_std_dev", 0.0);
@@ -147,36 +147,39 @@ void GroundTruth::odomCallback(const nav_msgs::msg::Odometry & msg)
 
 void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
 {
-  geometry_msgs::msg::TransformStamped transform_stamped;
-  static bool enabled = true;
-
-  if (enabled) {
-    bool found = true;
-    try {
-      tfBuffer_.lookupTransform("odom", "utm", rclcpp::Time(0));
-    } catch (const tf2::TransformException & ex) {
-      found = false;
-    }
-
-    if (found && transform_stamped.transform.rotation != toMsg(odom_to_utm.getRotation()) &&
-      transform_stamped.transform.translation.x != odom_to_utm.getOrigin().getX() &&
-      transform_stamped.transform.translation.y != odom_to_utm.getOrigin().getY() &&
-      transform_stamped.transform.translation.z != odom_to_utm.getOrigin().getZ()   )
-    {
-      RCLCPP_WARN(
-        this->get_logger(),
-        "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast."
-      );
-      enabled = false;
-      return;
-    }
-    geometry_msgs::msg::TransformStamped tMsg;
-    tMsg.header.frame_id = "odom";
-    tMsg.child_frame_id = "utm";
-    tMsg.header.stamp = this->get_clock()->now();
-    tMsg.transform = toMsg(odom_to_utm);
-    broadcaster->sendTransform(tMsg);
+  if (!utm_enabled) {
+    return;
   }
+  
+  geometry_msgs::msg::TransformStamped transform_msg;
+  transform_msg.header.frame_id = "odom";
+  transform_msg.child_frame_id = "utm";
+  transform_msg.header.stamp = this->get_clock()->now();
+  transform_msg.transform = toMsg(odom_to_utm);
+
+  // check if transformation from odom -> utm can be found
+  try {
+    tfBuffer_.lookupTransform("odom", "utm", rclcpp::Time(0));
+  }
+  catch (const tf2::TransformException & ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not find transform from \"odom\" to \"utm\"!");
+    return;
+  }
+
+  // check for any other odom -> utm broadcasts, stop this method from executing if any others exist
+  if (transform_msg.transform.rotation != toMsg(odom_to_utm.getRotation()) &&
+    transform_msg.transform.translation.x != odom_to_utm.getOrigin().getX() &&
+    transform_msg.transform.translation.y != odom_to_utm.getOrigin().getY() &&
+    transform_msg.transform.translation.z != odom_to_utm.getOrigin().getZ())
+  {
+    RCLCPP_WARN(
+      this->get_logger(),
+      "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast."
+    );
+    utm_enabled = false;
+    return;
+  }
+  broadcaster->sendTransform(transform_msg);
 }
 
 } // namespace ground_truth

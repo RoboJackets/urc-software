@@ -50,17 +50,21 @@ private:
   double x_noise_std_dev;
   double y_noise_std_dev;
   double z_noise_std_dev;
+
   double roll_noise_std_dev;
   double pitch_noise_std_dev;
   double yaw_noise_std_dev;
+
   std::default_random_engine engine;
   std::normal_distribution<double> x_distribution;
   std::normal_distribution<double> y_distribution;
   std::normal_distribution<double> z_distribution;
+
   std::normal_distribution<double> roll_distribution;
   std::normal_distribution<double> pitch_distribution;
   std::normal_distribution<double> yaw_distribution;
 
+  bool utm_enabled = true;
 
   tf2::Quaternion createQuaternionMsgFromYaw(double yaw);
   void groundTruthCallback(const nav_msgs::msg::Odometry & msg);
