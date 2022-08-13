@@ -113,7 +113,9 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
 
     geometry_msgs::msg::Vector3Stamped pos;
     tf2::fromMsg(msg.pose.pose.orientation, quat);
-    //tf2::fromMsg(result.pose.pose.position, pos);
+    pos.vector.x = result.pose.pose.position.x;
+    pos.vector.y = result.pose.pose.position.y;
+    pos.vector.z = result.pose.pose.position.z;
 
     // publish odom message
     _ground_truth_pub->publish(result);
@@ -130,8 +132,8 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
       transformMsg.transform.translation = pos.vector;
       transformMsg.transform.rotation = toMsg(quat);
 
-
-      //br->sendTransform(transformMsg);
+      //giving problemms
+      br->sendTransform(transformMsg);
 
       tf2::Transform utm_to_odom;
 
