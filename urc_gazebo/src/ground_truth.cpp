@@ -13,22 +13,20 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
   longitude = declare_parameter<double>("longitude");
   latitude = declare_parameter<double>("latitude");
 
-  // Other variables that need to be defined go here (noise variables?)
-  //RobotLocalization::NavsatConversions::UTM(latitude, longitude, &utm_x, &utm_y);
-  nav_msgs::msg::Odometry og_pose;
-  rclcpp::Time last_estimate;
-
   //noise variables
   x_noise_std_dev = declare_parameter<double>("x_noise_std_dev", 0.0);
   y_noise_std_dev = declare_parameter<double>("y_noise_std_dev", 0.0);
   z_noise_std_dev = declare_parameter<double>("z_noise_std_dev", 0.0);
+
   roll_noise_std_dev = declare_parameter<double>("roll_noise_std_dev", 0.0);
   pitch_noise_std_dev = declare_parameter<double>("pitch_noise_std_dev", 0.0);
   yaw_noise_std_dev = declare_parameter<double>("yaw_noise_std_dev", 0.0);
+
   std::default_random_engine engine(std::random_device{}());
   x_distribution = std::normal_distribution<double>(0, x_noise_std_dev);
   y_distribution = std::normal_distribution<double>(0, y_noise_std_dev);
   z_distribution = std::normal_distribution<double>(0, z_noise_std_dev);
+
   roll_distribution = std::normal_distribution<double>(0, roll_noise_std_dev);
   pitch_distribution = std::normal_distribution<double>(0, pitch_noise_std_dev);
   yaw_distribution = std::normal_distribution<double>(0, yaw_noise_std_dev);
@@ -78,7 +76,9 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     og_pose.pose.pose.position.z = msg.pose.pose.position.z + z_distribution(engine);
     RCLCPP_INFO(
       this->get_logger(), "setting og_pose to %f,%f,%f", og_pose.pose.pose.position.x, og_pose.pose.pose.position.y,
-      og_pose.pose.pose.position.z);
+      og_pose.pose.pose.position.z
+    );
+
   } else {
     nav_msgs::msg::Odometry result;
     result.pose = msg.pose;
@@ -101,9 +101,9 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     tf2::Quaternion quat(msg.pose.pose.orientation.x, msg.pose.pose.orientation.y,
       msg.pose.pose.orientation.z,
       msg.pose.pose.orientation.w);
-    tf2::Matrix3x3 m(quat);
+    tf2::Matrix3x3 temp_matrix(quat);
     double roll, pitch, yaw;
-    m.getRPY(roll, pitch, yaw);
+    temp_matrix.getRPY(roll, pitch, yaw);
 
     // set up orientation
     tf2::Quaternion tempQuat;
@@ -147,7 +147,6 @@ void GroundTruth::odomCallback(const nav_msgs::msg::Odometry & msg)
 
 void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
 {
-  tf2_ros::TransformListener tf_listener(tfBuffer_);
   geometry_msgs::msg::TransformStamped transform_stamped;
   static bool enabled = true;
 
@@ -166,7 +165,8 @@ void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
     {
       RCLCPP_WARN(
         this->get_logger(),
-        "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast.");
+        "Another odom -> utm tf broadcast detected. Disabling ground_truth odom -> utm tf broadcast."
+      );
       enabled = false;
       return;
     }
@@ -179,6 +179,6 @@ void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
   }
 }
 
-
 } // namespace ground_truth
+
 RCLCPP_COMPONENTS_REGISTER_NODE(ground_truth::GroundTruth)
