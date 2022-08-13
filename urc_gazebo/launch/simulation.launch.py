@@ -65,19 +65,17 @@ def generate_launch_description():
                 ("/ground_truth/odometry/filtered", "/odometry/filtered"),
                 ("/ground_truth/ground_truth", "/ground_truth")
            ]
-           
        )
-       
 
     # sim_color_detector = Node(
-    #        package='urc_gazebo',
-    #        executable='urc_gazebo_SimColorDetector',
-    #        output='screen',
-    #        parameters=[
-    #            PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-    #                                 'sim_color_detector_params.yaml'])
-    #        ]
-    #    )
+    #      package='urc_gazebo',
+    #      executable='urc_gazebo_SimColorDetector',
+    #      output='screen',
+    #      parameters=[
+    #          PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
+    #                                'sim_color_detector_params.yaml'])
+    #      ]
+    #  )
 
     return LaunchDescription([
         gazebo,

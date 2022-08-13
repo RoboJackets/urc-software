@@ -9,7 +9,7 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
   tfListener_(tfBuffer_)
 {
   broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
-  
+
   longitude = declare_parameter<double>("longitude", -84.405001);
   latitude = declare_parameter<double>("latitude", 33.774497);
 
@@ -22,7 +22,7 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
   pitch_noise_std_dev = declare_parameter<double>("pitch_noise_std_dev", 0.0);
   yaw_noise_std_dev = declare_parameter<double>("yaw_noise_std_dev", 0.0);
 
-  std::default_random_engine engine(std::random_device{}());
+  std::default_random_engine engine(std::random_device{} ());
   x_distribution = std::normal_distribution<double>(0, x_noise_std_dev);
   y_distribution = std::normal_distribution<double>(0, y_noise_std_dev);
   z_distribution = std::normal_distribution<double>(0, z_noise_std_dev);
@@ -111,7 +111,7 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
       roll + roll_distribution(engine), pitch + pitch_distribution(
         engine), yaw + yaw_distribution(engine));
     result.pose.pose.orientation = tf2::toMsg(tempQuat);
-    
+
     // publish odom message
     _ground_truth_pub->publish(result);
 
@@ -121,7 +121,7 @@ void GroundTruth::groundTruthCallback(const nav_msgs::msg::Odometry & msg)
     if (std::fabs(msg.header.stamp.sec - last_estimate.seconds()) > 1.0) {
       quat.setRPY(roll, pitch, yaw);
       tf2::fromMsg(msg.pose.pose.orientation, quat);
-      
+
       geometry_msgs::msg::Vector3 pos;
       pos.x = result.pose.pose.position.x;
       pos.y = result.pose.pose.position.y;
@@ -150,7 +150,7 @@ void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
   if (!utm_enabled) {
     return;
   }
-  
+
   geometry_msgs::msg::TransformStamped transform_msg;
   transform_msg.header.frame_id = "odom";
   transform_msg.child_frame_id = "utm";
@@ -160,8 +160,7 @@ void GroundTruth::utmCallback(const tf2::Transform & odom_to_utm)
   // check if transformation from odom -> utm can be found
   try {
     tfBuffer_.lookupTransform("odom", "utm", rclcpp::Time(0));
-  }
-  catch (const tf2::TransformException & ex) {
+  } catch (const tf2::TransformException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Could not find transform from \"odom\" to \"utm\"!");
     return;
   }

@@ -38,7 +38,6 @@ add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
   src/control.cpp
   src/ground_truth.cpp
-  
 )
 
 set(dependencies
