@@ -28,7 +28,8 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
   // // Create server socket
   ip_addr_ = declare_parameter<std::string>("ip_addr");
   tcpport_ = declare_parameter<int>("port");
-  socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
+  socket_ = std::make_unique<EthernetSocket>(tcpport_);
+  // socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
 
   // // Battery variables
   // battery_alpha_ = declare_parameter<double>("battery_alpha");
@@ -59,17 +60,25 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
 
   int i = 0;
 
+  size_t bytes_read;  
+  uint8_t buffer[256];
+
   while (rclcpp::ok()) {
 
-    // urc_msgs::msg::VelocityPair encoder_msg;
+    urc_msgs::msg::VelocityPair encoder_msg;
 
-    // encoder_msg.left_velocity = i++;
-    // encoder_msg.right_velocity = -1 * (i++);
-    // encoder_msg.header.stamp = this->get_clock()->now();
+    memset(buffer, 0, sizeof(buffer));
+    bytes_read = (socket_)->readMessage(buffer);
 
-    // _enc_pub->publish(encoder_msg);
+    encoder_msg.left_velocity = (double)bytes_read;
+    encoder_msg.right_velocity = -1 * (i++);
+    encoder_msg.header.stamp = this->get_clock()->now();
 
-    receiveResponse();
+    _enc_pub->publish(encoder_msg);
+
+    // receiveResponse();
+
+    // socket_->sendMessage(reinterpret_cast<char *>(buffer), 5);
     
     rate.sleep();
   }

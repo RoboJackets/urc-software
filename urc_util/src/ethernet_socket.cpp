@@ -2,17 +2,24 @@
 
 namespace ip = boost::asio::ip;
 
-// EthernetSocket::EthernetSocket(int port) {
-//   ip::udp::endpoint endpoint(ip::udp::v4(), port);
-//   this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
-//   boost::asio::connect(*sock_, endpoint);
-// }
+EthernetSocket::EthernetSocket(int port) {
+  ip::udp::endpoint endpoint(ip::udp::v4(), 8443);
+  this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
+
+  // this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
+  // sock_->open(ip::udp::v4());
+  // sock_->set_option(ip::udp::socket::reuse_address(true));
+  // sock_->set_option(boost::asio::socket_base::broadcast(true));
+  // sock_->bind(ip::udp::endpoint(
+  //   ip::address::from_string("192.168.8.147"), port));
+}
 
 EthernetSocket::EthernetSocket(std::string ip_addr, int port)
 {
   // resolve all possible endpoints
   ip::udp::resolver resolver(io_service_);
-  ip::udp::resolver::query query(ip_addr, std::to_string(port));
+  // ip::udp::resolver::query query(ip_addr, std::to_string(port));
+  ip::udp::resolver::query query(ip::udp::v4(), std::to_string(port));
   ip::udp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
   // look through endpoints and hit socket's connect() member function until
@@ -29,15 +36,24 @@ EthernetSocket::~EthernetSocket()
 
 void EthernetSocket::sendMessage(char * message, size_t len)
 {
-  boost::system::error_code error;
-  sock_->send(boost::asio::buffer(message, len), 0, error);
+  // boost::system::error_code error;
+  // sock_->send(boost::asio::buffer(message, len), 0, error);
+
+  char test[] = "hello back";
+
+  ip::udp::endpoint senderEndpoint(ip::address_v4::broadcast(), 8443); 
+  this->sock_->send_to(boost::asio::buffer(test), senderEndpoint);
 }
 
 size_t EthernetSocket::readMessage(unsigned char (& buffer)[256])
 {
-  // read data from UDP connection
+  // // read data from UDP connection
+  // boost::system::error_code error;
+  // size_t len = sock_->receive(boost::asio::buffer(buffer, sizeof(buffer) - 1), 0, error);
+
   boost::system::error_code error;
-  size_t len = sock_->receive(boost::asio::buffer(buffer, sizeof(buffer) - 1), 0, error);
+  ip::udp::endpoint sender_endpoint;
+  size_t len = sock_->receive_from(boost::asio::buffer(buffer), sender_endpoint);
 
   if (error == boost::asio::error::eof) {
     len = 0;
