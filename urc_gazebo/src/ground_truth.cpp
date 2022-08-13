@@ -33,7 +33,7 @@ GroundTruth::GroundTruth(const rclcpp::NodeOptions & options)
 
 
   _ground_truth_sub = create_subscription<nav_msgs::msg::Odometry>(
-    "~/state_raw", rclcpp::SensorDataQoS(), [this](const nav_msgs::msg::Odometry msg) {
+    "~/ground_truth/state_raw", rclcpp::SensorDataQoS(), [this](const nav_msgs::msg::Odometry msg) {
       groundTruthCallback(msg);
     });
 
