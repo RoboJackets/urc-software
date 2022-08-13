@@ -70,7 +70,7 @@ private:
   void setPID();
   void sendRequest();
   void receiveResponse();
-  void publishResponse(const ResponseMessage & response);
+  void publishResponse(const DriveEncodersMessage & response);
 
   bool poll();
 };

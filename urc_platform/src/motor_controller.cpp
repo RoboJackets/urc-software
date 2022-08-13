@@ -25,11 +25,10 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
     "~/battery",
     rclcpp::SystemDefaultsQoS());
 
-
   // // Create server socket
-  // ip_addr_ = declare_parameter<std::string>("ip_addr");
-  // tcpport_ = declare_parameter<int>("port");
-  // socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
+  ip_addr_ = declare_parameter<std::string>("ip_addr");
+  tcpport_ = declare_parameter<int>("port");
+  socket_ = std::make_unique<EthernetSocket>(ip_addr_, tcpport_);
 
   // // Battery variables
   // battery_alpha_ = declare_parameter<double>("battery_alpha");
@@ -62,14 +61,15 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
 
   while (rclcpp::ok()) {
 
+    // urc_msgs::msg::VelocityPair encoder_msg;
 
-    urc_msgs::msg::VelocityPair encoder_msg;
+    // encoder_msg.left_velocity = i++;
+    // encoder_msg.right_velocity = -1 * (i++);
+    // encoder_msg.header.stamp = this->get_clock()->now();
 
-    encoder_msg.left_velocity = i++;
-    encoder_msg.right_velocity = -1 * (i++);
-    encoder_msg.header.stamp = this->get_clock()->now();
+    // _enc_pub->publish(encoder_msg);
 
-    _enc_pub->publish(encoder_msg);
+    receiveResponse();
     
     rate.sleep();
   }
@@ -236,10 +236,11 @@ void MotorController::receiveResponse()
   }
 
   // Empty message where the decoded buffer will be stored
-  ResponseMessage response_msg = ResponseMessage_init_zero;
+  // ResponseMessage response_msg = ResponseMessage_init_zero;
+  DriveEncodersMessage response_msg = DriveEncodersMessage_init_zero;
 
   pb_istream_t istream = pb_istream_from_buffer(buffer, bytes_read);
-  bool status = pb_decode(&istream, ResponseMessage_fields, &response_msg);
+  bool status = pb_decode(&istream, DriveEncodersMessage_fields, &response_msg);
 
   if (!status) {
     RCLCPP_ERROR(this->get_logger(), "Decoding Failed: \n%s", PB_GET_ERROR(&istream));
@@ -249,31 +250,32 @@ void MotorController::receiveResponse()
   publishResponse(response_msg);
 }
 
-void MotorController::publishResponse(const ResponseMessage & response)
+void MotorController::publishResponse(const DriveEncodersMessage & response)
 {
-  /* update the exponentially weighted moving voltage average and publish */
-  std_msgs::msg::Float64 battery_msg;
-  battery_avg_ = (battery_alpha_ * battery_avg_) + ((1 - battery_alpha_) * response.voltage);
-  battery_msg.data = battery_avg_;
-  _battery_pub->publish(battery_msg);
+  // /* update the exponentially weighted moving voltage average and publish */
+  // std_msgs::msg::Float64 battery_msg;
+  // battery_avg_ = (battery_alpha_ * battery_avg_) + ((1 - battery_alpha_) * response.voltage);
+  // battery_msg.data = battery_avg_;
+  // _battery_pub->publish(battery_msg);
 
-  if (battery_avg_ < min_battery_voltage_) {
-    RCLCPP_ERROR(this->get_logger(), "Battery voltage dangerously low at %f!", battery_avg_);
-  }
+  // if (battery_avg_ < min_battery_voltage_) {
+  //   RCLCPP_ERROR(this->get_logger(), "Battery voltage dangerously low at %f!", battery_avg_);
+  // }
 
-  std_msgs::msg::Bool enabled_msg;
-  enabled_msg.data = response.estop;
-  _enabled_pub->publish(enabled_msg);
+  // std_msgs::msg::Bool enabled_msg;
+  // enabled_msg.data = response.estop;
+  // _enabled_pub->publish(enabled_msg);
 
   // publish encoder feedback
   urc_msgs::msg::VelocityPair encoder_msg;
 
-  encoder_msg.left_velocity = response.speed_l;
-  encoder_msg.right_velocity = response.speed_r;
-  encoder_msg.duration = response.dt_sec;
-  encoder_msg.header.stamp = this->get_clock()->now() - rclcpp::Duration::from_seconds(response.dt_sec);
+  encoder_msg.left_velocity = response.frontLeftTicks;
+  encoder_msg.right_velocity = response.frontRightTicks;
+  encoder_msg.duration = response.timestamp;
+  // encoder_msg.header.stamp = this->get_clock()->now() - rclcpp::Duration::from_seconds(response.timestamp);
+  encoder_msg.header.stamp = this->get_clock()->now();
 
-  // _enc_pub->publish(encoder_msg);
+  _enc_pub->publish(encoder_msg);
 }
 
 bool MotorController::poll() {

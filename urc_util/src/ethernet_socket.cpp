@@ -2,6 +2,12 @@
 
 namespace ip = boost::asio::ip;
 
+// EthernetSocket::EthernetSocket(int port) {
+//   ip::udp::endpoint endpoint(ip::udp::v4(), port);
+//   this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
+//   boost::asio::connect(*sock_, endpoint);
+// }
+
 EthernetSocket::EthernetSocket(std::string ip_addr, int port)
 {
   // resolve all possible endpoints
