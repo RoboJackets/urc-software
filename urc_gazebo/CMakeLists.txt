@@ -25,6 +25,7 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(velodyne_simulator REQUIRED)
 
@@ -36,6 +37,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/scan_to_pointcloud.cpp
   src/control.cpp
+  src/ground_truth.cpp
 )
 
 set(dependencies
@@ -47,6 +49,7 @@ set(dependencies
   sensor_msgs
   tf2
   tf2_ros
+  tf2_geometry_msgs
   laser_geometry
   velodyne_simulator
 )
@@ -72,6 +75,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "control::Control"
   EXECUTABLE ${PROJECT_NAME}_Control
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "ground_truth::GroundTruth"
+  EXECUTABLE ${PROJECT_NAME}_GroundTruth
 )
 
 # Install robot spawn file.

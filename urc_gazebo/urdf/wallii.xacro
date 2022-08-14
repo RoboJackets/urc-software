@@ -542,7 +542,7 @@
         
       <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
         <alwaysOn>true</alwaysOn>
-        <update_rate>200.0</update_rate>
+        <update_rate>30.0</update_rate>
         <ros>
           <namespace>/ground_truth</namespace>
           <remapping>odom:=state_raw</remapping>
