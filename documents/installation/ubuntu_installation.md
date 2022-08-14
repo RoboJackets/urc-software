@@ -42,6 +42,9 @@ echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 ```
 ```bash
+echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
+```
+```bash
 source ~/.bashrc
 ```
 
