@@ -55,33 +55,16 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
   // battery_updater_->setHardwareID("Battery Controller");
   // battery_updater_->add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
 
-  frequency_ = declare_parameter<double>("frequency");
-  rclcpp::Rate rate(frequency_);
+  // frequency_ = declare_parameter<double>("frequency");
+  // rclcpp::Rate rate(frequency_);
+  // rclcpp::executors::SingleThreadedExecutor exec;
 
-  int i = 0;
+  // while (rclcpp::ok()) {
 
-  size_t bytes_read;  
-  uint8_t buffer[256];
-
-  while (rclcpp::ok()) {
-
-    urc_msgs::msg::VelocityPair encoder_msg;
-
-    memset(buffer, 0, sizeof(buffer));
-    bytes_read = (socket_)->readMessage(buffer);
-
-    encoder_msg.left_velocity = (double)bytes_read;
-    encoder_msg.right_velocity = -1 * (i++);
-    encoder_msg.header.stamp = this->get_clock()->now();
-
-    _enc_pub->publish(encoder_msg);
-
-    // receiveResponse();
-
-    // socket_->sendMessage(reinterpret_cast<char *>(buffer), 5);
-    
-    rate.sleep();
-  }
+  //   MotorController::receiveResponse();
+  //   // exec.spin_once();
+  //   rate.sleep();
+  // }
 }
 
 void MotorController::cmdCallback(const urc_msgs::msg::VelocityPair & msg)
@@ -299,6 +282,8 @@ bool MotorController::poll() {
   // if (rc == 0) continue;    //timeout?
 
   // Publish the packet to the topic
+
+
   return true;
 }
 }
@@ -332,7 +317,15 @@ int main(int argc, char** argv)
   rclcpp::Logger logger = rclcpp::get_logger(NODE_MAIN_LOGGER_NAME);
   rclcpp::executors::SingleThreadedExecutor exec;
   
-  exec.spin();
+  motor_controller::MotorController drv;
+
+  // exec.spin();
+
+  while (rclcpp::ok()) {
+    motor_controller::MotorController
+  }
+
+  
 
   return 0;
 }

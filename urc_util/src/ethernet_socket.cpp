@@ -3,15 +3,8 @@
 namespace ip = boost::asio::ip;
 
 EthernetSocket::EthernetSocket(int port) {
-  ip::udp::endpoint endpoint(ip::udp::v4(), 8443);
+  ip::udp::endpoint endpoint(ip::udp::v4(), port);
   this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
-
-  // this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
-  // sock_->open(ip::udp::v4());
-  // sock_->set_option(ip::udp::socket::reuse_address(true));
-  // sock_->set_option(boost::asio::socket_base::broadcast(true));
-  // sock_->bind(ip::udp::endpoint(
-  //   ip::address::from_string("192.168.8.147"), port));
 }
 
 EthernetSocket::EthernetSocket(std::string ip_addr, int port)
@@ -47,13 +40,9 @@ void EthernetSocket::sendMessage(char * message, size_t len)
 
 size_t EthernetSocket::readMessage(unsigned char (& buffer)[256])
 {
-  // // read data from UDP connection
-  // boost::system::error_code error;
-  // size_t len = sock_->receive(boost::asio::buffer(buffer, sizeof(buffer) - 1), 0, error);
-
+  // read data from UDP connection
   boost::system::error_code error;
-  ip::udp::endpoint sender_endpoint;
-  size_t len = sock_->receive_from(boost::asio::buffer(buffer), sender_endpoint);
+  size_t len = sock_->receive(boost::asio::buffer(buffer, sizeof(buffer) - 1), 0, error);
 
   if (error == boost::asio::error::eof) {
     len = 0;
