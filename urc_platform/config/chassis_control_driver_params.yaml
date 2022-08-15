@@ -1,0 +1,17 @@
+chassis_control_driver:
+  ros__parameters:
+    ip_addr: "192.168.8.255"
+    port: 8443
+    battery_alpha: 0.9
+    min_battery_voltage: 23.5
+    p_l: 0.0
+    p_r: 0.0
+    d_l: 0.0
+    d_r: 0.0
+    i_r: 0.0
+    i_l: 0.0
+    kv_l: 32.0
+    kv_r: 32.0
+    watchdog_delay: 3.0
+    frequency: 50.0
+    log_period: 5.0

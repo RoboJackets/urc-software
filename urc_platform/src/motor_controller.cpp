@@ -317,15 +317,7 @@ int main(int argc, char** argv)
   rclcpp::Logger logger = rclcpp::get_logger(NODE_MAIN_LOGGER_NAME);
   rclcpp::executors::SingleThreadedExecutor exec;
   
-  motor_controller::MotorController drv;
-
-  // exec.spin();
-
-  while (rclcpp::ok()) {
-    motor_controller::MotorController
-  }
-
-  
+  exec.spin();
 
   return 0;
 }
