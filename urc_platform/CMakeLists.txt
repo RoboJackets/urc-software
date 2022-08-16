@@ -32,10 +32,12 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/motor_controller.cpp
-  src/joystick_driver.cpp
-  src/chassis_control_driver.cpp
-  src/chassis_control_ROS_wrapper.cpp
+  src/main.cpp
+  src/motor_controller/motor_controller.cpp
+  src/joystick/joystick_driver.cpp
+  # src/chassis_control_driver.cpp
+  # src/chassis_control_ROS_wrapper.cpp
+  src/chassis_control/test_driver.cpp
 )
 
 set(dependencies
@@ -66,11 +68,11 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
 )
 
-# rclcpp_components_register_node(
-#   ${PROJECT_NAME}
-#   PLUGIN "chassis_control_ros_wrapper::ChassisControlROSWrapper"
-#   EXECUTABLE ${PROJECT_NAME}_ChassisControlROSWrapper
-# )
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "test_driver::ChassisControlROSWrapper"
+  EXECUTABLE ${PROJECT_NAME}_ChassisControlROSWrapper
+)
 
 # Install launch files.
 install(

@@ -289,35 +289,3 @@ bool MotorController::poll() {
 }
 
 RCLCPP_COMPONENTS_REGISTER_NODE(motor_controller::MotorController)
-
-int main(int argc, char** argv)
-{
-  // // velodyne driver code:
-  // ros::init(argc, argv, "velodyne_node");
-  // ros::NodeHandle node;
-  // ros::NodeHandle private_nh("~");
-
-  // // start the driver
-  // velodyne_driver::VelodyneDriver dvr(node, private_nh);
-
-  // // loop until shut down or end of file
-  // while(ros::ok())
-  // {
-  //   // poll device until end of file
-  //   bool polled_ = dvr.poll();
-  //   if (!polled_)
-  //     ROS_ERROR_THROTTLE(1.0, "Velodyne - Failed to poll device.");
-
-  //   ros::spinOnce();
-  // }
-
-  // return 0;
-
-  auto args = rclcpp::init_and_remove_ros_arguments(argc, argv);
-  rclcpp::Logger logger = rclcpp::get_logger(NODE_MAIN_LOGGER_NAME);
-  rclcpp::executors::SingleThreadedExecutor exec;
-  
-  exec.spin();
-
-  return 0;
-}

@@ -1,6 +1,5 @@
-#ifndef CHASSIS_CONTROL_ROS_WRAPPER
-#define CHASSIS_CONTROL_ROS_WRAPPER
-
+#ifndef TEST_DRIVER_H
+#define TEST_DRIVER_H
 
 #include <memory>
 #include <string>
@@ -10,14 +9,17 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <urc_msgs/msg/velocity_pair.hpp>
-#include <boost/array.hpp>
-#include <boost/asio.hpp>
+#include <diagnostic_updater/diagnostic_updater.hpp>
+#include <diagnostic_updater/publisher.hpp>
+#include <urc_util/ethernet_socket.hpp>
 #include <urc_nanopb/urc.pb.h>
+
 #include <pb_common.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
 
-namespace chassis_control_ros_wrapper {
+namespace test_driver
+{
 
 class ChassisControlDriver {
 private:
@@ -35,17 +37,27 @@ public:
     DriveEncodersMessage getEncoderTicks();
 };
 
-class ChassisControlROSWrapper : rclcpp::Node {
+class ChassisControlROSWrapper : public rclcpp::Node {
+public:
+    explicit ChassisControlROSWrapper(const rclcpp::NodeOptions & options);
+
 private:
     std::unique_ptr<ChassisControlDriver> driver;
     rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _enc_pub;
     rclcpp::TimerBase::SharedPtr timer_;
     double publish_encoder_ticks_frequency_;
-
-public:
-    explicit ChassisControlROSWrapper(const rclcpp::NodeOptions & options);
+    
     void publishEncoderTicks();
+
 };
+
+// class TestDriver : public rclcpp::Node
+// {
+// public:
+//   explicit TestDriver(const rclcpp::NodeOptions & options);
+
+// private:
+// };
 
 }
 
