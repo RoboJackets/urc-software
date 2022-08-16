@@ -6,6 +6,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/time.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <urc_msgs/msg/velocity_pair.hpp>
@@ -14,9 +16,23 @@
 #include <pb_encode.h>
 #include <pb_decode.h>
 
-#include "chassis_control_driver.hpp"
-
 namespace chassis_controller {
+
+class ChassisControllerDriver {
+private:
+    std::string ip_addr_server_;
+    int port_;
+    boost::asio::io_service io_service_;    
+    std::unique_ptr<boost::asio::ip::udp::socket> sock_;
+public:
+    ChassisControllerDriver(std::string ip_addr_server, int port);
+    void start();
+    void stop();
+    void motorsEnable();
+    void motorsDisable();
+    void motorsSleep();
+    DriveEncodersMessage getEncoderTicks();
+};
 
 class ChassisControllerWrapper : public rclcpp::Node {
 public:
