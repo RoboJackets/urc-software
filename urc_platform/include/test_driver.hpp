@@ -51,14 +51,6 @@ private:
 
 };
 
-// class TestDriver : public rclcpp::Node
-// {
-// public:
-//   explicit TestDriver(const rclcpp::NodeOptions & options);
-
-// private:
-// };
-
 }
 
 #endif

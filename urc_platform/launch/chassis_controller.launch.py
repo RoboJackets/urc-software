@@ -6,19 +6,19 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
-    chassis_control_node = Node(
+    chassis_controller_node = Node(
             package='urc_platform',
-            executable='urc_platform_ChassisControlROSWrapper',
+            executable='urc_platform_ChassisController',
             output='screen',
             parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
-                                     'chassis_control_driver_params.yaml'])
+                                     'chassis_controller_params.yaml'])
             ],
             remappings=[
-                ("/chassis_control_driver/encoders", "/encoders")
+                ("/chassis_controller/encoders", "/encoders")
             ]
         )
 
     return LaunchDescription([
-        chassis_control_node
+        chassis_controller_node
     ])

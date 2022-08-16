@@ -11,16 +11,16 @@
 #include <pb_encode.h>
 #include <pb_decode.h>
 
-namespace chassis_control_driver {
+namespace chassis_controller {
 
-class ChassisControlDriver {
+class ChassisControllerDriver {
 private:
     std::string ip_addr_server_;
     int port_;
     boost::asio::io_service io_service_;    
     std::unique_ptr<boost::asio::ip::udp::socket> sock_;
 public:
-    ChassisControlDriver(std::string ip_addr_server, int port);
+    ChassisControllerDriver(std::string ip_addr_server, int port);
     void start();
     void stop();
     void motorsEnable();

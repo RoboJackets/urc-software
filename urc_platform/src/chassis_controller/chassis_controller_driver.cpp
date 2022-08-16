@@ -1,10 +1,10 @@
 #include "chassis_control_driver.hpp"
 
-namespace chassis_control_driver {
+namespace chassis_controller {
 
 namespace ip = boost::asio::ip;
 
-ChassisControlDriver::ChassisControlDriver(std::string ip_addr_server, int port) {
+ChassisControllerDriver::ChassisControllerDriver(std::string ip_addr_server, int port) {
     this->ip_addr_server_ = ip_addr_server;
     this->port_ = port;
 
@@ -12,7 +12,7 @@ ChassisControlDriver::ChassisControlDriver(std::string ip_addr_server, int port)
     this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
 }
 
-DriveEncodersMessage ChassisControlDriver::getEncoderTicks() {
+DriveEncodersMessage ChassisControllerDriver::getEncoderTicks() {
     size_t bytes_read;
     uint8_t buffer[256];  
     boost::system::error_code error; 
