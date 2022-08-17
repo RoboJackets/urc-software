@@ -101,10 +101,19 @@ cd /colcon_ws/src
 rm -rf urc-software
 git clone https://github.com/RoboJackets/urc-software.git --recursive
 ```
+
+### bashrc Setup
+
+```bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
+source ~/.bashrc
+```
+
 ### Update ROS Dependencies
 ```bash
 cd /colcon_ws
-source /opt/ros/humble/setup.bash
 sudo apt-get update
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y

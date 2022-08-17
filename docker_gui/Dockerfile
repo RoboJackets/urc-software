@@ -28,5 +28,6 @@ EXPOSE 8080 5900
 RUN apt-get install -y novnc websockify wget
 
 COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+RUN sed -i -e 's/\r$//' /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
