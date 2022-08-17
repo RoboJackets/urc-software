@@ -121,6 +121,7 @@ rosdep install --from-paths src --ignore-src -r -y
 ### Build
 
 ``` bash
+source ~/.bashrc
 cd /colcon_ws
 colcon build
 ```
@@ -152,7 +153,7 @@ docker stop urc_firmware_container
 
 To use the GUI, open your web browser and enter: 
 ```
-localhost:8080
+http://localhost:8080/vnc.html
 ```
 
 You should get a webpage for noVNC. Click `Connect` and enter the password, `1234`.
