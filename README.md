@@ -38,21 +38,15 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
 ## Installation Instructions
 
-### Linux, Ubuntu 22.04
+### Ubuntu 22.04
 
 [Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
 
-### Linux, Non-Ubuntu 22.04
+### Windows Subsystem for Linux (WSL)
 
-[Docker Installation Instructions](documents/installation/docker_installation.md)
+[Windows Subsystem for Linux (WSL) Installation Instructions](documents/installation/wsl_installation.md)
 
-### Windows
-
-First, follow [Windows Subsystem for Linux (WSL) Installation Instructions](documents/installation/wsl_installation.md)
-
-Then, proceed with [Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
-
-### MacOS
+### Docker with GUI
 
 [Docker Installation Instructions](documents/installation/docker_installation.md)
 
