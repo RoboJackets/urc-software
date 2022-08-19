@@ -81,13 +81,11 @@ You can launch your newly created Docker container using the command line or VS 
 
 ### 7a. Launch Docker Container Using VS Code
 
-First, make sure that you have the `Remote - Containers` extension installed.
+First, double check you have the `Docker` extension installed.
 
-Once you have it, click on the Remote Explorer tab. You should see the container you made in the "containers" tab. 
+Once you have it, click on the Docker tab on the left of the editor. You should see the container you made in the "containers" tab. 
 
-To launch the container in VS Code, either 
-* right click the container and select `Attach to Container`.
-* hover over the container and click on the folder with a plus.
+To launch the container in VS Code, right click it and select `Start`.
 
 ### 7b. Launch Docker Container Using Command Line
 
@@ -151,8 +149,8 @@ environment. Then, you can just create a new container from the `robojackets/urc
 ### 9a. Close Docker Conatiner Using VS Code
 
 Closing the VS Code window does not stop the Docker container. To stop the Docker container, you can either:
-* go to the `Remote Explorer` tab, right click the active Docker container, and hit `Stop Container`.
 * go to the `Docker` tab, and toggle the green arrow on the active container.
+* go to the `Remote Explorer` tab, right click the active Docker container, and hit `Stop Container`.
 
 ### 9b. Close Docker Container Using Command Line
 
