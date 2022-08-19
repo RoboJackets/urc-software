@@ -12,12 +12,30 @@ RUN apt-get update --fix-missing && apt-get -y install \
     ssh \
     python3-pip \
     libeigen3-dev \
+    python3-colcon-common-extensions \
+    python3-rosdep \
     && apt-get clean
 
 # Initialize colcon workspace
 RUN mkdir -p /colcon_ws
 WORKDIR /colcon_ws
 RUN mkdir -p src
+
+# Clone git repo
+WORKDIR /colcon_ws/src
+RUN rm -rf urc-software
+RUN git clone https://github.com/RoboJackets/urc-software.git --recursive
+
+# Install our ROS dependecies
+WORKDIR /colcon_ws
+RUN rosdep update
+RUN apt-get update --fix-missing
+RUN rosdep install --from-paths src --ignore-src -r -y
+
+# Setup bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc \
+    && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc \
+    && echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
 
 # Set up VNC server
 RUN apt-get update && apt-get install -y x11vnc xvfb terminator && apt-get clean
