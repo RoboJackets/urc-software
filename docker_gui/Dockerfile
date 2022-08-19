@@ -22,7 +22,7 @@ RUN mkdir -p src
 # Set up VNC server
 RUN apt-get update && apt-get install -y x11vnc xvfb terminator && apt-get clean
 RUN mkdir ~/.vnc
-RUN x11vnc -storepasswd 1234 ~/.vnc/passwd
+RUN x11vnc -storepasswd urc-2023 ~/.vnc/passwd
 
 EXPOSE 8080 5900
 RUN apt-get install -y novnc websockify wget

@@ -19,6 +19,16 @@ To check that everything installed OK, you should be able to open the command li
 docker
 ```
 
+### INSTALLATION NOTES:
+* It's probably a good idea to restart your computer once you install Docker.
+* Docker has to be running before you can use it. When you install Docker, it usually enables itself upon the computer turning on. If this isn't the case, be sure to launch Docker before proceeding.
+* For Linux users: I recommed adding youself to the `docker` group. Being a member of the `docker` group allows you to run `docker` without `sudo`. After running the following two commands, log back out and in again for the changes to take affect.
+
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
 ## 2. Install VS Code (Highly Recommended)
 
 You do not have to use VS Code. However, VS Code has very nice extensions for using Docker containers.
@@ -49,21 +59,27 @@ Navigate to the directory `docker_gui` and run:
 docker build -t robojackets/urc-baseimage .
 ```
 
-Run the command as a superuser if you get permission errors.
+## 5. Create Docker Volume
 
-## 5. Create Docker Container
+Create a Docker volume that will hold the `urc-software` repository. The Docker volume will store your data seperately from the container itself. As a result, you can delete the container without losing your changes.
+
+```bash
+docker volume create urc_software_volume
+```
+
+## 6. Create Docker Container
 
 To create a Docker container from the newly created image `robojackets/urc-baseimage`, run
 
 ```bash
-docker container create -i -t -p=8080:8080 --name=urc_software_container robojackets/urc-baseimage
+docker container create -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-baseimage
 ```
 
-## 6. Launch Docker Container
+## 7. Launch Docker Container
 
 You can launch your newly created Docker container using the command line or VS Code.
 
-### 6a. Launch Docker Container Using VS Code
+### 7a. Launch Docker Container Using VS Code
 
 First, make sure that you have the `Remote - Containers` extension installed.
 
@@ -73,12 +89,12 @@ To launch the container in VS Code, either
 * right click the container and select `Attach to Container`.
 * hover over the container and click on the folder with a plus.
 
-### 6b. Launch Docker Container Using Command Line
+### 7b. Launch Docker Container Using Command Line
 
 To run the Docker container in the command line, run
 
 ```bash
-docker start -i -p=8080:8080 urc_software_container
+docker start -i urc_software_container
 ```
 
 If you want to open another terminal if the Docker container is still running, run
@@ -87,7 +103,7 @@ If you want to open another terminal if the Docker container is still running, r
 docker attach urc_software_container
 ```
 
-## 7. Finish Setup
+## 8. Finish Setup
 
 In its current state, the Docker container is not quite ready for building the `urc-software` codebase. 
 
@@ -104,7 +120,6 @@ git clone https://github.com/RoboJackets/urc-software.git --recursive
 ```bash
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
-echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -118,12 +133,13 @@ rosdep install --from-paths src --ignore-src -r -y
 ### Build
 
 ``` bash
+echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
 source ~/.bashrc
 cd /colcon_ws
 colcon build
 ```
 
-## 8. Closing the Container
+## 9. Closing the Container
 
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.
@@ -132,13 +148,13 @@ Important Note: DO NOT delete the Docker container! The container saves its curr
 work is also preserved inside the container as well! Only delete the container if you somehow mess up your
 environment. Then, you can just create a new container from the `robojackets/urc-baseimage` image.
 
-### 8a. Close Docker Conatiner Using VS Code
+### 9a. Close Docker Conatiner Using VS Code
 
 Closing the VS Code window does not stop the Docker container. To stop the Docker container, you can either:
 * go to the `Remote Explorer` tab, right click the active Docker container, and hit `Stop Container`.
 * go to the `Docker` tab, and toggle the green arrow on the active container.
 
-### 8b. Close Docker Container Using Command Line
+### 9b. Close Docker Container Using Command Line
 
 Close the Docker container using
 
@@ -146,13 +162,22 @@ Close the Docker container using
 docker stop urc_software_container
 ```
 
-## 9. Using the GUI
+## 10. Using the GUI
 
 To use the GUI, open your web browser and enter: 
 ```
 http://localhost:8080/vnc.html
 ```
 
-You should get a webpage for noVNC. Click `Connect` and enter the password, `1234`.
+You should get a webpage for noVNC. Click `Connect` and enter the password, `urc-2023`.
 
 After this, you should see a Terminator window. You can launch GUI applications from this window. For example, try launching `gazebo`.
+
+## 11. Deleting the Docker Container
+
+If your development environment gets messed up, you can delete the development environment with:
+```bash
+docker stop urc_software_container
+docker rm urc_software_container
+```
+You can also delete the container in the `Remote Explorer` tab or the `Docker` tab by right clicking on the container and removing it.
