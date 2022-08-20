@@ -4,7 +4,7 @@ Doing a Docker installation is a good method for setting up the repository on an
 that isn't Ubuntu 22.04 LTS. It is a lighter-weight and faster alternative than installing a Virtual Machine.
 In addition, you can run GUI applications like Gazebo using the VNC server.
 
-Although compiling code in a Docker container is not as fast as compiling it on Ubuntu 22.04 natively, it is not slow by any means. If you use an IDE with Docker support (such as VS Code with the recommended extensions), writing code will be no different than doing it natively on Ubuntu 22.04. 
+Although compiling code in a Docker container is not as fast as compiling it on Ubuntu 22.04 natively, it is not slow by any means. If you use an IDE with Docker support (such as VSCode with the recommended extensions), writing code will be no different than doing it natively on Ubuntu 22.04. 
 
 ## 1. Install Docker
 
@@ -14,20 +14,20 @@ Although compiling code in a Docker container is not as fast as compiling it on 
 
 [Ubuntu Instructions](https://docs.docker.com/engine/install/ubuntu/)
 
+### NOTE
+* If you are on Linux, add yourself to the `docker` group. Being a member of the `docker` group allows you to run `docker` without `sudo`.
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+
+After you complete the installation, **restart your computer**!
+
 To check that everything installed OK, you should be able to open the command line and type:
 ```bash
 docker
 ```
 
-### INSTALLATION NOTES:
-* It's probably a good idea to restart your computer once you install Docker.
-* Docker has to be running before you can use it. When you install Docker, it usually enables itself upon the computer turning on. If this isn't the case, be sure to launch Docker before proceeding.
-* For Linux users: I recommed adding youself to the `docker` group. Being a member of the `docker` group allows you to run `docker` without `sudo`. After running the following two commands, log back out and in again for the changes to take affect.
-
-```bash
-sudo groupadd docker
-sudo usermod -aG docker $USER
-```
 
 ## 2. Install VS Code (Highly Recommended)
 
@@ -101,38 +101,20 @@ If you want to open another terminal if the Docker container is still running, r
 docker attach urc_software_container
 ```
 
-## 8. Finish Setup
+## 8. Build!
 
-In its current state, the Docker container is not quite ready for building the `urc-software` codebase. 
-
-### Re-clone `urc-software` in `/colcon_ws/src`
+First, it's always a good idea to check for updates. Nothing will happen if you just created the image. However, if you decide to re-create the container a while after you made the initial image, you will need to update those packages.
 
 ```bash
-cd /colcon_ws/src
-rm -rf urc-software
-git clone https://github.com/RoboJackets/urc-software.git --recursive
-```
-
-### bashrc Setup
-
-```bash
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
-source ~/.bashrc
-```
-
-### Update ROS Dependencies
-```bash
+sudo apt update
+sudo apt upgrade
 cd /colcon_ws
-sudo apt-get update
 rosdep update
-rosdep install --from-paths src --ignore-src -r -y
 ```
-### Build
+
+Now, its time for the moment of truth!
 
 ``` bash
-echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
-source ~/.bashrc
 cd /colcon_ws
 colcon build
 ```
@@ -142,9 +124,10 @@ colcon build
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.
 
-Important Note: DO NOT delete the Docker container! The container saves its current state, so all of your
-work is also preserved inside the container as well! Only delete the container if you somehow mess up your
-environment. Then, you can just create a new container from the `robojackets/urc-baseimage` image.
+Note: Deleting the Docker container is not a big deal, since
+* Your work is stored in a volume, which is seperate from the container.
+* All of the required pacakges were installed in the image creation step.
+However, the container remembers its state, so its a good idea to reuse the same container unless you mess up your environment.
 
 ### 9a. Close Docker Conatiner Using VS Code
 
@@ -169,7 +152,7 @@ http://localhost:8080/vnc.html
 
 You should get a webpage for noVNC. Click `Connect` and enter the password, `urc-2023`.
 
-After this, you should see a Terminator window. You can launch GUI applications from this window. For example, try launching `gazebo`.
+After this, you should see a terminal window. You can launch GUI applications from this window. For example, try launching `gazebo` or `rviz2`.
 
 ## 11. Deleting the Docker Container
 
