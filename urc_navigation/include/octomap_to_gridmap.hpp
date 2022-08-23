@@ -11,7 +11,7 @@
 
 #include <octomap/octomap.h>
 #include <octomap_msgs/conversions.h>
-#include <octomap_msgs/msg/octomap.hpp>
+#include <octomap_msgs/srv/get_octomap.hpp>
 
 namespace octomap_to_gridmap
 {
@@ -32,7 +32,7 @@ private:
   float minZ_;
   float maxZ_;
 
-  rclcpp::Client<octomap_msgs::msg::Octomap>::SharedPtr octomap_client_;
+  rclcpp::Client<octomap_msgs::srv::GetOctomap>::SharedPtr octomap_client_;
   rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr gridmap_pub_;
 
   void octomapCallback(const octomap_msgs::msg::Octomap::SharedPtr message);
