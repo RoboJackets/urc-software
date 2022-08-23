@@ -13,23 +13,26 @@ namespace octomap_to_gridmap
     minZ_ = declare_parameter<float>("min_z", NAN);
     maxZ_ = declare_parameter<float>("max_z", NAN);
 
-    octomap_sub_ = create_subscription<octomap_msgs::msg::Octomap>(
-        "~/octomap_full", rclcpp::SystemDefaultsQoS(), [this](const octomap_msgs::msg::Octomap::SharedPtr message)
-        { octomapCallback(message); });
+    octomap_client_ = create_client<octomap_msgs::srv::GetOctomap>(
+        "~/octomap_full");
 
     gridmap_pub_ = create_publisher<grid_map_msgs::msg::GridMap>(
         "~/slope/gridmap", rclcpp::QoS(1).transient_local());
   }
 
-  void OctomapToGridmap::octomapCallback(const octomap_msgs::msg::Octomap::SharedPtr message)
+  void OctomapToGridmap::getGridmap()
   {
-    octomap_msgs::msg::Octomap cloud = *message;
+    octomap_msgs::srv::GetOctomap srv;
+    if (!client_.call(srv)) {
+      ROS_ERROR_STREAM("Failed to call service: ~/octomap_full");
+      return;
+    }
 
     grid_map::GridMap output_map = grid_map::GridMap({"elevation"});
     map_.setBasicLayers({"elevation"});
 
     octomap::OcTree *octomap = nullptr;
-    octomap::AbstractOcTree *tree = octomap_msgs::msgToMap(cloud);
+    octomap::AbstractOcTree *tree = octomap_msgs::msgToMap(srv.response.map);
     if (tree)
     {
       octomap = dynamic_cast<octomap::OcTree *>(tree);
