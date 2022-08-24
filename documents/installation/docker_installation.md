@@ -143,7 +143,18 @@ Close the Docker container using
 docker stop urc_software_container
 ```
 
-## 10. Using the GUI
+## 10. Container Password
+
+People outside your LAN should not be able to connect to your VNC server unless the port is being forwarded 
+and the network firewall is disabled. If you want to change the default password, open the Dockerfile and change the line
+
+```bash
+RUN x11vnc -storepasswd urc-2023 ~/.vnc/passwd
+```
+
+by replacing the default password, `urc-2023`.
+
+## 11. Using the GUI
 
 To use the GUI, open your web browser and enter: 
 ```
@@ -154,7 +165,7 @@ You should get a webpage for noVNC. Click `Connect` and enter the password, `urc
 
 After this, you should see a terminal window. You can launch GUI applications from this window. For example, try launching `gazebo` or `rviz2`.
 
-## 11. Deleting the Docker Container
+## 12. Deleting the Docker Container
 
 If your development environment gets messed up, you can delete the development environment with:
 ```bash
