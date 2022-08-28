@@ -22,17 +22,21 @@ namespace octomap_to_gridmap
 
   void OctomapToGridmap::getGridmap()
   {
-    octomap_msgs::srv::GetOctomap srv;
-    if (!client_.call(srv)) {
-      ROS_ERROR_STREAM("Failed to call service: ~/octomap_full");
+    auto request = std::make_shared<octomap_msgs::srv::GetOctomap::Request>();
+    auto result_future = octomap_client_->async_send_request(request);
+    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future) !=
+        rclcpp::FutureReturnCode::SUCCESS)
+    {
+      RCLCPP_ERROR_STREAM(this->get_logger(), "Failed to call service: ~/octomap_full");
       return;
     }
+    auto response = result_future.get();
 
     grid_map::GridMap output_map = grid_map::GridMap({"elevation"});
     map_.setBasicLayers({"elevation"});
 
     octomap::OcTree *octomap = nullptr;
-    octomap::AbstractOcTree *tree = octomap_msgs::msgToMap(srv.response.map);
+    octomap::AbstractOcTree *tree = octomap_msgs::msgToMap(response->map);
     if (tree)
     {
       octomap = dynamic_cast<octomap::OcTree *>(tree);
@@ -79,7 +83,7 @@ namespace octomap_to_gridmap
       RCLCPP_ERROR(this->get_logger(), "Failed to call convert Octomap.");
       return;
     }
-    map_.setFrameId(message->header.frame_id);
+    map_.setFrameId(response->map.header.frame_id);
 
     auto output_message = grid_map::GridMapRosConverter::toMessage(output_map);
     gridmap_pub_->publish(std::move(output_message));
