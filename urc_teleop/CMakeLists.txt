@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(urc_teleop)
 
-include (../cmake/default_settings.cmake)
+include(../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
