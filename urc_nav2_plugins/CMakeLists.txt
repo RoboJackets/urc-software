@@ -29,6 +29,7 @@ set(dependencies
     nav2_costmap_2d
     nav2_msgs
     map_msgs
+    std_msgs
     grid_map_ros
     pluginlib
     urc_util
@@ -53,12 +54,21 @@ add_library(rolling_layer SHARED
 target_include_directories(rolling_layer PRIVATE include)
 ament_target_dependencies(rolling_layer ${dependencies})
 
+# --------------------------
+# Nav2 Behavior Tree Plugins
+# --------------------------
+add_library(bt_ARUCO_tag_detected SHARED
+    src/bt_ARUCO_tag_detected.cpp
+)
+target_include_directories(bt_ARUCO_tag_detected PRIVATE include)
+ament_target_dependencies(bt_ARUCO_tag_detected ${dependencies})
 
 
 # Installing plugin libraries
 install(TARGETS
     traversability_layer
     rolling_layer
+    bt_ARUCO_tag_detected
 
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
