@@ -51,12 +51,14 @@ colcon build --symlink-install
 
 # This script will initialize and run rosdep if in the correct directory
 apt install python3-rosdep
-if [$pwd | grep "src"]; then
+if ($pwd | grep "src"); then
 		source ../../install/setup.bash
 else
 		source ./install/setup.bash 
 fi
 
-rosdep init
+if !(ls /etc/ros/rosdep | grep "sources"); then 
+		rosdep init
+fi
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y -v
