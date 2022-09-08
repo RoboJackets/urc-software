@@ -45,7 +45,6 @@ source /opt/ros/humble/setup.bash
 # - If it exists, install it
 # - Run the script again
 # - Repeat as neccessary
-# TODO: Autoinstall system packages in this script that aremissing from rosdep?
 
 colcon build --symlink-install
 
@@ -56,9 +55,8 @@ if ($pwd | grep "src"); then
 else
 		source ./install/setup.bash 
 fi
-
 if !(ls /etc/ros/rosdep | grep "sources"); then 
 		rosdep init
 fi
 rosdep update
-rosdep install --from-paths src --ignore-src -r -y -v
+rosdep install --from-paths ../../src --ignore-src -r -y -v
