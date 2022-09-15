@@ -24,8 +24,17 @@ echo "Updating and upgrading system packages..."
 apt update
 apt upgrade
 
+echo "Installing Python dependencies..."
+apt install pip
+
 echo "Installing ROS2..."
 apt install ros-humble-desktop-full
+
+echo "Installing ROS packages..."
+for package in ros-humble-rosbridge-server nanopb
+do
+	apt install $package
+done
 
 apt install python3-colcon-common-extensions
 
@@ -46,17 +55,22 @@ source /opt/ros/humble/setup.bash
 # - Run the script again
 # - Repeat as neccessary
 
+cd ../
 colcon build --symlink-install
 
 # This script will initialize and run rosdep if in the correct directory
 apt install python3-rosdep
-if ($pwd | grep "src"); then
-		source ../../install/setup.bash
-else
-		source ./install/setup.bash 
-fi
+
 if !(ls /etc/ros/rosdep | grep "sources"); then 
 		rosdep init
 fi
+
 rosdep update
-rosdep install --from-paths ../../src --ignore-src -r -y -v
+
+if ($pwd | grep "src"); then
+		source ../../install/setup.bash
+		rosdep install --from-paths ../../src --ignore-src -r -y -v
+else
+		source ./install/setup.bash 
+		rosdep install --from-paths ./src --ignore-src -r -y -v
+fi
