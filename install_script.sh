@@ -31,7 +31,7 @@ echo "Installing ROS2..."
 apt install ros-humble-desktop-full
 
 echo "Installing ROS packages..."
-for package in ros-humble-rosbridge-server nanopb ros-humble-robot-localization
+for package in ros-humble-rosbridge-server nanopb ros-humble-robot-localization ros-humble-velodyne-simulator
 do
 	apt install $package
 done
