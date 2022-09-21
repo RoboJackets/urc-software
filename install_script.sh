@@ -31,10 +31,13 @@ echo "Installing ROS2..."
 apt install ros-humble-desktop-full
 
 echo "Installing ROS packages..."
-for package in ros-humble-rosbridge-server nanopb
+for package in ros-humble-rosbridge-server nanopb ros-humble-robot-localization
 do
 	apt install $package
 done
+
+python3 -m venv venv
+source /venv/bin/activate
 
 apt install python3-colcon-common-extensions
 
@@ -55,9 +58,6 @@ source /opt/ros/humble/setup.bash
 # - Run the script again
 # - Repeat as neccessary
 
-cd ../
-colcon build --symlink-install
-
 # This script will initialize and run rosdep if in the correct directory
 apt install python3-rosdep
 
@@ -66,11 +66,9 @@ if !(ls /etc/ros/rosdep | grep "sources"); then
 fi
 
 rosdep update
+cd ..
 
-if ($pwd | grep "src"); then
-		source ../../install/setup.bash
-		rosdep install --from-paths ../../src --ignore-src -r -y -v
-else
-		source ./install/setup.bash 
-		rosdep install --from-paths ./src --ignore-src -r -y -v
-fi
+source src/install/setup.bash 
+rosdep install --from-paths ./src --ignore-src -r -y -v
+
+colcon build --symlink-install
