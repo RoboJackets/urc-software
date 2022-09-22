@@ -1,7 +1,5 @@
 #!/bin/bash 
 
-# Note: You should run this script in your colcon workspace folder... if you're in the src folder, it will go up a directory to the workspace
-
 # Become root so we don't have to add sudo to everything
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
@@ -36,8 +34,8 @@ do
 	apt install $package
 done
 
-python3 -m venv venv
-source /venv/bin/activate
+#python3 -m venv venv
+#source /venv/bin/activate
 
 apt install python3-colcon-common-extensions
 
@@ -66,7 +64,7 @@ if !(ls /etc/ros/rosdep | grep "sources"); then
 fi
 
 rosdep update
-cd ..
+cd ../..
 
 source src/install/setup.bash 
 rosdep install --from-paths ./src --ignore-src -r -y -v
