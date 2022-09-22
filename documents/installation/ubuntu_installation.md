@@ -26,7 +26,8 @@ cd urc-software/
 ```
 ### Getting errors when running colcon build?
 If you have an error when running colcon build or rosdep:
-- Search the apt repository for the appropriate ROS package (usually ros-humble-package-name, using em dashes, with the package name being the package that caused an ament_cmake error) using `apt search ros-humble-package-name`
-- If it exists, install it using `apt install ros-humble-package-name`
+- Search the apt repository for the appropriate ROS package (usually ros-humble-package-name, using em dashes, with the package name being the package that caused an ament_cmake error) using `apt search ros-humble-package-name` or `apt search package-name`
+- Add the package to the list of apt packages to install in the install_script.sh script (line 32)
+- Run the install script with the new packaged added or manually install the package using `apt install ros-humble-package-name`
 - Run colcon build using `colcon build --symlink-install`
 - Repeat as neccessary until build succeeds
