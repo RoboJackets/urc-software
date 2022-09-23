@@ -217,5 +217,5 @@ well. However, **all of your previous work is stored inside this volume! If you 
 Make sure to push your changes to Github before deleting the volume!
 
 ```bash
-docker volume urc_software_volume
+docker volume rm urc_software_volume
 ```
