@@ -47,8 +47,19 @@ Search for and install the following extensions in VS Code
 
 [Install Git using the instructions here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
+## 4. Obtain Docker Image
 
-## 4. Create Docker Image
+You can either pull the image from Dockerhub or build the image manually using a Dockerfile. 
+**Pulling from Dockerhub is faster, easier, and less error-prone**. However, if you want to 
+edit the Dockerfile for some reason, do the manual build instructions.
+
+### 4a. Pull From Dockerhub
+
+```bash
+docker pull robojackets/urc-gui-baseimage
+```
+
+### 4b. Manually Build Docker Image
 
 ```bash
 git clone https://github.com/RoboJackets/urc-software.git
@@ -56,12 +67,12 @@ git clone https://github.com/RoboJackets/urc-software.git
 
 Navigate to the directory `docker_gui` and run:
 ```bash
-docker build -t robojackets/urc-baseimage .
+docker build -t robojackets/urc-gui-baseimage .
 ```
 
 If on an M1 Mac, enable x64 emulation by adding the `--platform linux/amd64` argument. Otherwise, some apt packages will be unavailable.
 ```bash
-docker build --platform linux/amd64 -t robojackets/urc-baseimage .
+docker build --platform linux/amd64 -t robojackets/urc-gui-baseimage .
 ```
 
 ## 5. Create Docker Volume
@@ -77,12 +88,12 @@ docker volume create urc_software_volume
 To create a Docker container from the newly created image `robojackets/urc-baseimage`, run
 
 ```bash
-docker container create -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-baseimage
+docker container create -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-gui-baseimage
 ```
 
 If on an M1 Mac, again add the platform argument.
 ```bash
-docker container create --platform linux/amd64 -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-baseimage
+docker container create --platform linux/amd64 -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-gui-baseimage
 ```
 
 ## 7. Launch Docker Container
@@ -122,7 +133,7 @@ cd /colcon_ws
 rosdep update
 ```
 
-Now, its time for the moment of truth!
+Now, it's time for the moment of truth!
 
 ``` bash
 cd /colcon_ws
@@ -175,7 +186,13 @@ You should get a webpage for noVNC. Click `Connect` and enter the password, `urc
 
 After this, you should see a terminal window. You can launch GUI applications from this window. For example, try launching `gazebo` or `rviz2`.
 
-## 12. Deleting the Docker Container
+## Troubleshooting
+
+If something isn't working correctly with your Docker container, the best solution 
+is to delete your old stuff and restart from step 4. To do this, you should
+remove the Docker container, Docker image, and Docker volume.
+
+### Deleting the Docker Container
 
 If your development environment gets messed up, you can delete the development environment with:
 ```bash
@@ -183,3 +200,22 @@ docker stop urc_software_container
 docker rm urc_software_container
 ```
 You can also delete the container in the `Remote Explorer` tab or the `Docker` tab by right clicking on the container and removing it.
+
+### Deleting the Docker Image
+
+If something isn't working correctly from a container freshly minted from the `urc-gui-baseimage`, something
+is probably wrong with your Docker image. To delete `urc-gui-baseimage`, run
+
+```bash
+docker image rm urc-gui-baseimage
+```
+
+### Deleting the Docker Volume
+
+If you are deleting your Docker image due to systemic issues, you should probably remove the Docker volume as
+well. However, **all of your previous work is stored inside this volume! If you delete it, your changes will be gone!**
+Make sure to push your changes to Github before deleting the volume!
+
+```bash
+docker volume urc_software_volume
+```
