@@ -207,7 +207,7 @@ If something isn't working correctly from a container freshly minted from the `u
 is probably wrong with your Docker image. To delete `urc-gui-baseimage`, run
 
 ```bash
-docker image rm urc-gui-baseimage
+docker image rm robojackets/urc-gui-baseimage
 ```
 
 ### Deleting the Docker Volume
