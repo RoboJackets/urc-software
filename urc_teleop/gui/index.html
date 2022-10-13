@@ -35,7 +35,15 @@
     Work in Progress!
   </div>
 
-  <div id="statusIndicator", style = "background: none; text-align:left; position: absolute; bottom: 0px; left: 0px; padding: 20px">
+
+  <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script src="js/launch_ros.js"></script>
+  <script src="js/control.js"></script>
+
+  <iframe style="padding:100px; border:none;" src="UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf#zoom=250, 1000,1000 & toolbar = 0" width="75%" height="750">
+  </iframe>
+
+  <div id="statusIndicator", style = "background: none; text-align:left; position: bottom; bottom: 0px; left: 0px; padding: 20px">
     <p id="connecting">
       Connecting to rosbridge...
     </p>
@@ -50,8 +58,5 @@
     </p>
   </div>
 
-  <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-  <script src="js/launch_ros.js"></script>
-  <script src="js/control.js"></script>
 </body>
 </html>
