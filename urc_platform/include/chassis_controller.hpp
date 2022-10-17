@@ -31,7 +31,8 @@ public:
     void motorsEnable();
     void motorsDisable();
     void motorsSleep();
-    DriveEncodersMessage getEncoderTicks();
+    bool getEncoderTicks(DriveEncodersMessage &message);
+    int getPortNumber();
 };
 
 class ChassisControllerWrapper : public rclcpp::Node {

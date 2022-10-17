@@ -13,5 +13,5 @@ chassis_controller:
     kv_l: 32.0
     kv_r: 32.0
     watchdog_delay: 3.0
-    frequency: 50.0
+    frequency: 1.0
     log_period: 5.0

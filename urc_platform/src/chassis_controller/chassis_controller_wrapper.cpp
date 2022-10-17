@@ -9,9 +9,13 @@ ChassisControllerWrapper::ChassisControllerWrapper(const rclcpp::NodeOptions & o
     int port_ = declare_parameter<int>("port");
     publish_encoder_ticks_frequency_ = declare_parameter<double>("frequency");
 
-    driver.reset(new ChassisControllerDriver(ip_addr_server_, port_));
+    // driver.reset(new ChassisControllerDriver(ip_addr_server_, port_));
+    driver = std::make_unique<ChassisControllerDriver>(ip_addr_server_, port_);
 
-    _enc_pub = this->create_publisher<urc_msgs::msg::VelocityPair>("~/encoders", 1000);
+    _enc_pub = this->create_publisher<urc_msgs::msg::VelocityPair>(
+        "~/encoders", 
+        1000);
+
     timer_ = this->create_wall_timer(
         std::chrono::duration<double>(1.0 / publish_encoder_ticks_frequency_) ,
         std::bind(&ChassisControllerWrapper::publishEncoderTicks, this));
@@ -19,15 +23,21 @@ ChassisControllerWrapper::ChassisControllerWrapper(const rclcpp::NodeOptions & o
 
 void ChassisControllerWrapper::publishEncoderTicks() {
 
-    DriveEncodersMessage ticks = driver->getEncoderTicks();
+    DriveEncodersMessage ticks;
+    bool success = driver->getEncoderTicks(ticks);
 
-    urc_msgs::msg::VelocityPair encoder_msg;
-    encoder_msg.left_velocity = ticks.frontLeftTicks;
-    encoder_msg.right_velocity = ticks.frontRightTicks;
-    encoder_msg.duration = ticks.timestamp;
-    encoder_msg.header.stamp = this->get_clock()->now();
+    if (!success) {
+        RCLCPP_ERROR(this->get_logger(), "Decoding Failed");
+    } else {
+        urc_msgs::msg::VelocityPair encoder_msg;
+        encoder_msg.left_velocity = ticks.frontLeftTicks;
+        encoder_msg.right_velocity = ticks.frontRightTicks;
+        encoder_msg.duration = ticks.timestamp;
+        encoder_msg.header.stamp = this->get_clock()->now();
 
-    _enc_pub->publish(encoder_msg);
+        _enc_pub->publish(encoder_msg);
+    }
+
 }
 
 }

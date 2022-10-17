@@ -55,16 +55,30 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
   // battery_updater_->setHardwareID("Battery Controller");
   // battery_updater_->add("Battery Diagnostic", this, &MotorController::battery_diagnostic);
 
-  // frequency_ = declare_parameter<double>("frequency");
-  // rclcpp::Rate rate(frequency_);
-  // rclcpp::executors::SingleThreadedExecutor exec;
+  frequency_ = declare_parameter<double>("frequency");
+  rclcpp::Rate rate(frequency_);
 
-  // while (rclcpp::ok()) {
+  int i = 0;
+  size_t bytes_read;  
+  uint8_t buffer[256];
 
-  //   MotorController::receiveResponse();
-  //   // exec.spin_once();
-  //   rate.sleep();
-  // }
+  while (rclcpp::ok()) {
+
+    MotorController::receiveResponse();
+    
+    urc_msgs::msg::VelocityPair encoder_msg;
+
+    memset(buffer, 0, sizeof(buffer));
+    bytes_read = (socket_)->readMessage(buffer);
+
+    encoder_msg.left_velocity = (double)bytes_read;
+    encoder_msg.right_velocity = -1 * (i++);
+    encoder_msg.header.stamp = this->get_clock()->now();
+
+    _enc_pub->publish(encoder_msg);
+
+    rate.sleep();
+  }
 }
 
 void MotorController::cmdCallback(const urc_msgs::msg::VelocityPair & msg)
