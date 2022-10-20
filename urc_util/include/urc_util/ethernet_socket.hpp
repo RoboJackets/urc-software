@@ -15,7 +15,6 @@
 class EthernetSocket
 {
 public:
-
   EthernetSocket(int port);
   /**
   Constructor opens the socket using UDP and binds it to an

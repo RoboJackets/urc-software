@@ -59,13 +59,13 @@ MotorController::MotorController(const rclcpp::NodeOptions & options)
   rclcpp::Rate rate(frequency_);
 
   int i = 0;
-  size_t bytes_read;  
+  size_t bytes_read;
   uint8_t buffer[256];
 
   while (rclcpp::ok()) {
 
     MotorController::receiveResponse();
-    
+
     urc_msgs::msg::VelocityPair encoder_msg;
 
     memset(buffer, 0, sizeof(buffer));
@@ -284,7 +284,8 @@ void MotorController::publishResponse(const DriveEncodersMessage & response)
   _enc_pub->publish(encoder_msg);
 }
 
-bool MotorController::poll() {
+bool MotorController::poll()
+{
   // If we haven't configured the server (MCU), just exit
 
   // Loop

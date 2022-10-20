@@ -2,7 +2,8 @@
 
 namespace ip = boost::asio::ip;
 
-EthernetSocket::EthernetSocket(int port) {
+EthernetSocket::EthernetSocket(int port)
+{
   ip::udp::endpoint endpoint(ip::udp::v4(), port);
   this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
 }
@@ -34,7 +35,7 @@ void EthernetSocket::sendMessage(char * message, size_t len)
 
   char test[] = "hello back";
 
-  ip::udp::endpoint senderEndpoint(ip::address_v4::broadcast(), 8443); 
+  ip::udp::endpoint senderEndpoint(ip::address_v4::broadcast(), 8443);
   this->sock_->send_to(boost::asio::buffer(test), senderEndpoint);
 }
 
