@@ -48,41 +48,93 @@ echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## 5. Create a colcon environment
+## 5. Create URC environment 
 
 ```bash
 cd <path to where you want to keep the project>
 ```
 ```bash
-mkdir -p colcon-urc/src
+mkdir urc 
+```
+Both the rover and the drone projects will live in the `urc` directory. The install process for both projects is very similar and detailed below. 
+
+---
+## **Rover**
+### 1. Create rover colcon environment
+
+```bash
+cd urc
+```
+```bash
+mkdir -p rover-colcon-urc/src
 ```
 
-## 6. Clone the repository into the colcon environment
+### 2. Clone the rover repository into the rover-colcon environment
 ```bash
-cd colcon-urc/src
+cd rover-colcon-urc/src
 ```
 ```bash
-git clone https://github.com/RoboJackets/urc-software.git --recursive
+git clone https://github.com/RoboJackets/urc-rover.git --recursive
 ```
 
-## 7. Build your workspace
+### 3. Install and run rosdep
+ Make sure to call the `rosdep install` command from the colcon workspace directory (`/rover-colcon-urc`)!
 ```bash
 cd ..
-```
-```bash
-colcon build --symlink-install
-```
-
-## 8. Source your environment
-```bash
-. install/setup.bash
-```
-
-## 9. Install and run rosdep
- Make sure to call the 'rosdep install' command from the colcon workspace directory (/colcon-urc)!
-```bash
 sudo apt install python3-rosdep
 sudo rosdep init
 rosdep update
 rosdep install --from-paths src --ignore-src -r -y
+```
+### 4. Build your rover workspace
+Any time you call `colcon build`, make sure you are in the colcon directory (`/rover-colcon-urc`)!
+```bash
+colcon build --symlink-install
+```
+
+### 5. Source the rover environment
+
+```bash
+. install/setup.bash
+```
+
+---
+## **Drone**
+### 1. Create drone colcon environment
+
+```bash
+cd ..
+```
+You should now be in the `urc` directory
+```bash
+mkdir -p drone-colcon-urc/src
+```
+
+### 2. Clone the drone repository into the drone-colcon environment
+```bash
+cd drone-colcon-urc/src
+```
+```bash
+git clone https://github.com/RoboJackets/urc-drone.git --recursive
+```
+
+### 3. Run rosdep
+ Make sure to call `rosdep install` from the colcon workspace directory (`/drone-colcon-urc`)!
+```bash
+cd ..
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+```
+
+### 4. Build your drone workspace
+Any time you call `colcon build`, make sure you are in the colcon directory (`/drone-colcon-urc`)!
+```bash
+colcon build --symlink-install
+```
+
+### 5. Source the drone environment
+
+```bash
+. install/setup.bash
 ```
