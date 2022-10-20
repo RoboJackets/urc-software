@@ -23,4 +23,4 @@ mv colcon-urc urc
 mv colcon-urc/ rover-colcon
 ```
 
-## 6. [Follow drone install steps](ubuntu_installation.md) (ignoring the first directory change as you should already be in `/urc`)
+## 6. Follow the [drone install steps](ubuntu_installation.md#drone), ignoring the first directory change as you should already be in `/urc`
