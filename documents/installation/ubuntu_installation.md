@@ -69,7 +69,7 @@ mkdir -p rover-colcon/src
 ### 2. Clone the rover repository into the rover-colcon environment
 ```bash
 cd rover-colcon
-git clone https://github.com/RoboJackets/urc-rover.git src --recursive
+git clone https://github.com/RoboJackets/urc-software.git src --recursive
 ```
 
 ### 3. Install and run rosdep
@@ -146,9 +146,9 @@ You should now have a file structure that looks like
      ├── install
      ├── log
      └── src
-         └── urc-rover
+         └── urc-software
 ```
-Whenever you want to work on a project, navigate to either `/urc-drone` or `/urc-rover` and use 
+Whenever you want to work on a project, navigate to either `/urc-drone` or `/urc-software` and use 
 ```bash
 code .
 ```
