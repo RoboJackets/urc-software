@@ -59,7 +59,7 @@ mkdir urc && cd urc
 Both the rover and the drone projects will live in the `/urc` directory. The install process for both projects is very similar and detailed below. 
 
 ---
-## **Rover**
+## Rover
 ### 1. Create rover colcon environment
 
 ```bash
@@ -93,7 +93,7 @@ colcon build --symlink-install
 ```
 
 ---
-## **Drone**
+## Drone
 ### 1. Create drone colcon environment
 
 ```bash
@@ -131,3 +131,25 @@ colcon build --symlink-install
 ```bash
 . install/setup.bash
 ```
+## Recap
+You should now have a file structure that looks like 
+```
+ urc
+ ├── drone-colcon
+ │   ├── build
+ │   ├── install
+ │   ├── log
+ │   └── src
+ │       └── urc-drone
+ └── rover-colcon
+     ├── build
+     ├── install
+     ├── log
+     └── src
+         └── urc-rover
+```
+Whenever you want to work on a project, navigate to either `/urc-drone` or `/urc-rover` and use 
+```bash
+code .
+```
+to open Visual Studio Code in your current directory. 
