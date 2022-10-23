@@ -131,6 +131,8 @@ colcon build --symlink-install
 ```bash
 . install/setup.bash
 ```
+
+---
 ## Recap
 You should now have a file structure that looks like 
 ```
@@ -148,8 +150,3 @@ You should now have a file structure that looks like
      └── src
          └── urc-software
 ```
-Whenever you want to work on a project, navigate to either `/urc-drone` or `/urc-software` and use 
-```bash
-code .
-```
-to open Visual Studio Code in your current directory. 
