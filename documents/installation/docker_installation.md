@@ -53,54 +53,20 @@ You can either pull the image from Dockerhub or build the image manually using a
 **Pulling from Dockerhub is faster, easier, and less error-prone**. However, if you want to 
 edit the Dockerfile for some reason, do the manual build instructions.
 
-### 4a. Pull From Dockerhub
+-   ### Pull From Dockerhub (Recommended!)
 
 ```bash
 docker pull robojackets/urc-gui-baseimage
 ```
 
-### 4b. Manually Build Docker Image
+-   ### [Manually Build Docker Image](manual_docker_image.md)
 
-```bash
-git clone https://github.com/RoboJackets/urc-software.git
-```
 
-Navigate to the directory `docker_gui` and run:
-```bash
-docker build -t robojackets/urc-gui-baseimage .
-```
-
-If on an M1 Mac, enable x64 emulation by adding the `--platform linux/amd64` argument. Otherwise, some apt packages will be unavailable.
-```bash
-docker build --platform linux/amd64 -t robojackets/urc-gui-baseimage .
-```
-
-## 5. Create Docker Volume
-
-Create a Docker volume that will hold the `urc-software` repository. The Docker volume will store your data seperately from the container itself. As a result, you can delete the container without losing your changes.
-
-```bash
-docker volume create urc_software_volume
-```
-
-## 6. Create Docker Container
-
-To create a Docker container from the newly created image `robojackets/urc-baseimage`, run
-
-```bash
-docker container create -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-gui-baseimage
-```
-
-If on an M1 Mac, again add the platform argument.
-```bash
-docker container create --platform linux/amd64 -i -t -p=8080:8080 -v=urc_software_volume:/colcon_ws/src --name=urc_software_container robojackets/urc-gui-baseimage
-```
-
-## 7. Launch Docker Container
+## 5. Launch Docker Container
 
 You can launch your newly created Docker container using the command line or VS Code.
 
-### 7a. Launch Docker Container Using VS Code
+-   ### Launch Docker Container Using VS Code
 
 First, double check you have the `Docker` extension installed.
 
@@ -108,7 +74,7 @@ Once you have it, click on the Docker tab on the left of the editor. You should 
 
 To launch the container in VS Code, right click it and select `Start`.
 
-### 7b. Launch Docker Container Using Command Line
+-   ### Launch Docker Container Using Command Line
 
 To run the Docker container in the command line, run
 
@@ -122,7 +88,7 @@ If you want to open another terminal if the Docker container is still running, r
 docker attach urc_software_container
 ```
 
-## 8. Build!
+## 6. Build!
 
 First, it's always a good idea to check for updates. Nothing will happen if you just created the image. However, if you decide to re-create the container a while after you made the initial image, you will need to update those packages.
 
@@ -140,7 +106,7 @@ cd /colcon_ws
 colcon build
 ```
 
-## 9. Closing the Container
+## 7. Closing the Container
 
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.
@@ -150,13 +116,13 @@ Note: Deleting the Docker container is not a big deal, since
 * All of the required pacakges were installed in the image creation step.
 However, the container remembers its state, so its a good idea to reuse the same container unless you mess up your environment.
 
-### 9a. Close Docker Conatiner Using VS Code
+-   ### Close Docker Conatiner Using VS Code
 
 Closing the VS Code window does not stop the Docker container. To stop the Docker container, you can either:
 * go to the `Docker` tab, and toggle the green arrow on the active container.
 * go to the `Remote Explorer` tab, right click the active Docker container, and hit `Stop Container`.
 
-### 9b. Close Docker Container Using Command Line
+-   ### Close Docker Container Using Command Line
 
 Close the Docker container using
 
@@ -164,7 +130,7 @@ Close the Docker container using
 docker stop urc_software_container
 ```
 
-## 10. Container Password
+## 8. Container Password
 
 People outside your LAN should not be able to connect to your VNC server unless the port is being forwarded 
 and the network firewall is disabled. If you want to change the default password, open the Dockerfile and change the line
@@ -175,7 +141,7 @@ RUN x11vnc -storepasswd urc-2023 ~/.vnc/passwd
 
 by replacing the default password, `urc-2023`.
 
-## 11. Using the GUI
+## 9. Using the GUI
 
 To use the GUI, open your web browser and enter: 
 ```
