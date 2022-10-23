@@ -33,11 +33,10 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/main.cpp
-  src/motor_controller/motor_controller.cpp
-  src/joystick/joystick_driver.cpp
-  src/chassis_controller/chassis_controller_driver.cpp
-  src/chassis_controller/chassis_controller_wrapper.cpp
-  # src/chassis_control/test_driver.cpp
+  src/motor_controller.cpp
+  src/joystick_driver.cpp
+  src/chassis_controller_driver.cpp
+  src/chassis_controller_wrapper.cpp
 )
 
 set(dependencies
