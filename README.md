@@ -10,6 +10,8 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
  * **.github**
     *CI pipeline and PR/issue templates*
+ * **cmake**
+    *CMake files to aid with building*
  * **documents**
     *Research, design, and documentation*
  * **external**
