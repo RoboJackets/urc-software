@@ -16,30 +16,27 @@ RUN apt-get update --fix-missing && apt-get -y install \
     python3-rosdep \
     && apt-get clean
 
-# Initialize rover-colcon workspace
-RUN mkdir -p /root/rover-colcon/src
+# Update ROS Packages
+RUN rosdep update
+
+# Create folders for our workspace
+RUN mkdir -p /root/urc/rover-colcon/src
+RUN mkdir -p /root/urc/drone-colcon/src
 
 # Clone rover git repo
-WORKDIR /root/rover-colcon/src
-RUN git clone https://github.com/RoboJackets/urc-software.git --recursive
+WORKDIR /root/urc/rover-colcon/src
+RUN git clone https://github.com/RoboJackets/urc-software.git src --recursive
 
-# Install our ROS dependecies
-WORKDIR /root/rover-colcon
-RUN rosdep update
-RUN apt-get update --fix-missing
+# Install ROS dependecies for rover
+WORKDIR /root/urc/rover-colcon/src
 RUN rosdep install --from-paths src --ignore-src -r -y
 
-# Initialize drone-colcon workspace
-RUN mkdir -p /root/drone-colcon/src
-
 # Clone rover git repo
-WORKDIR /root/drone-colcon/src
+WORKDIR /root/urc/drone-colcon/src
 RUN git clone https://github.com/RoboJackets/urc-drone.git src --recursive
 
-# Install our ROS dependecies
-WORKDIR /root/drone-colcon/src
-RUN rosdep update
-RUN apt-get update --fix-missing
+# Install ROS dependecies for drone
+WORKDIR /root/urc/drone-colcon/src
 RUN rosdep install --from-paths src --ignore-src -r -y
 
 # Setup bashrc
@@ -59,3 +56,6 @@ COPY entrypoint.sh /entrypoint.sh
 RUN sed -i -e 's/\r$//' /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Need to install rviz2 manually 
+RUN apt-get -y install ros-humble-rviz2

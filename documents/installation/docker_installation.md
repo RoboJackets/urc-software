@@ -62,7 +62,28 @@ docker pull robojackets/urc-gui-baseimage
 -   ### [Manually Build Docker Image](manual_docker_image.md)
 
 
-## 5. Launch Docker Container
+## 5. Create Docker Volume
+
+Create a Docker volume that will hold the `urc-software` repository. The Docker volume will store your data seperately from the container itself. As a result, you can delete the container without losing your changes.
+
+```bash
+docker volume create urc_software_volume
+```
+
+## 6. Create Docker Container
+
+To create a Docker container from the newly created image `robojackets/urc-baseimage`, run
+
+```bash
+docker container create -i -t -p=8080:8080 -v=urc_software_volume:/root/urc --name=urc_software_container robojackets/urc-gui-baseimage
+```
+
+If on an M1 Mac, add the platform argument.
+```bash
+docker container create --platform linux/amd64 -i -t -p=8080:8080 -v=urc_software_volume:/root/urc --name=urc_software_container robojackets/urc-gui-baseimage
+```
+
+## 7. Launch Docker Container
 
 You can launch your newly created Docker container using the command line or VS Code.
 
