@@ -16,18 +16,28 @@ RUN apt-get update --fix-missing && apt-get -y install \
     python3-rosdep \
     && apt-get clean
 
-# Initialize colcon workspace
-RUN mkdir -p /colcon_ws
-WORKDIR /colcon_ws
-RUN mkdir -p src
+# Initialize rover-colcon workspace
+RUN mkdir -p /root/rover-colcon/src
 
-# Clone git repo
-WORKDIR /colcon_ws/src
-RUN rm -rf urc-software
+# Clone rover git repo
+WORKDIR /root/rover-colcon/src
 RUN git clone https://github.com/RoboJackets/urc-software.git --recursive
 
 # Install our ROS dependecies
-WORKDIR /colcon_ws
+WORKDIR /root/rover-colcon
+RUN rosdep update
+RUN apt-get update --fix-missing
+RUN rosdep install --from-paths src --ignore-src -r -y
+
+# Initialize drone-colcon workspace
+RUN mkdir -p /root/drone-colcon/src
+
+# Clone rover git repo
+WORKDIR /root/drone-colcon/src
+RUN git clone https://github.com/RoboJackets/urc-drone.git src --recursive
+
+# Install our ROS dependecies
+WORKDIR /root/drone-colcon/src
 RUN rosdep update
 RUN apt-get update --fix-missing
 RUN rosdep install --from-paths src --ignore-src -r -y
