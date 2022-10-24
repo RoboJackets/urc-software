@@ -32,9 +32,6 @@ jobs:
           source /opt/ros/humble/setup.bash
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
-
-          colcon build --packages-select nanopb urc_nanopb
-          . install/setup.bash
           colcon build
   
   test:
@@ -62,9 +59,6 @@ jobs:
           source /opt/ros/humble/setup.bash
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
-          
-          colcon build --packages-select nanopb urc_nanopb
-          . install/setup.bash
           colcon build && colcon test && colcon test-result --verbose
 
   cpp_linting:

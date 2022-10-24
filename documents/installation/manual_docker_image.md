@@ -16,4 +16,5 @@ If on an M1 Mac, enable x64 emulation by adding the `--platform linux/amd64` arg
 docker build --platform linux/amd64 -t robojackets/urc-gui-baseimage .
 ```
 
+
 Once the Docker image has built, you can refer to the Docker installation instructions.

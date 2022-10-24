@@ -61,7 +61,6 @@ docker pull robojackets/urc-gui-baseimage
 
 -   ### [Manually Build Docker Image](manual_docker_image.md)
 
-
 ## 5. Create Docker Volume
 
 Create a Docker volume that will hold the `urc-software` repository. The Docker volume will store your data seperately from the container itself. As a result, you can delete the container without losing your changes.
@@ -109,7 +108,7 @@ If you want to open another terminal if the Docker container is still running, r
 docker attach urc_software_container
 ```
 
-## 6. Build!
+## 8. Build!
 
 First, it's always a good idea to check for updates. Nothing will happen if you just created the image. However, if you decide to re-create the container a while after you made the initial image, you will need to update those packages.
 
@@ -127,7 +126,7 @@ cd /colcon_ws
 colcon build
 ```
 
-## 7. Closing the Container
+## 9. Closing the Container
 
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.
@@ -151,7 +150,7 @@ Close the Docker container using
 docker stop urc_software_container
 ```
 
-## 8. Container Password
+## 10. Container Password
 
 People outside your LAN should not be able to connect to your VNC server unless the port is being forwarded 
 and the network firewall is disabled. If you want to change the default password, open the Dockerfile and change the line
@@ -162,7 +161,7 @@ RUN x11vnc -storepasswd urc-2023 ~/.vnc/passwd
 
 by replacing the default password, `urc-2023`.
 
-## 9. Using the GUI
+## 11. Using the GUI
 
 To use the GUI, open your web browser and enter: 
 ```

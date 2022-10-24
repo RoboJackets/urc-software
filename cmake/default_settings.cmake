@@ -15,7 +15,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # Check submodules
+
 set(GIT_REPO_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
+
 include(${CMAKE_CURRENT_LIST_DIR}/ensure_submodules.cmake)
 
 # Add color for ninja generator
