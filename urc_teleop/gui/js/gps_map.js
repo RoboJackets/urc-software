@@ -32,8 +32,8 @@ gps_pos_subscriber.subscribe(function(message) {
 })
 
 WebViewer({
-    path: '/webviewer/lib', //'home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/js/WebViewer/lib',
-    initialDoc: 'https://drive.google.com/file/d/1ht-cYEJDlVmYhDctEeTPMD_Hx26T3e8q/view?usp=sharing'
+    path: 'js/WebViewer/lib', //'home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/js/WebViewer/lib',
+    initialDoc: 'https://raw.githubusercontent.com/RoboJackets/urc-software/feat/gps_interface_pdftron/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf'
 }, document.getElementById('viewer')).then(instance => {
     const { documentViewer } = instance.Core;
 })
