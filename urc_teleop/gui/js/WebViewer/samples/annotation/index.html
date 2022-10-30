@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      if (window.location.href.slice(-1) !== '/' && window.location.href.slice(-4) !== 'html') {
+        // hacky redirect for mac php server...
+        window.location = window.location.href + '/';
+      }
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+    <title>Annotation Demo & Samples for JavaScript PDF Viewer</title>
+  </head>
+
+  <body class="pdftron">
+    <header>
+      <div class="container">
+        <div>
+          <a href="https://pdftron.com" target="_blank">
+            <div class="logo"></div>
+          </a>
+          <span class="title">WebViewer</span>
+        </div>
+        <div>
+          <a class="button" href="https://pdftron.com/documentation/web/guides/" target="_blank">Go to Guides</a>
+          <a class="button filled" href="https://pdftron.com/licensing/" target="_blank">Licensing</a>
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="sidebar">
+        <p><b>Samples</b></p>
+
+        <p><a class="" href="../">Viewing</a></p>
+        <p><a class="active" href=".">Annotation</a></p>
+        <p><a class="" href="../forms">Forms</a></p>
+        <p><a class="" href="../customization">Customization</a></p>
+        <p><a class="" href="../pdf-manipulation">PDF Manipulation</a></p>
+        <p><a class="" href="../advanced">Advanced</a></p>
+        <p><a class="" href="../full-apis">Full apis</a></p>
+
+        <p><b>Showcase</b></p>
+        <p><a href="https://pdftron.com/webviewer/demo" target="_blank">Go to showcase</a></p>
+      </div>
+      <div class="content">
+        <div id="error-message" style="display: none; background-color: red; color: white">Samples are not runnable from the file system. Please run using "npm start" or use a local web server.</div>
+
+        <h1>Annotation Demo for PDF Viewer</h1>
+
+        <div>
+          <h4>Custom annotations</h4>
+          <p>
+            Shows how to create and add custom annotations by extending the existing annotation classes.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./custom-annotations">Launch demo</a>
+            <a href="./custom-annotations/custom-annotations.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Realtime collaboration</h4>
+          <p>
+            An example setup with Node.js backend.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./realtime-collaboration">Launch demo</a>
+            <a href="./realtime-collaboration/realtime-collaboration.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Users and permissions</h4>
+          <p>
+            Describes types of permissions and switching between users. You can also show/hide annotations of specific users.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./users-and-permissions">Launch demo</a>
+            <a href="./users-and-permissions/users-and-permissions.js" target="_self">View Source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      if (window.location.href.indexOf('file://') === 0) {
+        alert('Samples are not runnable from the file system. Please run using "npm start" or use a local web server.');
+        document.getElementById('error-message').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

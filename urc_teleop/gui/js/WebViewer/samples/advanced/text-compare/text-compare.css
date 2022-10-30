@@ -1,0 +1,174 @@
+#compareContainer{
+  width: calc(100% - 330px);
+  height: calc(100% - 60px);
+  margin-left: 325px;
+  margin-top: 60px;
+
+  -webkit-box-shadow: 1px 1px 10px #999;
+  box-shadow: 1px 1px 10px #999;
+}
+
+/* top header */
+#header{
+  background-color: #00a5e4;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+#header span{
+  color: white;
+  margin: 2.5px;
+}
+
+#currentPage{
+  height: 15px;
+  width: 50px;
+  font-size: 12px !important;
+  border-radius: 4px;
+  box-sizing: content-box;
+  margin-right: 5px;
+}
+
+#totalPage{
+  margin-left: 5px;
+}
+
+#expandTextBtn{
+  height: 20px;
+  width: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><g><g><g><polygon points="272,192.264 272,64.76 325.84,108.184 345.936,83.272 256.528,11.176 167.136,83.272 187.232,108.184 240,65.624 240,192.264 128,192.264 128,224.264 512,224.264 512,192.264"/><rect y="192.264" width="32" height="32"/><rect x="64" y="192.264" width="32" height="32"/><polygon points="0,320.264 240,320.264 240,446.376 187.232,403.816 167.136,428.712 256.528,500.824 345.936,428.712 325.84,403.816 272,447.24 272,320.264 384,320.264 384,288.264 0,288.264 			"/><rect x="480" y="288.264" width="32" height="32"/><rect x="416" y="288.264" width="32" height="32"/></g></g></g></svg>');
+}
+
+#shirkTextBtn{
+  height: 20px;
+  width: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><g><g><g><polygon points="345.936,92.448 325.84,67.552 272,110.976 272,0 240,0 240,110.112 187.232,67.552 167.136,92.448 256.528,164.56"/><polygon points="167.136,419.552 187.232,444.448 240,401.888 240,512 272,512 272,401.024 325.84,444.448 345.936,419.552 256.528,347.44"/><rect x="128" y="192" width="384" height="32"/><rect y="192" width="32" height="32"/><rect x="64" y="192" width="32" height="32"/><rect y="288" width="384" height="32"/><rect x="480" y="288" width="32" height="32"/><rect x="416" y="288" width="32" height="32"/></g></g></g></svg>');
+}
+
+#expandTextBtn:focus, #shirkTextBtn:focus{
+  outline: none;
+}
+
+#currentPage:focus{
+  outline-color: #00a5e4;
+}
+
+#searchContainer{
+  display: flex;
+}
+
+#textSearch{
+  padding: 0px;
+  margin: 0px;
+}
+
+#searchForm{
+  display: flex;
+}
+
+/* color popup */
+#colorFormPopup{
+  position: fixed;
+  background-color: rgba(255,255,255,.9);
+  border: 1px solid rgba(0, 0, 0, .5);
+  right: 1%;
+  padding: 4px;
+}
+
+#colorFormPopup > h2{
+  margin: 7px 0px;
+}
+
+#colorFormPopup > h4{
+  margin: 7px 0px;
+}
+
+/* top text display */
+.text-compare#compareViewers {
+  display: flex;
+  width: 100%;
+  height: calc(50% - 30px);
+}
+
+.text-compare .viewer {
+  display: inline-block;
+  width: calc(100% - 330px);
+  overflow: scroll;
+}
+
+@media (max-width: 800px) {
+  .text-compare .viewer:first-child {
+    margin-top: 60px;
+  }
+
+  .text-compare .viewer {
+    margin-top: 10px;
+    width: 100%;
+    height: 90%;
+    -webkit-box-shadow: 1px 1px 10px #999;
+    box-shadow: 1px 1px 10px #999;
+    overflow: scroll;
+  }
+
+  .text-compare#compareViewers {
+    padding: 15px 15px 0px 15px;
+    margin-left: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 50%;
+  }
+}
+
+#compareViewers{
+  height: 50%;
+}
+
+.viewer .section {
+  background-color: lightgrey;
+}
+
+.viewer .section p{ 
+  margin: 0px;
+}
+
+.section.identical:hover {
+  background-color: darkgray;
+  cursor: pointer;
+}
+
+
+p.hidden, span.hidden {
+  display: none;
+ }
+
+/* middle controls */
+#documentToggle{
+  width: 100%;
+  height: 20px;
+  padding: 5px 0px;
+  background-color: #00a5e4;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+/* bottom viewers */
+
+.documentsContainer{
+  height: calc(50% - 30px);
+}
+
+.documentViewer{
+  height: 100%;
+}
+
+.documentViewer.hidden {
+  height: 0px;
+}

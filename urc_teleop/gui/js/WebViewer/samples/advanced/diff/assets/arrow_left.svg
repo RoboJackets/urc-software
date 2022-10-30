@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="14px" viewBox="0 0 17 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 58 (101010) - https://sketch.com -->
+    <title>794EADEB-478D-42E4-8B9B-0F6B4D02B08B@1.00x</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-12.5%" y="-5.3%" width="123.6%" height="110.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="2" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.775560462   0 0 0 0 0.775560462   0 0 0 0 0.775560462  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="D---nudge-diff-tool" transform="translate(-502.000000, -428.000000)">
+            <g id="wv-/--menu-/-detach-/-Nudge-Copy" filter="url(#filter-1)" transform="translate(488.000000, 340.000000)">
+                <g id="Buttons_palette" transform="translate(8.000000, 23.000000)">
+                    <g id="Arrow_up_left" transform="translate(1.000000, 58.000000)">
+                        <g id="padding"></g>
+                        <g id="icons" transform="translate(4.000000, 4.000000)" fill="#8C8C8C">
+                            <polygon id="Path" transform="translate(7.963948, 7.963948) scale(-1, -1) rotate(45.000000) translate(-7.963948, -7.963948) " points="8.67789567 5.84 3 11.5078957 4.42 12.9278957 10.0878957 7.25 12.9278957 10.08 12.9278957 3 5.84789567 3"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

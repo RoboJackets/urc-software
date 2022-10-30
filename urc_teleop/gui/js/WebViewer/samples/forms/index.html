@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      if (window.location.href.slice(-1) !== '/' && window.location.href.slice(-4) !== 'html') {
+        // hacky redirect for mac php server...
+        window.location = window.location.href + '/';
+      }
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+    <title>Forms Demo & Samples for JavaScript PDF Viewer</title>
+  </head>
+
+  <body class="pdftron">
+    <header>
+      <div class="container">
+        <div>
+          <a href="https://pdftron.com" target="_blank">
+            <div class="logo"></div>
+          </a>
+          <span class="title">WebViewer</span>
+        </div>
+        <div>
+          <a class="button" href="https://pdftron.com/documentation/web/guides/" target="_blank">Go to Guides</a>
+          <a class="button filled" href="https://pdftron.com/licensing/" target="_blank">Licensing</a>
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="sidebar">
+        <p><b>Samples</b></p>
+
+        <p><a class="" href="../">Viewing</a></p>
+        <p><a class="" href="../annotation">Annotation</a></p>
+        <p><a class="active" href=".">Forms</a></p>
+        <p><a class="" href="../customization">Customization</a></p>
+        <p><a class="" href="../pdf-manipulation">PDF Manipulation</a></p>
+        <p><a class="" href="../advanced">Advanced</a></p>
+        <p><a class="" href="../full-apis">Full apis</a></p>
+
+        <p><b>Showcase</b></p>
+        <p><a href="https://pdftron.com/webviewer/demo" target="_blank">Go to showcase</a></p>
+      </div>
+      <div class="content">
+        <div id="error-message" style="display: none; background-color: red; color: white">Samples are not runnable from the file system. Please run using "npm start" or use a local web server.</div>
+
+        <h1>Forms Demo for PDF Viewer</h1>
+
+        <div>
+          <h4>Form Builder Demo</h4>
+          <p>
+            This sample demonstrates how to add form fields to a PDF. Form fields can be added from the forms toolbar and various properties of the forms can be edited.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./form-builder">Launch demo</a>
+            <a href="./form-builder/form-builder.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Customizing form fields</h4>
+          <p>
+            Shows how to change color and opacity of form fields.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./form-fields">Launch demo</a>
+            <a href="./form-fields/form-fields.js" target="_self">View Source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      if (window.location.href.indexOf('file://') === 0) {
+        alert('Samples are not runnable from the file system. Please run using "npm start" or use a local web server.');
+        document.getElementById('error-message').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

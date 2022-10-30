@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>PDFTron WebViewer Class: WebViewerInstance</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.pdftron.css">
+	
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">PDFTron WebViewer</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.html">Core</a></li><li><a href="Core.Actions.html">Core.Actions</a></li><li><a href="Core.Annotations.html">Core.Annotations</a></li><li><a href="Core.ContentEdit.html">Core.ContentEdit</a></li><li><a href="Core.Math.html">Core.Math</a></li><li><a href="Core.PartRetrievers.html">Core.PartRetrievers</a></li><li><a href="Core.PDFNet.html">Core.PDFNet</a></li><li><a href="Core.Search.html">Core.Search</a></li><li><a href="Core.Tools.html">Core.Tools</a></li><li><a href="UI.html">UI</a></li><li><a href="UI.Fonts.html">UI.Fonts</a></li><li><a href="UI.Hotkeys.html">UI.Hotkeys</a></li><li><a href="UI.NotesPanel.html">UI.NotesPanel</a></li><li><a href="UI.OutlinesPanel.html">UI.OutlinesPanel</a></li><li><a href="UI.TabManager.html">UI.TabManager</a></li><li><a href="UI.ThumbnailsPanel.html">UI.ThumbnailsPanel</a></li><li><a href="UI.VerificationOptions.html">UI.VerificationOptions</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.Actions.Action.html">Core.Actions.Action</a></li><li><a href="Core.Actions.Dest.html">Core.Actions.Dest</a></li><li><a href="Core.Actions.GoTo.html">Core.Actions.GoTo</a></li><li><a href="Core.Actions.GoToR.html">Core.Actions.GoToR</a></li><li><a href="Core.Actions.Hide.html">Core.Actions.Hide</a></li><li><a href="Core.Actions.JavaScript.html">Core.Actions.JavaScript</a></li><li><a href="Core.Actions.Named.html">Core.Actions.Named</a></li><li><a href="Core.Actions.ResetForm.html">Core.Actions.ResetForm</a></li><li><a href="Core.Actions.SubmitForm.html">Core.Actions.SubmitForm</a></li><li><a href="Core.Actions.URI.html">Core.Actions.URI</a></li><li><a href="Core.AnnotationHistoryManager.html">Core.AnnotationHistoryManager</a></li><li><a href="Core.AnnotationManager.html">Core.AnnotationManager</a></li><li><a href="Core.Annotations.Annotation.html">Core.Annotations.Annotation</a></li><li><a href="Core.Annotations.ArcAnnotation.html">Core.Annotations.ArcAnnotation</a></li><li><a href="Core.Annotations.Border.html">Core.Annotations.Border</a></li><li><a href="Core.Annotations.BoxControlHandle.html">Core.Annotations.BoxControlHandle</a></li><li><a href="Core.Annotations.BoxSelectionModel.html">Core.Annotations.BoxSelectionModel</a></li><li><a href="Core.Annotations.ButtonWidgetAnnotation.html">Core.Annotations.ButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.CalloutControlHandle.html">Core.Annotations.CalloutControlHandle</a></li><li><a href="Core.Annotations.CalloutSelectionModel.html">Core.Annotations.CalloutSelectionModel</a></li><li><a href="Core.Annotations.CanvasHelper.html">Core.Annotations.CanvasHelper</a></li><li><a href="Core.Annotations.CaretAnnotation.html">Core.Annotations.CaretAnnotation</a></li><li><a href="Core.Annotations.CheckButtonWidgetAnnotation.html">Core.Annotations.CheckButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.ChoiceWidgetAnnotation.html">Core.Annotations.ChoiceWidgetAnnotation</a></li><li><a href="Core.Annotations.Color.html">Core.Annotations.Color</a></li><li><a href="Core.Annotations.ControlHandle.html">Core.Annotations.ControlHandle</a></li><li><a href="Core.Annotations.CustomAnnotation.html">Core.Annotations.CustomAnnotation</a></li><li><a href="Core.Annotations.DatePickerWidgetAnnotation.html">Core.Annotations.DatePickerWidgetAnnotation</a></li><li><a href="Core.Annotations.EllipseAnnotation.html">Core.Annotations.EllipseAnnotation</a></li><li><a href="Core.Annotations.FileAttachmentAnnotation.html">Core.Annotations.FileAttachmentAnnotation</a></li><li><a href="Core.Annotations.FileAttachmentUtils.html">Core.Annotations.FileAttachmentUtils</a></li><li><a href="Core.Annotations.Font.html">Core.Annotations.Font</a></li><li><a href="Core.Annotations.Forms.html">Core.Annotations.Forms</a></li><li><a href="Core.Annotations.Forms.EmbeddedJS.html">Core.Annotations.Forms.EmbeddedJS</a></li><li><a href="Core.Annotations.Forms.Field.html">Core.Annotations.Forms.Field</a></li><li><a href="Core.Annotations.Forms.FieldManager.html">Core.Annotations.Forms.FieldManager</a></li><li><a href="Core.Annotations.FreeHandAnnotation.html">Core.Annotations.FreeHandAnnotation</a></li><li><a href="Core.Annotations.FreeTextAnnotation.html">Core.Annotations.FreeTextAnnotation</a></li><li><a href="Core.Annotations.FreeTextAnnotation.RichTextEditor.html">Core.Annotations.FreeTextAnnotation.RichTextEditor</a></li><li><a href="Core.Annotations.FreeTextSelectionModel.html">Core.Annotations.FreeTextSelectionModel</a></li><li><a href="Core.Annotations.HTMLAnnotation.html">Core.Annotations.HTMLAnnotation</a></li><li><a href="Core.Annotations.IPathAnnotation.html">Core.Annotations.IPathAnnotation</a></li><li><a href="Core.Annotations.LineAnnotation.html">Core.Annotations.LineAnnotation</a></li><li><a href="Core.Annotations.LineControlHandle.html">Core.Annotations.LineControlHandle</a></li><li><a href="Core.Annotations.LineSelectionModel.html">Core.Annotations.LineSelectionModel</a></li><li><a href="Core.Annotations.Link.html">Core.Annotations.Link</a></li><li><a href="Core.Annotations.ListWidgetAnnotation.html">Core.Annotations.ListWidgetAnnotation</a></li><li><a href="Core.Annotations.MarkupAnnotation.html">Core.Annotations.MarkupAnnotation</a></li><li><a href="Core.Annotations.Model3D.html">Core.Annotations.Model3D</a></li><li><a href="Core.Annotations.PathControlHandle.html">Core.Annotations.PathControlHandle</a></li><li><a href="Core.Annotations.PathSelectionModel.html">Core.Annotations.PathSelectionModel</a></li><li><a href="Core.Annotations.PolygonAnnotation.html">Core.Annotations.PolygonAnnotation</a></li><li><a href="Core.Annotations.PolygonControlHandle.html">Core.Annotations.PolygonControlHandle</a></li><li><a href="Core.Annotations.PolygonSelectionModel.html">Core.Annotations.PolygonSelectionModel</a></li><li><a href="Core.Annotations.PolylineAnnotation.html">Core.Annotations.PolylineAnnotation</a></li><li><a href="Core.Annotations.PopupAnnotation.html">Core.Annotations.PopupAnnotation</a></li><li><a href="Core.Annotations.RadioButtonWidgetAnnotation.html">Core.Annotations.RadioButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.RectangleAnnotation.html">Core.Annotations.RectangleAnnotation</a></li><li><a href="Core.Annotations.RedactionAnnotation.html">Core.Annotations.RedactionAnnotation</a></li><li><a href="Core.Annotations.RedactionSelectionModel.html">Core.Annotations.RedactionSelectionModel</a></li><li><a href="Core.Annotations.RotationControlHandle.html">Core.Annotations.RotationControlHandle</a></li><li><a href="Core.Annotations.RotationUtils.html">Core.Annotations.RotationUtils</a></li><li><a href="Core.Annotations.SelectionAlgorithm.html">Core.Annotations.SelectionAlgorithm</a></li><li><a href="Core.Annotations.SelectionModel.html">Core.Annotations.SelectionModel</a></li><li><a href="Core.Annotations.SignatureWidgetAnnotation.html">Core.Annotations.SignatureWidgetAnnotation</a></li><li><a href="Core.Annotations.SoundAnnotation.html">Core.Annotations.SoundAnnotation</a></li><li><a href="Core.Annotations.StampAnnotation.html">Core.Annotations.StampAnnotation</a></li><li><a href="Core.Annotations.StickyAnnotation.html">Core.Annotations.StickyAnnotation</a></li><li><a href="Core.Annotations.TextHighlightAnnotation.html">Core.Annotations.TextHighlightAnnotation</a></li><li><a href="Core.Annotations.TextMarkupAnnotation.html">Core.Annotations.TextMarkupAnnotation</a></li><li><a href="Core.Annotations.TextRedactAnnotation.html">Core.Annotations.TextRedactAnnotation</a></li><li><a href="Core.Annotations.TextSelectionModel.html">Core.Annotations.TextSelectionModel</a></li><li><a href="Core.Annotations.TextSquigglyAnnotation.html">Core.Annotations.TextSquigglyAnnotation</a></li><li><a href="Core.Annotations.TextStrikeoutAnnotation.html">Core.Annotations.TextStrikeoutAnnotation</a></li><li><a href="Core.Annotations.TextUnderlineAnnotation.html">Core.Annotations.TextUnderlineAnnotation</a></li><li><a href="Core.Annotations.TextWidgetAnnotation.html">Core.Annotations.TextWidgetAnnotation</a></li><li><a href="Core.Annotations.WidgetAnnotation.html">Core.Annotations.WidgetAnnotation</a></li><li><a href="Core.Annotations.WidgetFlags.html">Core.Annotations.WidgetFlags</a></li><li><a href="Core.Annotations.XFDFUtils.html">Core.Annotations.XFDFUtils</a></li><li><a href="Core.Bookmark.html">Core.Bookmark</a></li><li><a href="Core.ContentEditManager.html">Core.ContentEditManager</a></li><li><a href="Core.DisplayMode.html">Core.DisplayMode</a></li><li><a href="Core.DisplayModeManager.html">Core.DisplayModeManager</a></li><li><a href="Core.Document.html">Core.Document</a></li><li><a href="Core.DocumentViewer.html">Core.DocumentViewer</a></li><li><a href="Core.EditBoxManager.html">Core.EditBoxManager</a></li><li><a href="Core.EventHandler.html">Core.EventHandler</a></li><li><a href="Core.FormFieldCreationManager.html">Core.FormFieldCreationManager</a></li><li><a href="Core.Math.Matrix.html">Core.Math.Matrix</a></li><li><a href="Core.Math.Point.html">Core.Math.Point</a></li><li><a href="Core.Math.Quad.html">Core.Math.Quad</a></li><li><a href="Core.Math.Rect.html">Core.Math.Rect</a></li><li><a href="Core.Math.TransformationBuilder.html">Core.Math.TransformationBuilder</a></li><li><a href="Core.MeasurementManager.html">Core.MeasurementManager</a></li><li><a href="Core.PartRetrievers.PartRetriever.html">Core.PartRetrievers.PartRetriever</a></li><li><a href="Core.PDFNet.Action.html">Core.PDFNet.Action</a></li><li><a href="Core.PDFNet.ActionParameter.html">Core.PDFNet.ActionParameter</a></li><li><a href="Core.PDFNet.Annot.html">Core.PDFNet.Annot</a></li><li><a href="Core.PDFNet.AnnotBorderStyle.html">Core.PDFNet.AnnotBorderStyle</a></li><li><a href="Core.PDFNet.AttrObj.html">Core.PDFNet.AttrObj</a></li><li><a href="Core.PDFNet.Bookmark.html">Core.PDFNet.Bookmark</a></li><li><a href="Core.PDFNet.ByteRange.html">Core.PDFNet.ByteRange</a></li><li><a href="Core.PDFNet.CaretAnnot.html">Core.PDFNet.CaretAnnot</a></li><li><a href="Core.PDFNet.CharData.html">Core.PDFNet.CharData</a></li><li><a href="Core.PDFNet.CheckBoxWidget.html">Core.PDFNet.CheckBoxWidget</a></li><li><a href="Core.PDFNet.ChunkRenderer.html">Core.PDFNet.ChunkRenderer</a></li><li><a href="Core.PDFNet.CircleAnnot.html">Core.PDFNet.CircleAnnot</a></li><li><a href="Core.PDFNet.ClassMap.html">Core.PDFNet.ClassMap</a></li><li><a href="Core.PDFNet.ColorPt.html">Core.PDFNet.ColorPt</a></li><li><a href="Core.PDFNet.ColorSpace.html">Core.PDFNet.ColorSpace</a></li><li><a href="Core.PDFNet.ComboBoxWidget.html">Core.PDFNet.ComboBoxWidget</a></li><li><a href="Core.PDFNet.ContentItem.html">Core.PDFNet.ContentItem</a></li><li><a href="Core.PDFNet.ContentReplacer.html">Core.PDFNet.ContentReplacer</a></li><li><a href="Core.PDFNet.ConversionMonitor.html">Core.PDFNet.ConversionMonitor</a></li><li><a href="Core.PDFNet.Convert.html">Core.PDFNet.Convert</a></li><li><a href="Core.PDFNet.Convert.AdvancedImagingConvertOptions.html">Core.PDFNet.Convert.AdvancedImagingConvertOptions</a></li><li><a href="Core.PDFNet.Convert.ConversionOptions.html">Core.PDFNet.Convert.ConversionOptions</a></li><li><a href="Core.PDFNet.Convert.EPUBOutputOptions.html">Core.PDFNet.Convert.EPUBOutputOptions</a></li><li><a href="Core.PDFNet.Convert.HTMLOutputOptions.html">Core.PDFNet.Convert.HTMLOutputOptions</a></li><li><a href="Core.PDFNet.Convert.OfficeToPDFOptions.html">Core.PDFNet.Convert.OfficeToPDFOptions</a></li><li><a href="Core.PDFNet.Convert.SVGOutputOptions.html">Core.PDFNet.Convert.SVGOutputOptions</a></li><li><a href="Core.PDFNet.Convert.TiffOutputOptions.html">Core.PDFNet.Convert.TiffOutputOptions</a></li><li><a href="Core.PDFNet.Convert.XODOutputOptions.html">Core.PDFNet.Convert.XODOutputOptions</a></li><li><a href="Core.PDFNet.Convert.XPSOutputCommonOptions.html">Core.PDFNet.Convert.XPSOutputCommonOptions</a></li><li><a href="Core.PDFNet.Convert.XPSOutputOptions.html">Core.PDFNet.Convert.XPSOutputOptions</a></li><li><a href="Core.PDFNet.Date.html">Core.PDFNet.Date</a></li><li><a href="Core.PDFNet.Destination.html">Core.PDFNet.Destination</a></li><li><a href="Core.PDFNet.Destroyable.html">Core.PDFNet.Destroyable</a></li><li><a href="Core.PDFNet.DictIterator.html">Core.PDFNet.DictIterator</a></li><li><a href="Core.PDFNet.DigestAlgorithm.html">Core.PDFNet.DigestAlgorithm</a></li><li><a href="Core.PDFNet.DigitalSignatureField.html">Core.PDFNet.DigitalSignatureField</a></li><li><a href="Core.PDFNet.DisallowedChange.html">Core.PDFNet.DisallowedChange</a></li><li><a href="Core.PDFNet.DocSnapshot.html">Core.PDFNet.DocSnapshot</a></li><li><a href="Core.PDFNet.Element.html">Core.PDFNet.Element</a></li><li><a href="Core.PDFNet.ElementBuilder.html">Core.PDFNet.ElementBuilder</a></li><li><a href="Core.PDFNet.ElementReader.html">Core.PDFNet.ElementReader</a></li><li><a href="Core.PDFNet.ElementWriter.html">Core.PDFNet.ElementWriter</a></li><li><a href="Core.PDFNet.EmbeddedTimestampVerificationResult.html">Core.PDFNet.EmbeddedTimestampVerificationResult</a></li><li><a href="Core.PDFNet.FDFDoc.html">Core.PDFNet.FDFDoc</a></li><li><a href="Core.PDFNet.FDFDoc.XFDFExportOptions.html">Core.PDFNet.FDFDoc.XFDFExportOptions</a></li><li><a href="Core.PDFNet.FDFField.html">Core.PDFNet.FDFField</a></li><li><a href="Core.PDFNet.Field.html">Core.PDFNet.Field</a></li><li><a href="Core.PDFNet.FileAttachmentAnnot.html">Core.PDFNet.FileAttachmentAnnot</a></li><li><a href="Core.PDFNet.FileSpec.html">Core.PDFNet.FileSpec</a></li><li><a href="Core.PDFNet.Filter.html">Core.PDFNet.Filter</a></li><li><a href="Core.PDFNet.FilterReader.html">Core.PDFNet.FilterReader</a></li><li><a href="Core.PDFNet.FilterWriter.html">Core.PDFNet.FilterWriter</a></li><li><a href="Core.PDFNet.Flattener.html">Core.PDFNet.Flattener</a></li><li><a href="Core.PDFNet.Font.html">Core.PDFNet.Font</a></li><li><a href="Core.PDFNet.FreeTextAnnot.html">Core.PDFNet.FreeTextAnnot</a></li><li><a href="Core.PDFNet.Function.html">Core.PDFNet.Function</a></li><li><a href="Core.PDFNet.GeometryCollection.html">Core.PDFNet.GeometryCollection</a></li><li><a href="Core.PDFNet.GState.html">Core.PDFNet.GState</a></li><li><a href="Core.PDFNet.HighlightAnnot.html">Core.PDFNet.HighlightAnnot</a></li><li><a href="Core.PDFNet.Highlights.html">Core.PDFNet.Highlights</a></li><li><a href="Core.PDFNet.Image.html">Core.PDFNet.Image</a></li><li><a href="Core.PDFNet.InkAnnot.html">Core.PDFNet.InkAnnot</a></li><li><a href="Core.PDFNet.Iterator.html">Core.PDFNet.Iterator</a></li><li><a href="Core.PDFNet.KeyStrokeActionResult.html">Core.PDFNet.KeyStrokeActionResult</a></li><li><a href="Core.PDFNet.KeyStrokeEventData.html">Core.PDFNet.KeyStrokeEventData</a></li><li><a href="Core.PDFNet.LineAnnot.html">Core.PDFNet.LineAnnot</a></li><li><a href="Core.PDFNet.LinkAnnot.html">Core.PDFNet.LinkAnnot</a></li><li><a href="Core.PDFNet.ListBoxWidget.html">Core.PDFNet.ListBoxWidget</a></li><li><a href="Core.PDFNet.MarkupAnnot.html">Core.PDFNet.MarkupAnnot</a></li><li><a href="Core.PDFNet.Matrix2D.html">Core.PDFNet.Matrix2D</a></li><li><a href="Core.PDFNet.MovieAnnot.html">Core.PDFNet.MovieAnnot</a></li><li><a href="Core.PDFNet.NameTree.html">Core.PDFNet.NameTree</a></li><li><a href="Core.PDFNet.NumberTree.html">Core.PDFNet.NumberTree</a></li><li><a href="Core.PDFNet.Obj.html">Core.PDFNet.Obj</a></li><li><a href="Core.PDFNet.ObjectIdentifier.html">Core.PDFNet.ObjectIdentifier</a></li><li><a href="Core.PDFNet.ObjSet.html">Core.PDFNet.ObjSet</a></li><li><a href="Core.PDFNet.OCG.html">Core.PDFNet.OCG</a></li><li><a href="Core.PDFNet.OCGConfig.html">Core.PDFNet.OCGConfig</a></li><li><a href="Core.PDFNet.OCGContext.html">Core.PDFNet.OCGContext</a></li><li><a href="Core.PDFNet.OCMD.html">Core.PDFNet.OCMD</a></li><li><a href="Core.PDFNet.OCRModule.html">Core.PDFNet.OCRModule</a></li><li><a href="Core.PDFNet.Optimizer.html">Core.PDFNet.Optimizer</a></li><li><a href="Core.PDFNet.Optimizer.ImageSettings.html">Core.PDFNet.Optimizer.ImageSettings</a></li><li><a href="Core.PDFNet.Optimizer.MonoImageSettings.html">Core.PDFNet.Optimizer.MonoImageSettings</a></li><li><a href="Core.PDFNet.Optimizer.OptimizerSettings.html">Core.PDFNet.Optimizer.OptimizerSettings</a></li><li><a href="Core.PDFNet.Optimizer.TextSettings.html">Core.PDFNet.Optimizer.TextSettings</a></li><li><a href="Core.PDFNet.OwnedBitmap.html">Core.PDFNet.OwnedBitmap</a></li><li><a href="Core.PDFNet.Page.html">Core.PDFNet.Page</a></li><li><a href="Core.PDFNet.PageLabel.html">Core.PDFNet.PageLabel</a></li><li><a href="Core.PDFNet.PageSet.html">Core.PDFNet.PageSet</a></li><li><a href="Core.PDFNet.PatternColor.html">Core.PDFNet.PatternColor</a></li><li><a href="Core.PDFNet.PDFACompliance.html">Core.PDFNet.PDFACompliance</a></li><li><a href="Core.PDFNet.PDFDC.html">Core.PDFNet.PDFDC</a></li><li><a href="Core.PDFNet.PDFDCEX.html">Core.PDFNet.PDFDCEX</a></li><li><a href="Core.PDFNet.PDFDoc.html">Core.PDFNet.PDFDoc</a></li><li><a href="Core.PDFNet.PDFDoc.DiffOptions.html">Core.PDFNet.PDFDoc.DiffOptions</a></li><li><a href="Core.PDFNet.PDFDoc.MergeXFDFOptions.html">Core.PDFNet.PDFDoc.MergeXFDFOptions</a></li><li><a href="Core.PDFNet.PDFDoc.RefreshOptions.html">Core.PDFNet.PDFDoc.RefreshOptions</a></li><li><a href="Core.PDFNet.PDFDoc.TextDiffOptions.html">Core.PDFNet.PDFDoc.TextDiffOptions</a></li><li><a href="Core.PDFNet.PDFDoc.ViewerOptimizedOptions.html">Core.PDFNet.PDFDoc.ViewerOptimizedOptions</a></li><li><a href="Core.PDFNet.PDFDocInfo.html">Core.PDFNet.PDFDocInfo</a></li><li><a href="Core.PDFNet.PDFDocViewPrefs.html">Core.PDFNet.PDFDocViewPrefs</a></li><li><a href="Core.PDFNet.PDFDraw.html">Core.PDFNet.PDFDraw</a></li><li><a href="Core.PDFNet.PDFRasterizer.html">Core.PDFNet.PDFRasterizer</a></li><li><a href="Core.PDFNet.PDFTronCustomSecurityHandler.html">Core.PDFNet.PDFTronCustomSecurityHandler</a></li><li><a href="Core.PDFNet.PDFView.html">Core.PDFNet.PDFView</a></li><li><a href="Core.PDFNet.PDFViewCtrl.html">Core.PDFNet.PDFViewCtrl</a></li><li><a href="Core.PDFNet.Point.html">Core.PDFNet.Point</a></li><li><a href="Core.PDFNet.PolygonAnnot.html">Core.PDFNet.PolygonAnnot</a></li><li><a href="Core.PDFNet.PolyLineAnnot.html">Core.PDFNet.PolyLineAnnot</a></li><li><a href="Core.PDFNet.PopupAnnot.html">Core.PDFNet.PopupAnnot</a></li><li><a href="Core.PDFNet.PrinterMode.html">Core.PDFNet.PrinterMode</a></li><li><a href="Core.PDFNet.PushButtonWidget.html">Core.PDFNet.PushButtonWidget</a></li><li><a href="Core.PDFNet.QuadPoint.html">Core.PDFNet.QuadPoint</a></li><li><a href="Core.PDFNet.RadioButtonGroup.html">Core.PDFNet.RadioButtonGroup</a></li><li><a href="Core.PDFNet.RadioButtonWidget.html">Core.PDFNet.RadioButtonWidget</a></li><li><a href="Core.PDFNet.Rect.html">Core.PDFNet.Rect</a></li><li><a href="Core.PDFNet.Redaction.html">Core.PDFNet.Redaction</a></li><li><a href="Core.PDFNet.RedactionAnnot.html">Core.PDFNet.RedactionAnnot</a></li><li><a href="Core.PDFNet.Redactor.html">Core.PDFNet.Redactor</a></li><li><a href="Core.PDFNet.Reflow.html">Core.PDFNet.Reflow</a></li><li><a href="Core.PDFNet.ResultSnapshot.html">Core.PDFNet.ResultSnapshot</a></li><li><a href="Core.PDFNet.RoleMap.html">Core.PDFNet.RoleMap</a></li><li><a href="Core.PDFNet.RubberStampAnnot.html">Core.PDFNet.RubberStampAnnot</a></li><li><a href="Core.PDFNet.ScreenAnnot.html">Core.PDFNet.ScreenAnnot</a></li><li><a href="Core.PDFNet.SDFDoc.html">Core.PDFNet.SDFDoc</a></li><li><a href="Core.PDFNet.SecurityHandler.html">Core.PDFNet.SecurityHandler</a></li><li><a href="Core.PDFNet.SElement.html">Core.PDFNet.SElement</a></li><li><a href="Core.PDFNet.Separation.html">Core.PDFNet.Separation</a></li><li><a href="Core.PDFNet.Shading.html">Core.PDFNet.Shading</a></li><li><a href="Core.PDFNet.ShapedText.html">Core.PDFNet.ShapedText</a></li><li><a href="Core.PDFNet.SignatureHandler.html">Core.PDFNet.SignatureHandler</a></li><li><a href="Core.PDFNet.SignatureWidget.html">Core.PDFNet.SignatureWidget</a></li><li><a href="Core.PDFNet.SoundAnnot.html">Core.PDFNet.SoundAnnot</a></li><li><a href="Core.PDFNet.SquareAnnot.html">Core.PDFNet.SquareAnnot</a></li><li><a href="Core.PDFNet.SquigglyAnnot.html">Core.PDFNet.SquigglyAnnot</a></li><li><a href="Core.PDFNet.Stamper.html">Core.PDFNet.Stamper</a></li><li><a href="Core.PDFNet.STree.html">Core.PDFNet.STree</a></li><li><a href="Core.PDFNet.StrikeOutAnnot.html">Core.PDFNet.StrikeOutAnnot</a></li><li><a href="Core.PDFNet.TextAnnot.html">Core.PDFNet.TextAnnot</a></li><li><a href="Core.PDFNet.TextExtractor.html">Core.PDFNet.TextExtractor</a></li><li><a href="Core.PDFNet.TextExtractorLine.html">Core.PDFNet.TextExtractorLine</a></li><li><a href="Core.PDFNet.TextExtractorStyle.html">Core.PDFNet.TextExtractorStyle</a></li><li><a href="Core.PDFNet.TextExtractorWord.html">Core.PDFNet.TextExtractorWord</a></li><li><a href="Core.PDFNet.TextMarkupAnnot.html">Core.PDFNet.TextMarkupAnnot</a></li><li><a href="Core.PDFNet.TextRange.html">Core.PDFNet.TextRange</a></li><li><a href="Core.PDFNet.TextSearch.html">Core.PDFNet.TextSearch</a></li><li><a href="Core.PDFNet.TextWidget.html">Core.PDFNet.TextWidget</a></li><li><a href="Core.PDFNet.TimestampingConfiguration.html">Core.PDFNet.TimestampingConfiguration</a></li><li><a href="Core.PDFNet.TimestampingResult.html">Core.PDFNet.TimestampingResult</a></li><li><a href="Core.PDFNet.TrustVerificationResult.html">Core.PDFNet.TrustVerificationResult</a></li><li><a href="Core.PDFNet.UnderlineAnnot.html">Core.PDFNet.UnderlineAnnot</a></li><li><a href="Core.PDFNet.UndoManager.html">Core.PDFNet.UndoManager</a></li><li><a href="Core.PDFNet.VerificationOptions.html">Core.PDFNet.VerificationOptions</a></li><li><a href="Core.PDFNet.VerificationResult.html">Core.PDFNet.VerificationResult</a></li><li><a href="Core.PDFNet.ViewChangeCollection.html">Core.PDFNet.ViewChangeCollection</a></li><li><a href="Core.PDFNet.WatermarkAnnot.html">Core.PDFNet.WatermarkAnnot</a></li><li><a href="Core.PDFNet.WebFontDownloader.html">Core.PDFNet.WebFontDownloader</a></li><li><a href="Core.PDFNet.WidgetAnnot.html">Core.PDFNet.WidgetAnnot</a></li><li><a href="Core.PDFNet.X501AttributeTypeAndValue.html">Core.PDFNet.X501AttributeTypeAndValue</a></li><li><a href="Core.PDFNet.X501DistinguishedName.html">Core.PDFNet.X501DistinguishedName</a></li><li><a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a></li><li><a href="Core.PDFNet.X509Extension.html">Core.PDFNet.X509Extension</a></li><li><a href="Core.Scale.html">Core.Scale</a></li><li><a href="Core.Tools.AddImageContentTool.html">Core.Tools.AddImageContentTool</a></li><li><a href="Core.Tools.AddParagraphTool.html">Core.Tools.AddParagraphTool</a></li><li><a href="Core.Tools.AnnotationEditTool.html">Core.Tools.AnnotationEditTool</a></li><li><a href="Core.Tools.AnnotationSelectTool.html">Core.Tools.AnnotationSelectTool</a></li><li><a href="Core.Tools.ArcCreateTool.html">Core.Tools.ArcCreateTool</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html">Core.Tools.ArcMeasurementCreateTool</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html">Core.Tools.AreaMeasurementCreateTool</a></li><li><a href="Core.Tools.ArrowCreateTool.html">Core.Tools.ArrowCreateTool</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html">Core.Tools.CalibrationMeasurementTool</a></li><li><a href="Core.Tools.CalloutCreateTool.html">Core.Tools.CalloutCreateTool</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html">Core.Tools.ChangeViewCreateTool</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html">Core.Tools.CheckBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html">Core.Tools.CloudyRectangularAreaMeasurementTool</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html">Core.Tools.ComboBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.ContentEditTool.html">Core.Tools.ContentEditTool</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html">Core.Tools.CountMeasurementCreateTool</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html">Core.Tools.DateFreeTextCreateTool</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html">Core.Tools.DistanceMeasurementCreateTool</a></li><li><a href="Core.Tools.EllipseCreateTool.html">Core.Tools.EllipseCreateTool</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html">Core.Tools.EllipseMeasurementCreateTool</a></li><li><a href="Core.Tools.EraserTool.html">Core.Tools.EraserTool</a></li><li><a href="Core.Tools.FileAttachmentCreateTool.html">Core.Tools.FileAttachmentCreateTool</a></li><li><a href="Core.Tools.FreeHandCreateTool.html">Core.Tools.FreeHandCreateTool</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html">Core.Tools.FreeHandHighlightCreateTool</a></li><li><a href="Core.Tools.FreeTextCreateTool.html">Core.Tools.FreeTextCreateTool</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html">Core.Tools.GenericAnnotationCreateTool</a></li><li><a href="Core.Tools.LineCreateTool.html">Core.Tools.LineCreateTool</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html">Core.Tools.ListBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.MarkInsertTextCreateTool.html">Core.Tools.MarkInsertTextCreateTool</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html">Core.Tools.MarkReplaceTextCreateTool</a></li><li><a href="Core.Tools.MarqueeZoomTool.html">Core.Tools.MarqueeZoomTool</a></li><li><a href="Core.Tools.PageCoordinate.html">Core.Tools.PageCoordinate</a></li><li><a href="Core.Tools.PanTool.html">Core.Tools.PanTool</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html">Core.Tools.PerimeterMeasurementCreateTool</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html">Core.Tools.PolygonCloudCreateTool</a></li><li><a href="Core.Tools.PolygonCreateTool.html">Core.Tools.PolygonCreateTool</a></li><li><a href="Core.Tools.PolylineCreateTool.html">Core.Tools.PolylineCreateTool</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html">Core.Tools.RadioButtonFormFieldCreateTool</a></li><li><a href="Core.Tools.RectangleCreateTool.html">Core.Tools.RectangleCreateTool</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html">Core.Tools.RectangularAreaMeasurementTool</a></li><li><a href="Core.Tools.RedactionCreateTool.html">Core.Tools.RedactionCreateTool</a></li><li><a href="Core.Tools.RubberStampCreateTool.html">Core.Tools.RubberStampCreateTool</a></li><li><a href="Core.Tools.SignatureCreateTool.html">Core.Tools.SignatureCreateTool</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html">Core.Tools.SignatureFormFieldCreateTool</a></li><li><a href="Core.Tools.StampCreateTool.html">Core.Tools.StampCreateTool</a></li><li><a href="Core.Tools.StickyCreateTool.html">Core.Tools.StickyCreateTool</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html">Core.Tools.TextAnnotationCreateTool</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html">Core.Tools.TextFormFieldCreateTool</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html">Core.Tools.TextHighlightCreateTool</a></li><li><a href="Core.Tools.TextSelectTool.html">Core.Tools.TextSelectTool</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html">Core.Tools.TextSquigglyCreateTool</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html">Core.Tools.TextStrikeoutCreateTool</a></li><li><a href="Core.Tools.TextTool.html">Core.Tools.TextTool</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html">Core.Tools.TextUnderlineCreateTool</a></li><li><a href="Core.Tools.Tool.html">Core.Tools.Tool</a></li><li><a href="Core.WebViewerServerAnnotationManager.html">Core.WebViewerServerAnnotationManager</a></li><li><a href="TextHighlightAnnotation.html">TextHighlightAnnotation</a></li><li><a href="UI.Header.html">UI.Header</a></li><li><a href="UI.MentionsManager.html">UI.MentionsManager</a></li><li><a href="UI.MultiPageManipulationControls.html">UI.MultiPageManipulationControls</a></li><li><a href="WebViewerInstance.html">WebViewerInstance</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.AnnotationHistoryManager.html#event:historyChanged">Core.AnnotationHistoryManager#event:historyChanged</a></li><li><a href="Core.AnnotationManager.html#event:addReply">Core.AnnotationManager#event:addReply</a></li><li><a href="Core.AnnotationManager.html#event:annotationChanged">Core.AnnotationManager#event:annotationChanged</a></li><li><a href="Core.AnnotationManager.html#event:annotationDeselected">Core.AnnotationManager#event:annotationDeselected</a></li><li><a href="Core.AnnotationManager.html#event:annotationDoubleClicked">Core.AnnotationManager#event:annotationDoubleClicked</a></li><li><a href="Core.AnnotationManager.html#event:annotationHidden">Core.AnnotationManager#event:annotationHidden</a></li><li><a href="Core.AnnotationManager.html#event:annotationsDrawn">Core.AnnotationManager#event:annotationsDrawn</a></li><li><a href="Core.AnnotationManager.html#event:annotationSelected">Core.AnnotationManager#event:annotationSelected</a></li><li><a href="Core.AnnotationManager.html#event:deleteReply">Core.AnnotationManager#event:deleteReply</a></li><li><a href="Core.AnnotationManager.html#event:fieldChanged">Core.AnnotationManager#event:fieldChanged</a></li><li><a href="Core.AnnotationManager.html#event:fileAttachmentDataAvailable">Core.AnnotationManager#event:fileAttachmentDataAvailable</a></li><li><a href="Core.AnnotationManager.html#event:setNoteText">Core.AnnotationManager#event:setNoteText</a></li><li><a href="Core.AnnotationManager.html#event:updateAnnotationPermission">Core.AnnotationManager#event:updateAnnotationPermission</a></li><li><a href="Core.Annotations.Forms.Field.html#event:calculate">Core.Annotations.Forms.Field#event:calculate</a></li><li><a href="Core.Annotations.Forms.Field.html#event:change">Core.Annotations.Forms.Field#event:change</a></li><li><a href="Core.Annotations.Forms.Field.html#event:commit">Core.Annotations.Forms.Field#event:commit</a></li><li><a href="Core.ContentEdit.html#event:editBoxesAvailable">Core.ContentEdit#event:editBoxesAvailable</a></li><li><a href="Core.ContentEdit.html#event:textContentUpdated">Core.ContentEdit#event:textContentUpdated</a></li><li><a href="Core.Document.html#event:colorSeparationAdded">Core.Document#event:colorSeparationAdded</a></li><li><a href="Core.Document.html#event:layersUpdated">Core.Document#event:layersUpdated</a></li><li><a href="Core.DocumentViewer.html#event:activeSearchResultChanged">Core.DocumentViewer#event:activeSearchResultChanged</a></li><li><a href="Core.DocumentViewer.html#event:annotationsLoaded">Core.DocumentViewer#event:annotationsLoaded</a></li><li><a href="Core.DocumentViewer.html#event:beforeDocumentLoaded">Core.DocumentViewer#event:beforeDocumentLoaded</a></li><li><a href="Core.DocumentViewer.html#event:beginRendering">Core.DocumentViewer#event:beginRendering</a></li><li><a href="Core.DocumentViewer.html#event:click">Core.DocumentViewer#event:click</a></li><li><a href="Core.DocumentViewer.html#event:dblClick">Core.DocumentViewer#event:dblClick</a></li><li><a href="Core.DocumentViewer.html#event:displayModeUpdated">Core.DocumentViewer#event:displayModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:displayPageLocation">Core.DocumentViewer#event:displayPageLocation</a></li><li><a href="Core.DocumentViewer.html#event:documentLoaded">Core.DocumentViewer#event:documentLoaded</a></li><li><a href="Core.DocumentViewer.html#event:documentUnloaded">Core.DocumentViewer#event:documentUnloaded</a></li><li><a href="Core.DocumentViewer.html#event:embeddedThumbnailComplete">Core.DocumentViewer#event:embeddedThumbnailComplete</a></li><li><a href="Core.DocumentViewer.html#event:finishedRendering">Core.DocumentViewer#event:finishedRendering</a></li><li><a href="Core.DocumentViewer.html#event:fitModeUpdated">Core.DocumentViewer#event:fitModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:keyDown">Core.DocumentViewer#event:keyDown</a></li><li><a href="Core.DocumentViewer.html#event:keyUp">Core.DocumentViewer#event:keyUp</a></li><li><a href="Core.DocumentViewer.html#event:mouseEnter">Core.DocumentViewer#event:mouseEnter</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeave">Core.DocumentViewer#event:mouseLeave</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeftDown">Core.DocumentViewer#event:mouseLeftDown</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeftUp">Core.DocumentViewer#event:mouseLeftUp</a></li><li><a href="Core.DocumentViewer.html#event:mouseMove">Core.DocumentViewer#event:mouseMove</a></li><li><a href="Core.DocumentViewer.html#event:mouseRightDown">Core.DocumentViewer#event:mouseRightDown</a></li><li><a href="Core.DocumentViewer.html#event:mouseRightUp">Core.DocumentViewer#event:mouseRightUp</a></li><li><a href="Core.DocumentViewer.html#event:notify">Core.DocumentViewer#event:notify</a></li><li><a href="Core.DocumentViewer.html#event:pageComplete">Core.DocumentViewer#event:pageComplete</a></li><li><a href="Core.DocumentViewer.html#event:pageNumberUpdated">Core.DocumentViewer#event:pageNumberUpdated</a></li><li><a href="Core.DocumentViewer.html#event:pagesUpdated">Core.DocumentViewer#event:pagesUpdated</a></li><li><a href="Core.DocumentViewer.html#event:rotationUpdated">Core.DocumentViewer#event:rotationUpdated</a></li><li><a href="Core.DocumentViewer.html#event:searchInProgress">Core.DocumentViewer#event:searchInProgress</a></li><li><a href="Core.DocumentViewer.html#event:searchResultsChanged">Core.DocumentViewer#event:searchResultsChanged</a></li><li><a href="Core.DocumentViewer.html#event:tap">Core.DocumentViewer#event:tap</a></li><li><a href="Core.DocumentViewer.html#event:textSelected">Core.DocumentViewer#event:textSelected</a></li><li><a href="Core.DocumentViewer.html#event:toolModeUpdated">Core.DocumentViewer#event:toolModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:toolUpdated">Core.DocumentViewer#event:toolUpdated</a></li><li><a href="Core.DocumentViewer.html#event:zoomUpdated">Core.DocumentViewer#event:zoomUpdated</a></li><li><a href="Core.EditBoxManager.html#event:editorBlur">Core.EditBoxManager#event:editorBlur</a></li><li><a href="Core.EditBoxManager.html#event:editorFocus">Core.EditBoxManager#event:editorFocus</a></li><li><a href="Core.EditBoxManager.html#event:editorSelectionChanged">Core.EditBoxManager#event:editorSelectionChanged</a></li><li><a href="Core.EditBoxManager.html#event:editorTextChanged">Core.EditBoxManager#event:editorTextChanged</a></li><li><a href="Core.FormFieldCreationManager.html#event:formFieldCreationModeEnded">Core.FormFieldCreationManager#event:formFieldCreationModeEnded</a></li><li><a href="Core.FormFieldCreationManager.html#event:formFieldCreationModeStarted">Core.FormFieldCreationManager#event:formFieldCreationModeStarted</a></li><li><a href="Core.MeasurementManager.html#event:createAnnotationWithNoScale">Core.MeasurementManager#event:createAnnotationWithNoScale</a></li><li><a href="Core.MeasurementManager.html#event:scaleUpdated">Core.MeasurementManager#event:scaleUpdated</a></li><li><a href="Core.Tools.AddParagraphTool.html#event:annotationAdded">Core.Tools.AddParagraphTool#event:annotationAdded</a></li><li><a href="Core.Tools.AddParagraphTool.html#event:annotationCreated">Core.Tools.AddParagraphTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArcCreateTool.html#event:annotationAdded">Core.Tools.ArcCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArcCreateTool.html#event:annotationCreated">Core.Tools.ArcCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html#event:annotationAdded">Core.Tools.ArcMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html#event:annotationCreated">Core.Tools.ArcMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html#event:annotationAdded">Core.Tools.AreaMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html#event:annotationCreated">Core.Tools.AreaMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArrowCreateTool.html#event:annotationAdded">Core.Tools.ArrowCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArrowCreateTool.html#event:annotationCreated">Core.Tools.ArrowCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html#event:annotationAdded">Core.Tools.CalibrationMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html#event:annotationCreated">Core.Tools.CalibrationMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.CalloutCreateTool.html#event:annotationAdded">Core.Tools.CalloutCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CalloutCreateTool.html#event:annotationCreated">Core.Tools.CalloutCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html#event:annotationAdded">Core.Tools.ChangeViewCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html#event:annotationCreated">Core.Tools.ChangeViewCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.CheckBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.CheckBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html#event:annotationAdded">Core.Tools.CloudyRectangularAreaMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html#event:annotationCreated">Core.Tools.CloudyRectangularAreaMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.ComboBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.ComboBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html#event:annotationAdded">Core.Tools.CountMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html#event:annotationCreated">Core.Tools.CountMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CropCreateTool.html#event:cropApplied">Core.Tools.CropCreateTool#event:cropApplied</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html#event:annotationAdded">Core.Tools.DateFreeTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html#event:annotationCreated">Core.Tools.DateFreeTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html#event:annotationAdded">Core.Tools.DistanceMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html#event:annotationCreated">Core.Tools.DistanceMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EllipseCreateTool.html#event:annotationAdded">Core.Tools.EllipseCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.EllipseCreateTool.html#event:annotationCreated">Core.Tools.EllipseCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html#event:annotationAdded">Core.Tools.EllipseMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html#event:annotationCreated">Core.Tools.EllipseMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EraserTool.html#event:annotationAdded">Core.Tools.EraserTool#event:annotationAdded</a></li><li><a href="Core.Tools.EraserTool.html#event:annotationCreated">Core.Tools.EraserTool#event:annotationCreated</a></li><li><a href="Core.Tools.EraserTool.html#event:erasingAnnotation">Core.Tools.EraserTool#event:erasingAnnotation</a></li><li><a href="Core.Tools.FreeHandCreateTool.html#event:annotationAdded">Core.Tools.FreeHandCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeHandCreateTool.html#event:annotationCreated">Core.Tools.FreeHandCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html#event:annotationAdded">Core.Tools.FreeHandHighlightCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html#event:annotationCreated">Core.Tools.FreeHandHighlightCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.FreeTextCreateTool.html#event:annotationAdded">Core.Tools.FreeTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeTextCreateTool.html#event:annotationCreated">Core.Tools.FreeTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html#event:annotationAdded">Core.Tools.GenericAnnotationCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html#event:annotationCreated">Core.Tools.GenericAnnotationCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.LineCreateTool.html#event:annotationAdded">Core.Tools.LineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.LineCreateTool.html#event:annotationCreated">Core.Tools.LineCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.ListBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.ListBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.MarkInsertTextCreateTool.html#event:selectionComplete">Core.Tools.MarkInsertTextCreateTool#event:selectionComplete</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html#event:annotationAdded">Core.Tools.MarkReplaceTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html#event:annotationCreated">Core.Tools.MarkReplaceTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html#event:annotationAdded">Core.Tools.PerimeterMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html#event:annotationCreated">Core.Tools.PerimeterMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html#event:annotationAdded">Core.Tools.PolygonCloudCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html#event:annotationCreated">Core.Tools.PolygonCloudCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolygonCreateTool.html#event:annotationAdded">Core.Tools.PolygonCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolygonCreateTool.html#event:annotationCreated">Core.Tools.PolygonCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolylineCreateTool.html#event:annotationAdded">Core.Tools.PolylineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolylineCreateTool.html#event:annotationCreated">Core.Tools.PolylineCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html#event:annotationAdded">Core.Tools.RadioButtonFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html#event:annotationCreated">Core.Tools.RadioButtonFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RectangleCreateTool.html#event:annotationAdded">Core.Tools.RectangleCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RectangleCreateTool.html#event:annotationCreated">Core.Tools.RectangleCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html#event:annotationAdded">Core.Tools.RectangularAreaMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html#event:annotationCreated">Core.Tools.RectangularAreaMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.RedactionCreateTool.html#event:annotationAdded">Core.Tools.RedactionCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RedactionCreateTool.html#event:annotationCreated">Core.Tools.RedactionCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RubberStampCreateTool.html#event:annotationAdded">Core.Tools.RubberStampCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:annotationAdded">Core.Tools.SignatureCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:fileRejected">Core.Tools.SignatureCreateTool#event:fileRejected</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:locationSelected">Core.Tools.SignatureCreateTool#event:locationSelected</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureDeleted">Core.Tools.SignatureCreateTool#event:signatureDeleted</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureReady">Core.Tools.SignatureCreateTool#event:signatureReady</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureSaved">Core.Tools.SignatureCreateTool#event:signatureSaved</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html#event:annotationAdded">Core.Tools.SignatureFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html#event:annotationCreated">Core.Tools.SignatureFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.StampCreateTool.html#event:annotationAdded">Core.Tools.StampCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.StampCreateTool.html#event:fileRejected">Core.Tools.StampCreateTool#event:fileRejected</a></li><li><a href="Core.Tools.StickyCreateTool.html#event:annotationAdded">Core.Tools.StickyCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.StickyCreateTool.html#event:annotationCreated">Core.Tools.StickyCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html#event:annotationAdded">Core.Tools.TextAnnotationCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html#event:annotationCreated">Core.Tools.TextAnnotationCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html#event:annotationAdded">Core.Tools.TextFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html#event:annotationCreated">Core.Tools.TextFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html#event:annotationAdded">Core.Tools.TextHighlightCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html#event:annotationCreated">Core.Tools.TextHighlightCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextSelectTool.html#event:selectionComplete">Core.Tools.TextSelectTool#event:selectionComplete</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html#event:annotationAdded">Core.Tools.TextSquigglyCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html#event:annotationCreated">Core.Tools.TextSquigglyCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html#event:annotationAdded">Core.Tools.TextStrikeoutCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html#event:annotationCreated">Core.Tools.TextStrikeoutCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html#event:annotationAdded">Core.Tools.TextUnderlineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html#event:annotationCreated">Core.Tools.TextUnderlineCreateTool#event:annotationCreated</a></li><li><a href="Core.WebViewerServerAnnotationManager.html#event:webViewerServerAnnotationsDisabled">Core.WebViewerServerAnnotationManager#event:webViewerServerAnnotationsDisabled</a></li><li><a href="Core.WebViewerServerAnnotationManager.html#event:webViewerServerAnnotationsEnabled">Core.WebViewerServerAnnotationManager#event:webViewerServerAnnotationsEnabled</a></li><li><a href="UI.MentionsManager.html#event:mentionChanged">UI.MentionsManager#event:mentionChanged</a></li><li><a href="UI.html#event:annotationFilterChanged">UI#event:annotationFilterChanged</a></li><li><a href="UI.html#event:beforeTabChanged">UI#event:beforeTabChanged</a></li><li><a href="UI.html#event:compareAnnotationsLoaded">UI#event:compareAnnotationsLoaded</a></li><li><a href="UI.html#event:documentLoaded">UI#event:documentLoaded</a></li><li><a href="UI.html#event:documentMerged">UI#event:documentMerged</a></li><li><a href="UI.html#event:dragOutline">UI#event:dragOutline</a></li><li><a href="UI.html#event:fileDownloaded">UI#event:fileDownloaded</a></li><li><a href="UI.html#event:finishedSavingPDF">UI#event:finishedSavingPDF</a></li><li><a href="UI.html#event:fullscreenModeToggled">UI#event:fullscreenModeToggled</a></li><li><a href="UI.html#event:languageChanged">UI#event:languageChanged</a></li><li><a href="UI.html#event:loaderror">UI#event:loaderror</a></li><li><a href="UI.html#event:multiViewerReady">UI#event:multiViewerReady</a></li><li><a href="UI.html#event:outlineBookmarksChanged">UI#event:outlineBookmarksChanged</a></li><li><a href="UI.html#event:panelResized">UI#event:panelResized</a></li><li><a href="UI.html#event:selectedThumbnailChanged">UI#event:selectedThumbnailChanged</a></li><li><a href="UI.html#event:tabAdded">UI#event:tabAdded</a></li><li><a href="UI.html#event:tabDeleted">UI#event:tabDeleted</a></li><li><a href="UI.html#event:tabMoved">UI#event:tabMoved</a></li><li><a href="UI.html#event:themeChanged">UI#event:themeChanged</a></li><li><a href="UI.html#event:thumbnailDragged">UI#event:thumbnailDragged</a></li><li><a href="UI.html#event:thumbnailDropped">UI#event:thumbnailDropped</a></li><li><a href="UI.html#event:toolbarGroupChanged">UI#event:toolbarGroupChanged</a></li><li><a href="UI.html#event:userBookmarksChanged">UI#event:userBookmarksChanged</a></li><li><a href="UI.html#event:viewerLoaded">UI#event:viewerLoaded</a></li><li><a href="UI.html#event:visibilityChanged">UI#event:visibilityChanged</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#getInstance">getInstance</a></li><li><a href="global.html#WebViewer">WebViewer</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">	
+											<input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+											<div class="input-group-btn">
+												<button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+											</div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: WebViewerInstance</h1>
+<section>
+
+<header>
+    
+        <h2>
+        WebViewerInstance
+        </h2>
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="WebViewerInstance"><span class="type-signature"></span>new WebViewerInstance()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        A single instance of webviewer. Can be retrieved from the
+global WebViewer function.
+
+This class is not instantiable.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id="Core">
+    <h4 id="Core"><span class="type-signature"></span>Core</h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Core namespace on WebViewer instance
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Class.&lt;<a href="Core.html">Core</a>></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="Core.html">Core</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">WebViewer({...options}, document.getElementById(&#x27;viewer&#x27;))
+ .then(webviewerInstance =&gt; {
+   webViewerInstance.Core
+ })</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="UI">
+    <h4 id="UI"><span class="type-signature"></span>UI</h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        UI namespace on WebViewer instance
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Class.&lt;<a href="UI.html">UI</a>></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="UI.html">UI</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">WebViewer({...options}, document.getElementById(&#x27;viewer&#x27;))
+ .then(webviewerInstance =&gt; {
+   webViewerInstance.UI
+ })</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a>
+	
+		on 2022-09-30T06:17:17+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : false,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	
+     
+    
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+</body>
+</html>

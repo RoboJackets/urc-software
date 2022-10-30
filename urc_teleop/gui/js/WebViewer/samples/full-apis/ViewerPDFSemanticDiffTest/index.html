@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../../lib/core/webviewer-core.min.js"></script>
+    <script src="../../../lib/core/pdf/PDFNet.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <!--ga-tag-->
+  </head>
+  <body>
+    <header>
+      <div class="title sample">Diff sample</div>
+    </header>
+    <aside>
+      <div class="PDFDiff">
+        <div class="PageDescription">
+          <p>
+            A demo of the PDF semantic diff capability to compare the text from two versions of a PDF in WebViewer.
+          </p>
+        </div>
+        <div class="PageSection bordered">
+          <h4 class="PageSection title">First File Version (A)</h4>
+          <div class="FilePicker">
+            <div>
+              <input type="file" id="fileUpload1" disabled />
+            </div>
+          </div>
+          <p class="error"></p>
+          <p class="file-name"></p>
+        </div>
+        <div class="PageSection last bordered">
+          <h4 class="PageSection title">Second File Version (B)</h4>
+          <div class="FilePicker">
+            <div>
+              <input type="file" id="fileUpload2" disabled />
+            </div>
+          </div>
+        </div>
+        <p class="error"></p>
+        <p class="file-name"></p>
+        <div class="PageSection">
+          <div id="compareButton" class="Button compare disabled blue">
+            <div class="button-content" style="font-family: sans-serif">
+              <p>Compare</p>
+            </div>
+          </div>
+          <div class="color-legend" style="margin-top: 10px;">
+            <span class="color" style="background-color: black;"></span>
+            <p>Overlaps are displayed as black</p>
+          </div>
+        </div>
+        <div class="PageSection">
+          <h4 class="PageSection title">Recent Comparisons</h4>
+          <div id="recentFiles"></div>
+        </div>
+      </div>
+    </aside>
+    <div id="viewer">
+      <div class="viewerContainer">
+        <div id="viewer1"></div>
+        <div id="viewer2"></div>
+      </div>
+    </div>
+    <script src="../../menu-button.js"></script>
+    <script src="./diff.js"></script>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      if (window.location.href.slice(-1) !== '/' && window.location.href.slice(-4) !== 'html') {
+        // hacky redirect for mac php server...
+        window.location = window.location.href + '/';
+      }
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+    <title>Customization Demo & Samples for JavaScript PDF Viewer</title>
+  </head>
+
+  <body class="pdftron">
+    <header>
+      <div class="container">
+        <div>
+          <a href="https://pdftron.com" target="_blank">
+            <div class="logo"></div>
+          </a>
+          <span class="title">WebViewer</span>
+        </div>
+        <div>
+          <a class="button" href="https://pdftron.com/documentation/web/guides/" target="_blank">Go to Guides</a>
+          <a class="button filled" href="https://pdftron.com/licensing/" target="_blank">Licensing</a>
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="sidebar">
+        <p><b>Samples</b></p>
+
+        <p><a class="" href="../">Viewing</a></p>
+        <p><a class="" href="../annotation">Annotation</a></p>
+        <p><a class="" href="../forms">Forms</a></p>
+        <p><a class="active" href=".">Customization</a></p>
+        <p><a class="" href="../pdf-manipulation">PDF Manipulation</a></p>
+        <p><a class="" href="../advanced">Advanced</a></p>
+        <p><a class="" href="../full-apis">Full apis</a></p>
+
+        <p><b>Showcase</b></p>
+        <p><a href="https://pdftron.com/webviewer/demo" target="_blank">Go to showcase</a></p>
+      </div>
+      <div class="content">
+        <div id="error-message" style="display: none; background-color: red; color: white">Samples are not runnable from the file system. Please run using "npm start" or use a local web server.</div>
+
+        <h1>Demo to Customize PDF Viewer</h1>
+
+        <div>
+          <h4>Internationalization</h4>
+          <p>
+            Shows how to switch language.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./internationalization">Launch demo</a>
+            <a href="./internationalization/internationalization.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Customizing UI</h4>
+          <p>
+            Shows how to customize the UI using WebViewer APIs. Includes modifying header, enabling/disabling features and hiding/showing individual elements.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./ui">Launch demo</a>
+            <a href="./ui/ui.js" target="_self">View Source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      if (window.location.href.indexOf('file://') === 0) {
+        alert('Samples are not runnable from the file system. Please run using "npm start" or use a local web server.');
+        document.getElementById('error-message').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redact faces with PDFTron WebViewer</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #viewer {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+    <link type="text/css" rel="stylesheet" href="./progress.css" />
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <div id="viewer"></div>
+    <script type="text/javascript">
+      var isIE11 = navigator.userAgent.indexOf('Trident/7.0') > -1;
+      if (isIE11) {
+        var viewerElement = document.getElementById('viewer');
+        var messageDiv = document.createElement('div');
+        messageDiv.innerHTML = 'Due to limitations in the 3rd party face recognition library, Internet Explorer 11 is not supported at this time. Sorry for the inconvenience.';
+        viewerElement.appendChild(messageDiv);
+      } else {
+        document.write('<script src="../../../lib/webviewer.min.js"><\/script>');
+        document.write('<script src="face-api.min.js"><\/script>');
+        document.write('<script src="progress.js"><\/script>');
+        document.write('<script src="redact-faces.js"><\/script>');
+      }
+    </script>
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      [].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

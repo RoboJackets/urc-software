@@ -1,0 +1,59 @@
+#viewer.hidden{
+    /* Set height and width to 0px instead of using display:none because of Firefox issues*/
+    height: 0px;
+    width: 0px;
+    margin: 0% !important;
+}
+
+#viewer {
+    width: 100%;
+    -webkit-transition: height 2s; /* Safari */
+    transition: height 2s;
+    margin: 2% 0% !important;
+}
+
+body{
+    display: block !important;
+}
+
+ul li{
+    display: inline;
+}
+
+h2{
+    margin: 0%;
+}
+
+.controlsContainers{
+    border: dashed black;
+    border-width: 0.5px;
+    margin: 2% 0%;
+    margin-top: 70px;
+    padding: 1%;
+}
+
+.control{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.controlSection{
+    vertical-align: top;
+}
+
+.leftControl{
+    width: 47%;
+    margin-right: 3%;
+    border-right: solid gray;
+    border-right-width: 0.5px;
+}
+
+.closeBtnContainer{
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .leftControl {
+        border-right: none;
+    }
+}

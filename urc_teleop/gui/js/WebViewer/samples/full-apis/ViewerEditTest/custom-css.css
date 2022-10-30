@@ -1,0 +1,21 @@
+.Button[data-element="refreshButton"].not-disabled {
+  -webkit-animation: NAME-YOUR-ANIMATION 4s infinite; /* Safari 4+ */
+  -moz-animation:    NAME-YOUR-ANIMATION 4s infinite; /* Fx 5+ */
+  -o-animation:      NAME-YOUR-ANIMATION 4s infinite; /* Opera 12+ */
+  animation:         NAME-YOUR-ANIMATION 4s infinite; /* IE 10+, Fx 29+ */
+}
+
+.Button[data-element="refreshButton"].disabled {
+  opacity: 0.5;
+}
+
+@-webkit-keyframes NAME-YOUR-ANIMATION {
+  0%, 49% {
+      background-color: white;
+      border: 3px solid white;
+  }
+  50%, 100% {
+      background-color: yellow;
+      border: 3px solid black;
+  }
+ }
