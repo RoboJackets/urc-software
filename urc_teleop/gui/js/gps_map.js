@@ -1,6 +1,4 @@
 // GPS map updating
-
-
 var goal_lat;
 var goal_long;
 var pos_lat;
@@ -34,8 +32,8 @@ gps_pos_subscriber.subscribe(function(message) {
 })
 
 WebViewer({
-    path: 'file:///home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/js/WebViewer/lib',
-    initialDoc: 'file:///home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf'
+    path: '/webviewer/lib', //'home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/js/WebViewer/lib',
+    initialDoc: 'https://drive.google.com/file/d/1ht-cYEJDlVmYhDctEeTPMD_Hx26T3e8q/view?usp=sharing'
 }, document.getElementById('viewer')).then(instance => {
     const { documentViewer } = instance.Core;
 })
