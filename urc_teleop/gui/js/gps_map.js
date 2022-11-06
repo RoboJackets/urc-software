@@ -59,6 +59,38 @@ WebViewer({
             documentViewer.updateView();
         })
         
-    })
+    });
+    documentViewer.addEventListener('annotationsLoaded', () => {
+        const annot = new Annotations.PolygonAnnotation({
+          PageNumber: 1,
+          StrokeColor: new Annotations.Color(255, 0, 0, 1),
+          FillColor: new Annotations.Color(255, 0, 0, 1),
+          Locked: true,
+        });
+  
+        annot.addPathPoint(50, 50);
+        annot.addPathPoint(75, 100);
+        annot.addPathPoint(100, 50);
+        annot.addPathPoint(50, 50);
+  
+        annotationManager.addAnnotation(annot);
+        annotationManager.redrawAnnotation(annot);
+      });
+    documentViewer.addEventListener('mouseLeftDown', () => {
+        const annot = new Annotations.PolygonAnnotation({
+          PageNumber: 1,
+          StrokeColor: new Annotations.Color(255, 0, 0, 1),
+          FillColor: new Annotations.Color(255, 0, 0, 1),
+          Locked: true,
+        });
+  
+        annot.addPathPoint(150, 50);
+        annot.addPathPoint(175, 100);
+        annot.addPathPoint(200, 50);
+        annot.addPathPoint(150, 50);
+  
+        annotationManager.addAnnotation(annot);
+        annotationManager.redrawAnnotation(annot);
+      });
     documentViewer.zoomTo(50);
 })
