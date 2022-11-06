@@ -33,7 +33,32 @@ gps_pos_subscriber.subscribe(function(message) {
 
 WebViewer({
     path: 'js/WebViewer/lib', //'home/matthewhannay/colcon_ws/src/urc-software/urc_teleop/gui/js/WebViewer/lib',
-    initialDoc: 'https://raw.githubusercontent.com/RoboJackets/urc-software/feat/gps_interface_pdftron/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf'
+    initialDoc: 'https://raw.githubusercontent.com/RoboJackets/urc-software/feat/gps_interface_pdftron/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf',
+    disabledElements: [
+"header",
+"toolsHeader",
+    ]
 }, document.getElementById('viewer')).then(instance => {
-    const { documentViewer } = instance.Core;
+    const { documentViewer, annotationManager, Annotations } = instance.Core;
+    documentViewer.addEventListener("documentLoaded", () => {
+        const doc = documentViewer.getDocument();
+        doc.getLayersArray().then(layers => {
+            layers.forEach((layer, index) => {
+                console.log(layer.children[0].name);
+                //layers[index].visible = false;
+            })
+            layers[0].visible = false;
+            layers[1].visible = false;
+            for (var i = 0; i < 9; i++) {
+                if (i != 7) {
+                    layers[2].children[i].visible = false;
+                }
+            }
+            doc.setLayersArray(layers);
+            documentViewer.refreshAll();
+            documentViewer.updateView();
+        })
+        
+    })
+    documentViewer.zoomTo(50);
 })
