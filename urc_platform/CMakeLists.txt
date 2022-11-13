@@ -35,8 +35,7 @@ add_library(${PROJECT_NAME} SHARED
   src/main.cpp
   src/motor_controller.cpp
   src/joystick_driver.cpp
-  src/chassis_controller_driver.cpp
-  src/chassis_controller_wrapper.cpp
+  src/motor_controller.cpp
 )
 
 set(dependencies
