@@ -32,7 +32,6 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/main.cpp
   src/motor_controller.cpp
   src/joystick_driver.cpp
   src/motor_controller.cpp
