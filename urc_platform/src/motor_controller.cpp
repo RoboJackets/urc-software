@@ -12,9 +12,7 @@ MotorControllerWrapper::MotorControllerDriver::MotorControllerDriver(
   this->ip_addr_server_ = ip_addr_server;
   this->port_ = port;
 
-  // old
   ip::udp::endpoint endpoint(ip::udp::v4(), port);
-  // ip::udp::endpoint endpoint(ip::address_v4::broadcast(), port);
   this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
 }
 
@@ -46,7 +44,6 @@ MotorControllerWrapper::MotorControllerWrapper(const rclcpp::NodeOptions & optio
   int port_ = declare_parameter<int>("port");
   publish_encoder_ticks_frequency_ = declare_parameter<double>("frequency");
 
-  // driver.reset(new ChassisControllerDriver(ip_addr_server_, port_));
   driver = std::make_unique<MotorControllerDriver>(ip_addr_server_, port_);
 
   _enc_pub = this->create_publisher<urc_msgs::msg::VelocityPair>(
