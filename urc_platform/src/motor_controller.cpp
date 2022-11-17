@@ -5,7 +5,9 @@ namespace motor_controller
 
 namespace ip = boost::asio::ip;
 
-MotorControllerWrapper::MotorControllerDriver::MotorControllerDriver(std::string ip_addr_server, int port)
+MotorControllerWrapper::MotorControllerDriver::MotorControllerDriver(
+  std::string ip_addr_server,
+  int port)
 {
   this->ip_addr_server_ = ip_addr_server;
   this->port_ = port;
@@ -53,7 +55,7 @@ MotorControllerWrapper::MotorControllerWrapper(const rclcpp::NodeOptions & optio
 
   timer_ = this->create_wall_timer(
     std::chrono::duration<double>(1.0 / publish_encoder_ticks_frequency_),
-    [this](){publishEncoderTicks();});
+    [this]() {publishEncoderTicks();});
 }
 
 void MotorControllerWrapper::publishEncoderTicks()
