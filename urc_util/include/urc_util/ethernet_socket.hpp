@@ -24,7 +24,7 @@ public:
   @throw std::runtime_error is socket couldn't open or connect
   */
   EthernetSocket(int port);
-  
+
   /**
   Constructor opens the socket using UDP and binds it to an
   endpoint. This endpoint is constructed using the specified ip address and
