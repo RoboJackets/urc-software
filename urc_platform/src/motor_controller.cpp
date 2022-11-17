@@ -38,7 +38,7 @@ int MotorControllerWrapper::MotorControllerDriver::getPortNumber()
 }
 
 MotorControllerWrapper::MotorControllerWrapper(const rclcpp::NodeOptions & options)
-: rclcpp::Node("chassis_controller", options)
+: rclcpp::Node("motor_controller", options)
 {
   std::string ip_addr_server_ = declare_parameter<std::string>("ip_addr");
   int port_ = declare_parameter<int>("port");

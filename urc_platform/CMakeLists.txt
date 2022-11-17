@@ -55,7 +55,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "motor_controller::MotorController"
+  PLUGIN "motor_controller::MotorControllerWrapper"
   EXECUTABLE ${PROJECT_NAME}_MotorController
 )
 
@@ -63,12 +63,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "chassis_controller::ChassisControllerWrapper"
-  EXECUTABLE ${PROJECT_NAME}_ChassisController
 )
 
 # Install launch files.

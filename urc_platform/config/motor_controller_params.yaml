@@ -1,4 +1,4 @@
-chassis_controller:
+motor_controller:
   ros__parameters:
     ip_addr: "192.168.8.255"
     port: 8443
