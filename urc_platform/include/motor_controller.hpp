@@ -1,77 +1,57 @@
-#ifndef MOTOR_CONTROLLER_H
-#define MOTOR_CONTROLLER_H
+#ifndef MOTOR_CONTROLLER_ROS_WRAPPER
+#define MOTOR_CONTROLLER_ROS_WRAPPER
 
 #include <memory>
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/time.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float64.hpp>
 #include <urc_msgs/msg/velocity_pair.hpp>
-#include <diagnostic_updater/diagnostic_updater.hpp>
-#include <diagnostic_updater/publisher.hpp>
-#include <urc_util/ethernet_socket.hpp>
 #include <urc_nanopb/urc.pb.h>
-
 #include <pb_common.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
 
 namespace motor_controller
 {
-class MotorController : public rclcpp::Node
+
+class MotorControllerWrapper : public rclcpp::Node
 {
 public:
-  explicit MotorController(const rclcpp::NodeOptions & options);
+  explicit MotorControllerWrapper(const rclcpp::NodeOptions & options);
 
 private:
-  urc_msgs::msg::VelocityPair current_motor_command_;
-  rclcpp::Time last_motors_message_;
+  class MotorControllerDriver
+  {
+private:
+    std::string ip_addr_server_;
+    int port_;
+    boost::asio::io_service io_service_;
+    std::unique_ptr<boost::asio::ip::udp::socket> sock_;
 
-  // seconds to wait before stopping if no new motors command comes in
-  double watchdog_delay_;
+public:
+    MotorControllerDriver(std::string ip_addr_server, int port);
+    void start();
+    void stop();
+    void motorsEnable();
+    void motorsDisable();
+    void motorsSleep();
+    bool getEncoderTicks(DriveEncodersMessage & message);
+    int getPortNumber();
+  };
 
-  // pid values
-  double p_l_, p_r_, d_l_, d_r_, i_l_, i_r_;
-  double kv_l_, kv_r_;
-
-  std::string ip_addr_;          // server ip address
-  int tcpport_;                  // server tcp tcp port
-  double min_battery_voltage_;   // min battery voltage before warnings
-  double log_period_;            // Period for logging messages
-  double frequency_;             // communicate frequency_ with the mbed
-  double battery_alpha_;         // alpha value for voltage exponentially weighted moving average
-
-  // current battery voltage
-  double battery_avg_;
-
-  // Ethernet socket of server
-  std::unique_ptr<EthernetSocket> socket_;
-
-  // subscribers
-  rclcpp::Subscription<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_sub;
-
-  // publishers
+  std::unique_ptr<MotorControllerDriver> driver;
   rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _enc_pub;
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr _enabled_pub;
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr _battery_pub;
+  rclcpp::TimerBase::SharedPtr timer_;
+  double publish_encoder_ticks_frequency_;
 
-  // diagnostics
-  std::unique_ptr<diagnostic_updater::Updater> mc_updater_;
-  std::unique_ptr<diagnostic_updater::Updater> battery_updater_;
-
-  double mc_hertz = 0;
-
-  void cmdCallback(const urc_msgs::msg::VelocityPair & msg);
-  void mc_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
-  void battery_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
-
-  void setPID();
-  void sendRequest();
-  void receiveResponse();
-  void publishResponse(const ResponseMessage & response);
+  void publishEncoderTicks();
 };
+
 }
 
 #endif

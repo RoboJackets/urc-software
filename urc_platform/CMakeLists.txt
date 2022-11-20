@@ -22,6 +22,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/motor_controller.cpp
   src/joystick_driver.cpp
+  src/motor_controller.cpp
 )
 
 set(dependencies
@@ -42,7 +43,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "motor_controller::MotorController"
+  PLUGIN "motor_controller::MotorControllerWrapper"
   EXECUTABLE ${PROJECT_NAME}_MotorController
 )
 
