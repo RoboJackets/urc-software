@@ -56,6 +56,35 @@ WebViewer({
     ]
 }, document.getElementById('viewer')).then(instance => {
     const { documentViewer, annotationManager, Annotations } = instance.Core;
+
+    gps_goal_subscriber.subscribe(function(message) {
+        goal_lat = message.latitude;
+        goal_long = message.longitude;
+        
+
+
+        const annot = new Annotations.PolygonAnnotation({
+            PageNumber: 1,
+            StrokeColor: new Annotations.Color(255, 0, 0, 1),
+            FillColor: new Annotations.Color(255, 0, 0, 1),
+            Locked: true,
+        });
+    
+        annot.addPathPoint(50, 50);
+        annot.addPathPoint(75, 100);
+        annot.addPathPoint(100, 50);
+        annot.addPathPoint(50, 50);
+    
+        annotationManager.addAnnotation(annot);
+        annotationManager.redrawAnnotation(annot);
+
+    });
+    
+    gps_pos_subscriber.subscribe(function(message) {
+        pos_lat = message.latitude;
+        pos_long = message.longitude;
+    })
+
     documentViewer.addEventListener("documentLoaded", () => {
         const doc = documentViewer.getDocument();
         doc.getLayersArray().then(layers => {
@@ -74,7 +103,6 @@ WebViewer({
             documentViewer.refreshAll();
             documentViewer.updateView();
         })
-        
     });
     documentViewer.addEventListener('annotationsLoaded', () => {
         const annot = new Annotations.PolygonAnnotation({
