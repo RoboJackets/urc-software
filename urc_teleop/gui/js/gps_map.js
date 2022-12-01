@@ -61,8 +61,8 @@ WebViewer({
     path: 'js/WebViewer/lib',
     initialDoc: 'https://raw.githubusercontent.com/RoboJackets/urc-software/feat/gps_interface_pdftron/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf',
     disabledElements: [
-"header",
-"toolsHeader",
+        "header",
+        "toolsHeader",
     ]
 }, document.getElementById('viewer')).then(instance => {
     const { documentViewer, annotationManager, Annotations } = instance.Core;
@@ -99,10 +99,6 @@ WebViewer({
     documentViewer.addEventListener("documentLoaded", () => {
         const doc = documentViewer.getDocument();
         doc.getLayersArray().then(layers => {
-            layers.forEach((layer, index) => {
-                console.log(layer.children[0].name);
-                //layers[index].visible = false;
-            })
             layers[0].visible = false;
             layers[1].visible = false;
             for (var i = 0; i < 9; i++) {
@@ -134,7 +130,7 @@ WebViewer({
 
         var border_annot = new Annotations.PolygonAnnotation({
             PageNumber: 1,
-            StrokeColor: new Annotations.Color(0, 0, 255, 1),
+            StrokeColor: new Annotations.Color(60, 60, 30, 1),
             FillColor: new Annotations.Color(0, 0, 0, 0),
             Locked: true,
         })

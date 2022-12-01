@@ -1,65 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Walli Teleoperation</title>
-    <style>
-      body {
-        background-color : rgb(30,40,40);
-        text-align: center;
-        color: #FAEBD7;
-        font-family: Futura, "Trebuchet MS", Arial, sans-serif;
-      }
-      h1 {
-        padding-bottom: 2%;
-        background-color: rgb(30,30,30);
-        margin: auto
-      }
-      div {
-        background: #555;
-        color: #FAEBD7; 
-        width: 70%
-      }
-    </style>
-</head>
-<body>
-  <h1>Walli Teleoperation</h1>
-  
-  <h3>Controller Input</h3>
-  <div id="gamepad-display", style="padding: 20px; margin: auto">
-  </div>
-  
-  <h3>Joystick Input</h3>
-  <div id="joystick-display", style="padding: 20px; margin: auto">
-    Work in Progress!
-  </div>
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Walli Teleoperation</title>
+      <link rel="stylesheet" href="style.css">
+  </head>
 
-  <!-- UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf#zoom=1600, 182, 1928 & toolbar = 0 -->
-  <!-- <iframe style="padding:100px; border:none;" src="map.html" width="1500" height="750" id="map_iframe">
-  </iframe> -->
-  <div id="viewer", style="margin: auto; width: 1066px; height: 600px;"></div>
+  <body>
+    <h1>Walli Teleoperation</h1>
 
-  <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-  <script src="js/WebViewer/lib/webviewer.min.js"></script>
-  <script src="js/launch_ros.js"></script>
-  <!-- <script src="js/control.js"></script> -->
-  <script src="js/gps_map.js"></script>
+    <div class="card" id="gamepad-card">
+      <h2 class="card-title" id="gamepad-title">Controller Input</h2>
+      <div class="card-content" id="gamepad-content">
+        <p>Put Content Here</p>
+      </div>
+    </div>
 
-  <div id="statusIndicator", style = "background: none; text-align:left; position: bottom; bottom: 0px; left: 0px; padding: 20px">
-    <p id="connecting">
-      Connecting to rosbridge...
-    </p>
-    <p id="connected" style="color:#00D600; display:none">
-      Connected
-    </p>
-    <p id="error" style="color:#FF0000; display:none">
-      Error in the backend!
-    </p>
-    <p id="closed" style="display:none">
-      Connection closed
-    </p>
-  </div>
+    <div class="card" id="joystick-card">
+      <h2 class="card-title" id="joystick-title">Joystick Input</h2>
+      <div class="card-content" id="joystick-content">
+        <p>Put Content Here</p>
+      </div>
+    </div>
 
-</body>
+    <div class="card" id="viewer-card">
+      <h2 class="card-title" id="viewer-title">Viewer</h2>
+      <div class="card-content" id="viewer"></div>
+    </div>
+
+    <div id="status-indicator">
+      <p id="connecting">
+        Connecting to rosbridge...
+      </p>
+      <p id="connected" style="color: #00D600; display: none">
+        Connected
+      </p>
+      <p id="error" style="color: #FF0000; display: none">
+        Backend Error!
+      </p>
+      <p id="closed" style="display: none">
+        Connection Closed
+      </p>
+    </div>
+
+    <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="js/WebViewer/lib/webviewer.min.js"></script>
+    <script src="js/launch_ros.js"></script>
+    <!-- <script src="js/control.js"></script> -->
+    <script src="js/gps_map.js"></script>
+  </body>
 </html>
