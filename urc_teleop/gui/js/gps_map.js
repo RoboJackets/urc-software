@@ -14,20 +14,17 @@ const tl_x_px = 217;
 const tl_y_px = 175;
 const br_x_px = 1506;
 const br_y_px = 1813;
-const pdf_x_px = 1727;
-const pdf_y_px = 2088;
 
-const lat_per_px = (map_br_lat - map_tl_lat) / (br_y_px - tl_y_px);
-const long_per_px = (map_br_long - map_tl_long) / (br_x_px - tl_x_px);
+const ROVER_ANNOT_LONG_LENGTH = 2;
+const ROVER_ANNOT_SHORT_LENGTH = 1;
+const GOAL_ANNOT_DIAMETER = 5;
 
-const pdf_tl_lat = map_tl_lat - tl_y_px * lat_per_px;
-const pdf_tl_long = map_tl_long - tl_x_px * long_per_px;
-const pdf_br_lat = map_br_lat + (pdf_y_px - br_y_px) * lat_per_px;
-const pdf_br_long = map_br_long + (pdf_x_px - br_x_px) * long_per_px;
-
-const ROVER_ANNOT_LONG_LENGTH = 5;
-const ROVER_ANNOT_SHORT_LENGTH = 3;
-const GOAL_ANNOT_DIAMETER = 10;
+// from index.html
+const VIEWER_WIDTH = 1066;
+const VIEWER_HEIGHT = 600;
+const INITIAL_ZOOM = 7;
+const INITIAL_X_OFFSET = 5500;
+const INITIAL_Y_OFFSET = 7000;
 
 var rover_annot;
 var goal_annot;
@@ -55,8 +52,8 @@ rover_theta_subscriber.subscribe(function(message) {
 })
 
 function getPixelCoordsFromGPS(lat, long) {
-    var x_px = pdf_x_px * (long - pdf_tl_long) / (pdf_br_long - pdf_tl_long);
-    var y_px = pdf_y_px * (lat - pdf_tl_lat) / (pdf_br_lat - pdf_tl_lat);
+    var x_px = (br_x_px - tl_x_px) * (long - map_tl_long) / (map_br_long - map_tl_long) + tl_x_px;
+    var y_px = (br_y_px - tl_y_px) * (lat - map_tl_lat) / (map_br_lat - map_tl_lat) + tl_y_px;
     return [x_px, y_px];
 }
 
@@ -77,7 +74,7 @@ WebViewer({
         var coords_px = getPixelCoordsFromGPS(goal_lat, goal_long);
         var goal_x_px = coords_px[0] - GOAL_ANNOT_DIAMETER/2;
         var goal_y_px = coords_px[1] - GOAL_ANNOT_DIAMETER/2;
-        //console.log("" + goal_x_px + " " + goal_y_px);
+        console.log("" + goal_x_px + " " + goal_y_px);
         
         goal_annot.setX(goal_x_px);
         goal_annot.setY(goal_y_px);
@@ -90,12 +87,12 @@ WebViewer({
 
         var coords_px = getPixelCoordsFromGPS(pos_lat, pos_long);
         var pos_x_px = coords_px[0];
-        var pos_x_px = coords_px[1];
+        var pos_y_px = coords_px[1];
 
-        rover_annot.setPathPoint(0, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta));
-        rover_annot.setPathPoint(1, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta + Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta + Math.PI * 2/3));
-        rover_annot.setPathPoint(2, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta - Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta - Math.PI * 2/3));
-        rover_annot.setPathPoint(3, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta));
+        rover_annot.setPathPoint(0, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta));
+        rover_annot.setPathPoint(1, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta + Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta + Math.PI * 2/3));
+        rover_annot.setPathPoint(2, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta - Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta - Math.PI * 2/3));
+        rover_annot.setPathPoint(3, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta));
         annotationManager.redrawAnnotation(rover_annot);
     });
 
@@ -157,39 +154,7 @@ WebViewer({
 
         annotationManager.addAnnotation(border_annot);
         annotationManager.redrawAnnotation(border_annot);
-    });
 
-    // documentViewer.addEventListener('annotationsLoaded', () => {
-    //     const annot = new Annotations.PolygonAnnotation({
-    //       PageNumber: 1,
-    //       StrokeColor: new Annotations.Color(255, 0, 0, 1),
-    //       FillColor: new Annotations.Color(255, 0, 0, 1),
-    //       Locked: true,
-    //     });
-  
-    //     annot.addPathPoint(50, 50);
-    //     annot.addPathPoint(75, 100);
-    //     annot.addPathPoint(100, 50);
-    //     annot.addPathPoint(50, 50);
-  
-    //     annotationManager.addAnnotation(annot);
-    //     annotationManager.redrawAnnotation(annot);
-    //   });
-    // documentViewer.addEventListener('mouseLeftDown', () => {
-    //     const annot = new Annotations.PolygonAnnotation({
-    //       PageNumber: 1,
-    //       StrokeColor: new Annotations.Color(255, 0, 0, 1),
-    //       FillColor: new Annotations.Color(255, 0, 0, 1),
-    //       Locked: true,
-    //     });
-  
-    //     annot.addPathPoint(150, 50);
-    //     annot.addPathPoint(175, 100);
-    //     annot.addPathPoint(200, 50);
-    //     annot.addPathPoint(150, 50);
-  
-    //     annotationManager.addAnnotation(annot);
-    //     annotationManager.redrawAnnotation(annot);
-    //   });
-    documentViewer.zoomTo(500, pdf_x_px/2, pdf_y_px/2);
+        documentViewer.zoomTo(INITIAL_ZOOM, INITIAL_X_OFFSET, INITIAL_Y_OFFSET);
+    });
 })
