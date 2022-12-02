@@ -5,6 +5,23 @@ function inputDeadzone(num) {
     return Math.abs(num) < 0.02 ? 0 : num;
 }
 
+function checkNonzero(arr) {
+    var nonzero = false;
+    arr.forEach(element => {
+        if (typeof element == typeof 0.0) {
+            if (inputDeadzone(element) != 0) {
+                nonzero = true;
+            }
+        } else {
+            if (inputDeadzone(element.value) != 0) {
+                nonzero = true;
+            }
+        }
+    });
+
+    return nonzero;
+}
+
 const joy_publisher = new ROSLIB.Topic({
   ros : ros,
   name : '/joy',
@@ -27,6 +44,7 @@ function publishMovementInput(gamepad) {
             gamepad.buttons[3].pressed ? 1 : 0
         ]
     });
+    
     joy_publisher.publish(joy_msg)
 }
 
@@ -69,6 +87,11 @@ setInterval(function() {
                 { button_3 : gamepad_list[0].buttons[3].pressed }
             ]
         }
+
+        if (checkNonzero(gamepad_list[0].axes) || checkNonzero(gamepad_list[0].buttons)) {
+            document.getElementById('gamepad').style.boxShadow = '0 0 10px 0 rgba(255, 0, 0, 0.5)';
+        }
+        
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
         publishMovementInput(gamepad_list[0]);
     }
