@@ -1,15 +1,12 @@
 body {
-    background-color: rgb(40, 40, 20);
+    background-color: rgb(60, 60, 20);
     text-align: center;
     color: rgb(235, 235, 235);
-    font-family: "Comic Sans MS", "Comic Sans", sans-serif;
+    font-family: "Arial", sans-serif;
 }
 
-h1 {
-    padding: 20px;
-    background-color: rgb(60, 60, 30);
-    border-radius: 30px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+p {
+    margin: 0px;
 }
 
 .card {
@@ -18,31 +15,50 @@ h1 {
     margin-bottom: 20px;
     margin-left: auto;
     border-radius: 30px;
-    width: 85%;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
 
 .card-title {
-    margin-bottom: 0px;
-    padding: 15px;
-    background-color: rgb(60, 60, 30);
-    border-radius: 20px 20px 0px 0px;
+    margin: 0px;
+    background-color: rgb(90, 90, 30);
+    border-radius: 30px 30px 0px 0px;
 }
 
 .card-content {
-    padding: 15px;
     background-color: rgb(40, 40, 40);
-    border-radius: 0px 0px 20px 20px;
+    border-radius: 0px 0px 30px 30px;
+}
+
+#title {
+    padding: 20px;
+}
+
+#title-data {
+    margin: 0px;
+    padding: 10px 20px 10px 20px;
+}
+
+#viewer-card {
+    width: 85%;
+}
+
+#viewer-title {
+    padding: 15px;
 }
 
 #viewer {
-    padding: 0px;
     height: 600px;
+    padding: 0px;
 }
 
 #status-indicator {
-    background: none;
     text-align: left;
-    position: bottom;
-    padding: 20px;
+}
+
+#connected {
+    color: #00D600;
+}
+
+#error {
+    color: #FF0000;
 }

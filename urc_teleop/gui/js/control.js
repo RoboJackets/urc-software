@@ -1,22 +1,8 @@
 // Joystick publication
 // --------------------
 
-
-// This function is to eliminate an error when integer value
-// floats are passed into rosbridge
-function checkValidity(num) {
-    if (num.toFixed(2) == 1.0) {
-        return 99.9;
-    }
-    else if (num.toFixed(2) == 0.0) {
-        return 0.000001;
-    }
-    else if (num.toFixed(2) == -1.0) {
-        return -99.9;
-    }
-    else {
-        return num;
-    }
+function inputDeadzone(num) {
+    return Math.abs(num) < 0.02 ? 0 : num;
 }
 
 const joy_publisher = new ROSLIB.Topic({
@@ -28,11 +14,11 @@ const joy_publisher = new ROSLIB.Topic({
 function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
         axes: [
-            checkValidity(0.0),
-            checkValidity(gamepad.axes[1]),
-            checkValidity(0.0),
-            checkValidity(0.0),
-            checkValidity(gamepad.axes[3])
+            0.0,
+            inputDeadzone(gamepad.axes[1]),
+            0.0,
+            0.0,
+            inputDeadzone(gamepad.axes[3])
         ],
         buttons: [
             gamepad.buttons[0].pressed ? 1 : 0,
@@ -71,19 +57,16 @@ setInterval(function() {
         const gamepadState = {
             id : gamepad_list[0].id,
             axes: [
-                //left stick
-                gamepad_list[0].axes[0].toFixed(2), // -1 left, 1 right
-                gamepad_list[0].axes[1].toFixed(2),  // -1 up, 1 down
-
-                //right stick
-                gamepad_list[0].axes[2].toFixed(2), // -1 left, 1 right
-                gamepad_list[0].axes[3].toFixed(2)  // -1 up, 1 down
+                inputDeadzone(gamepad_list[0].axes[0].toFixed(2)),
+                inputDeadzone(gamepad_list[0].axes[1].toFixed(2)),
+                inputDeadzone(gamepad_list[0].axes[2].toFixed(2)),
+                inputDeadzone(gamepad_list[0].axes[3].toFixed(2))
             ],
             buttons: [
                 { button_0 : gamepad_list[0].buttons[0].pressed },
-                { button_1 : gamepad_list[0].buttons[1].pressed }, // increase vel
+                { button_1 : gamepad_list[0].buttons[1].pressed },
                 { button_2 : gamepad_list[0].buttons[2].pressed },
-                { button_3 : gamepad_list[0].buttons[3].pressed }  // decrease vel
+                { button_3 : gamepad_list[0].buttons[3].pressed }
             ]
         }
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);

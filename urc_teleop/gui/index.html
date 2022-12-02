@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Walli Teleoperation</title>
       <link rel="stylesheet" href="style.css">
   </head>
 
   <body>
-    <h1>Walli Teleoperation</h1>
+    <div class="card" id="title-card">
+      <h1 class="card-title" id="title">Walli Teleoperation</h1>
+      <div class="card-content" id="title-data">
+        <div id="status-indicator">
+          <p id="connecting">
+            Connecting to rosbridge...
+          </p>
+          <p id="connected" style="display: none">
+            Connected
+          </p>
+          <p id="error" style="display: none">
+            Connection Error
+          </p>
+          <p id="closed" style="display: none">
+            Connection Closed
+          </p>
+        </div>
 
-    <div class="card" id="gamepad-card">
-      <h2 class="card-title" id="gamepad-title">Controller Input</h2>
-      <div class="card-content" id="gamepad-content">
-        <p>Put Content Here</p>
-      </div>
-    </div>
-
-    <div class="card" id="joystick-card">
-      <h2 class="card-title" id="joystick-title">Joystick Input</h2>
-      <div class="card-content" id="joystick-content">
-        <p>Put Content Here</p>
+        <p id="gamepad-display">gamepad</p>
+        <p id="joystick-display">joystick</p>
       </div>
     </div>
 
@@ -29,25 +36,10 @@
       <div class="card-content" id="viewer"></div>
     </div>
 
-    <div id="status-indicator">
-      <p id="connecting">
-        Connecting to rosbridge...
-      </p>
-      <p id="connected" style="color: #00D600; display: none">
-        Connected
-      </p>
-      <p id="error" style="color: #FF0000; display: none">
-        Backend Error!
-      </p>
-      <p id="closed" style="display: none">
-        Connection Closed
-      </p>
-    </div>
-
     <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
     <script src="js/WebViewer/lib/webviewer.min.js"></script>
     <script src="js/launch_ros.js"></script>
-    <!-- <script src="js/control.js"></script> -->
+    <script src="js/control.js"></script>
     <script src="js/gps_map.js"></script>
   </body>
 </html>
