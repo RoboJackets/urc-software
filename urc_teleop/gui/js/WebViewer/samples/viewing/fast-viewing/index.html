@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="stylesheet" href="./fast-viewing.css" />
+
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="title sample">Viewer optimized PDF comparison</div>
+    </header>
+    <aside>
+      <h1>Instructions</h1>
+      <p>
+        Use the dropdown below to view local or remote documents. Press the button after selecting documents to reload the browser and open two versions of the same (regular and viewer optimized PDF)
+        selected file in the viewers.
+      </p>
+      <h2>How to create Viewer Optimized PDF?</h2>
+      <p>
+        Use PDFTron's <a href="https://www.pdftron.com/documentation/web/guides/viewer-optimized-pdf/">DocPub command-line tool</a> or
+        <a href="https://www.pdftron.com/documentation/core/guides/features/optimization/viewer-optimized/">PDFTron SDK</a> to create viewer optimized PDFs.
+      </p>
+
+      <h1>Controls</h1>
+      <h2>Full API mode:</h2>
+      <input type="checkbox" id="isFullAPI" />
+      <h2>Choose files to view</h2>
+      <select id="select1" style="width: 100%">
+        <optgroup label="Regular PDFs">
+          <option value="demo-annotated.pdf" selected>demo-annotated.pdf</option>
+          <option value="construction-drawing-final.pdf">construction-drawing-final.pdf</option>
+          <option value="cheetahs.pdf" selected>cheetahs.pdf</option>
+          <option value="magazine.pdf" selected>magazine.pdf</option>
+          <option value="webviewer-demo.pdf" selected>webviewer-demo.pdf</option>
+        </optgroup>
+      </select>
+
+      <button id="selectControl">Reload and open files</button>
+
+      <h2>Or pass a urls to document</h2>
+      <form id="url-form">
+        First file: <input id="url" type="text" style="width: 100%" /> Second file: <input id="url2" type="text" style="width: 100%" />
+        <input type="submit" value="Reload and open files" />
+      </form>
+    </aside>
+    <div class="diff-sample" id="viewers">
+      <div id="leftPanel" class="viewer"></div>
+      <div id="middlePanel" class="viewer"></div>
+    </div>
+    <script src="../../menu-button.js"></script>
+    <!--Order of these files matter-->
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['fast-viewing.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

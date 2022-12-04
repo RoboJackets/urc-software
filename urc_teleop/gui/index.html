@@ -1,57 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Walli Teleoperation</title>
-    <style>
-      body {
-        background-color : rgb(30,40,40);
-        text-align: center;
-        color: #FAEBD7;
-        font-family: Futura, "Trebuchet MS", Arial, sans-serif;
-      }
-      h1 {
-        padding-bottom: 2%;
-        background-color: rgb(30,30,30);
-        margin: auto
-      }
-      div {
-        background: #555;
-        color: #FAEBD7; 
-        width: 70%
-      }
-    </style>
-</head>
-<body>
-  <h1>Walli Teleoperation</h1>
-  
-  <h3>Controller Input</h3>
-  <div id="gamepad-display", style="padding: 40px; margin: auto">
-  </div>
-  
-  <h3>Joystick Input</h3>
-  <div id="joystick-display", style="padding: 40px; margin: auto">
-    Work in Progress!
-  </div>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Walli Teleoperation</title>
+      <link rel="stylesheet" href="style.css">
+  </head>
 
-  <div id="statusIndicator", style = "background: none; text-align:left; position: absolute; bottom: 0px; left: 0px; padding: 20px">
-    <p id="connecting">
-      Connecting to rosbridge...
-    </p>
-    <p id="connected" style="color:#00D600; display:none">
-      Connected
-    </p>
-    <p id="error" style="color:#FF0000; display:none">
-      Error in the backend!
-    </p>
-    <p id="closed" style="display:none">
-      Connection closed
-    </p>
-  </div>
+  <body>
+    <div class="card" id="title-card">
+      <h1 class="card-title" id="title">Walli Teleoperation</h1>
+      <div class="card-content" id="title-data">
+        <div id="controls-display">
+          <div id="status-indicator">
+            <p id="connecting">
+              Connecting to rosbridge...
+            </p>
+            <p id="connected">
+              Connected
+            </p>
+            <p id="error">
+              Connection Error
+            </p>
+            <p id="closed">
+              Connection Closed
+            </p>
+          </div>
 
-  <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
-  <script src="js/launch_ros.js"></script>
-  <script src="js/control.js"></script>
-</body>
+          <img src="gamepad.png" id="gamepad" width = "75" height = "75" />
+          <img src="joystick.png" id="joystick" width = "75" height = "75" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="viewer-card">
+      <h2 class="card-title" id="viewer-title">Viewer</h2>
+      <div class="card-content" id="viewer"></div>
+    </div>
+
+    <script src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="js/WebViewer/lib/webviewer.min.js"></script>
+    <script src="js/launch_ros.js"></script>
+    <script src="js/control.js"></script>
+    <script src="js/gps_map.js"></script>
+  </body>
 </html>

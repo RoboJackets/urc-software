@@ -1,0 +1,18 @@
+#flipbook {
+  margin: 60px auto 0px 320px;
+  width: calc(100% - 320px);
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 800px) {
+  /* make sure that the sidebar is always on top of the flipbook */
+  aside {
+    z-index: 99;
+  }
+
+  #flipbook {
+    margin-left: 0px;
+    width: 100%;
+  }
+}

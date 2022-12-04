@@ -1,0 +1,452 @@
+* {
+  font-family: "Proxima Nova", sans-serif;
+}
+
+body {
+  padding: 0px 0px 0px 4px;
+}
+
+p {
+  font-size: 14px;
+  color: #485056;
+  margin-bottom: 4px;
+  margin-top: 20px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+#documentation-button {
+  float: right;
+  font-weight: 600;
+}
+
+#resize-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+#resizer {
+  position: relative;
+  border-left: 1px solid #cfd4da;
+  border-right: 1px solid #cfd4da;
+  color: #f1f3f5;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+#autofill-aside {
+  display: flex;
+  flex-direction: column;
+  resize: horizontal;
+  position: initial;
+  background: #F8F9FA;
+  min-width: 300px;
+  width: 60%;
+  height: calc(100% - 52px);
+  padding: 0px;
+}
+
+#viewer {
+  width: 100%;
+  margin-left: 0px;
+  position: initial;
+  box-shadow: none;
+}
+
+#autofill-aside h1 {
+  color:#485056;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+#autofill-aside h2 {
+  font-weight: 600;
+  font-size: 16px;
+  color: #485056;
+}
+
+div.spacer {
+  height:9px;
+}
+
+#autofill-aside .file-formats {
+  display: flex;
+}
+
+#autofill-aside .file-formats ul {
+  flex-grow: 1;
+}
+
+#autofill-header {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+#autofill-form-and-footer {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+#autofill-form {
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #e7ebee;
+  padding-top: 24px;
+  padding-bottom: 32px;
+  padding-right: 12px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+#autofill-form label, #autofill-form th {
+  font-size: 14px;
+  color:#485056;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.je-array-subheader {
+  color: #adb5bd;
+  margin-left: 8px;
+}
+
+#autofill-form th {
+  text-align: left;
+}
+
+#autofill-form td > label {
+  display: none;
+}
+
+#autofill-form > div > h3 > label {
+  font-size: 16px;
+  color: #334758;
+}
+
+#autofill-form > div > h3 {
+  margin-left: 12px;
+}
+
+#autofill-form > div > h3 > button.json-editor-btntype-toggle {
+  display: none;
+}
+
+#or-text-container {
+  display: flex;
+}
+
+#or-text {
+  font-size: 14px;
+  padding: 9px 10px 0px 10px;
+  color: #343A40;
+}
+
+.or-text-line {
+  width: 100%;
+  height: 20px;
+  border-bottom: 1px solid #CFD8E0;
+  text-align: center;
+}
+
+#autofill-form > div > div.je-indented-panel {
+  border-left: none !important;
+  margin-left: 12px;
+  padding-left: 0px;
+}
+
+#file-status {
+  line-height: initial;
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#generate-document-button-container {
+  padding: 20px 12px;
+  background: #f1f3f5;
+  display: flex;
+  align-items: center;
+}
+
+#generate-document-button {
+  background: #1F3058;
+  display: block;
+  padding: 12px 20px;
+  border-radius: 4px;
+  border-width: 0px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 100%;
+  color: white;
+  width: 100%;
+  text-transform: capitalize;
+}
+
+#file-status-and-reset-document-buttton {
+  margin-top: 14px;
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-file-upload {
+  display: block;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 100%;
+  background: #f5f8fa;
+  border-radius: 4px;
+  border: 1px solid #00a5e4;
+  color: #00a5e4;
+  font-weight: 600;
+  font-size: 14px;
+  width: 100%;
+}
+
+.je-modal {
+  display: flex;
+  flex-direction: column;
+  /* position: revert !important; */
+  position: relative !important;
+  left: 0px !important;
+  top: 2px !important;
+  border-radius: 4px;
+  margin-left: 8px;
+  margin-right: 8px;
+  height: 310px;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.je-modal > textarea {
+  overflow-y: auto;
+  border: none;
+  height: inherit !important;
+  background: #f8f9fa;
+  color: #485056;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.3px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.je-editjson-modal-buttons {
+  background: #f1f3f5;
+  display: flex;
+}
+
+.json-editor-btn-cancel, .json-editor-btn-save {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 100%;
+  width: 100%;
+}
+
+.json-editor-btn-cancel {
+  color: #1e3c74;
+  background-color: transparent;
+}
+
+.json-editor-btn-save {
+  color: #ffffff;
+  background-color: #1f3058;
+  border-radius: 4px;
+}
+
+#file-picker {
+  display:none;
+}
+
+#samples-file-picker {
+  font-size: 15px !important;
+  font-weight: 600;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  color: #343a40;
+  background: white;
+  border: 1px solid #a0a6ab;
+  border-radius: 4px;
+}
+
+.autofill-initial-hidden {
+  display: none !important;
+}
+
+.autofill-form-error {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#autofill-form table {
+  border-collapse: collapse;
+}
+
+#autofill-form table thead th {
+  border-bottom: 1px solid #E7EBEE;
+}
+
+#autofill-form td {
+  position: relative;
+  min-width: 112px;
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+#autofill-form td.je-table-controls-cell {
+  min-width: 0px;
+}
+
+div.row {
+  margin-top: 14px;
+  margin-bottom: 14px;
+  margin-right: 0px;
+}
+
+#autofill-form input[type=text], .je-textarea {
+  border-radius: 4px;
+  color: #868e96;
+  line-height: 20px;
+  font-size: 16px;
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  height: 46px !important;
+  overflow-y: hidden;
+  resize: none;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.je-textarea {
+  padding-right: 28px;
+}
+
+.je-textarea.expanded {
+  height: 222px !important;
+  overflow-y: auto;
+}
+
+td .je-textarea.expanded {
+  min-width: 212px;
+}
+
+td .je-object__container {
+  min-width: 170px;
+}
+
+.je-header {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.je-switcher {
+  padding: 0px !important;
+  font-style: normal !important;
+  color: #868E96;
+  position: unset;
+  /* float: right; */  /* TODO: this breaks things! */
+  margin-right: 12px;
+  margin-top: 0px;
+}
+
+#reset-document-button {
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00a5e4;
+  white-space: nowrap;
+}
+
+.json-editor-btntype-delete, .json-editor-btntype-add,
+.json-editor-btntype-toggle, .json-editor-btntype-editjson,
+.json-editor-btn-expandinput, .json-editor-btn-collapseinput,
+.json-editor-btntype-copy {
+  padding: 0px;
+  margin: 0px 0px 0px 0px !important;
+  background: transparent;
+}
+
+.json-editor-btntype-copy {
+  position: absolute;
+  padding: 6px;
+  top: 10px;
+  right: 14px;
+}
+
+.json-editor-btntype-editjson {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  margin-right: 4px;
+  color: #868e96;
+}
+
+.je-object__container > span > .json-editor-btntype-delete {
+  position: absolute;
+  right: 72px;
+  top: 11px;
+}
+
+.json-editor-btn-delete > span, .json-editor-btn-copy > span {
+  display: none;
+}
+
+.je-textarea-container {
+  position: relative;
+}
+
+.json-editor-btn-expandinput, .json-editor-btn-collapseinput {
+  position: absolute;
+  padding: 4px;
+  top: 17px;
+  right: 10px;
+}
+
+.json-editor-btn-add {
+  margin-left: 20px !important;
+}
+
+.json-editor-btn-add > span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00a5e4;
+  margin-left: 8px;
+}
+
+td .json-editor-btntype-delete {
+  padding: 2px;
+  margin-top: 29px !important;
+}
+
+.je-indented-panel {
+  border-left: 1px solid #cfd8e0 !important;
+}
+
+div.je-table-panel {
+  overflow-x: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-left: 0px !important;
+  border-left: none !important;
+  background: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  border-radius: 12px;
+}
+
+.je-checkbox {
+  margin-left: 0px !important;
+  margin-right: 12px;
+}

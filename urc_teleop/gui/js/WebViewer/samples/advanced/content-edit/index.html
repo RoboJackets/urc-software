@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../global.js"></script>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="title sample">Content editing sample</div>
+    </header>
+    <aside>
+      <h1>Instructions</h1>
+      <p>This sample automatically enables content editing mode where text and images are editable.</p>
+      <p>Editable content will be surrounded by a dashed rectangle and this can be selected to move, delete or edit the content.</p>
+      <p>If you would like to leave editing mode you can switch from "Edit Text" to another toolbar group.</p>
+      <h2>Pass a url to a document</h2>
+      <form id="url-form">
+        <input id="url" type="text" style="width: 100%" />
+        <input type="submit" value="Submit" />
+      </form>
+      <h2>Or choose your own</h2>
+      <input id="file-picker" type="file" accept=".pdf" />
+    </aside>
+    <div id="viewer"></div>
+    <script src="../../menu-button.js"></script>
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['content-edit.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

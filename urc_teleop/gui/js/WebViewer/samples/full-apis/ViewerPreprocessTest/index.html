@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../modernizr.custom.min.js"></script>
+    <!--ga-tag-->
+  </head>
+
+  <body style="width:100%;height:100%;margin:0px;padding:0px;overflow:hidden">
+    <div id="viewer" style="height: 100%; overflow: hidden;"></div>
+    <script>
+      /* global Modernizr */
+      const viewerElement = document.getElementById('viewer');
+      Modernizr.addTest('async', function() {
+        try {
+          let result;
+          // eslint-disable-next-line no-eval
+          eval('const a = () => {result = "success"}; const b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+      const script = Modernizr.async ? 'ViewerPreprocessTest.js' : 'ViewerPreprocessTest.ES5.js';
+      // eslint-disable-next-line no-unused-vars
+      WebViewer(
+        {
+          type: 'html5',
+          path: '../../../lib',
+          config: script,
+          documentType: 'pdf',
+          showLocalFilePicker: true,
+          enableAnnotations: true,
+          fullAPI: true,
+        },
+        viewerElement
+      );
+    </script>
+  </body>
+</html>

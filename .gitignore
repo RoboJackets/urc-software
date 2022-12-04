@@ -29,7 +29,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+lib/*
+!WebViewer/lib/*
 lib64/
 parts/
 sdist/

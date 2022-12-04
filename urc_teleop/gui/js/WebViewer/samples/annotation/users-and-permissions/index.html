@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../global.js"></script>
+    <title>JavaScript PDF Viewer User Permission Demo</title>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="title sample">User Permission Demo for PDF Viewer</div>
+    </header>
+    <aside>
+      <h1>Controls</h1>
+      <h2>Select user:</h2>
+      <input type="radio" name="user" id="justin" checked />
+      <label for="justin">Justin (Admin)</label>
+      <br />
+      <input type="radio" name="user" id="sally" />
+      <label for="sally">Sally (User)</label>
+      <br />
+      <input type="radio" name="user" id="brian" />
+      <label for="brian">Brian (Read only)</label>
+      <br />
+      <h2>Set display option:</h2>
+      <input type="checkbox" id="display" checked />
+      <label for="display">Show annotations created by others</label>
+      <hr />
+      <h1>Instructions</h1>
+      <p>Use the buttons to switch between users and show/hide annotations created by others. Each user has different permission levels:</p>
+      <ul>
+        <li><b>Admin:</b> Fully allowed to create/reply/edit/delete any annotations</li>
+        <li><b>User:</b> Allowed to create/reply any annotations, but only allowed to edit/delete his/her own annotations</li>
+        <li><b>Read only:</b> Not allowed to create/reply/edit/delete any annotations</li>
+      </ul>
+    </aside>
+    <div id="viewer"></div>
+    <script src="../../menu-button.js"></script>
+
+    <!--ga-tag-->
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['users-and-permissions.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

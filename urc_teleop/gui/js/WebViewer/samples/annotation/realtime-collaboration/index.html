@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../global.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.5.3/firebase.js"></script>
+
+    <title>JavaScript PDF Viewer Collaboration Demo</title>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="title sample">Collaboration Demo for PDF Viewer</div>
+    </header>
+    <aside>
+      <h1>Controls</h1>
+      <h2>Share this url:</h2>
+      <input id="url" type="text" style="width: calc(100% - 8px); padding: 2px" readonly />
+      <br />
+      <button id="copy">Copy</button>
+
+      <h2>Choose a file to view</h2>
+      <select id="select" style="width: 100%">
+        <option value="https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf">https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf</option>
+
+        <option value="https://pdftron.s3.amazonaws.com/downloads/pl/report.docx">https://pdftron.s3.amazonaws.com/downloads/pl/report.docx</option>
+        <option value="https://pdftron.s3.amazonaws.com/downloads/pl/presentation.pptx">https://pdftron.s3.amazonaws.com/downloads/pl/presentation.pptx</option>
+      </select>
+      <hr />
+
+      <h1>Instructions</h1>
+      <p>
+        Type your name when the prompt comes up. It will set your username and log you in to the realtime collaboration backend. Please note that the backend is being shared globally, so you might see
+        annotations created by strangers.
+      </p>
+      <p>Share the link with others in your local network to start collaborating!</p>
+    </aside>
+    <div id="viewer"></div>
+    <script src="../../menu-button.js"></script>
+
+    <!--ga-tag-->
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['server.js', 'realtime-collaboration.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

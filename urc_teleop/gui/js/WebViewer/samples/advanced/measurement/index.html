@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../global.js"></script>
+    <title>JavaScript PDF Viewer Measurement Demo</title>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="title sample">Measurement Demo for PDF Viewer</div>
+    </header>
+    <aside>
+      <h1>Controls</h1>
+      <h2>Choose a file to view</h2>
+      <select id="select" style="width: 100%">
+        <option value="../../../samples/files/houseplan-A.pdf">../../../samples/files/houseplan-A.pdf</option>
+      </select>
+      <h2>Or pass a url to a document</h2>
+      <form id="url-form">
+        <input id="url" type="text" style="width: 100%" />
+        <input type="submit" value="Submit" />
+      </form>
+      <h2>Or choose your own</h2>
+      <input id="file-picker" type="file" accept=".pdf,.jpg,.jpeg,.png,.docx,.xlsx,.pptx,.md" />
+      <hr />
+      <h1>Instructions</h1>
+      <p>Select the measurement tool from toolbar and create annotations that measure distance, perimeter and area.</p>
+      <p>Click on the measurement tool button to open the overlay in which you can change the scale and the precision.</p>
+      <p>View the distance, perimeter and area in the opened left panel.</p>
+      <p>From the measurement tool styles dropdown, you can check the checkbox to enable snapping for all measurement tools.</p>
+    </aside>
+    <div id="viewer"></div>
+    <script src="../../menu-button.js"></script>
+
+    <!--ga-tag-->
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['measurement-viewer.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

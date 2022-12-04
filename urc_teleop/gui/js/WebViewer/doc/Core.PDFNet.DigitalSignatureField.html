@@ -1,0 +1,8553 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>PDFTron WebViewer Class: DigitalSignatureField</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.pdftron.css">
+	
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">PDFTron WebViewer</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.html">Core</a></li><li><a href="Core.Actions.html">Core.Actions</a></li><li><a href="Core.Annotations.html">Core.Annotations</a></li><li><a href="Core.ContentEdit.html">Core.ContentEdit</a></li><li><a href="Core.Math.html">Core.Math</a></li><li><a href="Core.PartRetrievers.html">Core.PartRetrievers</a></li><li><a href="Core.PDFNet.html">Core.PDFNet</a></li><li><a href="Core.Search.html">Core.Search</a></li><li><a href="Core.Tools.html">Core.Tools</a></li><li><a href="UI.html">UI</a></li><li><a href="UI.Fonts.html">UI.Fonts</a></li><li><a href="UI.Hotkeys.html">UI.Hotkeys</a></li><li><a href="UI.NotesPanel.html">UI.NotesPanel</a></li><li><a href="UI.OutlinesPanel.html">UI.OutlinesPanel</a></li><li><a href="UI.TabManager.html">UI.TabManager</a></li><li><a href="UI.ThumbnailsPanel.html">UI.ThumbnailsPanel</a></li><li><a href="UI.VerificationOptions.html">UI.VerificationOptions</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.Actions.Action.html">Core.Actions.Action</a></li><li><a href="Core.Actions.Dest.html">Core.Actions.Dest</a></li><li><a href="Core.Actions.GoTo.html">Core.Actions.GoTo</a></li><li><a href="Core.Actions.GoToR.html">Core.Actions.GoToR</a></li><li><a href="Core.Actions.Hide.html">Core.Actions.Hide</a></li><li><a href="Core.Actions.JavaScript.html">Core.Actions.JavaScript</a></li><li><a href="Core.Actions.Named.html">Core.Actions.Named</a></li><li><a href="Core.Actions.ResetForm.html">Core.Actions.ResetForm</a></li><li><a href="Core.Actions.SubmitForm.html">Core.Actions.SubmitForm</a></li><li><a href="Core.Actions.URI.html">Core.Actions.URI</a></li><li><a href="Core.AnnotationHistoryManager.html">Core.AnnotationHistoryManager</a></li><li><a href="Core.AnnotationManager.html">Core.AnnotationManager</a></li><li><a href="Core.Annotations.Annotation.html">Core.Annotations.Annotation</a></li><li><a href="Core.Annotations.ArcAnnotation.html">Core.Annotations.ArcAnnotation</a></li><li><a href="Core.Annotations.Border.html">Core.Annotations.Border</a></li><li><a href="Core.Annotations.BoxControlHandle.html">Core.Annotations.BoxControlHandle</a></li><li><a href="Core.Annotations.BoxSelectionModel.html">Core.Annotations.BoxSelectionModel</a></li><li><a href="Core.Annotations.ButtonWidgetAnnotation.html">Core.Annotations.ButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.CalloutControlHandle.html">Core.Annotations.CalloutControlHandle</a></li><li><a href="Core.Annotations.CalloutSelectionModel.html">Core.Annotations.CalloutSelectionModel</a></li><li><a href="Core.Annotations.CanvasHelper.html">Core.Annotations.CanvasHelper</a></li><li><a href="Core.Annotations.CaretAnnotation.html">Core.Annotations.CaretAnnotation</a></li><li><a href="Core.Annotations.CheckButtonWidgetAnnotation.html">Core.Annotations.CheckButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.ChoiceWidgetAnnotation.html">Core.Annotations.ChoiceWidgetAnnotation</a></li><li><a href="Core.Annotations.Color.html">Core.Annotations.Color</a></li><li><a href="Core.Annotations.ControlHandle.html">Core.Annotations.ControlHandle</a></li><li><a href="Core.Annotations.CustomAnnotation.html">Core.Annotations.CustomAnnotation</a></li><li><a href="Core.Annotations.DatePickerWidgetAnnotation.html">Core.Annotations.DatePickerWidgetAnnotation</a></li><li><a href="Core.Annotations.EllipseAnnotation.html">Core.Annotations.EllipseAnnotation</a></li><li><a href="Core.Annotations.FileAttachmentAnnotation.html">Core.Annotations.FileAttachmentAnnotation</a></li><li><a href="Core.Annotations.FileAttachmentUtils.html">Core.Annotations.FileAttachmentUtils</a></li><li><a href="Core.Annotations.Font.html">Core.Annotations.Font</a></li><li><a href="Core.Annotations.Forms.html">Core.Annotations.Forms</a></li><li><a href="Core.Annotations.Forms.EmbeddedJS.html">Core.Annotations.Forms.EmbeddedJS</a></li><li><a href="Core.Annotations.Forms.Field.html">Core.Annotations.Forms.Field</a></li><li><a href="Core.Annotations.Forms.FieldManager.html">Core.Annotations.Forms.FieldManager</a></li><li><a href="Core.Annotations.FreeHandAnnotation.html">Core.Annotations.FreeHandAnnotation</a></li><li><a href="Core.Annotations.FreeTextAnnotation.html">Core.Annotations.FreeTextAnnotation</a></li><li><a href="Core.Annotations.FreeTextAnnotation.RichTextEditor.html">Core.Annotations.FreeTextAnnotation.RichTextEditor</a></li><li><a href="Core.Annotations.FreeTextSelectionModel.html">Core.Annotations.FreeTextSelectionModel</a></li><li><a href="Core.Annotations.HTMLAnnotation.html">Core.Annotations.HTMLAnnotation</a></li><li><a href="Core.Annotations.IPathAnnotation.html">Core.Annotations.IPathAnnotation</a></li><li><a href="Core.Annotations.LineAnnotation.html">Core.Annotations.LineAnnotation</a></li><li><a href="Core.Annotations.LineControlHandle.html">Core.Annotations.LineControlHandle</a></li><li><a href="Core.Annotations.LineSelectionModel.html">Core.Annotations.LineSelectionModel</a></li><li><a href="Core.Annotations.Link.html">Core.Annotations.Link</a></li><li><a href="Core.Annotations.ListWidgetAnnotation.html">Core.Annotations.ListWidgetAnnotation</a></li><li><a href="Core.Annotations.MarkupAnnotation.html">Core.Annotations.MarkupAnnotation</a></li><li><a href="Core.Annotations.Model3D.html">Core.Annotations.Model3D</a></li><li><a href="Core.Annotations.PathControlHandle.html">Core.Annotations.PathControlHandle</a></li><li><a href="Core.Annotations.PathSelectionModel.html">Core.Annotations.PathSelectionModel</a></li><li><a href="Core.Annotations.PolygonAnnotation.html">Core.Annotations.PolygonAnnotation</a></li><li><a href="Core.Annotations.PolygonControlHandle.html">Core.Annotations.PolygonControlHandle</a></li><li><a href="Core.Annotations.PolygonSelectionModel.html">Core.Annotations.PolygonSelectionModel</a></li><li><a href="Core.Annotations.PolylineAnnotation.html">Core.Annotations.PolylineAnnotation</a></li><li><a href="Core.Annotations.PopupAnnotation.html">Core.Annotations.PopupAnnotation</a></li><li><a href="Core.Annotations.RadioButtonWidgetAnnotation.html">Core.Annotations.RadioButtonWidgetAnnotation</a></li><li><a href="Core.Annotations.RectangleAnnotation.html">Core.Annotations.RectangleAnnotation</a></li><li><a href="Core.Annotations.RedactionAnnotation.html">Core.Annotations.RedactionAnnotation</a></li><li><a href="Core.Annotations.RedactionSelectionModel.html">Core.Annotations.RedactionSelectionModel</a></li><li><a href="Core.Annotations.RotationControlHandle.html">Core.Annotations.RotationControlHandle</a></li><li><a href="Core.Annotations.RotationUtils.html">Core.Annotations.RotationUtils</a></li><li><a href="Core.Annotations.SelectionAlgorithm.html">Core.Annotations.SelectionAlgorithm</a></li><li><a href="Core.Annotations.SelectionModel.html">Core.Annotations.SelectionModel</a></li><li><a href="Core.Annotations.SignatureWidgetAnnotation.html">Core.Annotations.SignatureWidgetAnnotation</a></li><li><a href="Core.Annotations.SoundAnnotation.html">Core.Annotations.SoundAnnotation</a></li><li><a href="Core.Annotations.StampAnnotation.html">Core.Annotations.StampAnnotation</a></li><li><a href="Core.Annotations.StickyAnnotation.html">Core.Annotations.StickyAnnotation</a></li><li><a href="Core.Annotations.TextHighlightAnnotation.html">Core.Annotations.TextHighlightAnnotation</a></li><li><a href="Core.Annotations.TextMarkupAnnotation.html">Core.Annotations.TextMarkupAnnotation</a></li><li><a href="Core.Annotations.TextRedactAnnotation.html">Core.Annotations.TextRedactAnnotation</a></li><li><a href="Core.Annotations.TextSelectionModel.html">Core.Annotations.TextSelectionModel</a></li><li><a href="Core.Annotations.TextSquigglyAnnotation.html">Core.Annotations.TextSquigglyAnnotation</a></li><li><a href="Core.Annotations.TextStrikeoutAnnotation.html">Core.Annotations.TextStrikeoutAnnotation</a></li><li><a href="Core.Annotations.TextUnderlineAnnotation.html">Core.Annotations.TextUnderlineAnnotation</a></li><li><a href="Core.Annotations.TextWidgetAnnotation.html">Core.Annotations.TextWidgetAnnotation</a></li><li><a href="Core.Annotations.WidgetAnnotation.html">Core.Annotations.WidgetAnnotation</a></li><li><a href="Core.Annotations.WidgetFlags.html">Core.Annotations.WidgetFlags</a></li><li><a href="Core.Annotations.XFDFUtils.html">Core.Annotations.XFDFUtils</a></li><li><a href="Core.Bookmark.html">Core.Bookmark</a></li><li><a href="Core.ContentEditManager.html">Core.ContentEditManager</a></li><li><a href="Core.DisplayMode.html">Core.DisplayMode</a></li><li><a href="Core.DisplayModeManager.html">Core.DisplayModeManager</a></li><li><a href="Core.Document.html">Core.Document</a></li><li><a href="Core.DocumentViewer.html">Core.DocumentViewer</a></li><li><a href="Core.EditBoxManager.html">Core.EditBoxManager</a></li><li><a href="Core.EventHandler.html">Core.EventHandler</a></li><li><a href="Core.FormFieldCreationManager.html">Core.FormFieldCreationManager</a></li><li><a href="Core.Math.Matrix.html">Core.Math.Matrix</a></li><li><a href="Core.Math.Point.html">Core.Math.Point</a></li><li><a href="Core.Math.Quad.html">Core.Math.Quad</a></li><li><a href="Core.Math.Rect.html">Core.Math.Rect</a></li><li><a href="Core.Math.TransformationBuilder.html">Core.Math.TransformationBuilder</a></li><li><a href="Core.MeasurementManager.html">Core.MeasurementManager</a></li><li><a href="Core.PartRetrievers.PartRetriever.html">Core.PartRetrievers.PartRetriever</a></li><li><a href="Core.PDFNet.Action.html">Core.PDFNet.Action</a></li><li><a href="Core.PDFNet.ActionParameter.html">Core.PDFNet.ActionParameter</a></li><li><a href="Core.PDFNet.Annot.html">Core.PDFNet.Annot</a></li><li><a href="Core.PDFNet.AnnotBorderStyle.html">Core.PDFNet.AnnotBorderStyle</a></li><li><a href="Core.PDFNet.AttrObj.html">Core.PDFNet.AttrObj</a></li><li><a href="Core.PDFNet.Bookmark.html">Core.PDFNet.Bookmark</a></li><li><a href="Core.PDFNet.ByteRange.html">Core.PDFNet.ByteRange</a></li><li><a href="Core.PDFNet.CaretAnnot.html">Core.PDFNet.CaretAnnot</a></li><li><a href="Core.PDFNet.CharData.html">Core.PDFNet.CharData</a></li><li><a href="Core.PDFNet.CheckBoxWidget.html">Core.PDFNet.CheckBoxWidget</a></li><li><a href="Core.PDFNet.ChunkRenderer.html">Core.PDFNet.ChunkRenderer</a></li><li><a href="Core.PDFNet.CircleAnnot.html">Core.PDFNet.CircleAnnot</a></li><li><a href="Core.PDFNet.ClassMap.html">Core.PDFNet.ClassMap</a></li><li><a href="Core.PDFNet.ColorPt.html">Core.PDFNet.ColorPt</a></li><li><a href="Core.PDFNet.ColorSpace.html">Core.PDFNet.ColorSpace</a></li><li><a href="Core.PDFNet.ComboBoxWidget.html">Core.PDFNet.ComboBoxWidget</a></li><li><a href="Core.PDFNet.ContentItem.html">Core.PDFNet.ContentItem</a></li><li><a href="Core.PDFNet.ContentReplacer.html">Core.PDFNet.ContentReplacer</a></li><li><a href="Core.PDFNet.ConversionMonitor.html">Core.PDFNet.ConversionMonitor</a></li><li><a href="Core.PDFNet.Convert.html">Core.PDFNet.Convert</a></li><li><a href="Core.PDFNet.Convert.AdvancedImagingConvertOptions.html">Core.PDFNet.Convert.AdvancedImagingConvertOptions</a></li><li><a href="Core.PDFNet.Convert.ConversionOptions.html">Core.PDFNet.Convert.ConversionOptions</a></li><li><a href="Core.PDFNet.Convert.EPUBOutputOptions.html">Core.PDFNet.Convert.EPUBOutputOptions</a></li><li><a href="Core.PDFNet.Convert.HTMLOutputOptions.html">Core.PDFNet.Convert.HTMLOutputOptions</a></li><li><a href="Core.PDFNet.Convert.OfficeToPDFOptions.html">Core.PDFNet.Convert.OfficeToPDFOptions</a></li><li><a href="Core.PDFNet.Convert.SVGOutputOptions.html">Core.PDFNet.Convert.SVGOutputOptions</a></li><li><a href="Core.PDFNet.Convert.TiffOutputOptions.html">Core.PDFNet.Convert.TiffOutputOptions</a></li><li><a href="Core.PDFNet.Convert.XODOutputOptions.html">Core.PDFNet.Convert.XODOutputOptions</a></li><li><a href="Core.PDFNet.Convert.XPSOutputCommonOptions.html">Core.PDFNet.Convert.XPSOutputCommonOptions</a></li><li><a href="Core.PDFNet.Convert.XPSOutputOptions.html">Core.PDFNet.Convert.XPSOutputOptions</a></li><li><a href="Core.PDFNet.Date.html">Core.PDFNet.Date</a></li><li><a href="Core.PDFNet.Destination.html">Core.PDFNet.Destination</a></li><li><a href="Core.PDFNet.Destroyable.html">Core.PDFNet.Destroyable</a></li><li><a href="Core.PDFNet.DictIterator.html">Core.PDFNet.DictIterator</a></li><li><a href="Core.PDFNet.DigestAlgorithm.html">Core.PDFNet.DigestAlgorithm</a></li><li><a href="Core.PDFNet.DigitalSignatureField.html">Core.PDFNet.DigitalSignatureField</a></li><li><a href="Core.PDFNet.DisallowedChange.html">Core.PDFNet.DisallowedChange</a></li><li><a href="Core.PDFNet.DocSnapshot.html">Core.PDFNet.DocSnapshot</a></li><li><a href="Core.PDFNet.Element.html">Core.PDFNet.Element</a></li><li><a href="Core.PDFNet.ElementBuilder.html">Core.PDFNet.ElementBuilder</a></li><li><a href="Core.PDFNet.ElementReader.html">Core.PDFNet.ElementReader</a></li><li><a href="Core.PDFNet.ElementWriter.html">Core.PDFNet.ElementWriter</a></li><li><a href="Core.PDFNet.EmbeddedTimestampVerificationResult.html">Core.PDFNet.EmbeddedTimestampVerificationResult</a></li><li><a href="Core.PDFNet.FDFDoc.html">Core.PDFNet.FDFDoc</a></li><li><a href="Core.PDFNet.FDFDoc.XFDFExportOptions.html">Core.PDFNet.FDFDoc.XFDFExportOptions</a></li><li><a href="Core.PDFNet.FDFField.html">Core.PDFNet.FDFField</a></li><li><a href="Core.PDFNet.Field.html">Core.PDFNet.Field</a></li><li><a href="Core.PDFNet.FileAttachmentAnnot.html">Core.PDFNet.FileAttachmentAnnot</a></li><li><a href="Core.PDFNet.FileSpec.html">Core.PDFNet.FileSpec</a></li><li><a href="Core.PDFNet.Filter.html">Core.PDFNet.Filter</a></li><li><a href="Core.PDFNet.FilterReader.html">Core.PDFNet.FilterReader</a></li><li><a href="Core.PDFNet.FilterWriter.html">Core.PDFNet.FilterWriter</a></li><li><a href="Core.PDFNet.Flattener.html">Core.PDFNet.Flattener</a></li><li><a href="Core.PDFNet.Font.html">Core.PDFNet.Font</a></li><li><a href="Core.PDFNet.FreeTextAnnot.html">Core.PDFNet.FreeTextAnnot</a></li><li><a href="Core.PDFNet.Function.html">Core.PDFNet.Function</a></li><li><a href="Core.PDFNet.GeometryCollection.html">Core.PDFNet.GeometryCollection</a></li><li><a href="Core.PDFNet.GState.html">Core.PDFNet.GState</a></li><li><a href="Core.PDFNet.HighlightAnnot.html">Core.PDFNet.HighlightAnnot</a></li><li><a href="Core.PDFNet.Highlights.html">Core.PDFNet.Highlights</a></li><li><a href="Core.PDFNet.Image.html">Core.PDFNet.Image</a></li><li><a href="Core.PDFNet.InkAnnot.html">Core.PDFNet.InkAnnot</a></li><li><a href="Core.PDFNet.Iterator.html">Core.PDFNet.Iterator</a></li><li><a href="Core.PDFNet.KeyStrokeActionResult.html">Core.PDFNet.KeyStrokeActionResult</a></li><li><a href="Core.PDFNet.KeyStrokeEventData.html">Core.PDFNet.KeyStrokeEventData</a></li><li><a href="Core.PDFNet.LineAnnot.html">Core.PDFNet.LineAnnot</a></li><li><a href="Core.PDFNet.LinkAnnot.html">Core.PDFNet.LinkAnnot</a></li><li><a href="Core.PDFNet.ListBoxWidget.html">Core.PDFNet.ListBoxWidget</a></li><li><a href="Core.PDFNet.MarkupAnnot.html">Core.PDFNet.MarkupAnnot</a></li><li><a href="Core.PDFNet.Matrix2D.html">Core.PDFNet.Matrix2D</a></li><li><a href="Core.PDFNet.MovieAnnot.html">Core.PDFNet.MovieAnnot</a></li><li><a href="Core.PDFNet.NameTree.html">Core.PDFNet.NameTree</a></li><li><a href="Core.PDFNet.NumberTree.html">Core.PDFNet.NumberTree</a></li><li><a href="Core.PDFNet.Obj.html">Core.PDFNet.Obj</a></li><li><a href="Core.PDFNet.ObjectIdentifier.html">Core.PDFNet.ObjectIdentifier</a></li><li><a href="Core.PDFNet.ObjSet.html">Core.PDFNet.ObjSet</a></li><li><a href="Core.PDFNet.OCG.html">Core.PDFNet.OCG</a></li><li><a href="Core.PDFNet.OCGConfig.html">Core.PDFNet.OCGConfig</a></li><li><a href="Core.PDFNet.OCGContext.html">Core.PDFNet.OCGContext</a></li><li><a href="Core.PDFNet.OCMD.html">Core.PDFNet.OCMD</a></li><li><a href="Core.PDFNet.OCRModule.html">Core.PDFNet.OCRModule</a></li><li><a href="Core.PDFNet.Optimizer.html">Core.PDFNet.Optimizer</a></li><li><a href="Core.PDFNet.Optimizer.ImageSettings.html">Core.PDFNet.Optimizer.ImageSettings</a></li><li><a href="Core.PDFNet.Optimizer.MonoImageSettings.html">Core.PDFNet.Optimizer.MonoImageSettings</a></li><li><a href="Core.PDFNet.Optimizer.OptimizerSettings.html">Core.PDFNet.Optimizer.OptimizerSettings</a></li><li><a href="Core.PDFNet.Optimizer.TextSettings.html">Core.PDFNet.Optimizer.TextSettings</a></li><li><a href="Core.PDFNet.OwnedBitmap.html">Core.PDFNet.OwnedBitmap</a></li><li><a href="Core.PDFNet.Page.html">Core.PDFNet.Page</a></li><li><a href="Core.PDFNet.PageLabel.html">Core.PDFNet.PageLabel</a></li><li><a href="Core.PDFNet.PageSet.html">Core.PDFNet.PageSet</a></li><li><a href="Core.PDFNet.PatternColor.html">Core.PDFNet.PatternColor</a></li><li><a href="Core.PDFNet.PDFACompliance.html">Core.PDFNet.PDFACompliance</a></li><li><a href="Core.PDFNet.PDFDC.html">Core.PDFNet.PDFDC</a></li><li><a href="Core.PDFNet.PDFDCEX.html">Core.PDFNet.PDFDCEX</a></li><li><a href="Core.PDFNet.PDFDoc.html">Core.PDFNet.PDFDoc</a></li><li><a href="Core.PDFNet.PDFDoc.DiffOptions.html">Core.PDFNet.PDFDoc.DiffOptions</a></li><li><a href="Core.PDFNet.PDFDoc.MergeXFDFOptions.html">Core.PDFNet.PDFDoc.MergeXFDFOptions</a></li><li><a href="Core.PDFNet.PDFDoc.RefreshOptions.html">Core.PDFNet.PDFDoc.RefreshOptions</a></li><li><a href="Core.PDFNet.PDFDoc.TextDiffOptions.html">Core.PDFNet.PDFDoc.TextDiffOptions</a></li><li><a href="Core.PDFNet.PDFDoc.ViewerOptimizedOptions.html">Core.PDFNet.PDFDoc.ViewerOptimizedOptions</a></li><li><a href="Core.PDFNet.PDFDocInfo.html">Core.PDFNet.PDFDocInfo</a></li><li><a href="Core.PDFNet.PDFDocViewPrefs.html">Core.PDFNet.PDFDocViewPrefs</a></li><li><a href="Core.PDFNet.PDFDraw.html">Core.PDFNet.PDFDraw</a></li><li><a href="Core.PDFNet.PDFRasterizer.html">Core.PDFNet.PDFRasterizer</a></li><li><a href="Core.PDFNet.PDFTronCustomSecurityHandler.html">Core.PDFNet.PDFTronCustomSecurityHandler</a></li><li><a href="Core.PDFNet.PDFView.html">Core.PDFNet.PDFView</a></li><li><a href="Core.PDFNet.PDFViewCtrl.html">Core.PDFNet.PDFViewCtrl</a></li><li><a href="Core.PDFNet.Point.html">Core.PDFNet.Point</a></li><li><a href="Core.PDFNet.PolygonAnnot.html">Core.PDFNet.PolygonAnnot</a></li><li><a href="Core.PDFNet.PolyLineAnnot.html">Core.PDFNet.PolyLineAnnot</a></li><li><a href="Core.PDFNet.PopupAnnot.html">Core.PDFNet.PopupAnnot</a></li><li><a href="Core.PDFNet.PrinterMode.html">Core.PDFNet.PrinterMode</a></li><li><a href="Core.PDFNet.PushButtonWidget.html">Core.PDFNet.PushButtonWidget</a></li><li><a href="Core.PDFNet.QuadPoint.html">Core.PDFNet.QuadPoint</a></li><li><a href="Core.PDFNet.RadioButtonGroup.html">Core.PDFNet.RadioButtonGroup</a></li><li><a href="Core.PDFNet.RadioButtonWidget.html">Core.PDFNet.RadioButtonWidget</a></li><li><a href="Core.PDFNet.Rect.html">Core.PDFNet.Rect</a></li><li><a href="Core.PDFNet.Redaction.html">Core.PDFNet.Redaction</a></li><li><a href="Core.PDFNet.RedactionAnnot.html">Core.PDFNet.RedactionAnnot</a></li><li><a href="Core.PDFNet.Redactor.html">Core.PDFNet.Redactor</a></li><li><a href="Core.PDFNet.Reflow.html">Core.PDFNet.Reflow</a></li><li><a href="Core.PDFNet.ResultSnapshot.html">Core.PDFNet.ResultSnapshot</a></li><li><a href="Core.PDFNet.RoleMap.html">Core.PDFNet.RoleMap</a></li><li><a href="Core.PDFNet.RubberStampAnnot.html">Core.PDFNet.RubberStampAnnot</a></li><li><a href="Core.PDFNet.ScreenAnnot.html">Core.PDFNet.ScreenAnnot</a></li><li><a href="Core.PDFNet.SDFDoc.html">Core.PDFNet.SDFDoc</a></li><li><a href="Core.PDFNet.SecurityHandler.html">Core.PDFNet.SecurityHandler</a></li><li><a href="Core.PDFNet.SElement.html">Core.PDFNet.SElement</a></li><li><a href="Core.PDFNet.Separation.html">Core.PDFNet.Separation</a></li><li><a href="Core.PDFNet.Shading.html">Core.PDFNet.Shading</a></li><li><a href="Core.PDFNet.ShapedText.html">Core.PDFNet.ShapedText</a></li><li><a href="Core.PDFNet.SignatureHandler.html">Core.PDFNet.SignatureHandler</a></li><li><a href="Core.PDFNet.SignatureWidget.html">Core.PDFNet.SignatureWidget</a></li><li><a href="Core.PDFNet.SoundAnnot.html">Core.PDFNet.SoundAnnot</a></li><li><a href="Core.PDFNet.SquareAnnot.html">Core.PDFNet.SquareAnnot</a></li><li><a href="Core.PDFNet.SquigglyAnnot.html">Core.PDFNet.SquigglyAnnot</a></li><li><a href="Core.PDFNet.Stamper.html">Core.PDFNet.Stamper</a></li><li><a href="Core.PDFNet.STree.html">Core.PDFNet.STree</a></li><li><a href="Core.PDFNet.StrikeOutAnnot.html">Core.PDFNet.StrikeOutAnnot</a></li><li><a href="Core.PDFNet.TextAnnot.html">Core.PDFNet.TextAnnot</a></li><li><a href="Core.PDFNet.TextExtractor.html">Core.PDFNet.TextExtractor</a></li><li><a href="Core.PDFNet.TextExtractorLine.html">Core.PDFNet.TextExtractorLine</a></li><li><a href="Core.PDFNet.TextExtractorStyle.html">Core.PDFNet.TextExtractorStyle</a></li><li><a href="Core.PDFNet.TextExtractorWord.html">Core.PDFNet.TextExtractorWord</a></li><li><a href="Core.PDFNet.TextMarkupAnnot.html">Core.PDFNet.TextMarkupAnnot</a></li><li><a href="Core.PDFNet.TextRange.html">Core.PDFNet.TextRange</a></li><li><a href="Core.PDFNet.TextSearch.html">Core.PDFNet.TextSearch</a></li><li><a href="Core.PDFNet.TextWidget.html">Core.PDFNet.TextWidget</a></li><li><a href="Core.PDFNet.TimestampingConfiguration.html">Core.PDFNet.TimestampingConfiguration</a></li><li><a href="Core.PDFNet.TimestampingResult.html">Core.PDFNet.TimestampingResult</a></li><li><a href="Core.PDFNet.TrustVerificationResult.html">Core.PDFNet.TrustVerificationResult</a></li><li><a href="Core.PDFNet.UnderlineAnnot.html">Core.PDFNet.UnderlineAnnot</a></li><li><a href="Core.PDFNet.UndoManager.html">Core.PDFNet.UndoManager</a></li><li><a href="Core.PDFNet.VerificationOptions.html">Core.PDFNet.VerificationOptions</a></li><li><a href="Core.PDFNet.VerificationResult.html">Core.PDFNet.VerificationResult</a></li><li><a href="Core.PDFNet.ViewChangeCollection.html">Core.PDFNet.ViewChangeCollection</a></li><li><a href="Core.PDFNet.WatermarkAnnot.html">Core.PDFNet.WatermarkAnnot</a></li><li><a href="Core.PDFNet.WebFontDownloader.html">Core.PDFNet.WebFontDownloader</a></li><li><a href="Core.PDFNet.WidgetAnnot.html">Core.PDFNet.WidgetAnnot</a></li><li><a href="Core.PDFNet.X501AttributeTypeAndValue.html">Core.PDFNet.X501AttributeTypeAndValue</a></li><li><a href="Core.PDFNet.X501DistinguishedName.html">Core.PDFNet.X501DistinguishedName</a></li><li><a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a></li><li><a href="Core.PDFNet.X509Extension.html">Core.PDFNet.X509Extension</a></li><li><a href="Core.Scale.html">Core.Scale</a></li><li><a href="Core.Tools.AddImageContentTool.html">Core.Tools.AddImageContentTool</a></li><li><a href="Core.Tools.AddParagraphTool.html">Core.Tools.AddParagraphTool</a></li><li><a href="Core.Tools.AnnotationEditTool.html">Core.Tools.AnnotationEditTool</a></li><li><a href="Core.Tools.AnnotationSelectTool.html">Core.Tools.AnnotationSelectTool</a></li><li><a href="Core.Tools.ArcCreateTool.html">Core.Tools.ArcCreateTool</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html">Core.Tools.ArcMeasurementCreateTool</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html">Core.Tools.AreaMeasurementCreateTool</a></li><li><a href="Core.Tools.ArrowCreateTool.html">Core.Tools.ArrowCreateTool</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html">Core.Tools.CalibrationMeasurementTool</a></li><li><a href="Core.Tools.CalloutCreateTool.html">Core.Tools.CalloutCreateTool</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html">Core.Tools.ChangeViewCreateTool</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html">Core.Tools.CheckBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html">Core.Tools.CloudyRectangularAreaMeasurementTool</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html">Core.Tools.ComboBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.ContentEditTool.html">Core.Tools.ContentEditTool</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html">Core.Tools.CountMeasurementCreateTool</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html">Core.Tools.DateFreeTextCreateTool</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html">Core.Tools.DistanceMeasurementCreateTool</a></li><li><a href="Core.Tools.EllipseCreateTool.html">Core.Tools.EllipseCreateTool</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html">Core.Tools.EllipseMeasurementCreateTool</a></li><li><a href="Core.Tools.EraserTool.html">Core.Tools.EraserTool</a></li><li><a href="Core.Tools.FileAttachmentCreateTool.html">Core.Tools.FileAttachmentCreateTool</a></li><li><a href="Core.Tools.FreeHandCreateTool.html">Core.Tools.FreeHandCreateTool</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html">Core.Tools.FreeHandHighlightCreateTool</a></li><li><a href="Core.Tools.FreeTextCreateTool.html">Core.Tools.FreeTextCreateTool</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html">Core.Tools.GenericAnnotationCreateTool</a></li><li><a href="Core.Tools.LineCreateTool.html">Core.Tools.LineCreateTool</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html">Core.Tools.ListBoxFormFieldCreateTool</a></li><li><a href="Core.Tools.MarkInsertTextCreateTool.html">Core.Tools.MarkInsertTextCreateTool</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html">Core.Tools.MarkReplaceTextCreateTool</a></li><li><a href="Core.Tools.MarqueeZoomTool.html">Core.Tools.MarqueeZoomTool</a></li><li><a href="Core.Tools.PageCoordinate.html">Core.Tools.PageCoordinate</a></li><li><a href="Core.Tools.PanTool.html">Core.Tools.PanTool</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html">Core.Tools.PerimeterMeasurementCreateTool</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html">Core.Tools.PolygonCloudCreateTool</a></li><li><a href="Core.Tools.PolygonCreateTool.html">Core.Tools.PolygonCreateTool</a></li><li><a href="Core.Tools.PolylineCreateTool.html">Core.Tools.PolylineCreateTool</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html">Core.Tools.RadioButtonFormFieldCreateTool</a></li><li><a href="Core.Tools.RectangleCreateTool.html">Core.Tools.RectangleCreateTool</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html">Core.Tools.RectangularAreaMeasurementTool</a></li><li><a href="Core.Tools.RedactionCreateTool.html">Core.Tools.RedactionCreateTool</a></li><li><a href="Core.Tools.RubberStampCreateTool.html">Core.Tools.RubberStampCreateTool</a></li><li><a href="Core.Tools.SignatureCreateTool.html">Core.Tools.SignatureCreateTool</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html">Core.Tools.SignatureFormFieldCreateTool</a></li><li><a href="Core.Tools.StampCreateTool.html">Core.Tools.StampCreateTool</a></li><li><a href="Core.Tools.StickyCreateTool.html">Core.Tools.StickyCreateTool</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html">Core.Tools.TextAnnotationCreateTool</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html">Core.Tools.TextFormFieldCreateTool</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html">Core.Tools.TextHighlightCreateTool</a></li><li><a href="Core.Tools.TextSelectTool.html">Core.Tools.TextSelectTool</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html">Core.Tools.TextSquigglyCreateTool</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html">Core.Tools.TextStrikeoutCreateTool</a></li><li><a href="Core.Tools.TextTool.html">Core.Tools.TextTool</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html">Core.Tools.TextUnderlineCreateTool</a></li><li><a href="Core.Tools.Tool.html">Core.Tools.Tool</a></li><li><a href="Core.WebViewerServerAnnotationManager.html">Core.WebViewerServerAnnotationManager</a></li><li><a href="TextHighlightAnnotation.html">TextHighlightAnnotation</a></li><li><a href="UI.Header.html">UI.Header</a></li><li><a href="UI.MentionsManager.html">UI.MentionsManager</a></li><li><a href="UI.MultiPageManipulationControls.html">UI.MultiPageManipulationControls</a></li><li><a href="WebViewerInstance.html">WebViewerInstance</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="Core.AnnotationHistoryManager.html#event:historyChanged">Core.AnnotationHistoryManager#event:historyChanged</a></li><li><a href="Core.AnnotationManager.html#event:addReply">Core.AnnotationManager#event:addReply</a></li><li><a href="Core.AnnotationManager.html#event:annotationChanged">Core.AnnotationManager#event:annotationChanged</a></li><li><a href="Core.AnnotationManager.html#event:annotationDeselected">Core.AnnotationManager#event:annotationDeselected</a></li><li><a href="Core.AnnotationManager.html#event:annotationDoubleClicked">Core.AnnotationManager#event:annotationDoubleClicked</a></li><li><a href="Core.AnnotationManager.html#event:annotationHidden">Core.AnnotationManager#event:annotationHidden</a></li><li><a href="Core.AnnotationManager.html#event:annotationsDrawn">Core.AnnotationManager#event:annotationsDrawn</a></li><li><a href="Core.AnnotationManager.html#event:annotationSelected">Core.AnnotationManager#event:annotationSelected</a></li><li><a href="Core.AnnotationManager.html#event:deleteReply">Core.AnnotationManager#event:deleteReply</a></li><li><a href="Core.AnnotationManager.html#event:fieldChanged">Core.AnnotationManager#event:fieldChanged</a></li><li><a href="Core.AnnotationManager.html#event:fileAttachmentDataAvailable">Core.AnnotationManager#event:fileAttachmentDataAvailable</a></li><li><a href="Core.AnnotationManager.html#event:setNoteText">Core.AnnotationManager#event:setNoteText</a></li><li><a href="Core.AnnotationManager.html#event:updateAnnotationPermission">Core.AnnotationManager#event:updateAnnotationPermission</a></li><li><a href="Core.Annotations.Forms.Field.html#event:calculate">Core.Annotations.Forms.Field#event:calculate</a></li><li><a href="Core.Annotations.Forms.Field.html#event:change">Core.Annotations.Forms.Field#event:change</a></li><li><a href="Core.Annotations.Forms.Field.html#event:commit">Core.Annotations.Forms.Field#event:commit</a></li><li><a href="Core.ContentEdit.html#event:editBoxesAvailable">Core.ContentEdit#event:editBoxesAvailable</a></li><li><a href="Core.ContentEdit.html#event:textContentUpdated">Core.ContentEdit#event:textContentUpdated</a></li><li><a href="Core.Document.html#event:colorSeparationAdded">Core.Document#event:colorSeparationAdded</a></li><li><a href="Core.Document.html#event:layersUpdated">Core.Document#event:layersUpdated</a></li><li><a href="Core.DocumentViewer.html#event:activeSearchResultChanged">Core.DocumentViewer#event:activeSearchResultChanged</a></li><li><a href="Core.DocumentViewer.html#event:annotationsLoaded">Core.DocumentViewer#event:annotationsLoaded</a></li><li><a href="Core.DocumentViewer.html#event:beforeDocumentLoaded">Core.DocumentViewer#event:beforeDocumentLoaded</a></li><li><a href="Core.DocumentViewer.html#event:beginRendering">Core.DocumentViewer#event:beginRendering</a></li><li><a href="Core.DocumentViewer.html#event:click">Core.DocumentViewer#event:click</a></li><li><a href="Core.DocumentViewer.html#event:dblClick">Core.DocumentViewer#event:dblClick</a></li><li><a href="Core.DocumentViewer.html#event:displayModeUpdated">Core.DocumentViewer#event:displayModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:displayPageLocation">Core.DocumentViewer#event:displayPageLocation</a></li><li><a href="Core.DocumentViewer.html#event:documentLoaded">Core.DocumentViewer#event:documentLoaded</a></li><li><a href="Core.DocumentViewer.html#event:documentUnloaded">Core.DocumentViewer#event:documentUnloaded</a></li><li><a href="Core.DocumentViewer.html#event:embeddedThumbnailComplete">Core.DocumentViewer#event:embeddedThumbnailComplete</a></li><li><a href="Core.DocumentViewer.html#event:finishedRendering">Core.DocumentViewer#event:finishedRendering</a></li><li><a href="Core.DocumentViewer.html#event:fitModeUpdated">Core.DocumentViewer#event:fitModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:keyDown">Core.DocumentViewer#event:keyDown</a></li><li><a href="Core.DocumentViewer.html#event:keyUp">Core.DocumentViewer#event:keyUp</a></li><li><a href="Core.DocumentViewer.html#event:mouseEnter">Core.DocumentViewer#event:mouseEnter</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeave">Core.DocumentViewer#event:mouseLeave</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeftDown">Core.DocumentViewer#event:mouseLeftDown</a></li><li><a href="Core.DocumentViewer.html#event:mouseLeftUp">Core.DocumentViewer#event:mouseLeftUp</a></li><li><a href="Core.DocumentViewer.html#event:mouseMove">Core.DocumentViewer#event:mouseMove</a></li><li><a href="Core.DocumentViewer.html#event:mouseRightDown">Core.DocumentViewer#event:mouseRightDown</a></li><li><a href="Core.DocumentViewer.html#event:mouseRightUp">Core.DocumentViewer#event:mouseRightUp</a></li><li><a href="Core.DocumentViewer.html#event:notify">Core.DocumentViewer#event:notify</a></li><li><a href="Core.DocumentViewer.html#event:pageComplete">Core.DocumentViewer#event:pageComplete</a></li><li><a href="Core.DocumentViewer.html#event:pageNumberUpdated">Core.DocumentViewer#event:pageNumberUpdated</a></li><li><a href="Core.DocumentViewer.html#event:pagesUpdated">Core.DocumentViewer#event:pagesUpdated</a></li><li><a href="Core.DocumentViewer.html#event:rotationUpdated">Core.DocumentViewer#event:rotationUpdated</a></li><li><a href="Core.DocumentViewer.html#event:searchInProgress">Core.DocumentViewer#event:searchInProgress</a></li><li><a href="Core.DocumentViewer.html#event:searchResultsChanged">Core.DocumentViewer#event:searchResultsChanged</a></li><li><a href="Core.DocumentViewer.html#event:tap">Core.DocumentViewer#event:tap</a></li><li><a href="Core.DocumentViewer.html#event:textSelected">Core.DocumentViewer#event:textSelected</a></li><li><a href="Core.DocumentViewer.html#event:toolModeUpdated">Core.DocumentViewer#event:toolModeUpdated</a></li><li><a href="Core.DocumentViewer.html#event:toolUpdated">Core.DocumentViewer#event:toolUpdated</a></li><li><a href="Core.DocumentViewer.html#event:zoomUpdated">Core.DocumentViewer#event:zoomUpdated</a></li><li><a href="Core.EditBoxManager.html#event:editorBlur">Core.EditBoxManager#event:editorBlur</a></li><li><a href="Core.EditBoxManager.html#event:editorFocus">Core.EditBoxManager#event:editorFocus</a></li><li><a href="Core.EditBoxManager.html#event:editorSelectionChanged">Core.EditBoxManager#event:editorSelectionChanged</a></li><li><a href="Core.EditBoxManager.html#event:editorTextChanged">Core.EditBoxManager#event:editorTextChanged</a></li><li><a href="Core.FormFieldCreationManager.html#event:formFieldCreationModeEnded">Core.FormFieldCreationManager#event:formFieldCreationModeEnded</a></li><li><a href="Core.FormFieldCreationManager.html#event:formFieldCreationModeStarted">Core.FormFieldCreationManager#event:formFieldCreationModeStarted</a></li><li><a href="Core.MeasurementManager.html#event:createAnnotationWithNoScale">Core.MeasurementManager#event:createAnnotationWithNoScale</a></li><li><a href="Core.MeasurementManager.html#event:scaleUpdated">Core.MeasurementManager#event:scaleUpdated</a></li><li><a href="Core.Tools.AddParagraphTool.html#event:annotationAdded">Core.Tools.AddParagraphTool#event:annotationAdded</a></li><li><a href="Core.Tools.AddParagraphTool.html#event:annotationCreated">Core.Tools.AddParagraphTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArcCreateTool.html#event:annotationAdded">Core.Tools.ArcCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArcCreateTool.html#event:annotationCreated">Core.Tools.ArcCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html#event:annotationAdded">Core.Tools.ArcMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArcMeasurementCreateTool.html#event:annotationCreated">Core.Tools.ArcMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html#event:annotationAdded">Core.Tools.AreaMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.AreaMeasurementCreateTool.html#event:annotationCreated">Core.Tools.AreaMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ArrowCreateTool.html#event:annotationAdded">Core.Tools.ArrowCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ArrowCreateTool.html#event:annotationCreated">Core.Tools.ArrowCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html#event:annotationAdded">Core.Tools.CalibrationMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.CalibrationMeasurementTool.html#event:annotationCreated">Core.Tools.CalibrationMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.CalloutCreateTool.html#event:annotationAdded">Core.Tools.CalloutCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CalloutCreateTool.html#event:annotationCreated">Core.Tools.CalloutCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html#event:annotationAdded">Core.Tools.ChangeViewCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ChangeViewCreateTool.html#event:annotationCreated">Core.Tools.ChangeViewCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.CheckBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CheckBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.CheckBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html#event:annotationAdded">Core.Tools.CloudyRectangularAreaMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.CloudyRectangularAreaMeasurementTool.html#event:annotationCreated">Core.Tools.CloudyRectangularAreaMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.ComboBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ComboBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.ComboBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html#event:annotationAdded">Core.Tools.CountMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.CountMeasurementCreateTool.html#event:annotationCreated">Core.Tools.CountMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.CropCreateTool.html#event:cropApplied">Core.Tools.CropCreateTool#event:cropApplied</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html#event:annotationAdded">Core.Tools.DateFreeTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.DateFreeTextCreateTool.html#event:annotationCreated">Core.Tools.DateFreeTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html#event:annotationAdded">Core.Tools.DistanceMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.DistanceMeasurementCreateTool.html#event:annotationCreated">Core.Tools.DistanceMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EllipseCreateTool.html#event:annotationAdded">Core.Tools.EllipseCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.EllipseCreateTool.html#event:annotationCreated">Core.Tools.EllipseCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html#event:annotationAdded">Core.Tools.EllipseMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.EllipseMeasurementCreateTool.html#event:annotationCreated">Core.Tools.EllipseMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.EraserTool.html#event:annotationAdded">Core.Tools.EraserTool#event:annotationAdded</a></li><li><a href="Core.Tools.EraserTool.html#event:annotationCreated">Core.Tools.EraserTool#event:annotationCreated</a></li><li><a href="Core.Tools.EraserTool.html#event:erasingAnnotation">Core.Tools.EraserTool#event:erasingAnnotation</a></li><li><a href="Core.Tools.FreeHandCreateTool.html#event:annotationAdded">Core.Tools.FreeHandCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeHandCreateTool.html#event:annotationCreated">Core.Tools.FreeHandCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html#event:annotationAdded">Core.Tools.FreeHandHighlightCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeHandHighlightCreateTool.html#event:annotationCreated">Core.Tools.FreeHandHighlightCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.FreeTextCreateTool.html#event:annotationAdded">Core.Tools.FreeTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.FreeTextCreateTool.html#event:annotationCreated">Core.Tools.FreeTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html#event:annotationAdded">Core.Tools.GenericAnnotationCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.GenericAnnotationCreateTool.html#event:annotationCreated">Core.Tools.GenericAnnotationCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.LineCreateTool.html#event:annotationAdded">Core.Tools.LineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.LineCreateTool.html#event:annotationCreated">Core.Tools.LineCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html#event:annotationAdded">Core.Tools.ListBoxFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.ListBoxFormFieldCreateTool.html#event:annotationCreated">Core.Tools.ListBoxFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.MarkInsertTextCreateTool.html#event:selectionComplete">Core.Tools.MarkInsertTextCreateTool#event:selectionComplete</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html#event:annotationAdded">Core.Tools.MarkReplaceTextCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.MarkReplaceTextCreateTool.html#event:annotationCreated">Core.Tools.MarkReplaceTextCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html#event:annotationAdded">Core.Tools.PerimeterMeasurementCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PerimeterMeasurementCreateTool.html#event:annotationCreated">Core.Tools.PerimeterMeasurementCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html#event:annotationAdded">Core.Tools.PolygonCloudCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolygonCloudCreateTool.html#event:annotationCreated">Core.Tools.PolygonCloudCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolygonCreateTool.html#event:annotationAdded">Core.Tools.PolygonCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolygonCreateTool.html#event:annotationCreated">Core.Tools.PolygonCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.PolylineCreateTool.html#event:annotationAdded">Core.Tools.PolylineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.PolylineCreateTool.html#event:annotationCreated">Core.Tools.PolylineCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html#event:annotationAdded">Core.Tools.RadioButtonFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RadioButtonFormFieldCreateTool.html#event:annotationCreated">Core.Tools.RadioButtonFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RectangleCreateTool.html#event:annotationAdded">Core.Tools.RectangleCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RectangleCreateTool.html#event:annotationCreated">Core.Tools.RectangleCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html#event:annotationAdded">Core.Tools.RectangularAreaMeasurementTool#event:annotationAdded</a></li><li><a href="Core.Tools.RectangularAreaMeasurementTool.html#event:annotationCreated">Core.Tools.RectangularAreaMeasurementTool#event:annotationCreated</a></li><li><a href="Core.Tools.RedactionCreateTool.html#event:annotationAdded">Core.Tools.RedactionCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.RedactionCreateTool.html#event:annotationCreated">Core.Tools.RedactionCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.RubberStampCreateTool.html#event:annotationAdded">Core.Tools.RubberStampCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:annotationAdded">Core.Tools.SignatureCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:fileRejected">Core.Tools.SignatureCreateTool#event:fileRejected</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:locationSelected">Core.Tools.SignatureCreateTool#event:locationSelected</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureDeleted">Core.Tools.SignatureCreateTool#event:signatureDeleted</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureReady">Core.Tools.SignatureCreateTool#event:signatureReady</a></li><li><a href="Core.Tools.SignatureCreateTool.html#event:signatureSaved">Core.Tools.SignatureCreateTool#event:signatureSaved</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html#event:annotationAdded">Core.Tools.SignatureFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.SignatureFormFieldCreateTool.html#event:annotationCreated">Core.Tools.SignatureFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.StampCreateTool.html#event:annotationAdded">Core.Tools.StampCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.StampCreateTool.html#event:fileRejected">Core.Tools.StampCreateTool#event:fileRejected</a></li><li><a href="Core.Tools.StickyCreateTool.html#event:annotationAdded">Core.Tools.StickyCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.StickyCreateTool.html#event:annotationCreated">Core.Tools.StickyCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html#event:annotationAdded">Core.Tools.TextAnnotationCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextAnnotationCreateTool.html#event:annotationCreated">Core.Tools.TextAnnotationCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html#event:annotationAdded">Core.Tools.TextFormFieldCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextFormFieldCreateTool.html#event:annotationCreated">Core.Tools.TextFormFieldCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html#event:annotationAdded">Core.Tools.TextHighlightCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextHighlightCreateTool.html#event:annotationCreated">Core.Tools.TextHighlightCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextSelectTool.html#event:selectionComplete">Core.Tools.TextSelectTool#event:selectionComplete</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html#event:annotationAdded">Core.Tools.TextSquigglyCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextSquigglyCreateTool.html#event:annotationCreated">Core.Tools.TextSquigglyCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html#event:annotationAdded">Core.Tools.TextStrikeoutCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextStrikeoutCreateTool.html#event:annotationCreated">Core.Tools.TextStrikeoutCreateTool#event:annotationCreated</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html#event:annotationAdded">Core.Tools.TextUnderlineCreateTool#event:annotationAdded</a></li><li><a href="Core.Tools.TextUnderlineCreateTool.html#event:annotationCreated">Core.Tools.TextUnderlineCreateTool#event:annotationCreated</a></li><li><a href="Core.WebViewerServerAnnotationManager.html#event:webViewerServerAnnotationsDisabled">Core.WebViewerServerAnnotationManager#event:webViewerServerAnnotationsDisabled</a></li><li><a href="Core.WebViewerServerAnnotationManager.html#event:webViewerServerAnnotationsEnabled">Core.WebViewerServerAnnotationManager#event:webViewerServerAnnotationsEnabled</a></li><li><a href="UI.MentionsManager.html#event:mentionChanged">UI.MentionsManager#event:mentionChanged</a></li><li><a href="UI.html#event:annotationFilterChanged">UI#event:annotationFilterChanged</a></li><li><a href="UI.html#event:beforeTabChanged">UI#event:beforeTabChanged</a></li><li><a href="UI.html#event:compareAnnotationsLoaded">UI#event:compareAnnotationsLoaded</a></li><li><a href="UI.html#event:documentLoaded">UI#event:documentLoaded</a></li><li><a href="UI.html#event:documentMerged">UI#event:documentMerged</a></li><li><a href="UI.html#event:dragOutline">UI#event:dragOutline</a></li><li><a href="UI.html#event:fileDownloaded">UI#event:fileDownloaded</a></li><li><a href="UI.html#event:finishedSavingPDF">UI#event:finishedSavingPDF</a></li><li><a href="UI.html#event:fullscreenModeToggled">UI#event:fullscreenModeToggled</a></li><li><a href="UI.html#event:languageChanged">UI#event:languageChanged</a></li><li><a href="UI.html#event:loaderror">UI#event:loaderror</a></li><li><a href="UI.html#event:multiViewerReady">UI#event:multiViewerReady</a></li><li><a href="UI.html#event:outlineBookmarksChanged">UI#event:outlineBookmarksChanged</a></li><li><a href="UI.html#event:panelResized">UI#event:panelResized</a></li><li><a href="UI.html#event:selectedThumbnailChanged">UI#event:selectedThumbnailChanged</a></li><li><a href="UI.html#event:tabAdded">UI#event:tabAdded</a></li><li><a href="UI.html#event:tabDeleted">UI#event:tabDeleted</a></li><li><a href="UI.html#event:tabMoved">UI#event:tabMoved</a></li><li><a href="UI.html#event:themeChanged">UI#event:themeChanged</a></li><li><a href="UI.html#event:thumbnailDragged">UI#event:thumbnailDragged</a></li><li><a href="UI.html#event:thumbnailDropped">UI#event:thumbnailDropped</a></li><li><a href="UI.html#event:toolbarGroupChanged">UI#event:toolbarGroupChanged</a></li><li><a href="UI.html#event:userBookmarksChanged">UI#event:userBookmarksChanged</a></li><li><a href="UI.html#event:viewerLoaded">UI#event:viewerLoaded</a></li><li><a href="UI.html#event:visibilityChanged">UI#event:visibilityChanged</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#getInstance">getInstance</a></li><li><a href="global.html#WebViewer">WebViewer</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">	
+											<input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+											<div class="input-group-btn">
+												<button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+											</div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: DigitalSignatureField</h1>
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="Core.html">Core</a><a href="Core.PDFNet.html">.PDFNet</a>.</span>
+        
+        DigitalSignatureField
+        </h2>
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="DigitalSignatureField"><span class="type-signature"></span>new DigitalSignatureField( [mp_field_dict_obj])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        A class representing a digital signature form field.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mp_field_dict_obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.Obj.html">Core.PDFNet.Obj</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>mp_field_dict_obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.Obj.html">Core.PDFNet.Obj</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id=".DocumentPermissions">
+    <h4 id=".DocumentPermissions"><span class="type-signature">&lt;static> </span>DocumentPermissions</h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>e_no_changes_allowed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_formfilling_signing_allowed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_annotating_formfilling_signing_allowed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_unrestricted</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".FieldPermissions">
+    <h4 id=".FieldPermissions"><span class="type-signature">&lt;static> </span>FieldPermissions</h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>e_lock_all</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_include</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_exclude</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".SubFilterType">
+    <h4 id=".SubFilterType"><span class="type-signature">&lt;static> </span>SubFilterType</h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>e_adbe_x509_rsa_sha1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_adbe_pkcs7_detached</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_adbe_pkcs7_sha1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_ETSI_CAdES_detached</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_ETSI_RFC3161</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_unknown</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>e_absent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id=".createFromField"><span class="type-signature">&lt;static> </span>createFromField(in_field)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Constructs a PDF::DigitalSignatureField from a PDF::Field.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_field</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.Field.html">Core.PDFNet.Field</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the PDF::Field to construct the DigitalSignatureField from.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an object of type: "PDFNet.DigitalSignatureField"
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.DigitalSignatureField.html">Core.PDFNet.DigitalSignatureField</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".generateCMSSignature"><span class="type-signature">&lt;static> </span>generateCMSSignature(in_signer_cert, in_chain_certs_list, in_digest_algorithm_oid, in_signature_algorithm_oid, in_signature_value_buf, in_signedattributes_buf)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Low-level function belonging to custom-signing APIs. Using low-level inputs that permit incorporation of
+remote key usage (cloud keystore, Hardware Security Module (HSM) device, etc.), generates bytes representing
+a Cryptographic Message Syntax (CMS)-format signature encoded in DER. The resulting data can be passed to
+SaveCustomSignature.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signer_cert</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the X509 public-key certificate of the signature's signer (mathematically associated with private key used)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_chain_certs_list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a>></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the intermediate and root certificates to include in the CMS to allow verifiers to establish the chain/path of trust</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_algorithm_oid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.ObjectIdentifier.html">Core.PDFNet.ObjectIdentifier</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the OID of the digest algorithm used, for embedding in the CMS</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signature_algorithm_oid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.ObjectIdentifier.html">Core.PDFNet.ObjectIdentifier</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the OID of the signature algorithm used, for embedding in the CMS</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signature_value_buf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- a buffer containing the signature value to embed in the CMS</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signedattributes_buf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- a buffer containing signedAttributes for embedding into the CMS (must exactly match those used when creating signature value)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to finished CMS data for embedding into the document using SaveCustomSignature
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".generateCMSSignedAttributes"><span class="type-signature">&lt;static> </span>generateCMSSignedAttributes(in_digest_buf [, in_custom_signedattributes_buf])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Low-level function belonging to custom-signing APIs. Creates the signedAttributes component of 
+Cryptographic Message Syntax (CMS). The result of this function can then be encrypted by a remote 
+private key (cloud service, Hardware Security Module (HSM) device, etc.), using some external API that returns
+the bytes of a not-already-CMS-embedded signature value (e.g. RSA PKCS #1 v1.5 format). Following that, 
+CMS generation can be performed using GenerateCMSSignature, after which the resulting signature can be 
+inserted into a resulting signed version of the PDF document using the PDFDoc function SaveCustomSignature.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_buf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- a buffer containing the digest of the document within ByteRanges of this DigitalSignatureField (see CalculateDigest)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_custom_signedattributes_buf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- a buffer containing any optional custom BER-encoded signedAttributes to add, 
+including potentially the PAdES one (see GenerateESSSigningCertPAdESAttribute). (Do not place an ASN.1 constructed type around all of the attributes.) 
+Do not pass any of the normal attributes (content type or message digest) as custom attributes because otherwise they will be duplicated.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the BER-encoded bytes of the future signedAttrs component of a CMS signature, with no surrounding constructed type
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".generateESSSigningCertPAdESAttribute"><span class="type-signature">&lt;static> </span>generateESSSigningCertPAdESAttribute(in_signer_cert, in_digest_algorithm_type)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Low-level optional function belonging to custom-signing APIs allowing creation of PAdES signatures
+with key elsewhere, allowing CMS to be generated automatically later.
+Represents one the components of the functionality of SignDigest which are not key-related.
+Creates the necessary attribute for a PAdES signature (ETSI.CAdES.detached subfilter type).
+The result of this function can be passed as a contiguous part of the
+custom attributes buffer parameter of GenerateCMSSignedAttributes. 
+At least one signing time, whether "M" (see SetSigDictTimeOfSigning) or 
+a secure embedded timestamp (see GenerateContentsWithEmbeddedTimestamp),
+is also required to be added in order to create a PAdES signature.
+
+The result will be either the BER-serialized bytes of an ESS_signing_cert or ESS_signing_cert_V2 CMS Attribute
+(an ASN.1 SEQUENCE containing the correct OID and ESSCertID or ESSCertIDv2), as is appropriate,
+depending on what digest algorithm type is provided (see RFC 5035).
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signer_cert</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the X509 public-key certificate of the signature's signer (mathematically associated with private key to be used)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_algorithm_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigestAlgorithm.Type = {
+	e_SHA1 : 0
+	e_SHA256 : 1
+	e_SHA384 : 2
+	e_SHA512 : 3
+	e_RIPEMD160 : 4
+	e_unknown_digest_algorithm : 5
+}
+</pre>
+-- the digest algorithm to be used</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the BER-serialized bytes of an ESS_signing_cert or ESS_signing_cert_V2 CMS attribute
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".signDigestBuffer"><span class="type-signature">&lt;static> </span>signDigestBuffer(in_digest, in_pkcs12_buffer, in_keyfile_password, in_pades_mode, in_digest_algorithm_type)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns a CMS detached signature incorporating a digest that is provided using the provided PKCS #12 key buffer (.pfx).
+Note: This function does not change the DigitalSignatureField. Call SaveCustomSignature to write a signature to its PDFDoc.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the digest value to use</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pkcs12_buffer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- a buffer containing the PKCS #12 key (as usually stored in .pfx files) to use for signing</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_keyfile_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- the password to use to decrypt the PKCS #12 key file data in the buffer</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pades_mode</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- whether to create a PAdES-type signature (PDF Advanced Electronic Signatures standards)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_algorithm_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigestAlgorithm.Type = {
+	e_SHA1 : 0
+	e_SHA256 : 1
+	e_SHA384 : 2
+	e_SHA512 : 3
+	e_RIPEMD160 : 4
+	e_unknown_digest_algorithm : 5
+}
+</pre>
+-- the identifier to use to write the digest algorithm</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the DER-serialized bytes of a CMS detached signature (CMS ContentInfo)
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="calculateDigest"><span class="type-signature"></span>calculateDigest( [in_digest_algorithm_type])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Calculates the digest of the relevant bytes of the document for this signature field, in order to allow
+the caller to perform custom signing/processing. Signature field must first be prepared using one of the
+non-sign overloads (CreateSigDictForCustomSigning/Certification), and then the document must be saved; after that, this function can be called.
+The ByteRanges that the most recent save has entered into the signature dictionary within this signature field
+will be used to calculate the digest.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_algorithm_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigestAlgorithm.Type = {
+	e_SHA1 : 0
+	e_SHA256 : 1
+	e_SHA384 : 2
+	e_SHA512 : 3
+	e_RIPEMD160 : 4
+	e_unknown_digest_algorithm : 5
+}
+</pre>
+-- the enumerated type of digest algorithm to use for the calculation. The default is SHA-256.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an array of bytes containing the digest value
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="certifyOnNextSave"><span class="type-signature"></span>certifyOnNextSave(in_pkcs12_keyfile_path, in_password)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for certification, which is done afterwards by calling Save. Throws if document already certified. Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pkcs12_keyfile_path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The path to the PKCS #12 private keyfile to use to certify this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 keyfile.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="certifyOnNextSaveFromBuffer"><span class="type-signature"></span>certifyOnNextSaveFromBuffer(in_pkcs12_buffer, in_password)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for certification, which is done afterwards by calling Save. Throws if document already certified. Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pkcs12_buffer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- A buffer of bytes containing the PKCS #12 private key certificate store to use to certify this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 buffer.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="certifyOnNextSaveFromURL"><span class="type-signature"></span>certifyOnNextSaveFromURL(url, in_password [, options])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for certification, which is done afterwards by calling Save. Throws if document already certified.Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The url to the PKCS #12 private keyfile to use to certify this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 keyfile.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Additional options
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>withCredentials</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to set the withCredentials property on the XMLHttpRequest</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>customHeaders</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An object containing custom HTTP headers to be used when downloading the document</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="certifyOnNextSaveWithCustomHandler"><span class="type-signature"></span>certifyOnNextSaveWithCustomHandler(in_signature_handler_id)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for certification, which is done afterwards by calling Save. Throws if document already certified. Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signature_handler_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The unique id of the signature handler to use to certify this digital signature.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="clearSignature"><span class="type-signature"></span>clearSignature()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Clears cryptographic signature, if present. Otherwise, does nothing. Do not need to call HasCryptographicSignature before calling this. After clearing, other signatures should still pass validation if saving after clearing was done incrementally. Clears the appearance as well.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="createSigDictForCustomCertification"><span class="type-signature"></span>createSigDictForCustomCertification(in_filter_name, in_subfilter_type, in_contents_size_to_reserve)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Prepares the field for certification without actually performing certification.
+Useful for custom signing workflows. It is not necessary to call HasCryptographicSignature
+before calling this function.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_filter_name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the Filter name to use, representing the name of the signature handler that will be used to sign and verify the signature (e.g. Adobe.PPKLite)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_subfilter_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigitalSignatureField.SubFilterType = {
+	e_adbe_x509_rsa_sha1 : 0
+	e_adbe_pkcs7_detached : 1
+	e_adbe_pkcs7_sha1 : 2
+	e_ETSI_CAdES_detached : 3
+	e_ETSI_RFC3161 : 4
+	e_unknown : 5
+	e_absent : 6
+}
+</pre>
+the SubFilter name to use, representing an interoperable signature type identifier for third-party verification (e.g. adbe.pkcs7.detached, ETSI.CAdES.detached, etc.)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_contents_size_to_reserve</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The size of the empty Contents entry to create. For security reasons, set the contents size to a value greater than but as close as possible to the size you expect your final signature to be.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="createSigDictForCustomSigning"><span class="type-signature"></span>createSigDictForCustomSigning(in_filter_name, in_subfilter_type, in_contents_size_to_reserve)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Prepares the field for approval signing without actually performing signing.
+Useful for custom signing workflows. It is not necessary to call HasCryptographicSignature
+before calling this function.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_filter_name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the Filter name to use, representing the name of the signature handler that will be used to sign and verify the signature (e.g. Adobe.PPKLite)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_subfilter_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigitalSignatureField.SubFilterType = {
+	e_adbe_x509_rsa_sha1 : 0
+	e_adbe_pkcs7_detached : 1
+	e_adbe_pkcs7_sha1 : 2
+	e_ETSI_CAdES_detached : 3
+	e_ETSI_RFC3161 : 4
+	e_unknown : 5
+	e_absent : 6
+}
+</pre>
+the SubFilter name to use, representing an interoperable signature type identifier for third-party verification (e.g. adbe.pkcs7.detached, ETSI.CAdES.detached, etc.)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_contents_size_to_reserve</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The size of the empty Contents entry to create. For security reasons, set the contents size to a value greater than but as close as possible to the size you expect your final signature to be.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="enableLTVOfflineVerification"><span class="type-signature"></span>enableLTVOfflineVerification(in_verification_result)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Given a successful verification result that required online information to verify trust
+(trust verification must have been enabled and successful during the verification),
+embeds data into the PDF document that allows the signature to be verified offline.
+(This is accomplished using DSS and VRI dictionaries.) When this operation is
+successfully completed, one of the two components of secure long term validation (LTV)
+will be in place. The other necessary component of secure long term validation is
+to make sure to timestamp the document appropriately while the signature
+is still verifiable to maintain a chain of unexpired secure timestamps
+attesting to the integrity of the document. The verifiability of the signature
+should thereafter be maintainable in such a fashion despite any possible
+certificate expiry, algorithm compromise, or key compromise that would
+have otherwise rendered it invalid if it were to be verified using a time in
+the future rather than a securely-signed timestamp-derived time nearer the time
+of signing (at which which the signature was verifiable without extra data).
+This function, if given a good verification result, is also capable of making timestamp
+(DocTimeStamp ETSI.RFC3161) signatures LTV-enabled, which is necessary to do first when
+you intend to add another timestamp around an already-timestamped document to extend
+or enhance its verifiability (as described above), as per the PDF 2.0 and
+ETSI TS 102 778-4 (PAdES Level 4) specifications.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_verification_result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.VerificationResult.html">Core.PDFNet.VerificationResult</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- a successful verification result containing a successful
+TrustVerificationResult</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a boolean status that reflects whether offline verification information was added successfully
+
+Note: It is necessary to save the document incrementally after this function completes successfully
+in order to actually write the LTV data into the document.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="generateContentsWithEmbeddedTimestamp"><span class="type-signature"></span>generateContentsWithEmbeddedTimestamp(in_timestamping_config, in_timestamp_response_verification_options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Contacts a remote timestamp authority over network, sends CMS digest, receives and verifies 
+timestamp token, combines the timestamp token and the data of an existing CMS-type (adbe.pkcs7.detached or 
+ETSI.CAdES.detached subfilter) main document signature, and then returns that data to the user.
+At least one signing time, whether "M" (see SetSigDictTimeOfSigning) or
+a secure embedded timestamp, is required to be added in order to create a PAdES signature.
+
+Note: This function does not insert the final CMS-type document signature into the document. 
+You must retrieve it from the result using GetData and then pass that to PDFDoc SaveCustomSignature.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_timestamping_config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.TimestampingConfiguration.html">Core.PDFNet.TimestampingConfiguration</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- Configuration options to store for timestamping.
+These will include various items related to contacting a timestamping authority.
+Incorrect configuration will result in an exception being thrown.
+The usability of a combination of a TimestampingConfiguration and VerificationOptions
+can be checked ahead of time to prevent exceptions by calling TestConfiguration on
+TimestampingConfiguration and passing VerificationOptions.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_timestamp_response_verification_options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.VerificationOptions.html">Core.PDFNet.VerificationOptions</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- Options for the timestamp
+response verification step (which is required by RFC 3161 to be done as part of
+timestamping). These response verification options should include the root certificate
+of the timestamp authority, so that the trust status of the timestamp signature
+can be verified. The options that should be passed are the same ones that one expects
+the timestamp to be verifiable with in the future (once it is embedded in the document),
+except the response verification requires online revocation information whereas
+the later verification may not (depending on whether LTV offline verification
+information for the embedded timestamp gets embedded into the document by that
+time). The timestamp response verification step makes sure that (a) the
+timestamp response has a success status, which is the only time that this is
+verified in the entire workflow, which prevents embedding an unsuccessful
+response; (b) that it digests the main signature digest correctly and is otherwise generally
+verifiable; and (c) that the nonce is correct (which is the only time that this
+is verifiable in the entire workflow) to prevent replay attacks (if it was not
+requested in the TimestampingConfiguration that the nonce mechanism should be
+disabled).</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the result of the timestamp request, including the final document signature as DER-encoded CMS with a timestamp embedded
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.TimestampingResult.html">Core.PDFNet.TimestampingResult</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getByteRanges"><span class="type-signature"></span>getByteRanges()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Retrieves the ranges of byte indices within the document over which this signature is intended to apply/be verifiable.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a container of byte range objects
+
+Note: This function does not verify that the signature is valid over its byte 
+ranges. It merely returns them. This can be useful when a document consists of 
+multiple incremental revisions, the latter of which may or may not have been 
+signed, for telling which revisions were actually signed by which signature. 
+The outputs of this function can also be used to truncate the document at the 
+end of a signed byte range, in order that the signed document revision may
+be retrieved from a document with later incremental revisions. Of course, to 
+be certain that the signature is valid, it must also then be verified using the 
+verification API. Also, the caller is responsible for making sure that the 
+byte ranges returned from this function actually make sense (i.e. fit inside
+the document).
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Array.&lt;<a href="Core.PDFNet.ByteRange.html">Core.PDFNet.ByteRange</a>>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getCert"><span class="type-signature"></span>getCert(in_index)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Gets a certificate in the certificate chain (Cert entry) of the digital signature dictionary by index. Throws if Cert is not Array or String, throws if index is out of range and Cert is Array, throws if index is > 1 and Cert is string, otherwise retrieves the certificate. Only to be used for old-style adbe.x509.rsa_sha1 signatures; for other signatures, use CMS getter functions instead.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- An integral index which must be greater than 0 and less than the cert count as retrieved using GetCertCount.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a vector of bytes containing the certificate at the index. Returns empty vector if Cert is missing.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Uint8Array></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getCertCount"><span class="type-signature"></span>getCertCount()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Gets number of certificates in certificate chain (Cert entry of digital signature dictionary). Must call HasCryptographicSignature first and use it to check whether the signature is signed. Only to be used for old-style adbe.x509.rsa_sha1 signatures; for other signatures, use CMS getter functions instead.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an integer value the number of certificates in the Cert entry of the digital signature dictionary.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;number></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getCertPathsFromCMS"><span class="type-signature"></span>getCertPathsFromCMS()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Retrieves all constructible certificate paths from an adbe.pkcs7.detached digital signature. The signer will always be returned if the signature is CMS-based and not corrupt. Must only be called on signed adbe.pkcs7.detached signatures. The order of the certificates in each of the paths returned is as follows: the signer will be first, and issuers come after it in order of the issuer of the previous certificate.The default behaviour is to return a sub-path for each marginal issuer in a max-length path.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a container of X509Certificate objectsNote: This function does not verify the paths. It merely extracts certificates and constructs paths. This function only works when the build has support for verification-related APIs.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Array.&lt;Array.&lt;<a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a>>>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getContactInfo"><span class="type-signature"></span>getContactInfo()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Returns the contact information of the signer from the digital signature dictionary. Must call HasCryptographicSignature first and use it to check whether the signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a unicode string containing the contact information of the signer from within the digital signature dictionary. Empty if ContactInfo entry not present.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getDocumentPermissions"><span class="type-signature"></span>getDocumentPermissions()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        If HasCryptographicSignature, returns most restrictive permissions found in any reference entries in this digital signature. Returns Lock-resident (i.e. tentative) permissions otherwise. Throws if invalid permission value is found.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an enumeration value representing the level of restrictions (potentially) placed on the document by this signature.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;number></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">Return value enum:
+&lt;pre&gt;
+PDFNet.DigitalSignatureField.DocumentPermissions = {
+	e_no_changes_allowed : 1
+	e_formfilling_signing_allowed : 2
+	e_annotating_formfilling_signing_allowed : 3
+	e_unrestricted : 4
+}
+&lt;/pre&gt;</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getLocation"><span class="type-signature"></span>getLocation()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Returns the Location of the signature from the digital signature dictionary. Must call HasCryptographicSignature first and use it to check whether the signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a unicode string containing the signing location from within the digital signature dictionary. Empty if Location entry not present.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getLockedFields"><span class="type-signature"></span>getLockedFields()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the fully-qualified names of all fields locked by this signature using the field permissions feature. Retrieves from the digital signature dictionary if the form field HasCryptographicSignature. Otherwise, retrieves from the Lock entry of the digital signature form field. Result is invalidated by any field additions or removals. Does not take document permissions restrictions into account.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a vector of UStrings representing the fully-qualified names of all fields locked by this signature.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Array.&lt;string>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getReason"><span class="type-signature"></span>getReason()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Returns the Reason for the signature from the digital signature dictionary. Must call HasCryptographicSignature first and use it to check whether the signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a unicode string containing the reason for the signature from within the digital signature dictionary. Empty if Reason entry not present.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getSDFObj"><span class="type-signature"></span>getSDFObj()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Retrieves the SDF Obj of the digital signature field.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to the underlying SDF/Cos object.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.Obj.html">Core.PDFNet.Obj</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getSignatureName"><span class="type-signature"></span>getSignatureName()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Returns the name of the signer of the signature from the digital signature dictionary. Must call HasCryptographicSignature first and use it to check whether the signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a unicode string containing the name of the signer from within the digital signature dictionary. Empty if Name entry not present.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getSignerCertFromCMS"><span class="type-signature"></span>getSignerCertFromCMS()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the signing certificate. Must only be called on signed adbe.pkcs7.detached signatures.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an X509Certificate object.
+
+Note: This function does not verify the signature. It merely extracts the claimed signing certificate.
+This function only works when the build has support for verification-related APIs.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.X509Certificate.html">Core.PDFNet.X509Certificate</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getSigningTime"><span class="type-signature"></span>getSigningTime()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). 
+Returns the "M" entry from the digital signature dictionary, which represents the 
+signing date/time. Must call HasCryptographicSignature first and use it to check whether the 
+signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a PDF::Date object holding the signing date/time from within the digital signature dictionary. Returns a default-constructed PDF::Date if no date is present.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.Date.html">Core.PDFNet.Date</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getSubFilter"><span class="type-signature"></span>getSubFilter()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the SubFilter type of the digital signature. Specification says that one must check the SubFilter before using various getters. Must call HasCryptographicSignature first and use it to check whether the signature is signed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to an enumeration describing what the SubFilter of the digital signature is from within the digital signature dictionary.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;number></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">Return value enum:
+&lt;pre&gt;
+PDFNet.DigitalSignatureField.SubFilterType = {
+	e_adbe_x509_rsa_sha1 : 0
+	e_adbe_pkcs7_detached : 1
+	e_adbe_pkcs7_sha1 : 2
+	e_ETSI_CAdES_detached : 3
+	e_ETSI_RFC3161 : 4
+	e_unknown : 5
+	e_absent : 6
+}
+&lt;/pre&gt;</pre>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="hasCryptographicSignature"><span class="type-signature"></span>hasCryptographicSignature()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns whether the digital signature field has been cryptographically signed. Checks whether there is a digital signature dictionary in the field and whether it has a Contents entry. Must be called before using various digital signature dictionary-related functions. Does not check validity will return true even if a valid hash has not yet been generated (which will be the case after [Certify/Sign]OnNextSave[WithCustomHandler] has been called on the signature but even before Save is called on the document).
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a boolean value representing whether the digital signature field has a digital signature dictionary with a Contents entry.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="hasVisibleAppearance"><span class="type-signature"></span>hasVisibleAppearance()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns whether the field has a visible appearance. Can be called without checking HasCryptographicSignature first, since it operates on the surrounding Field dictionary, not the "V" entry (i.e. digital signature dictionary). Performs the zero-width+height check, the Hidden bit check, and the NoView bit check as described by the PDF 2.0 specification, section 12.7.5.5 "Signature fields".
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a boolean representing whether or not the signature field has a visible signature.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="isCertification"><span class="type-signature"></span>isCertification()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns whether or not this signature is a certification.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a boolean value representing whether or not this signature is a certification.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="isLockedByDigitalSignature"><span class="type-signature"></span>isLockedByDigitalSignature()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns whether this digital signature field is locked against modifications by any digital signatures. Can be called when this field is unsigned.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a boolean representing whether this digital signature field is locked against modifications by any digital signatures in the document.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setContactInfo"><span class="type-signature"></span>setContactInfo(in_contact_info)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Sets the ContactInfo entry in the digital signature dictionary. Must create a digital signature dictionary first using [Certify/Sign]OnNextSave[WithCustomHandler]. If this function is called on a digital signature field that has already been cryptographically signed with a valid hash, the hash will no longer be valid, so do not call Save (to sign/create the hash) until after you call this function, if you need to call this function in the first place. Essentially, call this function after [Certify/Sign]OnNextSave[WithCustomHandler] and before Save.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_contact_info</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- A string containing the ContactInfo to be set.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setDocumentPermissions"><span class="type-signature"></span>setDocumentPermissions(in_perms)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sets the document locking permission level for this digital signature field. Call only on unsigned signatures, otherwise a valid hash will be invalidated.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_perms</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigitalSignatureField.DocumentPermissions = {
+	e_no_changes_allowed : 1
+	e_formfilling_signing_allowed : 2
+	e_annotating_formfilling_signing_allowed : 3
+	e_unrestricted : 4
+}
+</pre>
+-- An enumerated value representing the document locking permission level to set.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setFieldPermissions"><span class="type-signature"></span>setFieldPermissions(in_action [, in_field_names_list])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Tentatively sets which fields are to be locked by this digital signature upon signing. It is not necessary to call HasCryptographicSignature before using this function. Throws if non-empty array of field names is passed along with FieldPermissions Action == e_lock_all.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_action</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigitalSignatureField.FieldPermissions = {
+	e_lock_all : 0
+	e_include : 1
+	e_exclude : 2
+}
+</pre>
+-- An enumerated value representing which sort of field locking should be done. Options are All (lock all fields), Include (lock listed fields), and Exclude (lock all fields except listed fields).</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_field_names_list</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- A list of field names; can be empty (and must be empty, if Action is set to All). Empty by default.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setLocation"><span class="type-signature"></span>setLocation(in_location)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Sets the Location entry in the digital signature dictionary. Must create a digital signature dictionary first using [Certify/Sign]OnNextSave[WithCustomHandler]. If this function is called on a digital signature field that has already been cryptographically signed with a valid hash, the hash will no longer be valid, so do not call Save (to sign/create the hash) until after you call this function, if you need to call this function in the first place. Essentially, call this function after [Certify/Sign]OnNextSave[WithCustomHandler] and before Save.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_location</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- A string containing the Location to be set.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setPreferredDigestAlgorithm"><span class="type-signature"></span>setPreferredDigestAlgorithm(in_digest_algorithm_type [, in_make_mandatory])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sets the preferred digest algorithm to use when signing this field. This is done by setting DigestMethod
+in the Seed Value dictionary. This function can be called before a signature field is even prepared for signing.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_digest_algorithm_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigestAlgorithm.Type = {
+	e_SHA1 : 0
+	e_SHA256 : 1
+	e_SHA384 : 2
+	e_SHA512 : 3
+	e_RIPEMD160 : 4
+	e_unknown_digest_algorithm : 5
+}
+</pre>
+-- the digest algorithm to use</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_make_mandatory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- whether to tell signing software to give up if the preferred algorithm is unsupported. Default value for this parameter is true.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setReason"><span class="type-signature"></span>setReason(in_reason)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Should not be called when SubFilter is ETSI.RFC3161 (i.e. on a DocTimeStamp). Sets the Reason entry in the digital signature dictionary. Must create a digital signature dictionary first using [Certify/Sign]OnNextSave[WithCustomHandler]. If this function is called on a digital signature field that has already been cryptographically signed with a valid hash, the hash will no longer be valid, so do not call Save (to sign/create the hash) until after you call this function, if you need to call this function in the first place. Essentially, call this function after [Certify/Sign]OnNextSave[WithCustomHandler] and before Save.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_reason</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- A string containing the Reason to be set.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setSigDictTimeOfSigning"><span class="type-signature"></span>setSigDictTimeOfSigning(in_date)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Adds the "M" key and value, representing the PDF-time-of-signing (not to be confused with
+embedded timestamps, DocTimeStamps, or CMS signing time), to the digital signature dictionary.
+The digital signature field must have been prepared for signing first. This function should
+only be used if no secure embedded timestamping support is available from your signing provider.
+Useful for custom signing workflows, where signing time is not set automatically by the PDFTron SDK,
+unlike in the usual standard handler signing workflow. A secure embedded timestamp can also be added
+later and should override this "M" date entry when the signature is read by signature-verifying PDF processor applications. 
+At least one signing time, whether "M" or a secure embedded timestamp (see GenerateContentsWithEmbeddedTimestamp),
+is required to be added in order to create a PAdES signature.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.Date.html">Core.PDFNet.Date</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the PDF Date datetime value to set</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="signOnNextSave"><span class="type-signature"></span>signOnNextSave(in_pkcs12_keyfile_path, in_password)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for signing, which is done afterwards by calling Save. Cannot sign two signatures during one save (throws). Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pkcs12_keyfile_path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The path to the PKCS #12 private keyfile to use to sign this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 keyfile.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="signOnNextSaveFromBuffer"><span class="type-signature"></span>signOnNextSaveFromBuffer(in_pkcs12_buffer, in_password)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for signing, which is done afterwards by calling Save. Cannot sign two signatures during one save (throws). Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_pkcs12_buffer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ArrayBuffer</span>
+|
+
+<span class="param-type">Int8Array</span>
+|
+
+<span class="param-type">Uint8Array</span>
+|
+
+<span class="param-type">Uint8ClampedArray</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- A buffer of bytes containing the PKCS #12 private key certificate store to use to sign this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 buffer.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="signOnNextSaveFromURL"><span class="type-signature"></span>signOnNextSaveFromURL(url, in_password [, options])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for signing, which is done afterwards by calling Save. Cannot sign two signatures during one save (throws).Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The url to the PKCS #12 private keyfile to use to sign this digital signature.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- The password to use to parse the PKCS #12 keyfile.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Additional options
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>withCredentials</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether to set the withCredentials property on the XMLHttpRequest</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>customHeaders</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">An object containing custom HTTP headers to be used when downloading the document</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="signOnNextSaveWithCustomHandler"><span class="type-signature"></span>signOnNextSaveWithCustomHandler(in_signature_handler_id)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a signature for signing, which is done afterwards by calling Save. Cannot sign two signatures during one save (throws). Default document permission level is e_annotating_formfilling_signing_allowed. Throws if signature field already has a digital signature dictionary.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_signature_handler_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The unique id of the signature handler to use to sign this digital signature.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="timestampOnNextSave"><span class="type-signature"></span>timestampOnNextSave(in_timestamping_config, in_timestamp_response_verification_options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Must be called to prepare a secure PDF-embedded timestamp signature (RFC 3161 
+DocTimeStamp) for signing, which is done afterwards by calling Save on the 
+document with an e_incremental flag. Throws if document is locked by other 
+signatures,  if signature is already signed, or if another signature has already 
+been prepared for signing on the next save (because only one signing operation 
+can be done per incremental save). Default document permission level is 
+e_annotating_formfilling_signing_allowed.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_timestamping_config</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.TimestampingConfiguration.html">Core.PDFNet.TimestampingConfiguration</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- Configuration options to store for timestamping.
+These will include various items related to contacting a timestamping authority.
+Incorrect configuration will result in document Save throwing an exception. 
+The usability of a combination of a TimestampingConfiguration and VerificationOptions 
+can be checked ahead of time to prevent exceptions by calling TestConfiguration on 
+TimestampingConfiguration and passing VerificationOptions.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_timestamp_response_verification_options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.VerificationOptions.html">Core.PDFNet.VerificationOptions</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- Options for the timestamp
+response verification step (which is required by RFC 3161 to be done as part of 
+timestamping). These response verification options should include the root certificate
+of the timestamp authority, so that the trust status of the timestamp signature
+can be verified. The options that should be passed are the same ones that one expects
+the timestamp to be verifiable with in the future (once it is embedded in the document),
+except the response verification requires online revocation information whereas
+the later verification may not (depending on whether LTV offline verification
+information for the timestamp signature gets embedded into the document by that
+time). The timestamp response verification step makes sure that (a) the
+timestamp response has a success status, which is the only time that this is 
+verified in the entire workflow, which prevents embedding an unsuccessful 
+response; (b) that it digests the document correctly and is otherwise generally 
+verifiable; and (c) that the nonce is correct (which is the only time that this 
+is verifiable in the entire workflow) to prevent replay attacks (if it was not 
+requested in the TimestampingConfiguration that the nonce mechanism should be 
+disabled). 
+
+Note: A failure in timestamp response verification will result in document Save
+throwing an exception. It is recommended to use TimestampingConfiguration.TestConfiguration 
+with the VerificationOptions ahead of time to avoid this.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="useSubFilter"><span class="type-signature"></span>useSubFilter(in_subfilter_type [, in_make_mandatory])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sets the requested SubFilter value (which identifies a signature type) as the only one to use during future signing, overwriting all such previous settings. It is not necessary to call HasCryptographicSignature before calling this function. For example, this function can be used to switch to PAdES signing mode.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_subfilter_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><pre>
+PDFNet.DigitalSignatureField.SubFilterType = {
+	e_adbe_x509_rsa_sha1 : 0
+	e_adbe_pkcs7_detached : 1
+	e_adbe_pkcs7_sha1 : 2
+	e_ETSI_CAdES_detached : 3
+	e_ETSI_RFC3161 : 4
+	e_unknown : 5
+	e_absent : 6
+}
+</pre>
+-- The SubFilter type to set.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>in_make_mandatory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">- Whether to make usage of this SubFilter mandatory for future signing applications. Default value for this parameter is true.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="verify"><span class="type-signature"></span>verify(in_opts)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Verifies this cryptographic digital signature in the manner specified by the VerificationOptions. EXPERIMENTAL. Digital signature verification is undergoing active development, but currently does not support a number of features. If we are missing a feature that is important to you, or if you have files that do not act as expected, please contact us using one of the following forms: https://www.pdftron.com/form/trial-support/ or https://www.pdftron.com/form/request/
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>in_opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Core.PDFNet.VerificationOptions.html">Core.PDFNet.VerificationOptions</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">- The options specifying how to do the verification.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A promise that resolves to a VerificationResult object containing various information about the verifiability of the cryptographic digital signature.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Core.PDFNet.VerificationResult.html">Core.PDFNet.VerificationResult</a>></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a>
+	
+		on 2022-09-30T06:17:04+08:00
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : false,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	
+     
+    
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+</body>
+</html>

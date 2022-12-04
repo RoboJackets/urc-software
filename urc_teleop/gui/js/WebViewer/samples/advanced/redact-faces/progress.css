@@ -1,0 +1,32 @@
+#redact-progress-container{
+  position: relative;
+}
+#redact-progress-container.visible{
+  display: flex;
+}
+#redact-progress-container.hidden{
+  display: none;
+}
+.redact-progress {
+  position: absolute;
+  top:0;
+  left: 0;
+}
+.white-out{
+  position: absolute;
+  top:0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255,255,255,.8);
+}
+.redact-progress-content{
+  position: absolute;
+  top:0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

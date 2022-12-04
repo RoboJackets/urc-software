@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      if (window.location.href.slice(-1) !== '/' && window.location.href.slice(-4) !== 'html') {
+        // hacky redirect for mac php server...
+        window.location = window.location.href + '/';
+      }
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+    <title>PDF Viewer Samples</title>
+  </head>
+
+  <body class="pdftron">
+    <header>
+      <div class="container">
+        <div>
+          <a href="https://pdftron.com" target="_blank">
+            <div class="logo"></div>
+          </a>
+          <span class="title">WebViewer</span>
+        </div>
+        <div>
+          <a class="button" href="https://pdftron.com/documentation/web/guides/" target="_blank">Go to Guides</a>
+          <a class="button filled" href="https://pdftron.com/licensing/" target="_blank">Licensing</a>
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="sidebar">
+        <p><b>Samples</b></p>
+
+        <p><a class="" href="../">Viewing</a></p>
+        <p><a class="" href="../annotation">Annotation</a></p>
+        <p><a class="" href="../forms">Forms</a></p>
+        <p><a class="" href="../customization">Customization</a></p>
+        <p><a class="active" href=".">PDF Manipulation</a></p>
+        <p><a class="" href="../advanced">Advanced</a></p>
+        <p><a class="" href="../full-apis">Full apis</a></p>
+
+        <p><b>Showcase</b></p>
+        <p><a href="https://pdftron.com/webviewer/demo" target="_blank">Go to showcase</a></p>
+      </div>
+      <div class="content">
+        <div id="error-message" style="display: none; background-color: red; color: white">Samples are not runnable from the file system. Please run using "npm start" or use a local web server.</div>
+
+        <h1>PDF Manipulation Samples</h1>
+
+        <div>
+          <h4>Thumbnail controls</h4>
+          <p>
+            Shows how to use thumbnail controls for page manipulation of documents. Note that this is only enabled for client side PDF and Office documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./thumbnail-controls">Launch demo</a>
+            <a href="./thumbnail-controls/thumbnail-controls.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Page operations</h4>
+          <p>
+            Shows how to rotate/crop/add/delete page, change page order, insert blank pages and merge multiple documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./page-operations">Launch demo</a>
+            <a href="./page-operations/page-operations.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Layer separation</h4>
+          <p>
+            Shows how to get each layer's information. You can also show/hide specific layers.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./layer-separation">Launch demo</a>
+            <a href="./layer-separation/layer-separation.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Color separation</h4>
+          <p>
+            Shows how to get each color's information. You can also show/hide specific colors.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./color-separation">Launch demo</a>
+            <a href="./color-separation/color-separation.js" target="_self">View Source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      if (window.location.href.indexOf('file://') === 0) {
+        alert('Samples are not runnable from the file system. Please run using "npm start" or use a local web server.');
+        document.getElementById('error-message').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

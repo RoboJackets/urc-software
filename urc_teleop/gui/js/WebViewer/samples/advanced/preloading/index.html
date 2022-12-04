@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../global.js"></script>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="title sample">Preloading sample</div>
+    </header>
+    <aside>
+      <h1>Controls</h1>
+      <h2>Select a preloaded document</h2>
+      <div id="preload">
+        <ul id="documents" style="padding: 0"></ul>
+      </div>
+      <h2>Show/hide WebViewer</h2>
+      <button id="toggle">Toggle viewer</button>
+      <h1>Instructions</h1>
+      <p>
+        This sample preloads the WebViewer and the documents ahead of time. Use the controls to display a a preloaded document. It will load faster then normal because resources were already loaded.
+      </p>
+    </aside>
+    <div id="viewer" style="overflow: hidden; visibility: hidden"></div>
+    <script src="../../menu-button.js"></script>
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['preloading.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>

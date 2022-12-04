@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      if (window.location.href.slice(-1) !== '/' && window.location.href.slice(-4) !== 'html') {
+        // hacky redirect for mac php server...
+        window.location = window.location.href + '/';
+      }
+    </script>
+    <link rel="stylesheet" href="../style.css" />
+    <title>Advanced Demo & Samples for JavaScript PDF Viewer</title>
+  </head>
+
+  <body class="pdftron">
+    <header>
+      <div class="container">
+        <div>
+          <a href="https://pdftron.com" target="_blank">
+            <div class="logo"></div>
+          </a>
+          <span class="title">WebViewer</span>
+        </div>
+        <div>
+          <a class="button" href="https://pdftron.com/documentation/web/guides/" target="_blank">Go to Guides</a>
+          <a class="button filled" href="https://pdftron.com/licensing/" target="_blank">Licensing</a>
+        </div>
+      </div>
+    </header>
+    <section>
+      <div class="sidebar">
+        <p><b>Samples</b></p>
+
+        <p><a class="" href="../">Viewing</a></p>
+        <p><a class="" href="../annotation">Annotation</a></p>
+        <p><a class="" href="../forms">Forms</a></p>
+        <p><a class="" href="../customization">Customization</a></p>
+        <p><a class="" href="../pdf-manipulation">PDF Manipulation</a></p>
+        <p><a class="active" href=".">Advanced</a></p>
+        <p><a class="" href="../full-apis">Full apis</a></p>
+
+        <p><b>Showcase</b></p>
+        <p><a href="https://pdftron.com/webviewer/demo" target="_blank">Go to showcase</a></p>
+      </div>
+      <div class="content">
+        <div id="error-message" style="display: none; background-color: red; color: white">Samples are not runnable from the file system. Please run using "npm start" or use a local web server.</div>
+
+        <h1>Advanced Demo for PDF Viewer</h1>
+
+        <div>
+          <h4>Content Editing (text and images)</h4>
+          <p>
+            Edit the content of a PDF document directly.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./content-edit">Launch demo</a>
+            <a href="./content-edit/content-edit.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Office Template Filling</h4>
+          <p>
+            Bind templates to content in .docx and .xlsx files.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./template-fill">Launch demo</a>
+            <a href="./template-fill/template-fill.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Text compare</h4>
+          <p>
+            Shows how to compare text in different documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./text-compare">Launch demo</a>
+            <a href="./text-compare/text-compare.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Video Frames Annotating</h4>
+          <p>
+            Allows the functionality of annotating video frames.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./video">Launch demo</a>
+            <a href="./video/video.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Accessibility</h4>
+          <p>
+            Demonstrates how to use accessibility feature of WebViewer to read PDF text out loud.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./accessibility">Launch demo</a>
+            <a href="./accessibility/accessibility.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Diff Documents</h4>
+          <p>
+            Shows how to render three synchronized panels where the middle panel shows pixel differences between the two documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./diff">Launch demo</a>
+            <a href="./diff/diff.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Flipbook</h4>
+          <p>
+            Demonstrates how to extract canvas of each page. The sample uses turn.js to render them.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./flipbook">Launch demo</a>
+            <a href="./flipbook/flipbook.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Measurement Annotations</h4>
+          <p>
+            Shows how to create annotations that measure distance, perimeter and area.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./measurement">Launch demo</a>
+            <a href="./measurement/measurement.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Preloading</h4>
+          <p>
+            Shows how to preload WebViewer and documents to improve user experience.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./preloading">Launch demo</a>
+            <a href="./preloading/preloading.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Redaction</h4>
+          <p>
+            Shows how to redact and permanently remove text, images or graphics from a document.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./redaction">Launch demo</a>
+            <a href="./redaction/redaction.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Redact people's faces from a PDF.</h4>
+          <p>
+            Shows how to automatically detect and redact people's faces from documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./redact-faces">Launch demo</a>
+            <a href="./redact-faces/redact-faces.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Text position</h4>
+          <p>
+            Shows how to extract text positions from a document. The sample highlights the positions with different colors.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./text-position">Launch demo</a>
+            <a href="./text-position/text-position.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Office to PDF</h4>
+          <p>
+            This sample illustrates how to convert office files to PDFs.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./office-to-pdf-test">Launch demo</a>
+            <a href="./office-to-pdf-test/office-to-pdf-test.js" target="_self">View Source</a>
+          </div>
+        </div>
+
+        <div>
+          <h4>Table Extraction</h4>
+          <p>
+            This sample shows how to use the PDFTron.AI REST endpoint to extract table from PDF documents.
+            <br />
+          </p>
+          <div class="inline">
+            <a href="./table-extraction">Launch demo</a>
+            <a href="./table-extraction/table-extraction.js" target="_self">View Source</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script>
+      if (window.location.href.indexOf('file://') === 0) {
+        alert('Samples are not runnable from the file system. Please run using "npm start" or use a local web server.');
+        document.getElementById('error-message').style.display = 'block';
+      }
+    </script>
+  </body>
+</html>

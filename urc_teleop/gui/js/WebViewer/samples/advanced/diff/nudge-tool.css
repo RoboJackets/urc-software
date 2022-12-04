@@ -1,0 +1,53 @@
+#nudge-diff-tool {
+  padding: 5px;
+  z-index: 200;
+  opacity: 0.75;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  flex-direction: column;
+  border: 1px solid rgb(189, 189, 189);
+  border-radius: 4px;
+  background-color: #EEEEEE;
+}
+
+#nudge-diff-tool .action-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+#nudge-diff-tool .action {
+  cursor: pointer;
+  user-select: none;
+  padding-left: 4px;
+  padding-top: 3px;
+  display: flex;
+  margin: 5px;
+  background-color: rgb(218, 218, 218);
+  border-radius: 4px;
+}
+
+#nudge-diff-tool .translateDown, #nudge-diff-tool .translateUp {
+  padding-top: 3px;
+  display: flex;
+  justify-content: center;
+}
+
+#nudge-diff-tool .scaleOut, #nudge-diff-tool .scaleIn {
+  background-color: #bdbdbd;
+}
+
+/**
+  Style is not applied to scaleOut and scaleIn due to CSS specificity rule
+  so restate those CSS classes again
+*/
+#nudge-diff-tool .action:hover, #nudge-diff-tool .scaleOut:hover, #nudge-diff-tool .scaleIn:hover {
+  background-color: #000000;
+  opacity: 0.5;
+}
+
+#nudge-diff-tool img {
+  pointer-events: none;
+}

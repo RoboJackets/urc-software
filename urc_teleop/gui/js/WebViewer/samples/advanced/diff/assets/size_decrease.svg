@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="6px" viewBox="0 0 14 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 58 (101010) - https://sketch.com -->
+    <title>107F39E4-0D8D-4E93-9519-47AC73A9171B@1.00x</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <filter x="-12.5%" y="-5.3%" width="123.6%" height="110.0%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="2" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0.775560462   0 0 0 0 0.775560462   0 0 0 0 0.775560462  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="D---nudge-diff-tool" transform="translate(-503.000000, -488.000000)">
+            <g id="wv-/--menu-/-detach-/-Nudge-Copy" filter="url(#filter-1)" transform="translate(488.000000, 340.000000)">
+                <g id="Buttons_palette" transform="translate(8.000000, 23.000000)">
+                    <g id="size_decrease" transform="translate(0.000000, 114.000000)">
+                        <g id="padding"></g>
+                        <g id="icons" transform="translate(7.000000, 11.000000)" fill="#8C8C8C">
+                            <polygon id="Mask" points="10 2 0 2 0 0 10 0"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="../../../lib/webviewer.min.js"></script>
+    <script src="../../old-browser-checker.js"></script>
+    <script src="../../global.js"></script>
+    <title>JavaScript PDF Viewer Demo</title>
+    <script src="../../modernizr.custom.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="title sample">PDFTron.AI Table Extraction Demo</div>
+    </header>
+    <aside>
+      <h2>Choose a file</h2>
+      <input id="file-picker" type="file" accept=".pdf" />
+      <hr />
+
+      <h1>Instructions</h1>
+      <strong
+        >This sample uses the
+        <a href="https://www.pdftron.com/documentation/web/guides/extraction/text-extract/#pdftronai" target="_blank">
+          PDFTron.AI REST API
+        </a>
+        to extract table information from PDFs.</strong
+      >
+      <p>Select a file, which will be sent to the REST endpoint to extract table information, which is then imported as XFDF into the viewer.</p>
+      <p>To see the code follow <a href="./table-extraction.js">this link</a></p>
+    </aside>
+    <div id="viewer"></div>
+    <script src="../../menu-button.js"></script>
+
+    <!--ga-tag-->
+
+    <script>
+      Modernizr.addTest('async', function() {
+        try {
+          var result;
+          eval('let a = () => {result = "success"}; let b = async () => {await a()}; b()');
+          return result === 'success';
+        } catch (e) {
+          return false;
+        }
+      });
+
+      // test for async and fall back to code compiled to ES5 if they are not supported
+      ['table-extraction.js'].forEach(function(js) {
+        var script = Modernizr.async ? js : js.replace('.js', '.ES5.js');
+        var scriptTag = document.createElement('script');
+        scriptTag.src = script;
+        scriptTag.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(scriptTag);
+      });
+    </script>
+  </body>
+</html>
