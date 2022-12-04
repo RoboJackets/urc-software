@@ -49,23 +49,9 @@ void JoystickDriver::joyCallback(const sensor_msgs::msg::Joy & msg)
 
   updater_ptr->force_update();
 
-  auto joyVerification = [](const float & f) -> float {
-      if (f > 1.0) {
-        return 1.0;
-      } else if (f < -1.0) {
-        return -1.0;
-      } else if (std::fabs(f) <= 0.001) {
-        return 0.0;
-      } else {
-        return f;
-      }
-    };
-
   auto cmd = urc_msgs::msg::VelocityPair();
-  cmd.left_velocity =
-    joyVerification(msg.axes[leftJoyAxis]) * maxVel * (leftInverted ? -1.0 : 1.0);
-  cmd.right_velocity =
-    joyVerification(msg.axes[rightJoyAxis]) * maxVel * (rightInverted ? -1.0 : 1.0);
+  cmd.left_velocity = msg.axes[leftJoyAxis] * maxVel * (leftInverted ? -1.0 : 1.0);
+  cmd.right_velocity = msg.axes[rightJoyAxis] * maxVel * (rightInverted ? -1.0 : 1.0);
   cmd.header.stamp = this->get_clock()->now();
 
   _cmd_publisher->publish(cmd);

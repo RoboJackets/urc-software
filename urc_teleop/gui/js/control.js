@@ -1,38 +1,39 @@
-// Joystick publication
-// --------------------
+const gamepad_publisher = new ROSLIB.Topic({
+    ros : ros,
+    name : '/joy',
+    messageType : 'sensor_msgs/msg/Joy'
+});
 
-
-// This function is to eliminate an error when integer value
-// floats are passed into rosbridge
-function checkValidity(num) {
-    if (num.toFixed(2) == 1.0) {
-        return 99.9;
-    }
-    else if (num.toFixed(2) == 0.0) {
-        return 0.000001;
-    }
-    else if (num.toFixed(2) == -1.0) {
-        return -99.9;
-    }
-    else {
-        return num;
-    }
+// Helper Functions
+function inputDeadzone(num, deadzone) {
+    return Math.abs(num) < deadzone ? 0 : num;
 }
 
-const joy_publisher = new ROSLIB.Topic({
-  ros : ros,
-  name : '/joy',
-  messageType : 'sensor_msgs/msg/Joy'
-});
+function checkNonzero(arr, deadzone) {
+    var nonzero = false;
+    arr.forEach(element => {
+        if (typeof element == typeof 0.0) {
+            if (inputDeadzone(element, deadzone) != 0) {
+                nonzero = true;
+            }
+        } else {
+            if (inputDeadzone(element.value, deadzone) != 0) {
+                nonzero = true;
+            }
+        }
+    });
+
+    return nonzero;
+}
 
 function publishMovementInput(gamepad) {
     let joy_msg = new ROSLIB.Message({
         axes: [
-            checkValidity(0.0),
-            checkValidity(gamepad.axes[1]),
-            checkValidity(0.0),
-            checkValidity(0.0),
-            checkValidity(gamepad.axes[3])
+            0.0,
+            inputDeadzone(gamepad.axes[1], 0.02),
+            0.0,
+            0.0,
+            inputDeadzone(gamepad.axes[3], 0.02)
         ],
         buttons: [
             gamepad.buttons[0].pressed ? 1 : 0,
@@ -41,67 +42,55 @@ function publishMovementInput(gamepad) {
             gamepad.buttons[3].pressed ? 1 : 0
         ]
     });
-    joy_publisher.publish(joy_msg)
+    
+    gamepad_publisher.publish(joy_msg)
 }
 
-
-// Controller/Joystick functionality
-// -----------------------
-
-
+// Gamepad Event Listeners
 window.addEventListener("gamepadconnected", event => {
-    console.log('Gamepad connected!');
+    console.log('Gamepad Connected!');
     console.log(event.gamepad);
 });
 
 window.addEventListener("gamepaddisconnected", event => {
-    console.log('Gamepad disconnected!');
+    console.log('Gamepad Disconnected!');
     console.log(event.gamepad);
 });
 
-const gamepadDisplay = document.getElementById('gamepad-display');
-const joystickDisplay = document.getElementById('joystick-display');
-
 // Checks the gamepad inputs every 17 ms, publishes inputs across rosbridge
 setInterval(function() {
-    var gamepad_list = navigator.getGamepads();
-    
-    // controller (rover movement)
-    if (gamepad_list[0]) {
-        const gamepadState = {
-            id : gamepad_list[0].id,
-            axes: [
-                //left stick
-                gamepad_list[0].axes[0].toFixed(2), // -1 left, 1 right
-                gamepad_list[0].axes[1].toFixed(2),  // -1 up, 1 down
+    var controller_list = navigator.getGamepads();
+    var gamepad_index = -1;
+    var joystick_index = -1;
 
-                //right stick
-                gamepad_list[0].axes[2].toFixed(2), // -1 left, 1 right
-                gamepad_list[0].axes[3].toFixed(2)  // -1 up, 1 down
-            ],
-            buttons: [
-                { button_0 : gamepad_list[0].buttons[0].pressed },
-                { button_1 : gamepad_list[0].buttons[1].pressed }, // increase vel
-                { button_2 : gamepad_list[0].buttons[2].pressed },
-                { button_3 : gamepad_list[0].buttons[3].pressed }  // decrease vel
-            ]
+    // Get indexes for controllers
+    for (var i = 0; i < controller_list.length; i++) {
+        if (controller_list[i].id.includes('Xbox 360 Controller')) {
+            gamepad_index = i;
+        } else if (controller_list[i].id.includes('Logitech Attack 3')) {
+            joystick_index = i;
         }
-        gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
-        publishMovementInput(gamepad_list[0]);
     }
     
-    // joystick (arm movement)
-    //if (gamepad_list[1]) {
-    //    const joystickState = {
-    //        id : gamepad_list[1].id,
-    //        axes: [
-    //            gamepad_list[1].axes[0].toFixed(2)
-    //        ],
-    //        buttons: [
-    //            { button_0 : gamepad_list[1].buttons[0].pressed }
-    //        ]
-    //    }
-    //    joystickDisplay.textContent = JSON.stringify(joystickState, null, 2);
-        //publishArmInput(gamepad_list[1])
-    //}
+    // Deal with gamepad input
+    if (gamepad_index >= 0) {
+        if (checkNonzero(controller_list[gamepad_index].axes, 0.02) || checkNonzero(controller_list[gamepad_index].buttons, 0.02)) {
+            document.getElementById('gamepad').style.opacity = '1';
+        } else {
+            document.getElementById('gamepad').style.opacity = '0.5';
+        }
+        
+        publishMovementInput(controller_list[gamepad_index]);
+    }
+    
+    // Deal with joystick input
+    if (joystick_index >= 0) {
+        if (checkNonzero(controller_list[joystick_index].axes.slice(0, 2), 0.1) || checkNonzero(controller_list[joystick_index].buttons, 0.1)) {
+            document.getElementById('joystick').style.opacity = '1';
+        } else {
+            document.getElementById('joystick').style.opacity = '0.5';
+        }
+
+        // publishArmInput(gamepad_list[joystick_index]);
+    }
 }, 17)
