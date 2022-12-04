@@ -15,13 +15,17 @@ const tl_y_px = 175;
 const br_x_px = 1506;
 const br_y_px = 1813;
 
-const ROVER_ANNOT_LONG_LENGTH = 2;
-const ROVER_ANNOT_SHORT_LENGTH = 1;
-const GOAL_ANNOT_DIAMETER = 5;
+const PIXELS_PER_METER = 0.117;
+const ROVER_ANNOT_FW_RAD = 0.75;
+const ROVER_ANNOT_BW_RAD = 0.75*1.414;
+const ROVER_STROKE_THICKNESS = PIXELS_PER_METER/10;
+const GOAL_STROKE_THICKNESS = PIXELS_PER_METER*1.5;
+const GOAL_ANNOT_DIAMETER = 40 * PIXELS_PER_METER + GOAL_STROKE_THICKNESS * 2;
 
 // from index.html
 const VIEWER_WIDTH = 1066;
 const VIEWER_HEIGHT = 600;
+
 const INITIAL_ZOOM = 7;
 const INITIAL_X_OFFSET = 5500;
 const INITIAL_Y_OFFSET = 7000;
@@ -89,10 +93,13 @@ WebViewer({
         var pos_x_px = coords_px[0];
         var pos_y_px = coords_px[1];
 
-        rover_annot.setPathPoint(0, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta));
-        rover_annot.setPathPoint(1, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta + Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta + Math.PI * 2/3));
-        rover_annot.setPathPoint(2, pos_x_px + ROVER_ANNOT_SHORT_LENGTH * Math.sin(rover_theta - Math.PI * 2/3), pos_y_px + ROVER_ANNOT_SHORT_LENGTH * Math.cos(rover_theta - Math.PI * 2/3));
-        rover_annot.setPathPoint(3, pos_x_px + ROVER_ANNOT_LONG_LENGTH * Math.sin(rover_theta), pos_y_px + ROVER_ANNOT_LONG_LENGTH * Math.cos(rover_theta));
+        var angle = Math.PI * 3/4;
+        rover_annot.StrokeThickNess = ROVER_STROKE_THICKNESS;
+        rover_annot.setPathPoint(0, pos_x_px - ROVER_ANNOT_FW_RAD * Math.sin(rover_theta), pos_y_px - ROVER_ANNOT_FW_RAD * Math.cos(rover_theta));
+        rover_annot.setPathPoint(1, pos_x_px - ROVER_ANNOT_BW_RAD * Math.sin(rover_theta + angle), pos_y_px - ROVER_ANNOT_BW_RAD * Math.cos(rover_theta + angle));
+        rover_annot.setPathPoint(2, pos_x_px, pos_y_px);
+        rover_annot.setPathPoint(3, pos_x_px - ROVER_ANNOT_BW_RAD * Math.sin(rover_theta - angle), pos_y_px - ROVER_ANNOT_BW_RAD * Math.cos(rover_theta - angle));
+        rover_annot.setPathPoint(4, pos_x_px - ROVER_ANNOT_FW_RAD * Math.sin(rover_theta), pos_y_px - ROVER_ANNOT_FW_RAD * Math.cos(rover_theta));
         annotationManager.redrawAnnotation(rover_annot);
     });
 
@@ -113,19 +120,20 @@ WebViewer({
 
         rover_annot = new Annotations.PolygonAnnotation({
             PageNumber: 1,
-            StrokeColor: new Annotations.Color(255, 0, 0, 1),
-            FillColor: new Annotations.Color(255, 0, 0, 1),
+            StrokeColor: new Annotations.Color(255, 0, 0, 0),
+            FillColor: new Annotations.Color(255, 0, 0, 0.5),
             Locked: true,
         });
 
         goal_annot = new Annotations.EllipseAnnotation({
             PageNumber: 1,
-            StrokeColor: new Annotations.Color(0, 255, 0, 1),
+            StrokeColor: new Annotations.Color(0, 255, 0, 0.5),
             Locked: true,
             X: -GOAL_ANNOT_DIAMETER,
             Y: -GOAL_ANNOT_DIAMETER,
             Width: GOAL_ANNOT_DIAMETER,
             Height: GOAL_ANNOT_DIAMETER,
+            StrokeThickness: GOAL_STROKE_THICKNESS,
         });
 
         var border_annot = new Annotations.PolygonAnnotation({
@@ -137,6 +145,7 @@ WebViewer({
 
         rover_annot.addPathPoint(0, 0);
         rover_annot.addPathPoint(1, 0);
+        rover_annot.addPathPoint(1, 1);
         rover_annot.addPathPoint(0, 1);
         rover_annot.addPathPoint(0, 0);
         annotationManager.addAnnotation(rover_annot);
