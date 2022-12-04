@@ -91,6 +91,9 @@ setInterval(function() {
         if (checkNonzero(gamepad_list[0].axes) || checkNonzero(gamepad_list[0].buttons)) {
             document.getElementById('gamepad').style.boxShadow = '0 0 10px 0 rgba(255, 0, 0, 0.5)';
         }
+        else {
+            document.getElementById('gamepad').style.boxShadow = none;
+        }
         
         gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
         publishMovementInput(gamepad_list[0]);

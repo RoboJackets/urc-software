@@ -11,6 +11,7 @@
     <div class="card" id="title-card">
       <h1 class="card-title" id="title">Walli Teleoperation</h1>
       <div class="card-content" id="title-data">
+        <div id="controls-display">
         <div id="status-indicator">
           <p id="connecting">
             Connecting to rosbridge...
@@ -25,9 +26,12 @@
             Connection Closed
           </p>
         </div>
-
-        <p id="gamepad-display">gamepad</p>
-        <p id="joystick-display">joystick</p>
+        
+          <!-- <p id="gamepad-display">gamepad</p> -->
+          <!-- <p id="joystick-display">joystick</p> -->
+          <img src="gamepad.png" id="gamepad" width = "100" height = "100" />
+          <img src="joystick.png" id="joystick" width = "75" height = "80" />
+        </div>
       </div>
     </div>
 

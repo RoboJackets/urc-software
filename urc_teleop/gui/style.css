@@ -29,6 +29,14 @@ p {
     border-radius: 0px 0px 30px 30px;
 }
 
+#controls-display {
+    flex-direction: row;
+    display: flex;
+    width: 100%;
+    text-align: right;
+    
+}
+
 #title {
     padding: 20px;
 }
@@ -52,7 +60,9 @@ p {
 }
 
 #status-indicator {
-    text-align: left;
+    text-align: center;
+    margin-right: auto;
+    margin-left: 0;
 }
 
 #connected {
