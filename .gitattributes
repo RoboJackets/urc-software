@@ -1,4 +1,8 @@
+# Various file types to blanket ignore from stats
 *.ipynb linguist-detectable=false
 *.bib linguist-detectable=false
 *.html linguist-detectable=false
 *.css linguist-detectable=false
+
+# Exclude vendor libraries from stats
+urc_teleop/gui/js/WebViewer/** linguist-vendored
