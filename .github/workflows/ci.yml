@@ -2,7 +2,7 @@ name: CI
 on:
   pull_request:
     branches: [ master ]
-    types: [ opened, synchronize, closed ]
+    types: [ closed ]
   push:
     branches-ignore:
       - master
