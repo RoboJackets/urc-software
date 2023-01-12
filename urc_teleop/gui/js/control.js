@@ -43,16 +43,16 @@ function publishMovementInput(gamepad) {
         ]
     });
     
-    gamepad_publisher.publish(joy_msg)
+    gamepad_publisher.publish(joy_msg);
 }
 
 // Gamepad Event Listeners
-window.addEventListener("gamepadconnected", event => {
+window.addEventListener('gamepadconnected', event => {
     console.log('Gamepad Connected!');
     console.log(event.gamepad);
 });
 
-window.addEventListener("gamepaddisconnected", event => {
+window.addEventListener('gamepaddisconnected', event => {
     console.log('Gamepad Disconnected!');
     console.log(event.gamepad);
 });
@@ -65,13 +65,15 @@ setInterval(function() {
 
     // Get indexes for controllers
     for (var i = 0; i < controller_list.length; i++) {
-        if (controller_list[i].id.includes('Xbox 360 Controller')) {
-            gamepad_index = i;
-        } else if (controller_list[i].id.includes('Logitech Attack 3')) {
-            joystick_index = i;
+        if (controller_list[i] != null) {
+            if (controller_list[i].id.includes('Xbox 360 Controller')) {
+                gamepad_index = i;
+            } else if (controller_list[i].id.includes('Logitech Attack 3')) {
+                joystick_index = i;
+            }
         }
     }
-    
+
     // Deal with gamepad input
     if (gamepad_index >= 0) {
         if (checkNonzero(controller_list[gamepad_index].axes, 0.02) || checkNonzero(controller_list[gamepad_index].buttons, 0.02)) {
@@ -81,8 +83,10 @@ setInterval(function() {
         }
         
         publishMovementInput(controller_list[gamepad_index]);
+    } else {
+        document.getElementById('gamepad').style.opacity = '0.5';
     }
-    
+
     // Deal with joystick input
     if (joystick_index >= 0) {
         if (checkNonzero(controller_list[joystick_index].axes.slice(0, 2), 0.1) || checkNonzero(controller_list[joystick_index].buttons, 0.1)) {
@@ -92,5 +96,7 @@ setInterval(function() {
         }
 
         // publishArmInput(gamepad_list[joystick_index]);
+    } else {
+        document.getElementById('joystick').style.opacity = '0.5';
     }
-}, 17)
+}, 17);
