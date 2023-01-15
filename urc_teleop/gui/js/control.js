@@ -66,7 +66,7 @@ setInterval(function() {
     // Get indexes for controllers
     for (var i = 0; i < controller_list.length; i++) {
         if (controller_list[i] != null) {
-            if (controller_list[i].id.includes('Xbox 360 Controller')) {
+            if (controller_list[i].id.includes('Xbox 360 Controller') || controller_list[i].id.includes('Gamepad')) {
                 gamepad_index = i;
             } else if (controller_list[i].id.includes('Logitech Attack 3')) {
                 joystick_index = i;
