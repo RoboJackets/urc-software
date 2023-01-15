@@ -22,9 +22,9 @@ const ROVER_STROKE_THICKNESS = PIXELS_PER_METER/10;
 const GOAL_STROKE_THICKNESS = PIXELS_PER_METER*1.5;
 const GOAL_ANNOT_DIAMETER = 40 * PIXELS_PER_METER + GOAL_STROKE_THICKNESS * 2;
 
-// from index.html
-const VIEWER_WIDTH = 1066;
-const VIEWER_HEIGHT = 600;
+const viewer = document.getElementById('viewer');
+const VIEWER_WIDTH = viewer.clientWidth;
+const VIEWER_HEIGHT = viewer.clientHeight;
 
 const INITIAL_ZOOM = 7;
 const INITIAL_X_OFFSET = 5500;
@@ -37,23 +37,23 @@ const gps_goal_subscriber = new ROSLIB.Topic({
     ros : ros,
     name : '/gps_goal',
     messageType : 'sensor_msgs/msg/NavSatFix'
-})
+});
 
 const gps_pos_subscriber = new ROSLIB.Topic({
     ros: ros,
     name : '/gps_pos',
     messageType : 'sensor_msgs/msg/NavSatFix'
-})
+});
 
 const rover_theta_subscriber = new ROSLIB.Topic({
     ros: ros,
     name : '/heading',
     messageType : 'std_msgs/msg/Float64'
-})
+});
 
 rover_theta_subscriber.subscribe(function(message) {
     rover_theta = message.data;
-})
+});
 
 function getPixelCoordsFromGPS(lat, long) {
     var x_px = (br_x_px - tl_x_px) * (long - map_tl_long) / (map_br_long - map_tl_long) + tl_x_px;
@@ -61,14 +61,21 @@ function getPixelCoordsFromGPS(lat, long) {
     return [x_px, y_px];
 }
 
+const input = document.getElementById('map_upload');
+
 WebViewer({
     path: 'js/WebViewer/lib',
-    initialDoc: 'https://raw.githubusercontent.com/RoboJackets/urc-software/feat/gps_interface_pdftron/urc_teleop/gui/UT_75MinuteTopo1_20221012_234609624000_TM_geo.pdf',
     disabledElements: [
-        "header",
-        "toolsHeader",
+        'header',
+        'toolsHeader',
     ]
 }, document.getElementById('viewer')).then(instance => {
+    input.addEventListener('change', () => {
+        if (input.files.length > 0) {
+            instance.UI.loadDocument(input.files[0], { filename: input.files[0].name });
+        }
+    });
+
     const { documentViewer, annotationManager, Annotations } = instance.Core;
 
     gps_goal_subscriber.subscribe(function(message) {
@@ -78,7 +85,7 @@ WebViewer({
         var coords_px = getPixelCoordsFromGPS(goal_lat, goal_long);
         var goal_x_px = coords_px[0] - GOAL_ANNOT_DIAMETER/2;
         var goal_y_px = coords_px[1] - GOAL_ANNOT_DIAMETER/2;
-        console.log("" + goal_x_px + " " + goal_y_px);
+        console.log(goal_x_px + ' ' + goal_y_px);
         
         goal_annot.setX(goal_x_px);
         goal_annot.setY(goal_y_px);
@@ -103,7 +110,7 @@ WebViewer({
         annotationManager.redrawAnnotation(rover_annot);
     });
 
-    documentViewer.addEventListener("documentLoaded", () => {
+    documentViewer.addEventListener('documentLoaded', () => {
         const doc = documentViewer.getDocument();
         doc.getLayersArray().then(layers => {
             layers[0].visible = false;
