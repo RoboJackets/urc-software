@@ -12,11 +12,11 @@ def generate_launch_description():
     # ~<camera_name>/image_raw/compressed
     camera_node = Node(
             package='usb_cam',
-            executable='usb_cam_node',
+            executable='usb_cam_node_exe',
             output='screen',
             parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
-                                     'camera.yaml'])
+                                     'camera_params.yaml'])
             ]
         )
 
