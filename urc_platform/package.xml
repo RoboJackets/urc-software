@@ -18,6 +18,9 @@
   <depend>sensor_msgs</depend>
   <depend>diagnostic_updater</depend>
   <depend>urc_nanopb</depend>
+  <depend>usb_cam</depend>
+  <depend>image_transport</depend>
+  <depend>image_transport_plugins</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
