@@ -75,6 +75,7 @@ WebViewer({
             instance.UI.loadDocument(input.files[0], { filename: input.files[0].name });
         }
     });
+    
 
     const { documentViewer, annotationManager, Annotations } = instance.Core;
 
@@ -169,4 +170,28 @@ WebViewer({
 
         documentViewer.zoomTo(INITIAL_ZOOM, INITIAL_X_OFFSET, INITIAL_Y_OFFSET);
     });
+    documentViewer.addEventListener('click', (e) => {
+        doc = documentViewer.getDocument();
+        const pdfCoords = doc.getPDFCoordinates(1, e.x, e.y);
+        const viewerCoords = doc.getViewerCoordinates(1, e.x, e.y);
+        console.log(pdfCoords);
+        console.log(viewerCoords);
+        console.log(e.layerX);
+        console.log(e.layerY);
+        console.log(e.x);
+        console.log(e.y);
+        console.log(e);
+        landingPoint = new Annotations.EllipseAnnotation({
+            PageNumber: 1,
+            StrokeColor: new Annotations.Color(0, 0, 0, 1.0),
+            X: 217,
+            Y: 175,
+            Width: 100,
+            Height: 100
+        })
+        annotationManager.addAnnotation(landingPoint);
+        const landing = [landingPoint];
+        annotationManager.drawAnnotationsFromList(landing);
+        console.log(annotationManager.getAnnotationsList());
+    })
 })
