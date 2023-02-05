@@ -5,15 +5,17 @@ var rover_lat;
 var rover_long;
 var rover_theta = 0;
 
-const map_tl_lat = 38.4690
-const map_tl_long = -110.8542
-const map_br_lat = 38.3440
-const map_br_long = -110.7292
+const landing_locations = [];
 
-const tl_x_px = 217;
-const tl_y_px = 175;
-const br_x_px = 1506;
-const br_y_px = 1813;
+const MAP_TL_LAT = 38.4690
+const MAP_TL_LONG = -110.8542
+const MAP_BR_LAT = 38.3440
+const MAP_BR_LONG = -110.7292
+
+const TL_X_PX = 217;
+const TL_Y_PX = 175;
+const BR_X_PX = 1506;
+const BR_Y_PX = 1813;
 
 const PIXELS_PER_METER = 0.117;
 const ROVER_ANNOT_FW_RAD = 0.75;
@@ -51,14 +53,27 @@ const rover_theta_subscriber = new ROSLIB.Topic({
     messageType : 'std_msgs/msg/Float64'
 });
 
+const landing_location_publisher = new ROSLIB.Topic({
+    ros: ros,
+    name : '/landing',
+    messageType : 'std_msgs/msg/Float64MultiArray'
+});
+
+
 rover_theta_subscriber.subscribe(function(message) {
     rover_theta = message.data;
 });
 
 function getPixelCoordsFromGPS(lat, long) {
-    var x_px = (br_x_px - tl_x_px) * (long - map_tl_long) / (map_br_long - map_tl_long) + tl_x_px;
-    var y_px = (br_y_px - tl_y_px) * (lat - map_tl_lat) / (map_br_lat - map_tl_lat) + tl_y_px;
+    var x_px = (BR_X_PX - TL_X_PX) * (lat - MAP_TL_LAT) / (MAP_BR_LAT - MAP_TL_LAT) + TL_X_PX;
+    var y_px = (BR_Y_PX - TL_Y_PX) * (long - MAP_TL_LONG) / (MAP_BR_LONG - MAP_TL_LONG) + TL_Y_PX;
     return [x_px, y_px];
+}
+
+function getGPSFromPixelCoords(x_px, y_px) {
+    var lat = (MAP_BR_LAT - MAP_TL_LAT) * (x_px - TL_X_PX) / (BR_X_PX - TL_X_PX) + MAP_TL_LAT;
+    var long = (MAP_BR_LONG - MAP_TL_LONG) * (y_px - TL_Y_PX) / (BR_Y_PX - TL_Y_PX) + MAP_TL_LONG;
+    return [lat, long];
 }
 
 const input = document.getElementById('map_upload');
@@ -74,8 +89,7 @@ WebViewer({
         if (input.files.length > 0) {
             instance.UI.loadDocument(input.files[0], { filename: input.files[0].name });
         }
-    });
-    
+    });    
 
     const { documentViewer, annotationManager, Annotations } = instance.Core;
 
@@ -109,6 +123,52 @@ WebViewer({
         rover_annot.setPathPoint(3, pos_x_px - ROVER_ANNOT_BW_RAD * Math.sin(rover_theta - angle), pos_y_px - ROVER_ANNOT_BW_RAD * Math.cos(rover_theta - angle));
         rover_annot.setPathPoint(4, pos_x_px - ROVER_ANNOT_FW_RAD * Math.sin(rover_theta), pos_y_px - ROVER_ANNOT_FW_RAD * Math.cos(rover_theta));
         annotationManager.redrawAnnotation(rover_annot);
+    });
+
+    if (instance.contextMenuPopup.getItems().length > 3) {
+        instance.contextMenuPopup.update([instance.contextMenuPopup.getItems()[3]]);
+    }
+    instance.textPopup.update([]);
+    instance.annotationPopup.update([]);
+
+    annotationManager.addEventListener('annotationChanged', (annotations, action) => {
+        instance.Tools.FreeHandCreateTool.prototype.createDelay = 0;
+
+        if (action == 'add') {
+            annotations.forEach((annotation) => {
+                if (annotation.Color.toString() == 'rgba(228,66,52,1)') {
+                    const annot = new Annotations.EllipseAnnotation({
+                        PageNumber: 1,
+                        StrokeColor: new Annotations.Color(0, 255, 0),
+                        FillColor: new Annotations.Color(0, 255, 0),
+                        X: annotation.X,
+                        Y: annotation.Y,
+                        Height: 2,
+                        Width: 2
+                    });
+                    annotationManager.addAnnotation(annot);
+                    annotationManager.redrawAnnotation(annot);
+                    
+                    landing_locations.push([annot.X, annot.Y]);
+                    console.log(landing_locations);
+
+                    annotationManager.deleteAnnotation(annotation);
+                }
+            });
+        }
+
+        if (action == 'delete') {
+            annotations.forEach((annotation) => {
+                if (annotation.Color.toString() == 'rgba(0,255,0,1)') {
+                    for (var i = 0; i < landing_locations.length; ++i) {
+                        if (landing_locations[i][0] == annotation.X && landing_locations[i][1] == annotation.Y) {
+                            landing_locations.splice(i, 1);
+                        }
+                    }
+                    console.log(landing_locations);
+                }
+            });
+        }
     });
 
     documentViewer.addEventListener('documentLoaded', () => {
@@ -159,39 +219,28 @@ WebViewer({
         annotationManager.addAnnotation(rover_annot);
         annotationManager.addAnnotation(goal_annot);
 
-        border_annot.addPathPoint(tl_x_px, tl_y_px);
-        border_annot.addPathPoint(br_x_px, tl_y_px);
-        border_annot.addPathPoint(br_x_px, br_y_px);
-        border_annot.addPathPoint(tl_x_px, br_y_px);
-        border_annot.addPathPoint(tl_x_px, tl_y_px);
+        border_annot.addPathPoint(TL_X_PX, TL_Y_PX);
+        border_annot.addPathPoint(BR_X_PX, TL_Y_PX);
+        border_annot.addPathPoint(BR_X_PX, BR_Y_PX);
+        border_annot.addPathPoint(TL_X_PX, BR_Y_PX);
+        border_annot.addPathPoint(TL_X_PX, TL_Y_PX);
 
         annotationManager.addAnnotation(border_annot);
         annotationManager.redrawAnnotation(border_annot);
 
         documentViewer.zoomTo(INITIAL_ZOOM, INITIAL_X_OFFSET, INITIAL_Y_OFFSET);
     });
-    documentViewer.addEventListener('click', (e) => {
-        doc = documentViewer.getDocument();
-        const pdfCoords = doc.getPDFCoordinates(1, e.x, e.y);
-        const viewerCoords = doc.getViewerCoordinates(1, e.x, e.y);
-        console.log(pdfCoords);
-        console.log(viewerCoords);
-        console.log(e.layerX);
-        console.log(e.layerY);
-        console.log(e.x);
-        console.log(e.y);
-        console.log(e);
-        landingPoint = new Annotations.EllipseAnnotation({
-            PageNumber: 1,
-            StrokeColor: new Annotations.Color(0, 0, 0, 1.0),
-            X: 217,
-            Y: 175,
-            Width: 100,
-            Height: 100
-        })
-        annotationManager.addAnnotation(landingPoint);
-        const landing = [landingPoint];
-        annotationManager.drawAnnotationsFromList(landing);
-        console.log(annotationManager.getAnnotationsList());
-    })
-})
+});
+
+setInterval(function() {
+    var landing_gps_coords = []
+    landing_locations.forEach((location) => {
+        landing_gps_coords.push(getGPSFromPixelCoords(location.X, location.Y));
+    });
+
+    let landing_message = new ROSLIB.Message({
+        data: landing_gps_coords
+    });
+
+    landing_location_publisher.publish(landing_message);
+}, 15);
