@@ -57,7 +57,7 @@ window.addEventListener('gamepaddisconnected', event => {
     console.log(event.gamepad);
 });
 
-// Checks the gamepad inputs every 15 ms, publishes inputs across rosbridge
+// Process Controller Inputs
 setInterval(function() {
     var controller_list = navigator.getGamepads();
     var gamepad_index = -1;
