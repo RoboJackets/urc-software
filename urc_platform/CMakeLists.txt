@@ -13,6 +13,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(urc_nanopb REQUIRED)
 find_package(urc_util REQUIRED)
+find_package(usb_cam REQUIRED)
 
 include_directories(
   include
@@ -34,6 +35,7 @@ set(dependencies
   diagnostic_updater
   urc_nanopb
   urc_util
+  usb_cam
 )
 
 ament_target_dependencies(${PROJECT_NAME}
