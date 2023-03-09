@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="RoboticArm">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00014702 -0.26328 7.9943E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.45683" />
+      <inertia
+        ixx="0.010778"
+        ixy="-1.3408E-13"
+        ixz="4.4773E-13"
+        iyy="0.00036207"
+        iyz="4.0161E-12"
+        izz="0.010777" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="shoulder">
+    <inertial>
+      <origin
+        xyz="-0.025011 0.052946 0.046325"
+        rpy="0 0 0" />
+      <mass
+        value="3.0289" />
+      <inertia
+        ixx="0.0034764"
+        ixy="-1.3883E-06"
+        ixz="-2.3083E-06"
+        iyy="0.0044557"
+        iyz="3.8555E-06"
+        izz="0.0027728" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/shoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/shoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulderjoint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 -2.522" />
+    <parent
+      link="base_link" />
+    <child
+      link="shoulder" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="bicep">
+    <inertial>
+      <origin
+        xyz="-0.040731 -0.22142 4.1633E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.55716" />
+      <inertia
+        ixx="0.0061546"
+        ixy="1.2855E-18"
+        ixz="-2.0329E-20"
+        iyy="6.7641E-05"
+        iyz="-1.6466E-18"
+        izz="0.0061511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/bicep.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/bicep.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="bicepjoint"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.5708 1.5594 -2.522" />
+    <parent
+      link="base_link" />
+    <child
+      link="bicep" />
+    <axis
+      xyz="0.99993 0.011404 0" />
+  </joint>
+  <link
+    name="elbow">
+    <inertial>
+      <origin
+        xyz="0.26561 -0.15552 -0.029885"
+        rpy="0 0 0" />
+      <mass
+        value="2.9739" />
+      <inertia
+        ixx="0.001616"
+        ixy="6.6251E-06"
+        ixz="-2.1476E-06"
+        iyy="0.0038647"
+        iyz="-1.3225E-06"
+        izz="0.0039552" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/elbow.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.65098 0.61961 0.58824 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/elbow.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="elbowjoint"
+    type="fixed">
+    <origin
+      xyz="-0.5051 -0.33236 0.2155"
+      rpy="1.5708 -0.049368 0.61958" />
+    <parent
+      link="base_link" />
+    <child
+      link="elbow" />
+    <axis
+      xyz="0.28681 0.95799 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="forearm">
+    <inertial>
+      <origin
+        xyz="0.017007 -0.13784 0.00095558"
+        rpy="0 0 0" />
+      <mass
+        value="0.35206" />
+      <inertia
+        ixx="0.0023661"
+        ixy="-3.5062E-11"
+        ixz="-1.1663E-08"
+        iyy="0.0002374"
+        iyz="3.8931E-11"
+        izz="0.0023674" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/forearm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/forearm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="forearmjoint"
+    type="prismatic">
+    <origin
+      xyz="-0.35347 -0.25212 0.10695"
+      rpy="2.3599 1.5007 1.4099" />
+    <parent
+      link="base_link" />
+    <child
+      link="forearm" />
+    <axis
+      xyz="0.9568 -0.28681 0.047685" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="wrist">
+    <inertial>
+      <origin
+        xyz="-0.037997 0.73619 0.060138"
+        rpy="0 0 0" />
+      <mass
+        value="2.4141" />
+      <inertia
+        ixx="0.0011831"
+        ixy="-0.00011323"
+        ixz="-2.2935E-08"
+        iyy="0.00181"
+        iyz="1.5014E-06"
+        izz="0.0019735" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/wrist.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/wrist.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wristjoint"
+    type="prismatic">
+    <origin
+      xyz="-0.044705 -0.033731 0.09234"
+      rpy="-0.049429 -0.049736 2.1928" />
+    <parent
+      link="base_link" />
+    <child
+      link="wrist" />
+    <axis
+      xyz="0.047685 -0.28681 0.9568" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="end_effector">
+    <inertial>
+      <origin
+        xyz="-0.00054003 0.17293 4.5709E-05"
+        rpy="0 0 0" />
+      <mass
+        value="1.9904" />
+      <inertia
+        ixx="0.003059"
+        ixy="6.0236E-07"
+        ixz="-7.715E-05"
+        iyy="0.0012009"
+        iyz="1.5136E-07"
+        izz="0.0023328" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/end_effector.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.2 0.4 0.69804 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="$(find urc_gazebo)/urdf/meshes/end_effector.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="end_effectorjoint"
+    type="fixed">
+    <origin
+      xyz="-0.73155 -0.42158 0.073718"
+      rpy="3.0596 -1.0469 -2.2839" />
+    <parent
+      link="base_link" />
+    <child
+      link="end_effector" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

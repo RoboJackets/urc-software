@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Gen 3 End Effector.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.138889524654328 0.0980630603264762 0.160956321774185"
+        rpy="0 0 0" />
+      <mass
+        value="0.5" />
+      <inertia
+        ixx="0.00298101628796769"
+        ixy="2.39528657204268E-06"
+        ixz="2.1639648205633E-09"
+        iyy="0.00647177275495484"
+        iyz="-3.52684021537425E-09"
+        izz="0.00363830610645635" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://urc_gazebo/urdf/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.501960784313725 0.501960784313725 0.501960784313725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://urc_gazebo/urdf/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+</robot>
