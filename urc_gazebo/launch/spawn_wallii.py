@@ -6,7 +6,7 @@ from xacro import process_file
 
 
 def generate_launch_description():
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'wallii.xacro')
+    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'arm_urdf.urdf')
     assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in "+str(xacro_file)
 
     robot_description_config = process_file(xacro_file)
