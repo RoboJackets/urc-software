@@ -3,12 +3,12 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="RoboArm">
+  name="RoboticArm">
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="0 0 1"
+        xyz="0 0 0"
         rpy="0 0 0" />
       <mass
         value="0.523" />
@@ -48,16 +48,16 @@
     name="shoulder">
     <inertial>
       <origin
-        xyz="-0.060475 -0.024617 0.04737"
+        xyz="-0.057516 -0.030895 0.04737"
         rpy="0 0 0" />
       <mass
         value="2.4696" />
       <inertia
-        ixx="0.004235"
-        ixy="-0.00032614"
-        ixz="-1.9936E-06"
-        iyy="0.0033183"
-        iyz="-7.6883E-06"
+        ixx="0.0042934"
+        ixy="-0.00022215"
+        ixz="-1.5653E-06"
+        iyy="0.0032599"
+        iyz="-7.8777E-06"
         izz="0.0024937" />
     </inertial>
     <visual>
@@ -101,17 +101,17 @@
     name="bicep">
     <inertial>
       <origin
-        xyz="-0.033709 -0.019568 0.12482"
+        xyz="0.088588 -0.029308 0.077346"
         rpy="0 0 0" />
       <mass
         value="1.1771" />
       <inertia
-        ixx="0.0063226"
-        ixy="6.5403E-05"
-        ixz="0.00023509"
-        iyy="0.0060381"
-        iyz="-0.0015391"
-        izz="0.0008012" />
+        ixx="0.0063326"
+        ixy="9.2675E-08"
+        ixz="-3.6969E-07"
+        iyy="0.0056923"
+        iyz="0.0020171"
+        izz="0.001137" />
     </inertial>
     <visual>
       <origin
@@ -139,32 +139,32 @@
   </link>
   <joint
     name="bicepjoint"
-    type="fixed"> <!-- should be continuous/revolute -->
+    type="continuous">
     <origin
-      xyz="0 0 0"
-      rpy="-1.5708 0 -0.35187" />
+      xyz="0.068308 0.033227 0.041262"
+      rpy="1.5708 0 2.9385" />
     <parent
       link="shoulder" />
     <child
       link="bicep" />
     <axis
-      xyz="0.9991 0 0.042395" />
+      xyz="-1 0 0" />
   </joint>
   <link
     name="elbow">
     <inertial>
       <origin
-        xyz="-0.2653 -0.067321 0.22406"
+        xyz="-0.12752 -0.060357 -0.047394"
         rpy="0 0 0" />
       <mass
         value="2.3313" />
       <inertia
-        ixx="0.0019882"
-        ixy="-4.2108E-07"
-        ixz="-0.00054904"
-        iyy="0.0027669"
-        iyz="5.8953E-07"
-        izz="0.0022384" />
+        ixx="0.0027669"
+        ixy="-3.2722E-07"
+        ixz="6.4659E-07"
+        iyy="0.0017335"
+        iyz="-0.00041577"
+        izz="0.0024931" />
     </inertial>
     <visual>
       <origin
@@ -192,22 +192,22 @@
   </link>
   <joint
     name="elbowjoint"
-    type="fixed"> <!-- should be continuous/revolute -->
+    type="continuous">
     <origin
-      xyz="0 0 0"
-      rpy="-0.11095 1.1779 1.4682" />
+      xyz="0.1204 -0.12377 0.32658"
+      rpy="0 0 0" />
     <parent
       link="bicep" />
     <child
       link="elbow" />
     <axis
-      xyz="0 1 0" />
+      xyz="1 0 0" />
   </joint>
   <link
     name="forearm">
     <inertial>
       <origin
-        xyz="0.17797 0.046312 0.022682"
+        xyz="-0.31229 -9.7716E-06 -5.9818E-05"
         rpy="0 0 0" />
       <mass
         value="1.1353" />
@@ -215,9 +215,9 @@
         ixx="0.00033576"
         ixy="2.1424E-06"
         ixz="-2.1741E-06"
-        iyy="0.0036586"
-        iyz="1.423E-05"
-        izz="0.0036493" />
+        iyy="0.0036528"
+        iyz="1.5007E-05"
+        izz="0.0036552" />
     </inertial>
     <visual>
       <origin
@@ -245,10 +245,10 @@
   </link>
   <joint
     name="forearmjoint"
-    type="fixed"> <!-- should be continuous/revolute -->
+    type="continuous">
     <origin
-      xyz="-0.53446 -0.022729 0.034943"
-      rpy="-1.5708 -0.6694 0" />
+      xyz="-0.060202 -0.19694 -0.1385"
+      rpy="-1.5708 0.41929 -1.5708" />
     <parent
       link="elbow" />
     <child
@@ -260,17 +260,17 @@
     name="endeffector">
     <inertial>
       <origin
-        xyz="-0.01361 -0.071267 0.47099"
+        xyz="0.095201 0.012411 -0.044729"
         rpy="0 0 0" />
       <mass
-        value="1.8205" />
+        value="2.2712" />
       <inertia
-        ixx="0.0013189"
-        ixy="0.00012111"
-        ixz="3.9102E-05"
-        iyy="0.0011033"
-        iyz="-8.5009E-05"
-        izz="0.0012718" />
+        ixx="0.0018657"
+        ixy="-1.1142E-06"
+        ixz="-3.2769E-07"
+        iyy="0.0017275"
+        iyz="0.00021458"
+        izz="0.0011425" />
     </inertial>
     <visual>
       <origin
@@ -298,32 +298,32 @@
   </link>
   <joint
     name="endeffectorjoint"
-    type="fixed"> <!-- should be continuous/revolute --> 
+    type="continuous">
     <origin
-      xyz="0.33807 0.046323 0.048129"
-      rpy="1.5708 1.0472 -1.5708" />
+      xyz="-0.63096 -0.034252 -0.036275"
+      rpy="-0.3134 -0.81406 1.5708" />
     <parent
       link="forearm" />
     <child
       link="endeffector" />
     <axis
-      xyz="0.9117 0.41086 0" />
+      xyz="-1 0 0" />
   </joint>
   <link
     name="clawbase">
     <inertial>
       <origin
-        xyz="-0.041874 0.0097839 -0.13314"
+        xyz="0.42633 -0.00068376 -0.00063636"
         rpy="0 0 0" />
       <mass
-        value="1.5984" />
+        value="1.1594" />
       <inertia
-        ixx="0.0016783"
-        ixy="-0.00024724"
-        ixz="-1.0878E-06"
-        iyy="0.0013472"
-        iyz="-7.1138E-08"
-        izz="0.00087963" />
+        ixx="0.00082286"
+        ixy="8.0907E-07"
+        ixz="3.1937E-07"
+        iyy="0.0010464"
+        iyz="0.00029681"
+        izz="0.0010012" />
     </inertial>
     <visual>
       <origin
@@ -353,30 +353,30 @@
     name="clawbasejoint"
     type="continuous">
     <origin
-      xyz="0.059627 0.0042582 0.43251"
-      rpy="1.9117 0 0.4234" />
+      xyz="0.049891 0.041686 -0.2346"
+      rpy="1.2733 -1.2512 -1.5708" />
     <parent
       link="endeffector" />
     <child
       link="clawbase" />
     <axis
-      xyz="0 0 1" />
+      xyz="1 0 0" />
   </joint>
   <link
     name="claw">
     <inertial>
       <origin
-        xyz="-4.5879E-06 0.32283 -3.998E-05"
+        xyz="0.13526 -2.8019E-07 -2.5901E-07"
         rpy="0 0 0" />
       <mass
         value="0.73761" />
       <inertia
-        ixx="0.0013658"
-        ixy="-1.9078E-09"
-        ixz="-1.0142E-05"
-        iyy="0.00032501"
-        iyz="2.0092E-10"
-        izz="0.0012704" />
+        ixx="0.00030508"
+        ixy="-1.4067E-09"
+        ixz="-1.3046E-09"
+        iyy="0.001331"
+        iyz="3.8687E-05"
+        izz="0.0013251" />
     </inertial>
     <visual>
       <origin
@@ -406,14 +406,14 @@
     name="clawjoint"
     type="prismatic">
     <origin
-      xyz="-0.041275 0.0094698 -0.10395"
-      rpy="-1.5708 0 -0.38633" />
+      xyz="0.51169 -2.7356E-05 2.9513E-05"
+      rpy="0 0 0" />
     <parent
       link="clawbase" />
     <child
       link="claw" />
     <axis
-      xyz="0 1 0" />
+      xyz="1 0 0" />
     <limit
       lower="0"
       upper="0"

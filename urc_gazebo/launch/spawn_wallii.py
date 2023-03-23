@@ -6,8 +6,8 @@ from xacro import process_file
 
 
 def generate_launch_description():
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'Panda.urdf')
-    assert os.path.exists(xacro_file), "Panda.urdf doesnt exist in "+str(xacro_file)
+    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'RoboticArm.urdf')
+    assert os.path.exists(xacro_file), "RoboticArm.urdf doesnt exist in "+str(xacro_file)
 
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
