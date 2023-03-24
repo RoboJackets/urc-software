@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="RobotArm">
+    <link name="base_link">
+        <inertial>
+            <origin xyz="-0.00012842 -6.9829E-05 -0.23247" rpy="0 0 0" />
+            <mass value="0.523" />
+            <inertia ixx="0.010808" ixy="-4.4773E-13" ixz="-1.3408E-13" iyy="0.010807" iyz="-4.0161E-12" izz="0.00038179" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/base_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.89804 0.91765 0.92941 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="shoulder">
+        <inertial>
+            <origin xyz="-0.057629 -0.030685 0.04737" rpy="0 0 0" />
+            <mass value="2.4696" />
+            <inertia ixx="0.0042918" ixy="-0.00022593" ixz="-1.5804E-06" iyy="0.0032615" iyz="-7.8719E-06" izz="0.0024937" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/shoulder.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.52941 0.54902 0.54902 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/shoulder.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="shoulderjoint" type="continuous">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="shoulder" />
+        <axis xyz="0 0 -1" />
+    </joint>
+    <link name="bicep">
+        <inertial>
+            <origin xyz="0.088588 -0.029308 0.077346" rpy="0 0 0" />
+            <mass value="1.1771" />
+            <inertia ixx="0.0063326" ixy="9.2675E-08" ixz="-3.6969E-07" iyy="0.0056923" iyz="0.0020171" izz="0.001137" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/bicep.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.89804 0.91765 0.92941 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/bicep.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="bicepjoint" type="continuous">
+        <origin xyz="0.06843 0.032977 0.041262" rpy="1.5708 0 2.9348" />
+        <parent link="shoulder" />
+        <child link="bicep" />
+        <axis xyz="-1 0 0" />
+    </joint>
+    <link name="elbow">
+        <inertial>
+            <origin xyz="-0.12752 -0.060357 -0.047394" rpy="0 0 0" />
+            <mass value="2.3313" />
+            <inertia ixx="0.0027669" ixy="-3.2722E-07" ixz="6.4659E-07" iyy="0.0017335" iyz="-0.00041577" izz="0.0024931" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/elbow.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.65098 0.61961 0.58824 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/elbow.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="elbowjoint" type="continuous">
+        <origin xyz="0.1204 -0.12377 0.32658" rpy="0 0 0" />
+        <parent link="bicep" />
+        <child link="elbow" />
+        <axis xyz="1 0 0" />
+    </joint>
+    <link name="forearm">
+        <inertial>
+            <origin xyz="-0.31229 -9.7716E-06 -5.9818E-05" rpy="0 0 0" />
+            <mass value="1.1353" />
+            <inertia ixx="0.00033576" ixy="2.1424E-06" ixz="-2.1741E-06" iyy="0.0036528" iyz="1.5007E-05" izz="0.0036552" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/forearm.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.52941 0.54902 0.54902 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/forearm.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="forearmjoint" type="continuous">
+        <origin xyz="-0.060202 -0.19694 -0.1385" rpy="-1.5708 0.41929 -1.5708" />
+        <parent link="elbow" />
+        <child link="forearm" />
+        <axis xyz="-1 0 0" />
+    </joint>
+    <link name="endeffector">
+        <inertial>
+            <origin xyz="0.095201 0.012411 -0.044729" rpy="0 0 0" />
+            <mass value="2.2712" />
+            <inertia ixx="0.0018657" ixy="-1.1142E-06" ixz="-3.2769E-07" iyy="0.0017275" iyz="0.00021458" izz="0.0011425" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/endeffector.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.89804 0.91765 0.92941 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/endeffector.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="endeffectorjoint" type="continuous">
+        <origin xyz="-0.63096 -0.034252 -0.036275" rpy="-0.3134 -0.81406 1.5708" />
+        <parent link="forearm" />
+        <child link="endeffector" />
+        <axis xyz="-1 0 0" />
+    </joint>
+    <link name="clawbase">
+        <inertial>
+            <origin xyz="0.43001 -0.00062296 -0.00064864" rpy="0 0 0" />
+            <mass value="1.2045" />
+            <inertia ixx="0.00085053" ixy="7.8797E-07" ixz="3.6414E-07" iyy="0.0010265" iyz="0.00030933" izz="0.001051" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/clawbase.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.2 0.4 0.69804 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/clawbase.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="clawbasejoint" type="continuous">
+        <origin xyz="0.049891 0.041686 -0.2346" rpy="1.2733 -1.2512 -1.5708" />
+        <parent link="endeffector" />
+        <child link="clawbase" />
+        <axis xyz="1 0 0" />
+    </joint>
+    <link name="leftgripper">
+        <inertial>
+            <origin xyz="-0.009144 -0.040033 -0.094265" rpy="0 0 0" />
+            <mass value="0.34627" />
+            <inertia ixx="0.00067002" ixy="-1.0503E-18" ixz="-2.8765E-18" iyy="0.00050614" iyz="-0.00019433" izz="0.00027569" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/leftgripper.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.79216 0.81961 0.93333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/leftgripper.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="leftgripperjoint" type="continuous">
+        <origin xyz="0.55008 0.064162 -0.048982" rpy="-1.1573 -0.80524 1.5708" />
+        <parent link="clawbase" />
+        <child link="leftgripper" />
+        <axis xyz="1 0 0" />
+        <limit lower="0" upper="0" effort="0" velocity="0" />
+    </joint>
+    <link name="rightgripper">
+        <inertial>
+            <origin xyz="-0.0127 -0.042269 -0.093284" rpy="0 0 0" />
+            <mass value="0.34627" />
+            <inertia ixx="0.00067002" ixy="-1.8635E-18" ixz="1.0944E-18" iyy="0.00057498" iyz="-0.000131" izz="0.00020685" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/rightgripper.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.89804 0.91765 0.92941 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="$(find urc_gazebo)/urdf/meshes/rightgripper.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rightgripperjoint" type="continuous">
+        <origin xyz="0.55008 -0.049084 0.064788" rpy="-1.1573 -0.80524 1.5708" />
+        <parent link="clawbase" />
+        <child link="rightgripper" />
+        <axis xyz="1 0 0" />
+    </joint>
+    <transmission name="trans_shoulderjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="shoulderjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="shoulderjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_bicepjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="bicepjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="bicepjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_elbowjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="elbowjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="elbowjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_forearmjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="forearmjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="forearmjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_endeffectorjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="endeffectorjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="endeffectorjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_clawbasejoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="clawbasejoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="clawbasejoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_leftgripperjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="leftgripperjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="leftgripperjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_rightgripperjoint">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="rightgripperjoint">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="rightgripperjoint_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <gazebo>
+        <plugin name="gazebo_ros_control">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+    </gazebo>
+</robot>
+

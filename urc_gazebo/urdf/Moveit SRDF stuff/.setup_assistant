@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: igvc_description
+    relative_path: urdf/RobotArm.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/RobotArm.srdf
+  CONFIG:
+    author_name: Matthew Kerner
+    author_email: mkerner1876@gmail.com
+    generated_timestamp: 1679630317
