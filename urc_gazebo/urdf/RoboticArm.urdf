@@ -5,7 +5,7 @@
 <robot name="RoboticArm">
     <link name="arm_base_link">
         <inertial>
-            <origin xyz="-0.00012842 -6.9829E-05 -0.23247" rpy="0 0 0" />
+            <origin xyz="0 0 0.6" rpy="0 0 0" />
             <mass value="0.523" />
             <inertia ixx="0.010808" ixy="-4.4773E-13" ixz="-1.3408E-13" iyy="0.010807" iyz="-4.0161E-12" izz="0.00038179" />
         </inertial>
@@ -26,7 +26,7 @@
         </collision>
     </link>
     <joint name="arm_joint" type="fixed">
-      <origin xyz="0.043 0 -0.001"/>
+      <origin xyz="0 0 0.6"/>
       <parent link="base_link"/>
       <child link="arm_base_link"/>
     </joint>
