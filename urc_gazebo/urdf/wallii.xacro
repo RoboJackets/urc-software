@@ -5,6 +5,8 @@
   <xacro:include filename="walli_prop.xacro"/>
   <xacro:include filename="walli_inertials.xacro"/>
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+  <xacro:include filename="RoboticArm.urdf"/>
+  
   <!-- The "wheel" macro defines an axle carrier, axle, and wheel. -->
   <xacro:macro name="wheel" params="lr_prefix fr_prefix lr_pos fr_pos">
     <joint name="${lr_prefix}_${fr_prefix}_axle" type="continuous">
