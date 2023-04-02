@@ -30,18 +30,23 @@ void convertJoyToCmd(
 JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 : Node("arm_driver", options)
 {
+  joy_topic = declare_parameter<string>("joy_topic");
+  twist_topic = declare_parameter<string>("twist_topic");
+  joint_topic = declare_parameter<string>("joint_topic");
+  base_frame_id = declare_parameter<string>("base_frame_id");
+  
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
-    JOY_TOPIC, rclcpp::SystemDefaultsQoS(),
+    joy_topic, rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Joy::ConstSharedPtr & msg) {
       return joyCB(msg);
     });
 
   twist_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
-    TWIST_TOPIC,
+    twist_topic,
     rclcpp::SystemDefaultsQoS());
   joint_pub_ = create_publisher<control_msgs::msg::JointJog>(
-    JOINT_TOPIC,
+    joint_topic,
     rclcpp::SystemDefaultsQoS());
   collision_pub_ = create_publisher<moveit_msgs::msg::PlanningScene>(
     "/planning_scene",
@@ -58,7 +63,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
       rclcpp::sleep_for(std::chrono::seconds(3));
       // Create collision object, in the way of servoing
       moveit_msgs::msg::CollisionObject collision_object;
-      collision_object.header.frame_id = BASE_FRAME_ID;
+      collision_object.header.frame_id = base_frame_id;
       collision_object.id = "box";
 
       shape_msgs::msg::SolidPrimitive rover_body;
@@ -103,7 +108,7 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
   convertJoyToCmd(msg->axes, msg->buttons, twist_msg);
 
   // publish the TwistStamped
-  twist_msg->header.frame_id = BASE_FRAME_ID;
+  twist_msg->header.frame_id = base_frame_id;
   twist_msg->header.stamp = now();
   twist_pub_->publish(std::move(twist_msg));
 

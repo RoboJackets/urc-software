@@ -78,6 +78,11 @@ private:
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr servo_start_client_;
 
   std::thread collision_pub_thread_;
+
+  std::string joy_topic;
+  std::string twist_topic;
+  std::string joint_topic;
+  std::string base_frame_id;
 };  // class JoyToServoPub
 
 }
