@@ -25,20 +25,24 @@ bool convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& but
     return false;
   }
 
-  // The bread and butter: map buttons to twist commands
+  // Right stick up controls along 
   twist->twist.linear.z = axes[RIGHT_STICK_Y];
+  // Right stick right controls along y axis
   twist->twist.linear.y = axes[RIGHT_STICK_X];
 
+  // Right trigger moves arm out, left trigger moves arm in
   double lin_x_right = -0.5 * (axes[RIGHT_TRIGGER] - AXIS_DEFAULTS.at(RIGHT_TRIGGER));
   double lin_x_left = 0.5 * (axes[LEFT_TRIGGER] - AXIS_DEFAULTS.at(LEFT_TRIGGER));
-  twist->twist.linear.x = lin_x_right + lin_x_left;
+  twist->twist.linear.x = lin_x_right + lin_x_left; // Added together to account for negation
 
+  // Left stick controls the manipulator x and y rotation
   twist->twist.angular.y = axes[LEFT_STICK_Y];
   twist->twist.angular.x = axes[LEFT_STICK_X];
 
+  // Left and right bumbper controls the manipulator z rotation
   double roll_positive = buttons[RIGHT_BUMPER];
   double roll_negative = -1 * (buttons[LEFT_BUMPER]);
-  twist->twist.angular.z = roll_positive + roll_negative;
+  twist->twist.angular.z = roll_positive + roll_negative; // Added together to account for negation
 
   return true;
 }
