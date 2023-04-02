@@ -3,9 +3,8 @@
 namespace arm_driver
 {
 
-bool convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
-                     std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist,
-                     std::unique_ptr<control_msgs::msg::JointJog>& joint)
+void convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
+                     std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist)
 {
   // Right stick up controls along 
   twist->twist.linear.z = axes[RIGHT_STICK_Y];
@@ -25,8 +24,6 @@ bool convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& but
   double roll_positive = buttons[RIGHT_BUMPER];
   double roll_negative = -1 * (buttons[LEFT_BUMPER]);
   twist->twist.angular.z = roll_positive + roll_negative; // Added together to account for negation
-
-  return true;
 }
 
 
@@ -110,20 +107,13 @@ void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
     updateCmdFrame(frame_to_publish_, msg->buttons);
 
     // Convert the joystick message to Twist or JointJog and publish
-    if (convertJoyToCmd(msg->axes, msg->buttons, twist_msg, joint_msg))
-    {
-      // publish the TwistStamped
-      twist_msg->header.frame_id = frame_to_publish_;
-      twist_msg->header.stamp = now();
-      twist_pub_->publish(std::move(twist_msg));
-    }
-    else
-    {
-      // publish the JointJog
-      joint_msg->header.stamp = now();
-      joint_msg->header.frame_id = "panda_link3";
-      joint_pub_->publish(std::move(joint_msg));
-    }
+    convertJoyToCmd(msg->axes, msg->buttons, twist_msg);
+  
+    // publish the TwistStamped
+    twist_msg->header.frame_id = frame_to_publish_;
+    twist_msg->header.stamp = now();
+    twist_pub_->publish(std::move(twist_msg));
+  
   }
 }
 

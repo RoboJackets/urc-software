@@ -62,12 +62,10 @@ std::map<Axis, double> AXIS_DEFAULTS = { { LEFT_TRIGGER, 1.0 }, { RIGHT_TRIGGER,
  * @param axes The vector of continuous controller joystick axes
  * @param buttons The vector of discrete controller button values
  * @param twist A TwistStamped message to update in prep for publishing
- * @param joint A JointJog message to update in prep for publishing
  * @return return true if you want to publish a Twist, false if you want to publish a JointJog
  */
-bool convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
-                     std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist,
-                     std::unique_ptr<control_msgs::msg::JointJog>& joint);
+void convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
+                     std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist);
 
 /** \brief // This should update the frame_to_publish_ as needed for changing command frame via controller
  * @param frame_name Set the command frame to this
