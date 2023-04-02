@@ -83,28 +83,19 @@ void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
       collision_object.header.frame_id = "panda_link0";
       collision_object.id = "box";
 
-      shape_msgs::msg::SolidPrimitive table_1;
-      table_1.type = table_1.BOX;
-      table_1.dimensions = { 0.4, 0.6, 0.03 };
+      shape_msgs::msg::SolidPrimitive rover_body;
+      rover_body.type = rover_body.BOX;
+      // These are made up numbers, fix them later
+      rover_body.dimensions = { 1.0, 0.5, 0.5 };
 
-      geometry_msgs::msg::Pose table_1_pose;
-      table_1_pose.position.x = 0.6;
-      table_1_pose.position.y = 0.0;
-      table_1_pose.position.z = 0.4;
+      geometry_msgs::msg::Pose rover_body_pose;
+      // These are made up numbers, fix them later
+      rover_body_pose.position.x = 0.5;
+      rover_body_pose.position.y = 0.8;
+      rover_body_pose.position.z = 0.1;
 
-      shape_msgs::msg::SolidPrimitive table_2;
-      table_2.type = table_2.BOX;
-      table_2.dimensions = { 0.6, 0.4, 0.03 };
-
-      geometry_msgs::msg::Pose table_2_pose;
-      table_2_pose.position.x = 0.0;
-      table_2_pose.position.y = 0.5;
-      table_2_pose.position.z = 0.25;
-
-      collision_object.primitives.push_back(table_1);
-      collision_object.primitive_poses.push_back(table_1_pose);
-      collision_object.primitives.push_back(table_2);
-      collision_object.primitive_poses.push_back(table_2_pose);
+      collision_object.primitives.push_back(rover_body);
+      collision_object.primitive_poses.push_back(rover_body_pose);
       collision_object.operation = collision_object.ADD;
 
       moveit_msgs::msg::PlanningSceneWorld psw;
