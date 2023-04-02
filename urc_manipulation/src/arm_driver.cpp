@@ -28,7 +28,7 @@ void convertJoyToCmd(
 }
 
 JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
-: Node("joy_to_twist_publisher", options)
+: Node("arm_driver", options)
 {
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
