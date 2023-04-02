@@ -21,7 +21,6 @@ namespace arm_driver {
 const std::string JOY_TOPIC = "/joy";
 const std::string TWIST_TOPIC = "/servo_node/delta_twist_cmds";
 const std::string JOINT_TOPIC = "/servo_node/delta_joint_cmds";
-const std::string EEF_FRAME_ID = "panda_hand";
 const std::string BASE_FRAME_ID = "panda_link0";
 
 // Enums for button names -> axis/button array index
@@ -67,11 +66,6 @@ std::map<Axis, double> AXIS_DEFAULTS = { { LEFT_TRIGGER, 1.0 }, { RIGHT_TRIGGER,
 void convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
                      std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist);
 
-/** \brief // This should update the frame_to_publish_ as needed for changing command frame via controller
- * @param frame_name Set the command frame to this
- * @param buttons The vector of discrete controller button values
- */
-void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons);
 
 class JoyToServoPub : public rclcpp::Node
 {
@@ -86,8 +80,7 @@ private:
   rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr joint_pub_;
   rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr collision_pub_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr servo_start_client_;
-
-  std::string frame_to_publish_;
+  
   std::thread collision_pub_thread_;
 };  // class JoyToServoPub
 

@@ -20,28 +20,14 @@ void convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& but
   twist->twist.angular.y = axes[LEFT_STICK_Y];
   twist->twist.angular.x = axes[LEFT_STICK_X];
 
-  // Left and right bumbper controls the manipulator z rotation
+  // Left and right bumper controls the manipulator z rotation
   double roll_positive = buttons[RIGHT_BUMPER];
   double roll_negative = -1 * (buttons[LEFT_BUMPER]);
   twist->twist.angular.z = roll_positive + roll_negative; // Added together to account for negation
 }
 
-
-void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
-{
-  if (buttons[CHANGE_VIEW] && frame_name == EEF_FRAME_ID)
-  {
-    frame_name = BASE_FRAME_ID;
-  }
-  else if (buttons[MENU] && frame_name == BASE_FRAME_ID)
-  {
-    frame_name = EEF_FRAME_ID;
-  }
-}
-
-
   JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions& options)
-    : Node("joy_to_twist_publisher", options), frame_to_publish_(BASE_FRAME_ID)
+  : Node("joy_to_twist_publisher", options)
   {
     // Setup pub/sub
     joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(JOY_TOPIC, rclcpp::SystemDefaultsQoS(),
@@ -63,7 +49,7 @@ void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
       rclcpp::sleep_for(std::chrono::seconds(3));
       // Create collision object, in the way of servoing
       moveit_msgs::msg::CollisionObject collision_object;
-      collision_object.header.frame_id = "panda_link0";
+      collision_object.header.frame_id = BASE_FRAME_ID;
       collision_object.id = "box";
 
       shape_msgs::msg::SolidPrimitive rover_body;
@@ -103,14 +89,11 @@ void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
     auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
     auto joint_msg = std::make_unique<control_msgs::msg::JointJog>();
 
-    // This call updates the frame for twist commands
-    updateCmdFrame(frame_to_publish_, msg->buttons);
-
-    // Convert the joystick message to Twist or JointJog and publish
+    // Convert the joystick message to Twist and publish
     convertJoyToCmd(msg->axes, msg->buttons, twist_msg);
   
     // publish the TwistStamped
-    twist_msg->header.frame_id = frame_to_publish_;
+    twist_msg->header.frame_id = BASE_FRAME_ID;
     twist_msg->header.stamp = now();
     twist_pub_->publish(std::move(twist_msg));
   
