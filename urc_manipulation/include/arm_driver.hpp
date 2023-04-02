@@ -18,12 +18,6 @@
 namespace arm_driver
 {
 
-// We'll just set up parameters here
-const std::string JOY_TOPIC = "/joy";
-const std::string TWIST_TOPIC = "/servo_node/delta_twist_cmds";
-const std::string JOINT_TOPIC = "/servo_node/delta_joint_cmds";
-const std::string BASE_FRAME_ID = "panda_link0";
-
 // Enums for button names -> axis/button array index
 // For XBOX 1 controller
 enum Axis

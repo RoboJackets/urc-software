@@ -1,2 +1,6 @@
 arm_driver:
   ros__parameters:
+    joy_topic: "/joy"
+    twist_topic: "/servo_node/delta_twist_cmds"
+    joint_topic: "/servo_node/delta_joint_cmds"
+    base_frame_id: "panda_link0" # Will need to change to the arm's actual base frame
