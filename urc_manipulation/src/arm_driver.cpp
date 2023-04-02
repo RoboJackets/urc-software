@@ -1,5 +1,7 @@
 #include "arm_driver.hpp"
 
+namespace arm_driver
+{
 
 bool convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
                      std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist,
@@ -54,12 +56,8 @@ void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
   }
 }
 
-namespace moveit_servo
-{
-class JoyToServoPub : public rclcpp::Node
-{
-public:
-  JoyToServoPub(const rclcpp::NodeOptions& options)
+
+  JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions& options)
     : Node("joy_to_twist_publisher", options), frame_to_publish_(BASE_FRAME_ID)
   {
     // Setup pub/sub
@@ -119,13 +117,13 @@ public:
     });
   }
 
-  ~JoyToServoPub() override
+  JoyToServoPub::~JoyToServoPub() override
   {
     if (collision_pub_thread_.joinable())
       collision_pub_thread_.join();
   }
 
-  void joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr& msg)
+  void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr& msg)
   {
     // Create the messages we might publish
     auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
@@ -150,19 +148,6 @@ public:
       joint_pub_->publish(std::move(joint_msg));
     }
   }
-
-private:
-  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
-  rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr joint_pub_;
-  rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr collision_pub_;
-  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr servo_start_client_;
-
-  std::string frame_to_publish_;
-
-  std::thread collision_pub_thread_;
-};  // class JoyToServoPub
-
 }
 
 RCLCPP_COMPONENTS_REGISTER_NODE(moveit_servo::JoyToServoPub)
