@@ -3,7 +3,7 @@
 namespace arm_driver
 {
 
-void convertJoyToCmd(
+void JoyToServoPub::convertJoyToCmd(
   const std::vector<float> & axes, const std::vector<int> & buttons,
   std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist)
 {
@@ -32,7 +32,6 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 {
   joy_topic = declare_parameter<string>("joy_topic");
   twist_topic = declare_parameter<string>("twist_topic");
-  joint_topic = declare_parameter<string>("joint_topic");
   base_frame_id = declare_parameter<string>("base_frame_id");
   
   // Setup pub/sub
@@ -44,9 +43,6 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 
   twist_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
     twist_topic,
-    rclcpp::SystemDefaultsQoS());
-  joint_pub_ = create_publisher<control_msgs::msg::JointJog>(
-    joint_topic,
     rclcpp::SystemDefaultsQoS());
   collision_pub_ = create_publisher<moveit_msgs::msg::PlanningScene>(
     "/planning_scene",
@@ -66,13 +62,15 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
       collision_object.header.frame_id = base_frame_id;
       collision_object.id = "box";
 
+      // Create a solid primitive to represent the rover body
+      // Prevents the arm from colliding into the rover
       shape_msgs::msg::SolidPrimitive rover_body;
       rover_body.type = rover_body.BOX;
       // These are made up numbers, fix them later
       rover_body.dimensions = {1.0, 0.5, 0.5};
 
       geometry_msgs::msg::Pose rover_body_pose;
-      // These are made up numbers, fix them later
+      // Made up numbers, change later
       rover_body_pose.position.x = 0.5;
       rover_body_pose.position.y = 0.8;
       rover_body_pose.position.z = 0.1;
@@ -102,7 +100,6 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 {
   // Create the messages we might publish
   auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
-  auto joint_msg = std::make_unique<control_msgs::msg::JointJog>();
 
   // Convert the joystick message to Twist and publish
   convertJoyToCmd(msg->axes, msg->buttons, twist_msg);
@@ -115,4 +112,4 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 }
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(moveit_servo::JoyToServoPub)
+RCLCPP_COMPONENTS_REGISTER_NODE(arm_driver::ArmDriver)

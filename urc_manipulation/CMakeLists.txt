@@ -5,9 +5,50 @@ include(../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+
+include_directories(
+  include
+)
+
+# Library creation
+add_library(${PROJECT_NAME} SHARED
+  src/arm_driver.cpp
+)
+
+set(dependencies
+  rclcpp
+  rclcpp_components
+
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+# Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "motor_controller::MotorControllerWrapper"
+  EXECUTABLE ${PROJECT_NAME}_MotorController
+)
+
+# Install launch files.
+install(
+  DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install library
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -21,9 +62,4 @@ endif()
 
 ament_package()
 
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
-)
+
