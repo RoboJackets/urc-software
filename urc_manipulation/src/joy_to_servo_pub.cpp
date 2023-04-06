@@ -1,6 +1,6 @@
-#include "arm_driver.hpp"
+#include "joy_to_servo_pub.hpp"
 
-namespace arm_driver
+namespace joy_to_servo_pub
 {
 
 void JoyToServoPub::convertJoyToCmd(
@@ -112,4 +112,4 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 }
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(arm_driver::JoyToServoPub)
+RCLCPP_COMPONENTS_REGISTER_NODE(joy_to_servo_pub::JoyToServoPub)

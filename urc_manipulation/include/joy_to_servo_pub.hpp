@@ -14,7 +14,7 @@
 #include <thread>
 #include <rclcpp_components/register_node_macro.hpp>
 
-namespace arm_driver
+namespace joy_to_servo_pub
 {
 
 // For XBOX 1 controller

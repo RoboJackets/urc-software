@@ -12,10 +12,10 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_manipulation'), 'config',
-                                     'arm_driver_params.yaml'])
+                                     'joy_to_servo_pub_params.yaml'])
             ],
             remappings=[
-                ("/arm_driver/planning_scene", "/planning_scene"),
+                ("/joy_to_servo_pub_params/planning_scene", "/planning_scene"),
             ]
         )
 

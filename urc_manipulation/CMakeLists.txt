@@ -19,7 +19,7 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/arm_driver.cpp
+  src/joy_to_servo_pub.cpp
 )
 
 set(dependencies
@@ -38,7 +38,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "arm_driver::JoyToServoPub"
+  PLUGIN "joy_to_servo_pub::JoyToServoPub"
   EXECUTABLE ${PROJECT_NAME}_JoyToServoPub
 )
 
@@ -67,6 +67,11 @@ if(BUILD_TESTING)
 
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_export_include_directories(include)
+
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(${dependencies})
 
 ament_package()
 

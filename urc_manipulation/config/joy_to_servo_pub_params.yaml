@@ -1,4 +1,4 @@
-arm_driver:
+joy_to_servo_pub:
   ros__parameters:
     joy_topic: "/joy"
     twist_topic: "/servo_node/delta_twist_cmds"
