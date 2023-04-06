@@ -7,6 +7,11 @@ include(../cmake/default_settings.cmake)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(moveit_msgs REQUIRED)
+
 
 include_directories(
   include
@@ -20,7 +25,10 @@ add_library(${PROJECT_NAME} SHARED
 set(dependencies
   rclcpp
   rclcpp_components
-
+  sensor_msgs
+  geometry_msgs
+  std_srvs
+  moveit_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -30,8 +38,8 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "motor_controller::MotorControllerWrapper"
-  EXECUTABLE ${PROJECT_NAME}_MotorController
+  PLUGIN "arm_driver::ArmDriver"
+  EXECUTABLE ${PROJECT_NAME}_ArmDriver
 )
 
 # Install launch files.
