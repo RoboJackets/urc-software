@@ -38,8 +38,8 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "arm_driver::ArmDriver"
-  EXECUTABLE ${PROJECT_NAME}_ArmDriver
+  PLUGIN "arm_driver::JoyToServoPub"
+  EXECUTABLE ${PROJECT_NAME}_JoyToServoPub
 )
 
 # Install launch files.

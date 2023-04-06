@@ -30,9 +30,9 @@ void JoyToServoPub::convertJoyToCmd(
 JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 : Node("arm_driver", options)
 {
-  joy_topic = declare_parameter<string>("joy_topic");
-  twist_topic = declare_parameter<string>("twist_topic");
-  base_frame_id = declare_parameter<string>("base_frame_id");
+  joy_topic = declare_parameter<std::string>("joy_topic");
+  twist_topic = declare_parameter<std::string>("twist_topic");
+  base_frame_id = declare_parameter<std::string>("base_frame_id");
   
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
@@ -89,7 +89,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
     });
 }
 
-JoyToServoPub::~JoyToServoPub() override
+JoyToServoPub::~JoyToServoPub()
 {
   if (collision_pub_thread_.joinable()) {
     collision_pub_thread_.join();
@@ -112,4 +112,4 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 }
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(arm_driver::ArmDriver)
+RCLCPP_COMPONENTS_REGISTER_NODE(arm_driver::JoyToServoPub)
