@@ -12,7 +12,6 @@ jobs:
     name: Build
     runs-on: ubuntu-22.04
     container: robojackets/urc-baseimage:humble
-      image: ubuntu:jammy
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
