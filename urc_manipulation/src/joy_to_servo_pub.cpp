@@ -3,37 +3,18 @@
 namespace joy_to_servo_pub
 {
 
-void JoyToServoPub::convertJoyToCmd(
-  const std::vector<float> & axes, const std::vector<int> & buttons,
-  std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist)
-{
-  // Right stick up controls along
-  twist->twist.linear.z = axes[RIGHT_STICK_Y];
-  // Right stick right controls along y axis
-  twist->twist.linear.y = axes[RIGHT_STICK_X];
-
-  // Right trigger moves arm out, left trigger moves arm in
-  double lin_x_right = -0.5 * (axes[RIGHT_TRIGGER] - AXIS_DEFAULTS.at(RIGHT_TRIGGER));
-  double lin_x_left = 0.5 * (axes[LEFT_TRIGGER] - AXIS_DEFAULTS.at(LEFT_TRIGGER));
-  twist->twist.linear.x = lin_x_right + lin_x_left; // Added together to account for negation
-
-  // Left stick controls the manipulator x and y rotation
-  twist->twist.angular.y = axes[LEFT_STICK_Y];
-  twist->twist.angular.x = axes[LEFT_STICK_X];
-
-  // Left and right bumper controls the manipulator z rotation
-  double roll_positive = buttons[RIGHT_BUMPER];
-  double roll_negative = -1 * (buttons[LEFT_BUMPER]);
-  twist->twist.angular.z = roll_positive + roll_negative; // Added together to account for negation
-}
-
 JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 : Node("arm_driver", options)
 {
-  joy_topic = declare_parameter<std::string>("joy_topic");
-  twist_topic = declare_parameter<std::string>("twist_topic");
-  base_frame_id = declare_parameter<std::string>("base_frame_id");
-  
+  declare_parameter<std::string>("joy_topic", "/joy");
+  get_parameter<std::string>("joy_topic", joy_topic);
+
+  declare_parameter<std::string>("twist_topic", "/servo_node/delta_twist_cmds");
+  get_parameter<std::string>("twist_topic", twist_topic);
+
+  declare_parameter<std::string>("base_frame_id", "panda_link0");
+  get_parameter<std::string>("base_frame_id", base_frame_id);
+
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
     joy_topic, rclcpp::SystemDefaultsQoS(),
@@ -89,11 +70,28 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
     });
 }
 
-JoyToServoPub::~JoyToServoPub()
+void JoyToServoPub::convertJoyToCmd(
+  const std::vector<float> & axes, const std::vector<int> & buttons,
+  std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist)
 {
-  if (collision_pub_thread_.joinable()) {
-    collision_pub_thread_.join();
-  }
+  // Right stick up controls along
+  twist->twist.linear.z = axes[RIGHT_STICK_Y];
+  // Right stick right controls along y axis
+  twist->twist.linear.y = axes[RIGHT_STICK_X];
+
+  // Right trigger moves arm out, left trigger moves arm in
+  double lin_x_right = -0.5 * (axes[RIGHT_TRIGGER] - AXIS_DEFAULTS.at(RIGHT_TRIGGER));
+  double lin_x_left = 0.5 * (axes[LEFT_TRIGGER] - AXIS_DEFAULTS.at(LEFT_TRIGGER));
+  twist->twist.linear.x = lin_x_right + lin_x_left; // Added together to account for negation
+
+  // Left stick controls the manipulator x and y rotation
+  twist->twist.angular.y = axes[LEFT_STICK_Y];
+  twist->twist.angular.x = axes[LEFT_STICK_X];
+
+  // Left and right bumper controls the manipulator z rotation
+  double roll_positive = buttons[RIGHT_BUMPER];
+  double roll_negative = -1 * (buttons[LEFT_BUMPER]);
+  twist->twist.angular.z = roll_positive + roll_negative; // Added together to account for negation
 }
 
 void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
@@ -110,6 +108,14 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
   twist_pub_->publish(std::move(twist_msg));
 
 }
+
+JoyToServoPub::~JoyToServoPub()
+{
+  if (collision_pub_thread_.joinable()) {
+    collision_pub_thread_.join();
+  }
+}
+
 }
 
 RCLCPP_COMPONENTS_REGISTER_NODE(joy_to_servo_pub::JoyToServoPub)

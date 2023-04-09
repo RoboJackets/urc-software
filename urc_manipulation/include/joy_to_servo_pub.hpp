@@ -56,7 +56,7 @@ public:
   void convertJoyToCmd(
     const std::vector<float> & axes, const std::vector<int> & buttons,
     std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist);
-  
+
   JoyToServoPub(const rclcpp::NodeOptions & options);
   ~JoyToServoPub() override;
   void joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg);
