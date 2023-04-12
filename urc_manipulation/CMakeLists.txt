@@ -5,9 +5,58 @@ include(../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(moveit_msgs REQUIRED)
+
+
+include_directories(
+  include
+)
+
+# Library creation
+add_library(${PROJECT_NAME} SHARED
+  src/joy_to_servo_pub.cpp
+)
+
+set(dependencies
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  geometry_msgs
+  std_srvs
+  moveit_msgs
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+# Node registration
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "joy_to_servo_pub::JoyToServoPub"
+  EXECUTABLE ${PROJECT_NAME}_JoyToServoPub
+)
+
+# Install launch files.
+install(
+  DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# Install library
+install(TARGETS
+  ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -19,11 +68,11 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_include_directories(include)
+
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(${dependencies})
+
 ament_package()
 
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
-)
+
