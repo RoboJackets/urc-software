@@ -32,6 +32,9 @@ jobs:
           source /opt/ros/humble/setup.bash
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
+
+          ros2 pkg xml ament_cmake | grep version
+          
           colcon build
   
   test:
