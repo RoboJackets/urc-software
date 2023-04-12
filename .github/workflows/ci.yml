@@ -24,6 +24,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get update
+          sudo apt-get upgrade
 
       - name: Build
         shell: bash
@@ -34,7 +35,7 @@ jobs:
           rosdep install --from-paths src --ignore-src -r -y
 
           ros2 pkg xml ament_cmake | grep version
-          
+
           colcon build
   
   test:
