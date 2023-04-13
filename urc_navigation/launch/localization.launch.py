@@ -1,17 +1,10 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
 from launch.substitutions import PathJoinSubstitution
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-
-    # launch odometry
-    wheel_odometer_node = IncludeLaunchDescription(PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare('urc_navigation'), 'launch',
-                                 'wheel_odometer.launch.py'])))
 
     # launch ekf localization node
     ekf_localization_node = Node(
@@ -29,5 +22,4 @@ def generate_launch_description():
 
     return LaunchDescription([
         ekf_localization_node,
-        wheel_odometer_node
     ])

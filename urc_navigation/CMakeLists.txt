@@ -49,13 +49,6 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-# Node registration
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "wheel_odometer::WheelOdometer"
-  EXECUTABLE ${PROJECT_NAME}_WheelOdometer
-)
-
 # Install launch files.
 install(
   DIRECTORY
