@@ -23,31 +23,25 @@ include_directories(
 )
 
 # Library creation
-add_library(${PROJECT_NAME} SHARED
-  src/wheel_odometer.cpp
-)
+# add_library(${PROJECT_NAME} SHARED
+#
+# )
 
 set(dependencies
   robot_localization
   rclcpp
   rclcpp_components
-  urc_msgs
-  nav_msgs
-  geometry_msgs
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
 )
 
-ament_target_dependencies(${PROJECT_NAME}
-  ${dependencies}
-)
+# ament_target_dependencies(${PROJECT_NAME}
+#   ${dependencies}
+# )
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
+# target_include_directories(${PROJECT_NAME}
+#   PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#   $<INSTALL_INTERFACE:include>
+# )
 
 # Install launch files.
 install(
@@ -58,12 +52,12 @@ install(
 )
 
 # Install library
-install(TARGETS
-  ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
+# install(TARGETS
+#   ${PROJECT_NAME}
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION lib/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
