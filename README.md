@@ -51,8 +51,8 @@ You will need to be using the Ubuntu operating system (or a simulation of it) to
 [Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
 
 ## Helpful Resources
-[Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
-[Design Presentation Requirements](documents/design/README.md)
+- [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
+- [Design Presentation Requirements](documents/design/README.md)
 
 ## Communications
 Join our slack [here!](https://robojackets.slack.com/)
