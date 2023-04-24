@@ -44,11 +44,10 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 You will need to be using the Ubuntu operating system (or a simulation of it) to run ROS2. This can be accomplished by either:
 - [Windows Subsystem for Linux (WSL) Installation (Windows Only)](documents/installation/wsl_installation.md)
 - [Docker Installation Instructions (Mac or Windows)](documents/installation/docker_installation.md)
-- [noVNC Container (Mac or Windows)] (upcoming)
-- Dual-Boot (Have 2 Operating System at the Same Time!) This is a bit more tedious, but rewarding. Ask a returning member on how to do this.
+- noVNC Container (Mac or Windows): Coming Soon
+- Dual-Boot (Have 2 Operating System at the Same Time!) More tedious and risky, ask a returning member about this.
 
 #### 2. Set Up ROS2 on Ubuntu
-Follow the installion instructions to get the codebase running on your Ubuntu computer or Ubuntu container:
 [Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
 
 ## Helpful Resources
