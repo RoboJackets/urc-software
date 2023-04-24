@@ -40,27 +40,19 @@ Welcome to the RoboJackets URC software repo! This document will give you a brie
 
 ## Installation Instructions
 
-### Ubuntu 22.04
+#### 1. Get Ubuntu Running
+You will need to be using the Ubuntu operating system (or a simulation of it) to run ROS2. This can be accomplished by either:
+a. [Windows Subsystem for Linux (WSL) Installation (Windows Only)](documents/installation/wsl_installation.md)
+b. [Docker Installation Instructions (Mac or Windows)](documents/installation/docker_installation.md)
+c. [noVNC Container (Mac or Windows)] (upcoming)
 
+#### 2. Set Up ROS2 on Ubuntu
+Follow the installion instructions to get the codebase running on your Ubuntu computer or Ubuntu container:
 [Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
 
-### Windows Subsystem for Linux (WSL)
-
-[Windows Subsystem for Linux (WSL) Installation Instructions](documents/installation/wsl_installation.md)
-
-### Docker with GUI
-
-[Docker Installation Instructions](documents/installation/docker_installation.md)
-
-
 ## Helpful Resources
+[Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
+[Design Presentation Requirements](documents/design/README.md)
 
-[Useful commands](documents/helpers/useful_commands.md)
-- ROS2 Commands
-- Git Commands
-
-[Design presentations](documents/design/README.md)
-
-
-## Contributing
+## Communications
 Join our slack [here!](https://robojackets.slack.com/)
