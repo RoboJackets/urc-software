@@ -53,6 +53,7 @@ You will need to be using the Ubuntu operating system (or a simulation of it) to
 ## Helpful Resources
 - [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
 - [Design Presentation Requirements](documents/design/README.md)
+- [Drone Repository](https://github.com/RoboJackets/urc-drone)
 
 ## Communications
 Join our slack [here!](https://robojackets.slack.com/)
