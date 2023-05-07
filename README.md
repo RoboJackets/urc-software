@@ -48,7 +48,7 @@ You will need to be using the Ubuntu operating system (or a simulation of it) to
 - Dual-Boot (Have 2 Operating System at the Same Time!) More tedious and risky, ask a returning member about this.
 
 #### 2. Set Up ROS2 on Ubuntu
-[Ubuntu 22.04 Installation Instructions](documents/installation/ubuntu_installation.md)
+[ROS2 Installation Instructions](documents/installation/ubuntu_installation.md)
 
 ## Helpful Resources
 - [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
