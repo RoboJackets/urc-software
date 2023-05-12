@@ -20,7 +20,7 @@ clone_repository() {
             exit 1
         fi
     else
-        echo "Destination directory '$destination_directory' is not empty. Skipping cloning."
+        echo "Destination directory '$destination_directory' likely contains repo already (not empty). Skipping cloning."
     fi
 }
 
