@@ -28,7 +28,6 @@ To check that everything installed OK, you should be able to open the command li
 docker
 ```
 
-
 ## 2. Install VS Code (Highly Recommended)
 
 You do not have to use VS Code. However, VS Code has very nice extensions for using Docker containers.
@@ -41,7 +40,8 @@ Search for and install the following extensions in VS Code
 
 * Docker
 * ROS
-* Remote - Containers
+* C/C++
+* CMake
 
 ## 3. Install Git
 
@@ -60,6 +60,19 @@ docker pull robojackets/urc-gui-baseimage
 ```
 
 -   ### [Manually Build Docker Image](manual_docker_image.md)
+
+## 5. Create directory to mount container
+
+The docker container is essentially a self-contained instance of Ubuntu 22.04, but can access some files on your system in a limited way. We use this so the container can see the repositories you clone locally, that way both local development and containerized testing can be done without any delays.
+
+**You can place this directory wherever you want**, I recommend `/home` for Mac/Linux and `C:\Users\[Username]\` for Windows
+
+```bash
+mkdir urc_container
+```
+
+## 6. Clone our repos
+
 
 
 ## 5. Launch Docker Container
