@@ -10,8 +10,10 @@ Every major design decision is required to have an accompanying presentation for
 [RJ General Slides Theme](https://docs.google.com/presentation/d/14omGRc-cdEDDEFdOUnVKgbbW5EMFX9UyO-QmpGfILho/edit?usp=sharing)
 
 
-Below is a collection of past presentations for major additions to the URC software stack.
-
-## 2022 - 2023
-
+## Design Presentation Example
 * ### [Teleoperations Stack](https://docs.google.com/presentation/d/14omGRc-cdEDDEFdOUnVKgbbW5EMFX9UyO-QmpGfILho/edit?usp=sharing)
+
+## Design Presentations History
+
+### Summer 2023
+
