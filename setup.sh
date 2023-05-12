@@ -69,7 +69,7 @@ start_container() {
         echo "Container $container_name started."
     else
         # Run the container and mount with additional options on first creation
-        docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/mount" "$image_name:$image_tag"
+        docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/home/ubuntu/urc_container" "$image_name:$image_tag"
         echo "Container $container_name created and started."
     fi
 }
