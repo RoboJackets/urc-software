@@ -26,12 +26,7 @@ clone_repository() {
 
 # Determine the platform
 platform=$(uname)
-if [[ "$platform" == "Darwin" || "$platform" == "Linux" ]]; then
-    # Mac OS or Linux
-    clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
-    clone_repository "https://github.com/RoboJackets/urc-firmware.git" "drone_ws/src"
-elif [[ "$platform" == *"MINGW"* || "$platform" == *"MSYS"* ]]; then
-    # Windows with Git Bash
+if [[ "$platform" == "Darwin" || "$platform" == "Linux" || "$platform" == *"MINGW"* || "$platform" == *"MSYS"*]]; then
     clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
     clone_repository "https://github.com/RoboJackets/urc-firmware.git" "drone_ws/src"
 else
