@@ -1,10 +1,8 @@
 # Docker Installation
 
-Doing a Docker installation is a good method for setting up the repository on any operating system
-that isn't Ubuntu 22.04 LTS. It is a lighter-weight and faster alternative than installing a Virtual Machine.
-In addition, you can run GUI applications like Gazebo using the VNC server.
-
-Although compiling code in a Docker container is not as fast as compiling it on Ubuntu 22.04 natively, it is not slow by any means. If you use an IDE with Docker support (such as VSCode with the recommended extensions), writing code will be no different than doing it natively on Ubuntu 22.04. 
+Doing a Docker installation is a great method for setting up the repository on any operating system
+that isn't Ubuntu 22.04. It is a faster and more lightweight alternative to a traditional Virtual Machine.
+In addition, you can run GUI applications like Gazebo using the NoVNC desktop environment.
 
 ## 1. Install Docker
 
@@ -95,12 +93,12 @@ For beginners to Docker:
 - Go to `localhost:6060` in your web browser of choice
 
 Recommended way:
-- Open up VSCode
+- Open up VS Code
 - Click on the whale Docker icon on your left
 - Right click the currently running container (Should be called tiryoh/ros2)
 - Select open in browser
 
-![Picture of where to head in VSCode](../pictures/docker_tab.png)
+![Picture of where to head in VS Code](../pictures/docker_tab.png)
 
 ## 10. Head to your mounted directory
 
