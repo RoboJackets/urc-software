@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##############
+# Repo Setup #
+##############
+
 # Check if Git is installed
 if ! command -v git &> /dev/null; then
     echo "Git is not installed. Please install Git and try again."
@@ -56,7 +60,7 @@ mount_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # Function to start the container
 start_container() {
     # Check if the container is already running
-    if docker container inspect "$container_name" >/dev/null 2>&1; then
+    if docker ps -q --filter "name=$container_name" | grep -q .; then
         echo "Container $container_name is already running."
         exit 1
     fi
