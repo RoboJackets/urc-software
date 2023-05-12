@@ -5,19 +5,19 @@ LABEL maintainer="aidan.stickan@gmail.com"
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Initialize colcon workspace
-RUN mkdir -p /urc
-WORKDIR /urc
-RUN mkdir -p /rover_colcon/src
-RUN mkdir -p /drone_colcon/src
-WORKDIR /rover_colcon
+RUN mkdir -p /home/ubuntu/urc
+WORKDIR /ubuntu/home/urc
+RUN mkdir -p /home/ubuntu/urc/rover_colcon/src
+RUN mkdir -p /home/ubuntu/urc/drone_colcon/src
+WORKDIR /home/ubuntu/urc/rover_colcon
 RUN mkdir -p src
 
 # Clone rover repo
-WORKDIR /rover_colcon/src
+WORKDIR /home/ubuntu/urc/rover_colcon/src
 RUN git clone https://github.com/RoboJackets/urc-software.git . --recursive
 
 # Clone drone repo
-WORKDIR /drone_colcon/src
+WORKDIR /home/ubuntu/urc/drone_colcon/src
 RUN git clone https://github.com/RoboJackets/urc-drone.git . --recursive
 
 # Setup bashrc
