@@ -6,25 +6,38 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
-# Set the repository URLs
-rover_url="https://github.com/RoboJackets/urc-rover.git"
-drone_url="https://github.com/RoboJackets/urc-firmware.git"
+# Function to clone repository
+clone_repository() {
+    local repository_url="$1"
+    local destination_directory="$2"
+    if [[ -z "$(ls -A "$destination_directory")" ]]; then
+        if ! git clone "$repository_url" "$destination_directory"; then
+            echo "Failed to clone the repository."
+            exit 1
+        fi
+    else
+        echo "Destination directory '$destination_directory' is not empty. Skipping cloning."
+    fi
+}
 
-# Set the target directories for cloning
-rover_dir="rover_ws/src"
-drone_dir="drone_ws/src"
-
-# Clone the rover repository
-if ! git clone "$rover_url" "$rover_dir"; then
-    echo "Failed to clone urc-rover"
+# Determine the platform
+platform=$(uname)
+if [[ "$platform" == "Darwin" || "$platform" == "Linux" ]]; then
+    # Mac OS or Linux
+    clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
+    clone_repository "https://github.com/RoboJackets/urc-firmware.git" "drone_ws/src"
+elif [[ "$platform" == *"MINGW"* || "$platform" == *"MSYS"* ]]; then
+    # Windows with Git Bash
+    clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
+    clone_repository "https://github.com/RoboJackets/urc-firmware.git" "drone_ws/src"
+else
+    echo "Unsupported platform: $platform"
     exit 1
 fi
 
-# Clone the drone repository
-if ! git clone "$drone_url" "$drone_dir"; then
-    echo "Failed to clone urc-drone"
-    exit 1
-fi
+#################
+# Docker Setup  #
+#################
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -36,19 +49,67 @@ fi
 image_name="tiryoh/ros2-desktop-vnc"
 image_tag="humble"
 
-# Get NoVNC container from DockerHub
-docker pull "$image_name:$image_tag"
-
 # Set up container name + location
 container_name="urc_container"
 mount_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# Check if a container with the same name already exists
-existing_container=$(docker ps -aq --filter name="$container_name")
-if [[ -n "$existing_container" ]]; then
-    echo "A container with the name $container_name already exists. Please choose a different name."
-    exit 1
+# Function to start the container
+start_container() {
+    # Check if the container is already running
+    if docker container inspect "$container_name" >/dev/null 2>&1; then
+        echo "Container $container_name is already running."
+        exit 1
+    fi
+
+    # Check if the container already exists
+    existing_container=$(docker ps -aq --filter name="$container_name")
+    if [[ -n "$existing_container" ]]; then
+        # Start the existing container
+        docker start "$container_name" >/dev/null 2>&1
+        echo "Container $container_name started."
+    else
+        # Run the container and mount with additional options on first creation
+        docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/mount" "$image_name:$image_tag"
+        echo "Container $container_name created and started."
+    fi
+}
+
+# Function to stop the container
+stop_container() {
+    # Stop the container
+    docker stop "$container_name" >/dev/null 2>&1
+    echo "Container $container_name stopped."
+}
+
+# Function to display usage instructions
+display_usage() {
+    echo "Usage: $0 [start|stop|help]"
+    echo "  start   : Start the container (default behavior if no argument is provided)"
+    echo "  stop    : Stop the container"
+    echo "  help    : Display this help message"
+}
+
+# Check if a command-line argument is provided
+if [[ $# -eq 0 ]]; then
+    # No argument provided, start the container by default
+    start_container
+else
+    # Check the command-line argument
+    case "$1" in
+        start)
+            start_container
+            ;;
+        stop)
+            stop_container
+            ;;
+        help)
+            display_usage
+            ;;
+        *)
+            echo "Unrecognized command: $1"
+            display_usage
+            exit 1
+            ;;
+    esac
 fi
 
-# Run the container and mount
-docker run -d --name "$container_name" -v "$mount_dir:/mount" "$image_name:$image_tag"

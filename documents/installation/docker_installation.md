@@ -71,9 +71,19 @@ The docker container is essentially a self-contained instance of Ubuntu 22.04, b
 mkdir urc_container
 ```
 
-## 6. Clone our repos
+## 6. [Download our installation script](../../setup.sh)
 
+## 7. Move the script into your `urc_container` directory
 
+## 8. Run the script
+
+```bash
+chmod +x setup.sh
+```
+
+```bash
+./setup.sh
+```
 
 ## 5. Launch Docker Container
 
