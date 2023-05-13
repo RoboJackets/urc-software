@@ -1,7 +1,7 @@
 # Docker Installation
 
 Doing a Docker installation is a great method for setting up the repository on any operating system
-that isn't Ubuntu 22.04. It is a faster and more lightweight alternative to a traditional Virtual Machine.
+that isn't Ubuntu 22.0colcon b4. It is a faster and more lightweight alternative to a traditional Virtual Machine.
 In addition, you can run GUI applications like Gazebo using the NoVNC desktop environment.
 
 ## 1. Install Docker
@@ -79,6 +79,8 @@ Our installation script will
 
 ## 8. Run the script
 
+**If on Windows, you will need to use Git Bash to run the following commands!**
+
 ```bash
 chmod +x setup.sh
 ```
@@ -111,30 +113,33 @@ In terminator, run
 cd urc_container
 ```
 
-## 11. Build!
+## 11. Get necessary packages
 
 First, it's always a good idea to check for updates. Nothing will happen if you just created the image. However, if you decide to re-create the container a while after you made the initial image, you will need to update those packages.
 
 ```bash
 sudo apt update
 sudo apt upgrade
-cd /colcon_ws
-rosdep update
 ```
+```bash
+cd /rover_ws
+rosdep update && rosdep install --from-paths src --ignore-src -r -y
+```
+
+## 12. Build the repo!
 
 Now, it's time for the moment of truth!
 
 ``` bash
-cd /colcon_ws
 colcon build
 ```
 
-## 12. Developing using the Docker NoVNC container
+## 13. Developing using the Docker NoVNC container
 
 1. Work on your code in `urc_container` locally to avoid input lag
 2. When ready to test, you can build and run your code in the container just like on native Ubuntu!
 
-## 13. Closing/Starting the Container
+## 14. Closing/Starting the Container
 
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.

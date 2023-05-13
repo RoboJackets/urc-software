@@ -26,13 +26,14 @@ clone_repository() {
 
 # Determine the platform
 platform=$(uname)
-if [[ "$platform" == "Darwin" || "$platform" == "Linux" || "$platform" == *"MINGW"* || "$platform" == *"MSYS"*]]; then
+if [[ "$platform" == "Darwin" || "$platform" == "Linux" || "$platform" == *"MINGW"* || "$platform" == *"MSYS"* ]]; then
     clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
-    clone_repository "https://github.com/RoboJackets/urc-firmware.git" "drone_ws/src"
+    clone_repository "https://github.com/RoboJackets/urc-drone.git" "drone_ws/src"
 else
     echo "Unsupported platform: $platform"
     exit 1
 fi
+
 
 #################
 # Docker Setup  #
@@ -48,9 +49,24 @@ fi
 image_name="tiryoh/ros2-desktop-vnc"
 image_tag="humble"
 
+# Function to get the current working directory
+get_cwd() {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        echo "$(dirname "$(readlink "$0")")"
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        echo "$(dirname "$(readlink -f "$0")")"
+    elif [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* ]]; then
+        dir="$(dirname "$(readlink -f "$BASH_SOURCE")" | sed 's/^[A-Za-z]://')"
+        echo "/$(echo "$dir" | sed 's/\\/\//g' | sed 's/://')"
+    else
+        echo "Unsupported platform: $(uname -s)"
+        exit 1
+    fi
+}
+
 # Set up container name + location
 container_name="urc_container"
-mount_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+mount_dir=$(get_cwd)
 
 # Function to start the container
 start_container() {
