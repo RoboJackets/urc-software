@@ -43,7 +43,6 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
 You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
 - [NoVNC Docker Installation Instructions (Mac or Windows)](documents/installation/docker_installation.md) **Strongly recommended!**
 - [Dual-booted or Native linux installation](documents/installation/ubuntu_installation.md) *Ask a returning member!*
-- [WSL](documents/installation/wsl_installation.md) *Legacy installation method, avoid using*
 
 ## Helpful Resources
 - [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
