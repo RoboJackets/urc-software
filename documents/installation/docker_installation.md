@@ -1,10 +1,8 @@
 # Docker Installation
 
-Doing a Docker installation is a good method for setting up the repository on any operating system
-that isn't Ubuntu 22.04 LTS. It is a lighter-weight and faster alternative than installing a Virtual Machine.
-In addition, you can run GUI applications like Gazebo using the VNC server.
-
-Although compiling code in a Docker container is not as fast as compiling it on Ubuntu 22.04 natively, it is not slow by any means. If you use an IDE with Docker support (such as VSCode with the recommended extensions), writing code will be no different than doing it natively on Ubuntu 22.04. 
+Doing a Docker installation is a great method for setting up the repository on any operating system
+that isn't Ubuntu 22.0colcon b4. It is a faster and more lightweight alternative to a traditional Virtual Machine.
+In addition, you can run GUI applications like Gazebo using the NoVNC desktop environment.
 
 ## 1. Install Docker
 
@@ -28,7 +26,6 @@ To check that everything installed OK, you should be able to open the command li
 docker
 ```
 
-
 ## 2. Install VS Code (Highly Recommended)
 
 You do not have to use VS Code. However, VS Code has very nice extensions for using Docker containers.
@@ -41,7 +38,8 @@ Search for and install the following extensions in VS Code
 
 * Docker
 * ROS
-* Remote - Containers
+* C/C++
+* CMake
 
 ## 3. Install Git
 
@@ -61,127 +59,102 @@ docker pull robojackets/urc-gui-baseimage
 
 -   ### [Manually Build Docker Image](manual_docker_image.md)
 
+## 5. Create directory to mount container
 
-## 5. Launch Docker Container
+The docker container is essentially a self-contained instance of Ubuntu 22.04, but can access some files on your system in a limited way. We use this so the container can see the repositories you clone locally, that way both local development and containerized testing can be done without any delays.
 
-You can launch your newly created Docker container using the command line or VS Code.
-
--   ### Launch Docker Container Using VS Code
-
-First, double check you have the `Docker` extension installed.
-
-Once you have it, click on the Docker tab on the left of the editor. You should see the container you made in the "containers" tab. 
-
-To launch the container in VS Code, right click it and select `Start`.
-
--   ### Launch Docker Container Using Command Line
-
-To run the Docker container in the command line, run
+**You can place this directory wherever you want**, I recommend `/home` for Mac/Linux and `C:\Users\[Username]\` for Windows
 
 ```bash
-docker start -i urc_software_container
+mkdir urc_container
 ```
 
-If you want to open another terminal if the Docker container is still running, run
+## 6. [Download our installation script](../../setup.sh)
+
+Our installation script will
+- Clone all necessary repos
+- Automatically setup your desktop NoVNC environment
+
+## 7. Move the script into your `urc_container` directory
+
+## 8. Run the script
+
+**If on Windows, you will need to use Git Bash to run the following commands!**
+
+Run this command only if you are on Mac/Linux
+```bash
+chmod +x setup.sh
+```
 
 ```bash
-docker attach urc_software_container
+./setup.sh
 ```
 
-## 6. Build!
+## 9. Access your new container
+
+For beginners to Docker:
+- Go to `localhost:6060` in your web browser of choice
+
+Recommended way:
+- Open up VS Code
+- Click on the whale Docker icon on your left
+- Right click the currently running container (Should be called tiryoh/ros2)
+- Select open in browser
+
+![Picture of where to head in VS Code](../pictures/docker_tab.png)
+
+## 10. Head to your mounted directory
+
+Open terminator in the desktop (this is the recommended terminal for commands in your container)
+
+![You can find terminator in the bottom left corner here](../pictures/terminator_location.png)
+
+In terminator, run
+```bash
+cd urc_container
+```
+
+## 11. Get necessary packages
 
 First, it's always a good idea to check for updates. Nothing will happen if you just created the image. However, if you decide to re-create the container a while after you made the initial image, you will need to update those packages.
 
 ```bash
 sudo apt update
 sudo apt upgrade
-cd /colcon_ws
-rosdep update
 ```
+```bash
+cd /rover_ws
+rosdep update && rosdep install --from-paths src --ignore-src -r -y
+```
+
+## 12. Build the repo!
 
 Now, it's time for the moment of truth!
 
 ``` bash
-cd /colcon_ws
 colcon build
 ```
 
-## 7. Closing the Container
+## 13. Developing using the Docker NoVNC container
+
+1. Work on your code in `urc_container` locally to avoid input lag
+2. When ready to test, you can build and run your code in the container just like on native Ubuntu!
+
+## 14. Closing/Starting the Container
 
 Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
 Docker container will take up a big chunk of memory on your computer.
 
-Note: Deleting the Docker container is not a big deal, since
-* Your work is stored in a volume, which is seperate from the container.
-* All of the required pacakges were installed in the image creation step.
-However, the container remembers its state, so its a good idea to reuse the same container unless you mess up your environment.
+-   ### Using VS Code
 
--   ### Close Docker Conatiner Using VS Code
+    - Go to the Docker tab in VS Code
+    - Right click the container (it has a green arrow next to it if already running)
+    - Press stop/start
 
-Closing the VS Code window does not stop the Docker container. To stop the Docker container, you can either:
-* go to the `Docker` tab, and toggle the green arrow on the active container.
-* go to the `Remote Explorer` tab, right click the active Docker container, and hit `Stop Container`.
+    ![Picture of where to head in VSCode](../pictures/docker_tab.png)
 
--   ### Close Docker Container Using Command Line
+-   ### Using the install script
 
-Close the Docker container using
-
-```bash
-docker stop urc_software_container
-```
-
-## 8. Container Password
-
-People outside your LAN should not be able to connect to your VNC server unless the port is being forwarded 
-and the network firewall is disabled. If you want to change the default password, open the Dockerfile and change the line
-
-```bash
-RUN x11vnc -storepasswd urc-2023 ~/.vnc/passwd
-```
-
-by replacing the default password, `urc-2023`.
-
-## 9. Using the GUI
-
-To use the GUI, open your web browser and enter: 
-```
-http://localhost:8080/vnc.html
-```
-
-You should get a webpage for noVNC. Click `Connect` and enter the password, `urc-2023`.
-
-After this, you should see a terminal window. You can launch GUI applications from this window. For example, try launching `gazebo` or `rviz2`.
-
-## Troubleshooting
-
-If something isn't working correctly with your Docker container, the best solution 
-is to delete your old stuff and restart from step 4. To do this, you should
-remove the Docker container, Docker image, and Docker volume.
-
-### Deleting the Docker Container
-
-If your development environment gets messed up, you can delete the development environment with:
-```bash
-docker stop urc_software_container
-docker rm urc_software_container
-```
-You can also delete the container in the `Remote Explorer` tab or the `Docker` tab by right clicking on the container and removing it.
-
-### Deleting the Docker Image
-
-If something isn't working correctly from a container freshly minted from the `urc-gui-baseimage`, something
-is probably wrong with your Docker image. To delete `urc-gui-baseimage`, run
-
-```bash
-docker image rm robojackets/urc-gui-baseimage
-```
-
-### Deleting the Docker Volume
-
-If you are deleting your Docker image due to systemic issues, you should probably remove the Docker volume as
-well. However, **all of your previous work is stored inside this volume! If you delete it, your changes will be gone!**
-Make sure to push your changes to Github before deleting the volume!
-
-```bash
-docker volume rm urc_software_volume
-```
+    - Go to where you placed `urc_container` locally
+    - Run `./setup.sh stop` to stop
+    - Run `./setup.sh start` to start up again
