@@ -81,6 +81,7 @@ Our installation script will
 
 **If on Windows, you will need to use Git Bash to run the following commands!**
 
+Run this command only if you are on Mac/Linux
 ```bash
 chmod +x setup.sh
 ```
