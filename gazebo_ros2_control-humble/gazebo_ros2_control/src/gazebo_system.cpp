@@ -100,9 +100,6 @@ public:
 
   /// \brief mapping of mimicked joints to index of joint they mimic
   std::vector<MimicJoint> mimic_joints_;
-
-  /// \brief Gain which converts position error to a velocity command
-  double position_proportional_gain_;
 };
 
 namespace gazebo_ros2_control
@@ -126,17 +123,6 @@ bool GazeboSystem::initSim(
   if (physics_type_.empty()) {
     RCLCPP_ERROR(this->nh_->get_logger(), "No physics engine configured in Gazebo.");
     return false;
-  }
-
-  constexpr double default_gain = 0.1;
-  if (!this->nh_->get_parameter_or(
-      "position_proportional_gain",
-      this->dataPtr->position_proportional_gain_, default_gain))
-  {
-    RCLCPP_WARN_STREAM(
-      this->nh_->get_logger(),
-      "The position_proportional_gain parameter was not defined, defaulting to: " <<
-        default_gain);
   }
 
   registerJoints(hardware_info, parent_model);
@@ -489,11 +475,13 @@ GazeboSystem::perform_command_mode_switch(
         hardware_interface::HW_IF_POSITION))
       {
         this->dataPtr->joint_control_methods_[j] &= static_cast<ControlMethod_>(VELOCITY & EFFORT);
-      } else if (interface_name == (this->dataPtr->joint_names_[j] + "/" + // NOLINT
+      }
+      if (interface_name == (this->dataPtr->joint_names_[j] + "/" +
         hardware_interface::HW_IF_VELOCITY))
       {
         this->dataPtr->joint_control_methods_[j] &= static_cast<ControlMethod_>(POSITION & EFFORT);
-      } else if (interface_name == (this->dataPtr->joint_names_[j] + "/" + // NOLINT
+      }
+      if (interface_name == (this->dataPtr->joint_names_[j] + "/" +
         hardware_interface::HW_IF_EFFORT))
       {
         this->dataPtr->joint_control_methods_[j] &=
@@ -507,11 +495,13 @@ GazeboSystem::perform_command_mode_switch(
         hardware_interface::HW_IF_POSITION))
       {
         this->dataPtr->joint_control_methods_[j] |= POSITION;
-      } else if (interface_name == (this->dataPtr->joint_names_[j] + "/" + // NOLINT
+      }
+      if (interface_name == (this->dataPtr->joint_names_[j] + "/" +
         hardware_interface::HW_IF_VELOCITY))
       {
         this->dataPtr->joint_control_methods_[j] |= VELOCITY;
-      } else if (interface_name == (this->dataPtr->joint_names_[j] + "/" + // NOLINT
+      }
+      if (interface_name == (this->dataPtr->joint_names_[j] + "/" +
         hardware_interface::HW_IF_EFFORT))
       {
         this->dataPtr->joint_control_methods_[j] |= EFFORT;
@@ -585,13 +575,15 @@ hardware_interface::return_type GazeboSystem::write(
       this->dataPtr->joint_position_cmd_[mimic_joint.joint_index] =
         mimic_joint.multiplier *
         this->dataPtr->joint_position_cmd_[mimic_joint.mimicked_joint_index];
-    } else if (this->dataPtr->joint_control_methods_[mimic_joint.joint_index] & VELOCITY && // NOLINT
+    }
+    if (this->dataPtr->joint_control_methods_[mimic_joint.joint_index] & VELOCITY &&
       this->dataPtr->joint_control_methods_[mimic_joint.mimicked_joint_index] & VELOCITY)
     {
       this->dataPtr->joint_velocity_cmd_[mimic_joint.joint_index] =
         mimic_joint.multiplier *
         this->dataPtr->joint_velocity_cmd_[mimic_joint.mimicked_joint_index];
-    } else if (this->dataPtr->joint_control_methods_[mimic_joint.joint_index] & EFFORT && // NOLINT
+    }
+    if (this->dataPtr->joint_control_methods_[mimic_joint.joint_index] & EFFORT &&
       this->dataPtr->joint_control_methods_[mimic_joint.mimicked_joint_index] & EFFORT)
     {
       this->dataPtr->joint_effort_cmd_[mimic_joint.joint_index] =
@@ -603,13 +595,12 @@ hardware_interface::return_type GazeboSystem::write(
     if (this->dataPtr->sim_joints_[j]) {
       if (this->dataPtr->joint_control_methods_[j] & POSITION) {
         this->dataPtr->sim_joints_[j]->SetPosition(0, this->dataPtr->joint_position_cmd_[j], true);
-      } else if (this->dataPtr->joint_control_methods_[j] & VELOCITY) { // NOLINT
+      }
+      if (this->dataPtr->joint_control_methods_[j] & VELOCITY) {
         this->dataPtr->sim_joints_[j]->SetVelocity(0, this->dataPtr->joint_velocity_cmd_[j]);
-      } else if (this->dataPtr->joint_control_methods_[j] & EFFORT) { // NOLINT
+      }
+      if (this->dataPtr->joint_control_methods_[j] & EFFORT) {
         this->dataPtr->sim_joints_[j]->SetForce(0, this->dataPtr->joint_effort_cmd_[j]);
-      } else {
-        // Fallback case is a velocity command of zero
-        this->dataPtr->sim_joints_[j]->SetVelocity(0, 0.0);
       }
     }
   }

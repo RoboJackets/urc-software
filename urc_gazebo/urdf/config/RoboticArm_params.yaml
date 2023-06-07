@@ -1,26 +1,27 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000
+    update_rate: 1000 # Hz
     
-    arm_controller:
+    joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
       
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
       
-arm_controller:
+joint_trajectory_controller:
   ros__parameters:
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
     joints:
-      - arm_joint
       - shoulderjoint
+      - bicepjoint
       - elbowjoint
       - forearmjoint
       - endefffectorjoint
       - clawbasejoint
       - leftgripperjoint
       - rightgripperjoint
+    interface_name: position
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
