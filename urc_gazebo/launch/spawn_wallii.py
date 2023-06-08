@@ -15,14 +15,14 @@ def generate_launch_description():
     robot_desc = robot_description_config.toxml()
     
     load_joint_state_controller = ExecuteProcess(
-    	cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+    	cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
     		'joint_state_broadcaster'],
     	output='screen'
     )
     
     load_joint_trajectory_controller = ExecuteProcess(
-    	cmd=['ros2','control', 'load_controler', '--set-state',
-    		'start', 'joint_trajectory_controller'],
+    	cmd=['ros2','control', 'load_controller', '--set-state',
+    		'active', 'joint_trajectory_controller'],
     	output='screen'
     )
 
