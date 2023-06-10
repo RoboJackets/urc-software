@@ -1,2 +1,0 @@
-motor_controller::MotorControllerWrapper;lib/liburc_platform.so
-joystick_driver::JoystickDriver;lib/liburc_platform.so

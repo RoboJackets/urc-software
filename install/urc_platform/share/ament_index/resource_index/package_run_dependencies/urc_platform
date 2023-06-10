@@ -1,1 +1,0 @@
-rclcpp;rclcpp_components;urc_msgs;urc_util;std_msgs;nav_msgs;sensor_msgs;diagnostic_updater;urc_nanopb;ament_lint_auto;ament_lint_common;ament_cmake_gtest
