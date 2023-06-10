@@ -1,0 +1,4 @@
+source;share/urc_nanopb/local_setup.bash
+source;share/urc_nanopb/local_setup.dsv
+source;share/urc_nanopb/local_setup.sh
+source;share/urc_nanopb/local_setup.zsh

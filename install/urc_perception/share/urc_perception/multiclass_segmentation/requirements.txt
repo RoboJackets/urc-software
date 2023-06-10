@@ -1,0 +1,11 @@
+segmentation-models-pytorch
+tensorboard
+torchvision
+torch
+catalyst==20.12
+numpy
+opencv-python
+scikit-learn
+matplotlib
+
+# Dependencies for multiclass segmentation

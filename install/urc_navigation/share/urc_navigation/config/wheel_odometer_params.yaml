@@ -1,0 +1,3 @@
+wheel_odometer:
+  ros__parameters:
+    wheel_sep: 0.5
