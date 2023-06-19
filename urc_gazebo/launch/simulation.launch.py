@@ -67,6 +67,7 @@ def generate_launch_description():
                 ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw")
            ]
        )
+    
     aruco_detector = Node(
             package='urc_aruco',
             executable='urc_aruco_ArucoDetector',
@@ -92,9 +93,7 @@ def generate_launch_description():
             remappings=[
                 ("/aruco_location/aruco_location", "/aruco_location")
             ]
-            )
-
-
+        )
 
 
     # sim_color_detector = Node(

@@ -92,7 +92,8 @@ void ArucoLocation::arucoCallback(const urc_msgs::msg::ArucoDetection & aruco_ms
 
     location_publisher->publish(location_message);
   } else {
-    RCLCPP_INFO(this->get_logger(), "ARUCO tag GPS and orientation out of date, waiting for their output");
+    RCLCPP_INFO(
+      this->get_logger(), "ARUCO tag GPS and orientation out of date, waiting for their output");
   }
 
   orientationRead = false, gpsRead = false;
