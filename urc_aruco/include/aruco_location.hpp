@@ -40,6 +40,7 @@ private:
   double trueDist;
   double tagId;
   bool arucoRead = false;
+  std::string which_camera;
 
   double droneLat, droneLon, droneAlt;
   bool gpsRead = false;

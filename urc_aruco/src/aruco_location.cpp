@@ -6,13 +6,13 @@ ArucoLocation::ArucoLocation(const rclcpp::NodeOptions & options)
 : rclcpp::Node("aruco_location", options)
 {
   location_publisher = create_publisher<urc_msgs::msg::ArucoLocation>(
-    "~/tag_location",
+    "~/aruco_location",
     rclcpp::SystemDefaultsQoS()
   );
 
   //Aruco Tag Angles and Distance relative to camera.
   aruco_subscriber = create_subscription<urc_msgs::msg::ArucoDetection>(
-    "/aruco", rclcpp::SystemDefaultsQoS(), [this](const urc_msgs::msg::ArucoDetection
+    "/aruco_detection", rclcpp::SystemDefaultsQoS(), [this](const urc_msgs::msg::ArucoDetection
     aruco_msg) {
       arucoCallback(aruco_msg);
     });
@@ -79,6 +79,7 @@ void ArucoLocation::arucoCallback(const urc_msgs::msg::ArucoDetection & aruco_ms
   yAngle = aruco_msg.y_angle;
   trueDist = aruco_msg.distance;
   tagId = aruco_msg.id;
+  which_camera = aruco_msg.which_camera;
 
   if (gpsRead && orientationRead) {
     double d = findD(trueDist, yAngle, pitch);
@@ -87,11 +88,11 @@ void ArucoLocation::arucoCallback(const urc_msgs::msg::ArucoDetection & aruco_ms
     location_message.lon = getNextLongitude(d, xAngle, yaw);
     location_message.lat = getNextLatitude(d, xAngle, yaw);
     location_message.id = aruco_msg.id;
+    location_message.which_camera = which_camera;
 
     location_publisher->publish(location_message);
   } else {
-    RCLCPP_INFO(
-      this->get_logger(), "ARUCO tag GPS and orientation out of date, waiting for their output");
+    RCLCPP_INFO(this->get_logger(), "ARUCO tag GPS and orientation out of date, waiting for their output");
   }
 
   orientationRead = false, gpsRead = false;

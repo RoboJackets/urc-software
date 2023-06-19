@@ -24,7 +24,9 @@ public:
 
 private:
   rclcpp::Publisher<urc_msgs::msg::ArucoDetection>::SharedPtr aruco_publisher;
-  image_transport::CameraSubscriber camera_subscriber_;
+  image_transport::CameraSubscriber camera_subscriber_center_;
+  image_transport::CameraSubscriber camera_subscriber_left_;
+  image_transport::CameraSubscriber camera_subscriber_right_;
 
   std::vector<std::vector<cv::Point2f>> corners, rejects;   // rejects will likely be unused
   std::vector<int> MarkerIDs;
@@ -43,7 +45,8 @@ private:
 
   void imageCallback(
     const sensor_msgs::msg::Image::ConstSharedPtr & image_msg,
-    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info_msg
+    const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info_msg,
+    const std::string which_camera
   );
 };
 }

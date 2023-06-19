@@ -2,31 +2,41 @@
 
 namespace aruco_detector
 {
-
 ArucoDetector::ArucoDetector(const rclcpp::NodeOptions & options)
 : rclcpp::Node("aruco_detector", options)
 {
   tagWidth = declare_parameter<int>("tagWidth");
 
   aruco_publisher = create_publisher<urc_msgs::msg::ArucoDetection>(
-    "~/aruco",
+    "~/aruco_detection",
     rclcpp::SystemDefaultsQoS()
   );
 
-  /*
-    See --> https://github.com/ros-perception/image_common/issues/121 for imagetransport pub/subs
-  */
-  camera_subscriber_ = image_transport::create_camera_subscription(
+  // See --> https://github.com/ros-perception/image_common/issues/121 for imagetransport pub/subs
+  camera_subscriber_center_ = image_transport::create_camera_subscription(
     this, "/image/center_img",
     std::bind(
       &ArucoDetector::imageCallback, this, std::placeholders::_1,
-      std::placeholders::_2),
+      std::placeholders::_2, "center"),
+    "raw", rclcpp::SensorDataQoS().get_rmw_qos_profile());
+  camera_subscriber_left_  = image_transport::create_camera_subscription(
+    this, "/image/left_img",
+    std::bind(
+      &ArucoDetector::imageCallback, this, std::placeholders::_1,
+      std::placeholders::_2, "left"),
+    "raw", rclcpp::SensorDataQoS().get_rmw_qos_profile());
+  camera_subscriber_right_ = image_transport::create_camera_subscription(
+    this, "/image/right_img",
+    std::bind(
+      &ArucoDetector::imageCallback, this, std::placeholders::_1,
+      std::placeholders::_2, "right"),
     "raw", rclcpp::SensorDataQoS().get_rmw_qos_profile());
 }
 
 void ArucoDetector::imageCallback(
   const sensor_msgs::msg::Image::ConstSharedPtr & image_msg,
-  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info_msg)
+  const sensor_msgs::msg::CameraInfo::ConstSharedPtr & info_msg,
+  const std::string which_camera)
 {
   cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
   cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(
@@ -81,6 +91,7 @@ void ArucoDetector::imageCallback(
       aruco_message.y_angle = yAngle;
       aruco_message.distance = distance;
       aruco_message.id = MarkerIDs[id];
+      aruco_message.which_camera = which_camera;
 
       aruco_publisher->publish(aruco_message);
     }
