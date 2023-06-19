@@ -95,7 +95,6 @@ def generate_launch_description():
             ]
         )
 
-
     # sim_color_detector = Node(
     #      package='urc_gazebo',
     #      executable='urc_gazebo_SimColorDetector',

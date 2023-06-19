@@ -19,7 +19,7 @@ ArucoDetector::ArucoDetector(const rclcpp::NodeOptions & options)
       &ArucoDetector::imageCallback, this, std::placeholders::_1,
       std::placeholders::_2, "center"),
     "raw", rclcpp::SensorDataQoS().get_rmw_qos_profile());
-  camera_subscriber_left_  = image_transport::create_camera_subscription(
+  camera_subscriber_left_ = image_transport::create_camera_subscription(
     this, "/image/left_img",
     std::bind(
       &ArucoDetector::imageCallback, this, std::placeholders::_1,
