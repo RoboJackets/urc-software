@@ -6,9 +6,10 @@ from ament_index_python.packages import get_package_share_directory
 import os
 from xacro import process_file
 
-
+#Wallii_ArmV2
+#robot_arm_urdf
 def generate_launch_description():
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'WalliiArmV1.urdf')
+    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'WalliiArmV3.urdf')
     assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in "+str(xacro_file)
 
     robot_description_config = process_file(xacro_file)
@@ -22,7 +23,7 @@ def generate_launch_description():
     
     load_joint_trajectory_controller = ExecuteProcess(
     	cmd=['ros2','control', 'load_controller', '--set-state',
-    		'active', 'joint_trajectory_controller'],
+    		'active', 'arm_controller'],
     	output='screen'
     )
 
@@ -50,10 +51,12 @@ def generate_launch_description():
     	),
     	RegisterEventHandler(
     		event_handler=OnProcessExit(
-    			target_action=load_joint_state_controller,
+    			target_action=spawn_robot,
     			on_exit=[load_joint_trajectory_controller],
     		)
     	),
+    	
         robot_state_publisher,
-        spawn_robot
+        spawn_robot,
+        
     ])

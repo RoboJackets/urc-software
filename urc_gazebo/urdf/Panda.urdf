@@ -4,6 +4,7 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="panda" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <link name="world"/>
   <link name="panda_link0">
   	<inertial>
       <origin rpy="0 0 0" xyz="0 0 0.05"/>
@@ -25,6 +26,11 @@
       <material name="panda_white"/>
     </collision>
   </link>
+  <joint name="world_to_base" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 1"/>
+    <parent link="world"/>
+    <child link="panda_link0"/>
+  </joint>
   <link name="panda_link1">
   	<inertial>
       <origin rpy="0 0 0" xyz="0 -0.04 -0.05"/>
@@ -335,4 +341,88 @@
     <origin rpy="0 0 0" xyz="0 0 0.105"/>
   </joint>
   
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name ="panda_joint1">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint2">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint3">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint4">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint5">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint6">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_joint7">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_finger_joint1">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    <joint name ="panda_finger_joint2">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity"/>
+        <state_interface name="effort"/>
+      </joint>
+    </ros2_control>
+
+  <gazebo>
+    <plugin name ="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <!-- problematic: yaml parse crashes simulation-->
+      <parameters>$(find urc_gazebo)/urdf/config/Panda_params.yaml</parameters>
+    </plugin>
+  </gazebo>
 </robot>
