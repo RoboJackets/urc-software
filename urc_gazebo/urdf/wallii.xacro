@@ -253,7 +253,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=center_img</remapping>
-          <remapping>~/camera_info:=center_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
@@ -310,7 +310,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=left_img</remapping>
-          <remapping>~/camera_info:=left_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
@@ -368,7 +368,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=right_img</remapping>
-          <remapping>~/camera_info:=right_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>

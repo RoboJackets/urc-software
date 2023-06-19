@@ -14,6 +14,8 @@ find_package(geometry_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
   "msg/LandingLocations.msg"
+  "msg/ArucoDetection.msg"
+  "msg/ArucoLocation.msg"
 
   DEPENDENCIES
   std_msgs
