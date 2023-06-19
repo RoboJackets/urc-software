@@ -253,7 +253,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=center_img</remapping>
-          <remapping>~/camera_info:=center_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
@@ -261,15 +261,22 @@
       <update_rate>100</update_rate>
       <visualize>true</visualize>
       <camera name="cam/center">
-          <distortion>
-            <k1>0.1</k1>
-            <k2>0.2</k2>
-            <k3>0.3</k3>
-            <p1>0.4</p1>
-            <p2>0.5</p2>
-            <center>0.5 0.5</center>
-          </distortion>
-       </camera>
+	<horizontal_fov>1.3962634</horizontal_fov>
+	<image>
+	<width>800</width>
+	<height>800</height>
+	<format>R8G8B8</format>
+	</image>
+	<clip>
+	<near>0.02</near>
+	<far>300</far>
+	</clip>
+	<noise>
+	<type>gaussian</type>
+	<mean>0</mean>
+	<stddev>0.007</stddev>
+	</noise>
+      </camera>
     </sensor>
   </gazebo>
   
@@ -303,7 +310,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=left_img</remapping>
-          <remapping>~/camera_info:=left_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
@@ -311,15 +318,22 @@
       <update_rate>100</update_rate>
       <visualize>true</visualize>
       <camera name="cam/left">
-          <distortion>
-            <k1>0.1</k1>
-            <k2>0.2</k2>
-            <k3>0.3</k3>
-            <p1>0.4</p1>
-            <p2>0.5</p2>
-            <center>0.5 0.5</center>
-          </distortion>
-       </camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+	<image>
+	<width>800</width>
+	<height>800</height>
+	<format>R8G8B8</format>
+	</image>
+	<clip>
+	<near>0.02</near>
+	<far>300</far>
+	</clip>
+	<noise>
+	<type>gaussian</type>
+	<mean>0</mean>
+	<stddev>0.007</stddev>
+	</noise> 
+      </camera>
     </sensor>
   </gazebo>
   
@@ -354,7 +368,7 @@
         <ros>
           <namespace>/image</namespace>
           <remapping>~/image_raw:=right_img</remapping>
-          <remapping>~/camera_info:=right_info</remapping>
+          <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
       </plugin>
@@ -362,15 +376,22 @@
       <update_rate>100</update_rate>
       <visualize>true</visualize>
       <camera name="cam/right">
-          <distortion>
-            <k1>0.1</k1>
-            <k2>0.2</k2>
-            <k3>0.3</k3>
-            <p1>0.4</p1>
-            <p2>0.5</p2>
-            <center>0.5 0.5</center>
-          </distortion>
-       </camera>
+        <horizontal_fov>1.3962634</horizontal_fov>
+	<image>
+	<width>800</width>
+	<height>800</height>
+	<format>R8G8B8</format>
+	</image>
+	<clip>
+	<near>0.02</near>
+	<far>300</far>
+	</clip>
+	<noise>
+	<type>gaussian</type>
+	<mean>0</mean>
+	<stddev>0.007</stddev>
+	</noise>
+      </camera>
     </sensor>
   </gazebo>
 
@@ -556,8 +577,7 @@
       </plugin>
   
   </gazebo>
-
-
+  
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
