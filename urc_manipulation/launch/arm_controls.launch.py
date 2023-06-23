@@ -70,7 +70,7 @@ def generate_launch_description():
             #replace with urc manipulation arm control node
             ComposableNode(
                 package="urc_manipulation",
-                plugin="urc_manipulation::JoyToServoPub",
+                plugin="joy_to_servo_pub::JoyToServoPub",
                 name="controller_to_servo_node",
             ),
             ComposableNode(
