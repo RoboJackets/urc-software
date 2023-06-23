@@ -12,7 +12,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
   declare_parameter<std::string>("twist_topic", "/servo_node/delta_twist_cmds");
   get_parameter<std::string>("twist_topic", twist_topic);
 
-  declare_parameter<std::string>("base_frame_id", "panda_link0");
+  declare_parameter<std::string>("base_frame_id", "base_link");
   get_parameter<std::string>("base_frame_id", base_frame_id);
 
   // Setup pub/sub
@@ -47,7 +47,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
       // Prevents the arm from colliding into the rover
       shape_msgs::msg::SolidPrimitive rover_body;
       rover_body.type = rover_body.BOX;
-      // These are made up numbers, fix them later
+      //TODO These are made up numbers, fix them later
       rover_body.dimensions = {1.0, 0.5, 0.5};
 
       geometry_msgs::msg::Pose rover_body_pose;

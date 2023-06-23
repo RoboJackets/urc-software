@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: urc_gazebo
+    relative_path: urdf/WalliiArmV3.urdf
+  srdf:
+    relative_path: config/WalliiArmV3.srdf
+  package_settings:
+    author_name: Matthew Kerner
+    author_email: mkerner1876@gmail.com
+    generated_timestamp: 1687401278
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

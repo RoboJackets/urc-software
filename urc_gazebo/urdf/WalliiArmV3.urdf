@@ -575,7 +575,8 @@
   <gazebo reference="rightgripperjoint">
     <implicitSpringDamper>true</implicitSpringDamper>
   </gazebo>
-  
+  <!-- mock_components/GenericSystem -->
+  <!-- gazebo_ros2_control/GazeboSystem -->
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>

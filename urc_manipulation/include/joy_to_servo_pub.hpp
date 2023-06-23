@@ -75,7 +75,7 @@ private:
 
   // Some axes have offsets (e.g. the default trigger position is 1.0 not 0)
   // This will map the default values for the axes
-  std::map<Axis, double> AXIS_DEFAULTS = {{LEFT_TRIGGER, 1.0}, {RIGHT_TRIGGER, 1.0}};
+  std::map<Axis, double> AXIS_DEFAULTS = { {LEFT_TRIGGER, -1.0}, {RIGHT_TRIGGER, -1.0}};
 
 };  // class JoyToServoPub
 
