@@ -1,19 +1,20 @@
-// GPS map updating
+// GPS Map Updating
 var goal_lat;
 var goal_long;
 var rover_lat;
 var rover_long;
 var rover_theta = 0;
 
-const map_tl_lat = 38.4690
-const map_tl_long = -110.8542
-const map_br_lat = 38.3440
-const map_br_long = -110.7292
+// Map and Viewer Constants
+const MAP_TL_LAT = 38.4690
+const MAP_TL_LONG = -110.8542
+const MAP_BR_LAT = 38.3440
+const MAP_BR_LONG = -110.7292
 
-const tl_x_px = 217;
-const tl_y_px = 175;
-const br_x_px = 1506;
-const br_y_px = 1813;
+const TL_X_PX = 217;
+const TL_Y_PX = 175;
+const BR_X_PX = 1506;
+const BR_Y_PX = 1813;
 
 const PIXELS_PER_METER = 0.117;
 const ROVER_ANNOT_FW_RAD = 0.75;
@@ -33,36 +34,53 @@ const INITIAL_Y_OFFSET = 7000;
 var rover_annot;
 var goal_annot;
 
+const landing_locations = [];
+
+// Publishers and Subscribers
 const gps_goal_subscriber = new ROSLIB.Topic({
-    ros : ros,
-    name : '/gps_goal',
-    messageType : 'sensor_msgs/msg/NavSatFix'
+    ros: ros,
+    name: '/gps_goal',
+    messageType: 'sensor_msgs/msg/NavSatFix'
 });
 
 const gps_pos_subscriber = new ROSLIB.Topic({
     ros: ros,
-    name : '/gps_pos',
-    messageType : 'sensor_msgs/msg/NavSatFix'
+    name: '/gps_pos',
+    messageType: 'sensor_msgs/msg/NavSatFix'
 });
 
 const rover_theta_subscriber = new ROSLIB.Topic({
     ros: ros,
-    name : '/heading',
-    messageType : 'std_msgs/msg/Float64'
+    name: '/heading',
+    messageType: 'std_msgs/msg/Float64'
+});
+
+const landing_location_publisher = new ROSLIB.Topic({
+    ros: ros,
+    name: '/landing',
+    messageType: 'urc_msgs/msg/LandingLocations'
 });
 
 rover_theta_subscriber.subscribe(function(message) {
     rover_theta = message.data;
 });
 
+// GPS and Pixel Coordinates Conversion
 function getPixelCoordsFromGPS(lat, long) {
-    var x_px = (br_x_px - tl_x_px) * (long - map_tl_long) / (map_br_long - map_tl_long) + tl_x_px;
-    var y_px = (br_y_px - tl_y_px) * (lat - map_tl_lat) / (map_br_lat - map_tl_lat) + tl_y_px;
+    var x_px = (BR_X_PX - TL_X_PX) * (lat - MAP_TL_LAT) / (MAP_BR_LAT - MAP_TL_LAT) + TL_X_PX;
+    var y_px = (BR_Y_PX - TL_Y_PX) * (long - MAP_TL_LONG) / (MAP_BR_LONG - MAP_TL_LONG) + TL_Y_PX;
     return [x_px, y_px];
+}
+
+function getGPSFromPixelCoords(x_px, y_px) {
+    var lat = (MAP_BR_LAT - MAP_TL_LAT) * (x_px - TL_X_PX) / (BR_X_PX - TL_X_PX) + MAP_TL_LAT;
+    var long = (MAP_BR_LONG - MAP_TL_LONG) * (y_px - TL_Y_PX) / (BR_Y_PX - TL_Y_PX) + MAP_TL_LONG;
+    return [lat, long];
 }
 
 const input = document.getElementById('map_upload');
 
+// PDF Viewer
 WebViewer({
     path: 'js/WebViewer/lib',
     disabledElements: [
@@ -70,14 +88,16 @@ WebViewer({
         'toolsHeader',
     ]
 }, document.getElementById('viewer')).then(instance => {
+    // Input File
     input.addEventListener('change', () => {
         if (input.files.length > 0) {
             instance.UI.loadDocument(input.files[0], { filename: input.files[0].name });
         }
-    });
+    });    
 
     const { documentViewer, annotationManager, Annotations } = instance.Core;
 
+    // GPS Subscribers
     gps_goal_subscriber.subscribe(function(message) {
         goal_lat = message.latitude;
         goal_long = message.longitude;
@@ -110,7 +130,58 @@ WebViewer({
         annotationManager.redrawAnnotation(rover_annot);
     });
 
+    // Remove Popup Menus
+    if (instance.contextMenuPopup.getItems().length > 3) {
+        instance.contextMenuPopup.update([instance.contextMenuPopup.getItems()[3]]);
+    }
+    instance.textPopup.update([]);
+    instance.annotationPopup.update([]);
+
+    // Annotation Add/Delete Listener
+    annotationManager.addEventListener('annotationChanged', (annotations, action) => {
+        instance.Tools.FreeHandCreateTool.prototype.createDelay = 0;
+
+        // Annotation Add
+        if (action == 'add') {
+            annotations.forEach((annotation) => {
+                if (annotation.Color.toString() == 'rgba(228,66,52,1)') {
+                    const annot = new Annotations.EllipseAnnotation({
+                        PageNumber: 1,
+                        StrokeColor: new Annotations.Color(0, 255, 0),
+                        FillColor: new Annotations.Color(0, 255, 0),
+                        X: annotation.X,
+                        Y: annotation.Y,
+                        Height: 2,
+                        Width: 2
+                    });
+                    annotationManager.addAnnotation(annot);
+                    annotationManager.redrawAnnotation(annot);
+                    
+                    landing_locations.push([annot.X, annot.Y]);
+                    console.log(landing_locations);
+
+                    annotationManager.deleteAnnotation(annotation);
+                }
+            });
+        }
+
+        // Annotation Delete
+        if (action == 'delete') {
+            annotations.forEach((annotation) => {
+                if (annotation.Color.toString() == 'rgba(0,255,0,1)') {
+                    for (var i = 0; i < landing_locations.length; ++i) {
+                        if (landing_locations[i][0] == annotation.X && landing_locations[i][1] == annotation.Y) {
+                            landing_locations.splice(i, 1);
+                        }
+                    }
+                    console.log(landing_locations);
+                }
+            });
+        }
+    });
+
     documentViewer.addEventListener('documentLoaded', () => {
+        // Remove Unnecessary PDF Layers
         const doc = documentViewer.getDocument();
         doc.getLayersArray().then(layers => {
             layers[0].visible = false;
@@ -125,6 +196,7 @@ WebViewer({
             documentViewer.updateView();
         })
 
+        // Draw Rover, Goal, Border Annotations
         rover_annot = new Annotations.PolygonAnnotation({
             PageNumber: 1,
             StrokeColor: new Annotations.Color(255, 0, 0, 0),
@@ -158,15 +230,37 @@ WebViewer({
         annotationManager.addAnnotation(rover_annot);
         annotationManager.addAnnotation(goal_annot);
 
-        border_annot.addPathPoint(tl_x_px, tl_y_px);
-        border_annot.addPathPoint(br_x_px, tl_y_px);
-        border_annot.addPathPoint(br_x_px, br_y_px);
-        border_annot.addPathPoint(tl_x_px, br_y_px);
-        border_annot.addPathPoint(tl_x_px, tl_y_px);
+        border_annot.addPathPoint(TL_X_PX, TL_Y_PX);
+        border_annot.addPathPoint(BR_X_PX, TL_Y_PX);
+        border_annot.addPathPoint(BR_X_PX, BR_Y_PX);
+        border_annot.addPathPoint(TL_X_PX, BR_Y_PX);
+        border_annot.addPathPoint(TL_X_PX, TL_Y_PX);
 
         annotationManager.addAnnotation(border_annot);
         annotationManager.redrawAnnotation(border_annot);
 
         documentViewer.zoomTo(INITIAL_ZOOM, INITIAL_X_OFFSET, INITIAL_Y_OFFSET);
     });
-})
+});
+
+// Publish Landing Locations
+setInterval(function() {
+    var latitudes = new Float64Array(100);
+    var longitudes = new Float64Array(100);
+
+    var i = 0;
+    landing_locations.forEach((location) => {
+        var gps_coords = getGPSFromPixelCoords(location[0], location[1]);
+        latitudes[i] = gps_coords[0];
+        longitudes[i] = gps_coords[1];
+        ++i;
+    });
+
+    let landing_message = new ROSLIB.Message({
+        size: i,
+        latitudes: latitudes,
+        longitudes: longitudes
+    });
+
+    landing_location_publisher.publish(landing_message);
+}, 15);

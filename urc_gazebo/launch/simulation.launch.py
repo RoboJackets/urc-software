@@ -68,6 +68,33 @@ def generate_launch_description():
            ]
        )
 
+    aruco_detector = Node(
+            package='urc_aruco',
+            executable='urc_aruco_ArucoDetector',
+            output='screen',
+            parameters=[
+                PathJoinSubstitution([FindPackageShare('urc_aruco'), 'config',
+                                     'aruco_detector_params.yaml'])
+            ],
+            remappings=[
+                ("/aruco_detector/aruco_detection", "/aruco_detection")
+            ]
+        )
+
+    aruco_location = Node(
+            package='urc_aruco',
+            executable='urc_aruco_ArucoLocation',
+            output='screen',
+            # No parameters exist for this node, so we do not need to use it.
+            # parameters=[
+            #    PathJoinSubstitution([FindPackageShare('urc_aruco'), 'config',
+            #                         'aruco_location_params.yaml'])
+            # ],
+            remappings=[
+                ("/aruco_location/aruco_location", "/aruco_location")
+            ]
+        )
+
     # sim_color_detector = Node(
     #      package='urc_gazebo',
     #      executable='urc_gazebo_SimColorDetector',
@@ -82,6 +109,8 @@ def generate_launch_description():
         gazebo,
         wallii,
         control,
-        ground_truth
+        ground_truth,
+        aruco_detector,
+        aruco_location
         # sim_color_detector
     ])
