@@ -14,33 +14,6 @@ from moveit_configs_utils import MoveItConfigsBuilder
 # The same goes for the Joint State Broadcaster.
 
 def generate_launch_description():
-    arm_moveit_pkg_path = get_package_share_directory("urc_arm_moveit_config")
-    
-    moveit_config = (
-        MoveItConfigsBuilder("urc_arm")
-        .robot_description(file_path="config/WalliiArmV3.urdf.xacro")
-        .to_moveit_configs()
-    )
-
-    # Get parameters for the Servo node
-    servo_yaml = os.path.join(arm_moveit_pkg_path, "/config/WalliiArmV3_simulated_config.yaml")
-    servo_params = {"wallii_servo": servo_yaml}
-    
-    
-    #TODO Check if this ros2 control node is necessary
-    # ros2_control using FakeSystem as hardware
-    ros2_controllers_path = os.path.join(
-        get_package_share_directory("urc_arm_moveit_config"),
-        "config",
-        "ros2_controllers.yaml",
-    )
-    ros2_control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[moveit_config.robot_description, ros2_controllers_path],
-        output="screen",
-    )
-
     # Launch as much as possible in components
     container = ComposableNodeContainer(
         name="urc_manipulation_container",
@@ -67,7 +40,6 @@ def generate_launch_description():
                 #check if child frame id and base link are correct
                 parameters=[{"child_frame_id": "/claw", "frame_id": "/base_link"}],
             ),
-            #replace with urc manipulation arm control node
             ComposableNode(
                 package="urc_manipulation",
                 plugin="joy_to_servo_pub::JoyToServoPub",
@@ -95,7 +67,6 @@ def generate_launch_description():
         )
 
     return LaunchDescription([
-        ros2_control_node,
         arm_controls_node,
         container
     ])

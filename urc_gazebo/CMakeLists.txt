@@ -17,6 +17,10 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
 find_package(velodyne_simulator REQUIRED)
 
+find_package(hardware_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+
 include_directories(
   include
 )

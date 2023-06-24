@@ -5,6 +5,9 @@ controller_manager:
     arm_controller:
       type: position_controllers/JointGroupPositionController
       
+    gripper_controller:
+      type: position_controllers/GripperActionController
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
       
@@ -17,8 +20,6 @@ arm_controller:
       - forearmjoint
       - wristjoint
       - clawjoint
-      - leftgripperjoint
-      - rightgripperjoint 
     interface_name: position
     command_interfaces:
       - position
@@ -26,3 +27,7 @@ arm_controller:
       - position
       - velocity
       - effort
+gripper_controller:
+  ros__parameters:
+    joints:
+      - leftgripperjoint

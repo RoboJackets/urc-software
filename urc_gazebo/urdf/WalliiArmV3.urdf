@@ -577,7 +577,7 @@
   </gazebo>
   <!-- mock_components/GenericSystem -->
   <!-- gazebo_ros2_control/GazeboSystem -->
-  <ros2_control name="GazeboSystem" type="system">
+  <ros2_control name="GazeboSimSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
     </hardware>
