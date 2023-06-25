@@ -74,7 +74,7 @@ void JoyToServoPub::convertJoyToCmd(
   const std::vector<float> & axes, const std::vector<int> & buttons,
   std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist)
 {
-  // Right stick up controls along
+  // Right stick up controls along z axis
   twist->twist.linear.z = axes[RIGHT_STICK_Y];
   // Right stick right controls along y axis
   twist->twist.linear.y = axes[RIGHT_STICK_X];
