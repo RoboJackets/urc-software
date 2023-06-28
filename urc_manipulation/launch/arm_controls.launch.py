@@ -76,7 +76,7 @@ def generate_launch_description():
     #Standalone arm control node. Could be necessary if servo runs on different PC
     arm_controls_node = Node(
             package='urc_manipulation',
-            executable='urc_manipulation_JoyToServoPub',
+            executable='servo_node_main',
             output='screen',
             parameters=[
             	servo_params,
