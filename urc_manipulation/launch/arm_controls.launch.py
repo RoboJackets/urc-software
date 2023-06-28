@@ -19,14 +19,19 @@ def generate_launch_description():
     moveit_config = (
         MoveItConfigsBuilder("urc_arm")
         .robot_description(file_path="config/WalliiArmV3.urdf.xacro")
+        .robot_description_semantic(file_path="config/WalliiArmV3.srdf")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
+        .planning_scene_monitor(
+        	publish_robot_description=True, publish_robot_description_semantic=True
+        )
+        .planning_pipelines(pipelines=["ompl"])
         .to_moveit_configs()
     )
 
     # Get parameters for the Servo node
     servo_yaml = os.path.join(arm_moveit_pkg_path, "/config/WalliiArmV3_simulated_config.yaml")
-    servo_params = {"wallii_servo": servo_yaml}
+    servo_params = {"moveit_servo": servo_yaml}
 
     # Launch as much as possible in components
     container = ComposableNodeContainer(
@@ -74,17 +79,14 @@ def generate_launch_description():
             executable='urc_manipulation_JoyToServoPub',
             output='screen',
             parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_manipulation'), 'config',
-                                     'joy_to_servo_pub_params.yaml']),
-                                     servo_params,
-                                     moveit_config.robot_description,
-            			     moveit_config.robot_description_semantic,
-            			     moveit_config.robot_description_kinematics,
+            	servo_params,
+		moveit_config.robot_description,
+		moveit_config.robot_description_semantic,
+		moveit_config.robot_description_kinematics,
             ],
-            remappings=[]
         )
 
     return LaunchDescription([
         arm_controls_node,
-        container
+        #container
     ])

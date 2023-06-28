@@ -1,7 +1,7 @@
 ###############################################
 # Modify all parameters related to servoing here
 ###############################################
-use_gazebo: true # Whether the robot is started in a Gazebo simulation environment
+use_gazebo: false # Whether the robot is started in a Gazebo simulation environment
 
 ## Properties of incoming commands
 command_in_type: "unitless" # "unitless"> in the range [-1:1], as if from joystick. "speed_units"> cmds are in m/s and rad/s
@@ -38,12 +38,12 @@ smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
 is_primary_planning_scene_monitor: true
 
 ## MoveIt properties
-move_group_name:  arm  # 'arm' for arm, 'gripper' for gripper
-planning_frame: base_link  # The MoveIt planning frame. Often 'base_link' or 'world'
+move_group_name:  panda_arm  # Often 'manipulator' or 'arm'
+planning_frame: panda_link0  # The MoveIt planning frame. Often 'base_link' or 'world'
 
 ## Other frames
-ee_frame_name: claw  # The name of the end effector link, used to return the EE pose
-robot_link_command_frame:  base_link  # commands must be given in the frame of a robot link. Usually either the base or end effector
+ee_frame_name: panda_link8  # The name of the end effector link, used to return the EE pose
+robot_link_command_frame:  panda_link0  # commands must be given in the frame of a robot link. Usually either the base or end effector
 
 ## Stopping behaviour
 incoming_command_timeout:  0.1  # Stop servoing if X seconds elapse without a new command
@@ -62,7 +62,7 @@ cartesian_command_in_topic: ~/delta_twist_cmds  # Topic for incoming Cartesian t
 joint_command_in_topic: ~/delta_joint_cmds # Topic for incoming joint angle commands
 joint_topic: /joint_states
 status_topic: ~/status # Publish status to this topic
-command_out_topic: /wallii_arm_controller/joint_trajectory # Publish outgoing commands here
+command_out_topic: /panda_arm_controller/joint_trajectory # Publish outgoing commands here
 
 ## Collision checking for the entire robot body
 check_collisions: true # Check collisions?
