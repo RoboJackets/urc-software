@@ -3,50 +3,38 @@ from launch_ros.actions import Node
 from launch.actions import ExecuteProcess, RegisterEventHandler
 from launch.event_handlers import (OnProcessStart, OnProcessExit)
 from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import Command, LaunchConfiguration, TextSubstitution
 import os
 from xacro import process_file
-from moveit_configs_utils import MoveItConfigsBuilder
+from tempfile import NamedTemporaryFile
 
 #Wallii_ArmV2
 #robot_arm_urdf
 def generate_launch_description():
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), 'urdf/', 'WalliiArmV3.urdf')
-    assert os.path.exists(xacro_file), "wallii.xacro doesnt exist in "+str(xacro_file)
-
+    urdf_path = 'urdf/WalliiArmV3.urdf'
+    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
+    
+    with open(xacro_file, "r") as file:
+    	urdf_content = file.read()
+    
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
-
-    # ros2_control using real hardware
-    #Is this necessary or is this redundant?
-    #ros2_controllers_path = os.path.join(
-    #    get_package_share_directory("urc_arm_moveit_config"),
-    #    "config",
-    #    "ros2_controllers.yaml",
-    #)
-    #ros2_control_node = Node(
-    #    package="controller_manager",
-    #    executable="ros2_control_node",
-    #    parameters=[moveit_config.robot_description, ros2_controllers_path],
-    #    output="screen",
-    #)
+   
+    # Explanation for this convoluted logic/text replacement:
+    # To load files in ros2, nodes like the ones used in moveit2 need to use paths relative to a package 
+    # they are located in. However, the spawn_entity.py script needs the absolute file path to load
+    # model files, which causes issues when trying to load the two together. Thus, this text replacement
+    # gets rid of that issue by processing the xacro/urdf file and adding the absolute file path as a
+    # replacement string for the relative path that nodes within moveit2 use.
+    # If there is a more elegant way to solve this issue, please bring it up and try to implement it
+    # in your workspace. Elegant methods would NOT involve directly modifying the source code of
+    # either the moveit robot model loader or spawn_entity.py...
+   
+    replacement_pattern = "package://urc_gazebo"
+    new_pattern = get_package_share_directory('urc_gazebo')
     
-    load_joint_state_controller = ExecuteProcess(
-    	cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    		'joint_state_broadcaster'],
-    	output='screen'
-    )
-    
-    load_joint_trajectory_controller = ExecuteProcess(
-    	cmd=['ros2','control', 'load_controller', '--set-state',
-    		'active', 'joint_trajectory_controller'],
-    	output='screen'
-    )
-
-    gorilla_grip = ExecuteProcess(
-    	cmd=['ros2','control', 'load_controller', '--set-state',
-    		'active', 'gripper_controller'],
-    	output='screen'
-    )
+    robot_desc = robot_desc.replace(replacement_pattern, new_pattern)
     
     spawn_robot = Node(
         package='gazebo_ros',
@@ -61,8 +49,26 @@ def generate_launch_description():
         parameters=[
             {"robot_description": robot_desc}],
         output='screen'
-       )
+    )
+    
+    load_joint_state_controller = ExecuteProcess(
+    	cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+    		'joint_state_broadcaster'],
+    	output='screen'
+    )
+    
+    load_joint_trajectory_controller = ExecuteProcess(
+    	cmd=['ros2','control', 'load_controller', '--set-state',
+    		'active', 'arm_controller'],
+    	output='screen'
+    )
 
+    gorilla_grip = ExecuteProcess(
+    	cmd=['ros2','control', 'load_controller', '--set-state',
+    		'active', 'gripper_controller'],
+    	output='screen'
+    )
+    
     return LaunchDescription([
         #ros2_control_node,
     	RegisterEventHandler(

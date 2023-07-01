@@ -25,9 +25,11 @@
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
+        <!-- $(find urc_gazebo) -->
+        <!-- package://urc_gazebo -->
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/base_link.STL" />
+          filename="package://urc_gazebo/urdf/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -41,7 +43,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/base_link_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/base_link_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -73,7 +75,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/shoulder.STL" />
+          filename="package://urc_gazebo/urdf/meshes/shoulder.STL" />
       </geometry>
       <material
         name="">
@@ -87,7 +89,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/shoulder_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/shoulder_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -134,7 +136,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/bicep.STL" />
+          filename="package://urc_gazebo/urdf/meshes/bicep.STL" />
       </geometry>
       <material
         name="">
@@ -148,7 +150,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/bicep_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/bicep_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -195,7 +197,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/elbow.STL" />
+          filename="package://urc_gazebo/urdf/meshes/elbow.STL" />
       </geometry>
       <material
         name="">
@@ -209,7 +211,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/elbow_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/elbow_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -256,7 +258,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/forearm.STL" />
+          filename="package://urc_gazebo/urdf/meshes/forearm.STL" />
       </geometry>
       <material
         name="">
@@ -270,7 +272,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/forearm_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/forearm_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -317,7 +319,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/wrist.STL" />
+          filename="package://urc_gazebo/urdf/meshes/wrist.STL" />
       </geometry>
       <material
         name="">
@@ -331,7 +333,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/wrist_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/wrist_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -378,7 +380,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/claw.STL" />
+          filename="package://urc_gazebo/urdf/meshes/claw.STL" />
       </geometry>
       <material
         name="">
@@ -392,7 +394,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/claw_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/claw_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -439,7 +441,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/leftgripper.STL" />
+          filename="package://urc_gazebo/urdf/meshes/leftgripper.STL" />
       </geometry>
       <material
         name="">
@@ -453,7 +455,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/leftgripper_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/leftgripper_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -500,7 +502,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/rightgripper.STL" />
+          filename="package://urc_gazebo/urdf/meshes/rightgripper.STL" />
       </geometry>
       <material
         name="">
@@ -514,7 +516,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="$(find urc_gazebo)/urdf/meshes/rightgripper_collision.STL" />
+          filename="package://urc_gazebo/urdf/meshes/rightgripper_collision.STL" />
       </geometry>
     </collision>
   </link>
@@ -663,7 +665,7 @@
 
   <gazebo>
     <plugin name ="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-      <parameters>$(find urc_gazebo)/urdf/config/RoboticArm_params.yaml</parameters>
+      <parameters>package://urc_gazebo/urdf/config/RoboticArm_params.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>

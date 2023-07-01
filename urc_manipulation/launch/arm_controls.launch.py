@@ -88,5 +88,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         arm_controls_node,
-        #container
+        container
     ])
