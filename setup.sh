@@ -51,10 +51,8 @@ image_tag="humble"
 
 # Function to get the current working directory
 get_cwd() {
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        echo "$(dirname "$(readlink "$0")")"
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        echo "$(dirname "$(readlink -f "$0")")"
+    if [[ "$(uname -s)" == "Darwin" || "$(uname -s)" == "Linux" ]]; then
+        echo "$(pwd)"
     elif [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* ]]; then
         dir="$(dirname "$(readlink -f "$BASH_SOURCE")" | sed 's/^[A-Za-z]://')"
         echo "/$(echo "$dir" | sed 's/\\/\//g' | sed 's/://')"
