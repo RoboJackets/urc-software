@@ -9,6 +9,6 @@
     <xacro:include filename="WalliiArmV3.ros2_control.xacro" />
 
 
-    <xacro:WalliiArmV3_ros2_control name="GazeboSystem" initial_positions_file="$(arg initial_positions_file)"/>
+    <xacro:WalliiArmV3_ros2_control name="GazeboSimSystem" initial_positions_file="$(arg initial_positions_file)"/>
 
 </robot>

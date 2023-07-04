@@ -84,7 +84,7 @@ struct ServoParameters
   // MoveIt properties
   std::string move_group_name{ "arm" };
   std::string planning_frame{ "base_link" };
-  std::string ee_frame_name{ "claw" };
+  std::string ee_frame_name{ "leftgripper" };
   bool is_primary_planning_scene_monitor = { true };
   std::string monitored_planning_scene_topic{
     planning_scene_monitor::PlanningSceneMonitor::DEFAULT_PLANNING_SCENE_TOPIC

@@ -1,4 +1,4 @@
-# Default initial positions for WalliiArmV3's ros2_control fake system
+# Default initial positions for WalliiArmV3's ros2_control system
 
 initial_positions:
   bicepjoint: 0

@@ -51,7 +51,7 @@
     <origin rpy="0 0 0" xyz="0 0 1"/>
     <parent link="world"/>
     <child link="base_link"/>
-    <dynamics damping="0" friction="1.0"/>
+    <dynamics damping="60.0" friction="4.0"/>
   </joint>
   <link
     name="shoulder">
@@ -111,8 +111,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="bicep">
@@ -172,8 +172,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="elbow">
@@ -233,8 +233,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="forearm">
@@ -294,8 +294,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="wrist">
@@ -355,8 +355,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="claw">
@@ -416,8 +416,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="leftgripper">
@@ -477,8 +477,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
   </joint>
   <link
     name="rightgripper">
@@ -538,8 +538,8 @@
       effort="0"
       velocity="0" />
     <dynamics
-      damping="0.7"
-      friction="1" />
+      damping="60.0"
+      friction="4.0" />
     <mimic
       joint="leftgripperjoint"
       multiplier="1"

@@ -57,7 +57,7 @@ def generate_launch_description():
                 plugin="tf2_ros::StaticTransformBroadcasterNode",
                 name="static_tf2_broadcaster",
                 #check if child frame id and base link are correct
-                parameters=[{"child_frame_id": "/claw", "frame_id": "/base_link"}],
+                parameters=[{"child_frame_id": "/leftgripper", "frame_id": "/base_link"}],
             ),
             ComposableNode(
                 package="urc_manipulation",
