@@ -11,7 +11,7 @@
   <xacro:property name="body_length"    value="0.300"/>
   <xacro:property name="body_width"     value="0.250"/>
   <xacro:property name="body_height"    value="0.050"/>
-  <xacro:property name="body_mass"      value="3.000"/>
+  <xacro:property name="body_mass"      value="50.000"/>
   <xacro:property name="body_clearance" value="0.200"/>
 
   <xacro:property name="wheelbase_rocker" value="0.350"/>

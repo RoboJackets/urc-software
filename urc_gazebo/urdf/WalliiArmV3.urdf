@@ -4,9 +4,8 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="WalliiArmV3">
-  <link name="world"/>
   <link
-    name="base_link">
+    name="arm_base_link">
     <inertial>
       <origin
         xyz="-8.1195E-05 0.025555 0.31181"
@@ -47,12 +46,6 @@
       </geometry>
     </collision>
   </link>
-  <joint name="world_to_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 1"/>
-    <parent link="world"/>
-    <child link="base_link"/>
-    <dynamics damping="60.0" friction="4.0"/>
-  </joint>
   <link
     name="shoulder">
     <inertial>
@@ -100,7 +93,7 @@
       xyz="0.00028389 0.0254 0.62708"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="arm_base_link" />
     <child
       link="shoulder" />
     <axis
@@ -579,9 +572,12 @@
   </gazebo>
   <!-- mock_components/GenericSystem -->
   <!-- gazebo_ros2_control/GazeboSystem -->
-  <ros2_control name="GazeboSimSystem" type="system">
+ 
+
+    <ros2_control name="arm_control" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
     </hardware>
     <joint name ="arm_joint">
         <command_interface name="position" />
@@ -660,12 +656,13 @@
         </state_interface>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
-      </joint>  
+      </joint>
     </ros2_control>
-
-  <gazebo>
+    
+    <gazebo>
     <plugin name ="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
       <parameters>package://urc_gazebo/urdf/config/RoboticArm_params.yaml</parameters>
     </plugin>
-  </gazebo>
+    </gazebo>
+
 </robot>

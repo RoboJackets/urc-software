@@ -64,7 +64,7 @@ struct ServoParameters
   // Properties of incoming commands
   std::string cartesian_command_in_topic{ "~/delta_twist_cmds" };
   std::string joint_command_in_topic{ "~/delta_joint_cmds" };
-  std::string robot_link_command_frame{ "base_link" };
+  std::string robot_link_command_frame{ "arm_base_link" };
   std::string command_in_type{ "unitless" };
   double linear_scale{ 0.4 };
   double rotational_scale{ 0.8 };
@@ -83,7 +83,7 @@ struct ServoParameters
   std::string smoothing_filter_plugin_name{ "online_signal_smoothing::ButterworthFilterPlugin" };
   // MoveIt properties
   std::string move_group_name{ "arm" };
-  std::string planning_frame{ "base_link" };
+  std::string planning_frame{ "arm_base_link" };
   std::string ee_frame_name{ "leftgripper" };
   bool is_primary_planning_scene_monitor = { true };
   std::string monitored_planning_scene_topic{

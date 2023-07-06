@@ -8,10 +8,10 @@ import os
 from xacro import process_file
 from tempfile import NamedTemporaryFile
 
-#Wallii_ArmV2
-#robot_arm_urdf
+#Wallii_ArmV3
+#wallii.xacro
 def generate_launch_description():
-    urdf_path = 'urdf/WalliiArmV3.urdf'
+    urdf_path = 'urdf/wallii.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
     
@@ -39,7 +39,7 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'wallii', '-topic', '/robot_description']
+        arguments=['-entity', 'wallii', '-x', '0', '-y', '0', '-z', '0.3', '-topic', '/robot_description']
     )
     
     robot_state_publisher = Node(
@@ -50,7 +50,7 @@ def generate_launch_description():
             {"robot_description": robot_desc}],
         output='screen'
     )
-    
+ 
     load_joint_state_controller = ExecuteProcess(
     	cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
     		'joint_state_broadcaster'],
@@ -70,7 +70,6 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
-        #ros2_control_node,
     	RegisterEventHandler(
     		event_handler=OnProcessExit(
     			target_action=spawn_robot,
@@ -80,7 +79,7 @@ def generate_launch_description():
     	RegisterEventHandler(
     		event_handler=OnProcessExit(
     			target_action=load_joint_state_controller,
-    			on_exit=[load_joint_trajectory_controller],
+			on_exit=[load_joint_trajectory_controller],
     		)
     	),
     	RegisterEventHandler(

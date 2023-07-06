@@ -15,7 +15,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
   declare_parameter<std::string>("joint_topic", "/servo_node/delta_joint_cmds");
   get_parameter<std::string>("joint_topic", joint_topic);
 
-  declare_parameter<std::string>("base_frame_id", "base_link");
+  declare_parameter<std::string>("base_frame_id", "arm_base_link");
   get_parameter<std::string>("base_frame_id", base_frame_id);
   
   declare_parameter<std::string>("eef_frame_id", "leftgripper");

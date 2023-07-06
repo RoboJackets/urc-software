@@ -2,6 +2,9 @@ controller_manager:
   ros__parameters:
     update_rate: 1000 # Hz
     
+    rover_controller:
+      type: robot_mechanism_controllers/JointVelocityController
+    
     arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
       
@@ -10,6 +13,22 @@ controller_manager:
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
+
+rover_controller:
+  ros__parameters:
+    joints:
+      - left_bogie_front_axle
+      - left_bogie_rear_axle
+      - left_rocker_rear_axle
+      - right_bogie_front_axle
+      - right_bogie_rear_axle
+      - right_rocker_rear_axle
+      
+    command_interfaces:
+      - velocity
+      
+    state_interfaces:
+      - velocity
 
 arm_controller:
   ros__parameters:
