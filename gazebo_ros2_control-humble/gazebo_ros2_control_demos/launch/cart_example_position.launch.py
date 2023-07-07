@@ -32,7 +32,7 @@ def generate_launch_description():
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-        os.path.join(pkg_gazebo_ros, 'launch', '/gazebo.launch.py'),
+            os.path.join(pkg_gazebo_ros, 'launch', '/gazebo.launch.py'),
         ),
         launch_arguments={'verbose': 'true'}.items()
     )
