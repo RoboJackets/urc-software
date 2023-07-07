@@ -39,9 +39,10 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'wallii', '-x', '0', '-y', '0', '-z', '0.3', '-topic', '/robot_description']
+        arguments=['-entity', 'wallii', '-x', '0', '-y', '0', '-z', '0.3',
+            '-topic', '/robot_description']
     )
-    
+
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -50,25 +51,25 @@ def generate_launch_description():
             {"robot_description": robot_desc}],
         output='screen'
     )
- 
+
     load_joint_state_controller = ExecuteProcess(
-    	cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    		'joint_state_broadcaster'],
-    	output='screen'
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+                    'joint_state_broadcaster'],
+        output='screen'
     )
-    
+
     load_joint_trajectory_controller = ExecuteProcess(
-    	cmd=['ros2','control', 'load_controller', '--set-state',
-    		'active', 'arm_controller'],
-    	output='screen'
+        cmd=['ros2', 'control', 'load_controller', '--set-state',
+                    'active', 'arm_controller'],
+        output='screen'
     )
 
     gorilla_grip = ExecuteProcess(
-    	cmd=['ros2','control', 'load_controller', '--set-state',
-    		'active', 'gripper_controller'],
-    	output='screen'
+        cmd=['ros2', 'control', 'load_controller', '--set-state',
+    	            'active', 'gripper_controller'],
+        output='screen'
     )
-    
+
     return LaunchDescription([
         RegisterEventHandler(
                 event_handler=OnProcessExit(
@@ -76,7 +77,7 @@ def generate_launch_description():
                         on_exit=[load_joint_state_controller],
                 )
         ),
-    	RegisterEventHandler(
+        RegisterEventHandler(
                 event_handler=OnProcessExit(
                         target_action=load_joint_state_controller,
                         on_exit=[load_joint_trajectory_controller],
@@ -91,5 +92,5 @@ def generate_launch_description():
 
         robot_state_publisher,
         spawn_robot,
-   
+
     ])
