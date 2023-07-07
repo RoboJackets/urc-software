@@ -2,3 +2,7 @@
 	path = external/nanopb
 	url = https://github.com/nanopb/nanopb
 	ignore = dirty
+[submodule "external/gazebo_ros2_control"]
+	path = external/gazebo_ros2_control
+	url = https://github.com/ros-controls/gazebo_ros2_control
+	branch = humble
