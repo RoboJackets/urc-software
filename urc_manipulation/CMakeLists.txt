@@ -34,6 +34,8 @@ find_package(moveit_common REQUIRED)
 moveit_package()
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
+  controller_manager
+  controller_manager_msgs
   control_msgs
   control_toolbox
   geometry_msgs
