@@ -51,72 +51,72 @@
 
 namespace moveit_servo
 {
-class CollisionCheck
-{
-public:
-  /** \brief Constructor
-   *  \param parameters: common settings of moveit_servo
-   *  \param planning_scene_monitor: PSM should have scene monitor and state monitor
-   *                                 already started when passed into this class
-   */
-  CollisionCheck(const rclcpp::Node::SharedPtr& node, const ServoParameters::SharedConstPtr& parameters,
-                 const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor);
-
-  ~CollisionCheck()
+  class CollisionCheck
   {
-    if (timer_)
+public:
+    /** \brief Constructor
+     *  \param parameters: common settings of moveit_servo
+     *  \param planning_scene_monitor: PSM should have scene monitor and state monitor
+     *                                 already started when passed into this class
+     */
+    CollisionCheck(
+      const rclcpp::Node::SharedPtr & node, const ServoParameters::SharedConstPtr & parameters,
+      const planning_scene_monitor::PlanningSceneMonitorPtr & planning_scene_monitor);
+
+    ~CollisionCheck()
     {
-      timer_->cancel();
+      if (timer_) {
+        timer_->cancel();
+      }
     }
-  }
 
-  /** \brief start the Timer that regulates collision check rate */
-  void start();
+    /** \brief start the Timer that regulates collision check rate */
+    void start();
 
-  /** \brief Pause or unpause processing servo commands while keeping the timers alive */
-  void setPaused(bool paused);
+    /** \brief Pause or unpause processing servo commands while keeping the timers alive */
+    void setPaused(bool paused);
 
 private:
-  /** \brief Run one iteration of collision checking */
-  void run();
+    /** \brief Run one iteration of collision checking */
+    void run();
 
-  /** \brief Get a read-only copy of the planning scene */
-  planning_scene_monitor::LockedPlanningSceneRO getLockedPlanningSceneRO() const;
+    /** \brief Get a read-only copy of the planning scene */
+    planning_scene_monitor::LockedPlanningSceneRO getLockedPlanningSceneRO() const;
 
-  // Pointer to the ROS node
-  const std::shared_ptr<rclcpp::Node> node_;
+    // Pointer to the ROS node
+    const std::shared_ptr < rclcpp::Node > node_;
 
-  // Parameters from yaml
-  const ServoParameters::SharedConstPtr parameters_;
+    // Parameters from yaml
+    const ServoParameters::SharedConstPtr parameters_;
 
-  // Pointer to the collision environment
-  planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
+    // Pointer to the collision environment
+    planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
 
-  // Robot state and collision matrix from planning scene
-  std::shared_ptr<moveit::core::RobotState> current_state_;
+    // Robot state and collision matrix from planning scene
+    std::shared_ptr < moveit::core::RobotState > current_state_;
 
-  // Scale robot velocity according to collision proximity and user-defined thresholds.
-  // I scaled exponentially (cubic power) so velocity drops off quickly after the threshold.
-  // Proximity decreasing --> decelerate
-  double velocity_scale_ = 1;
-  double self_collision_distance_ = 0;
-  double scene_collision_distance_ = 0;
-  bool collision_detected_ = false;
-  bool paused_ = false;
+    // Scale robot velocity according to collision proximity and user-defined thresholds.
+    // I scaled exponentially (cubic power) so velocity drops off quickly after the threshold.
+    // Proximity decreasing --> decelerate
+    double velocity_scale_ = 1;
+    double self_collision_distance_ = 0;
+    double scene_collision_distance_ = 0;
+    bool collision_detected_ = false;
+    bool paused_ = false;
 
-  const double self_velocity_scale_coefficient_;
-  const double scene_velocity_scale_coefficient_;
+    const double self_velocity_scale_coefficient_;
+    const double scene_velocity_scale_coefficient_;
 
-  // collision request
-  collision_detection::CollisionRequest collision_request_;
-  collision_detection::CollisionResult collision_result_;
+    // collision request
+    collision_detection::CollisionRequest collision_request_;
+    collision_detection::CollisionResult collision_result_;
 
-  // ROS
-  rclcpp::TimerBase::SharedPtr timer_;
-  double period_;  // The loop period, in seconds
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr collision_velocity_scale_pub_;
+    // ROS
+    rclcpp::TimerBase::SharedPtr timer_;
+    double period_; // The loop period, in seconds
+    rclcpp::Publisher < std_msgs::msg::Float64 > ::SharedPtr collision_velocity_scale_pub_;
 
-  mutable std::mutex joint_state_mutex_;
-  sensor_msgs::msg::JointState latest_joint_state_;
-};
+    mutable std::mutex joint_state_mutex_;
+    sensor_msgs::msg::JointState latest_joint_state_;
+  };
 }  // namespace moveit_servo

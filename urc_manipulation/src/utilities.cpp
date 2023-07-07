@@ -43,27 +43,27 @@ constexpr auto ROS_LOG_THROTTLE_PERIOD = std::chrono::milliseconds(3000).count()
 }  // namespace
 
 /** \brief Helper function for detecting zeroed message **/
-bool isNonZero(const geometry_msgs::msg::TwistStamped& msg)
+bool isNonZero(const geometry_msgs::msg::TwistStamped & msg)
 {
   return msg.twist.linear.x != 0.0 || msg.twist.linear.y != 0.0 || msg.twist.linear.z != 0.0 ||
          msg.twist.angular.x != 0.0 || msg.twist.angular.y != 0.0 || msg.twist.angular.z != 0.0;
 }
 
 /** \brief Helper function for detecting zeroed message **/
-bool isNonZero(const control_msgs::msg::JointJog& msg)
+bool isNonZero(const control_msgs::msg::JointJog & msg)
 {
   bool all_zeros = true;
-  for (double delta : msg.velocities)
-  {
+  for (double delta : msg.velocities) {
     all_zeros &= (delta == 0.0);
   }
   return !all_zeros;
 }
 
 /** \brief Helper function for converting Eigen::Isometry3d to geometry_msgs/TransformStamped **/
-geometry_msgs::msg::TransformStamped convertIsometryToTransform(const Eigen::Isometry3d& eigen_tf,
-                                                                const std::string& parent_frame,
-                                                                const std::string& child_frame)
+geometry_msgs::msg::TransformStamped convertIsometryToTransform(
+  const Eigen::Isometry3d & eigen_tf,
+  const std::string & parent_frame,
+  const std::string & child_frame)
 {
   geometry_msgs::msg::TransformStamped output = tf2::eigenToTransform(eigen_tf);
   output.header.frame_id = parent_frame;
@@ -85,14 +85,15 @@ geometry_msgs::msg::TransformStamped convertIsometryToTransform(const Eigen::Iso
  * @param[in, out] current_state  The state of the robot. Used in internal calculations.
  * @param[out] status             Singularity status
  */
-double velocityScalingFactorForSingularity(const moveit::core::JointModelGroup* joint_model_group,
-                                           const Eigen::VectorXd& commanded_twist,
-                                           const Eigen::JacobiSVD<Eigen::MatrixXd>& svd,
-                                           const Eigen::MatrixXd& pseudo_inverse,
-                                           const double hard_stop_singularity_threshold,
-                                           const double lower_singularity_threshold,
-                                           const double leaving_singularity_threshold_multiplier, rclcpp::Clock& clock,
-                                           moveit::core::RobotStatePtr& current_state, StatusCode& status)
+double velocityScalingFactorForSingularity(
+  const moveit::core::JointModelGroup * joint_model_group,
+  const Eigen::VectorXd & commanded_twist,
+  const Eigen::JacobiSVD<Eigen::MatrixXd> & svd,
+  const Eigen::MatrixXd & pseudo_inverse,
+  const double hard_stop_singularity_threshold,
+  const double lower_singularity_threshold,
+  const double leaving_singularity_threshold_multiplier, rclcpp::Clock & clock,
+  moveit::core::RobotStatePtr & current_state, StatusCode & status)
 {
   double velocity_scale = 1;
   std::size_t num_dimensions = commanded_twist.size();
@@ -103,7 +104,8 @@ double velocityScalingFactorForSingularity(const moveit::core::JointModelGroup* 
   // Look ahead to see if the Jacobian's condition will decrease.
   Eigen::VectorXd vector_toward_singularity = svd.matrixU().col(num_dimensions - 1);
 
-  double ini_condition = svd.singularValues()(0) / svd.singularValues()(svd.singularValues().size() - 1);
+  double ini_condition = svd.singularValues()(0) /
+    svd.singularValues()(svd.singularValues().size() - 1);
 
   // This singular vector tends to flip direction unpredictably. See R. Bro,
   // "Resolving the Sign Ambiguity in the Singular Value Decomposition".
@@ -121,11 +123,11 @@ double velocityScalingFactorForSingularity(const moveit::core::JointModelGroup* 
   Eigen::MatrixXd new_jacobian = current_state->getJacobian(joint_model_group);
 
   Eigen::JacobiSVD<Eigen::MatrixXd> new_svd(new_jacobian);
-  double new_condition = new_svd.singularValues()(0) / new_svd.singularValues()(new_svd.singularValues().size() - 1);
+  double new_condition = new_svd.singularValues()(0) /
+    new_svd.singularValues()(new_svd.singularValues().size() - 1);
   // If new_condition < ini_condition, the singular vector does point towards a
   // singularity. Otherwise, flip its direction.
-  if (ini_condition >= new_condition)
-  {
+  if (ini_condition >= new_condition) {
     vector_toward_singularity *= -1;
   }
 
@@ -133,24 +135,30 @@ double velocityScalingFactorForSingularity(const moveit::core::JointModelGroup* 
   double dot = vector_toward_singularity.dot(commanded_twist);
   // see https://github.com/ros-planning/moveit2/pull/620#issuecomment-1201418258 for visual explanation of algorithm
   double upper_threshold = dot > 0 ? hard_stop_singularity_threshold :
-                                     (hard_stop_singularity_threshold - lower_singularity_threshold) *
-                                             leaving_singularity_threshold_multiplier +
-                                         lower_singularity_threshold;
-  if ((ini_condition > lower_singularity_threshold) && (ini_condition < hard_stop_singularity_threshold))
+    (hard_stop_singularity_threshold - lower_singularity_threshold) *
+    leaving_singularity_threshold_multiplier +
+    lower_singularity_threshold;
+  if ((ini_condition > lower_singularity_threshold) &&
+    (ini_condition < hard_stop_singularity_threshold))
   {
     velocity_scale =
-        1. - (ini_condition - lower_singularity_threshold) / (upper_threshold - lower_singularity_threshold);
+      1. - (ini_condition - lower_singularity_threshold) /
+      (upper_threshold - lower_singularity_threshold);
     status =
-        dot > 0 ? StatusCode::DECELERATE_FOR_APPROACHING_SINGULARITY : StatusCode::DECELERATE_FOR_LEAVING_SINGULARITY;
-    RCLCPP_WARN_STREAM_THROTTLE(LOGGER, clock, ROS_LOG_THROTTLE_PERIOD, SERVO_STATUS_CODE_MAP.at(status));
+      dot >
+      0 ? StatusCode::DECELERATE_FOR_APPROACHING_SINGULARITY : StatusCode::
+      DECELERATE_FOR_LEAVING_SINGULARITY;
+    RCLCPP_WARN_STREAM_THROTTLE(
+      LOGGER, clock, ROS_LOG_THROTTLE_PERIOD,
+      SERVO_STATUS_CODE_MAP.at(status));
   }
-
   // Very close to singularity, so halt.
-  else if (ini_condition >= upper_threshold)
-  {
+  else if (ini_condition >= upper_threshold) {
     velocity_scale = 0;
     status = StatusCode::HALT_FOR_SINGULARITY;
-    RCLCPP_WARN_STREAM_THROTTLE(LOGGER, clock, ROS_LOG_THROTTLE_PERIOD, SERVO_STATUS_CODE_MAP.at(status));
+    RCLCPP_WARN_STREAM_THROTTLE(
+      LOGGER, clock, ROS_LOG_THROTTLE_PERIOD,
+      SERVO_STATUS_CODE_MAP.at(status));
   }
 
   return velocity_scale;

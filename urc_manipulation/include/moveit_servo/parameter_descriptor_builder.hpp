@@ -65,7 +65,7 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& type(uint8_t type);
+  ParameterDescriptorBuilder & type(uint8_t type);
 
   /**
    * @brief      Set the description string
@@ -74,7 +74,7 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& description(const std::string& description);
+  ParameterDescriptorBuilder & description(const std::string & description);
 
   /**
    * @brief      Set the additional constraints string (a description of any additional constraints which cannot be
@@ -84,7 +84,7 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& additionalConstraints(const std::string& additional_constraints);
+  ParameterDescriptorBuilder & additionalConstraints(const std::string & additional_constraints);
 
   /**
    * @brief      Sets the read only flag
@@ -93,7 +93,7 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& readOnly(bool read_only);
+  ParameterDescriptorBuilder & readOnly(bool read_only);
 
   /**
    * @brief      Set the dynamic typing flag (rolling only)
@@ -102,7 +102,7 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& dynamicTyping(bool dynamic_typing);
+  ParameterDescriptorBuilder & dynamicTyping(bool dynamic_typing);
 
   /**
    * @brief      Set floating point range
@@ -113,8 +113,9 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& floatingPointRange(double from_value = std::numeric_limits<double>::min(),
-                                                 double to_value = std::numeric_limits<double>::max(), double step = 0);
+  ParameterDescriptorBuilder & floatingPointRange(
+    double from_value = std::numeric_limits<double>::min(),
+    double to_value = std::numeric_limits<double>::max(), double step = 0);
 
   /**
    * @brief      Set the integer range
@@ -125,8 +126,9 @@ public:
    *
    * @return     Reference to this object
    */
-  ParameterDescriptorBuilder& integerRange(int64_t from_value = std::numeric_limits<int64_t>::min(),
-                                           int64_t to_value = std::numeric_limits<int64_t>::max(), int64_t step = 0);
+  ParameterDescriptorBuilder & integerRange(
+    int64_t from_value = std::numeric_limits<int64_t>::min(),
+    int64_t to_value = std::numeric_limits<int64_t>::max(), int64_t step = 0);
 };
 
 }  // namespace moveit_servo

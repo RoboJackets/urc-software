@@ -46,15 +46,16 @@
 namespace moveit_servo
 {
 // Helper function for detecting zeroed message
-bool isNonZero(const geometry_msgs::msg::TwistStamped& msg);
+  bool isNonZero(const geometry_msgs::msg::TwistStamped & msg);
 
 // Helper function for detecting zeroed message
-bool isNonZero(const control_msgs::msg::JointJog& msg);
+  bool isNonZero(const control_msgs::msg::JointJog & msg);
 
 // Helper function for converting Eigen::Isometry3d to geometry_msgs/TransformStamped
-geometry_msgs::msg::TransformStamped convertIsometryToTransform(const Eigen::Isometry3d& eigen_tf,
-                                                                const std::string& parent_frame,
-                                                                const std::string& child_frame);
+  geometry_msgs::msg::TransformStamped convertIsometryToTransform(
+    const Eigen::Isometry3d & eigen_tf,
+    const std::string & parent_frame,
+    const std::string & child_frame);
 
 /** \brief Possibly calculate a velocity scaling factor, due to proximity of
  * singularity and direction of motion
@@ -69,13 +70,14 @@ geometry_msgs::msg::TransformStamped convertIsometryToTransform(const Eigen::Iso
  * @param[in, out] current_state  The state of the robot. Used in internal calculations.
  * @param[out] status             Singularity status
  */
-double velocityScalingFactorForSingularity(const moveit::core::JointModelGroup* joint_model_group,
-                                           const Eigen::VectorXd& commanded_twist,
-                                           const Eigen::JacobiSVD<Eigen::MatrixXd>& svd,
-                                           const Eigen::MatrixXd& pseudo_inverse,
-                                           const double hard_stop_singularity_threshold,
-                                           const double lower_singularity_threshold,
-                                           const double leaving_singularity_threshold_multiplier, rclcpp::Clock& clock,
-                                           moveit::core::RobotStatePtr& current_state, StatusCode& status);
+  double velocityScalingFactorForSingularity(
+    const moveit::core::JointModelGroup * joint_model_group,
+    const Eigen::VectorXd & commanded_twist,
+    const Eigen::JacobiSVD < Eigen::MatrixXd > & svd,
+    const Eigen::MatrixXd & pseudo_inverse,
+    const double hard_stop_singularity_threshold,
+    const double lower_singularity_threshold,
+    const double leaving_singularity_threshold_multiplier, rclcpp::Clock & clock,
+    moveit::core::RobotStatePtr & current_state, StatusCode & status);
 
 }  // namespace moveit_servo

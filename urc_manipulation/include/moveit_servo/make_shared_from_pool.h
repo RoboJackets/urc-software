@@ -43,15 +43,15 @@
 
 namespace moveit
 {
-namespace util
-{
+  namespace util
+  {
 // Useful template for creating messages from a message pool
-template <typename T>
-std::shared_ptr<T> make_shared_from_pool()
-{
-  using allocator_t = boost::fast_pool_allocator<std::shared_ptr<T>>;
-  return std::allocate_shared<T, allocator_t>(allocator_t());
-}
+    template < typename T >
+    std::shared_ptr < T > make_shared_from_pool()
+    {
+      using allocator_t = boost::fast_pool_allocator < std::shared_ptr < T >>;
+      return std::allocate_shared < T, allocator_t > (allocator_t());
+    }
 
-}  // namespace util
+  } // namespace util
 }  // namespace moveit

@@ -53,143 +53,156 @@
 
 namespace moveit_servo
 {
-struct PIDConfig
-{
-  // Default values
-  double dt = 0.001;
-  double k_p = 1;
-  double k_i = 0;
-  double k_d = 0;
-  double windup_limit = 0.1;
-};
+  struct PIDConfig
+  {
+    // Default values
+    double dt = 0.001;
+    double k_p = 1;
+    double k_i = 0;
+    double k_d = 0;
+    double windup_limit = 0.1;
+  };
 
-enum class PoseTrackingStatusCode : int8_t
-{
-  INVALID = -1,
-  SUCCESS = 0,
-  NO_RECENT_TARGET_POSE = 1,
-  NO_RECENT_END_EFFECTOR_POSE = 2,
-  STOP_REQUESTED = 3
-};
+  enum class PoseTrackingStatusCode: int8_t
+  {
+    INVALID = -1,
+    SUCCESS = 0,
+    NO_RECENT_TARGET_POSE = 1,
+    NO_RECENT_END_EFFECTOR_POSE = 2,
+    STOP_REQUESTED = 3
+  };
 
-const std::unordered_map<PoseTrackingStatusCode, std::string> POSE_TRACKING_STATUS_CODE_MAP(
-    { { PoseTrackingStatusCode::INVALID, "Invalid" },
-      { PoseTrackingStatusCode::SUCCESS, "Success" },
-      { PoseTrackingStatusCode::NO_RECENT_TARGET_POSE, "No recent target pose" },
-      { PoseTrackingStatusCode::NO_RECENT_END_EFFECTOR_POSE, "No recent end effector pose" },
-      { PoseTrackingStatusCode::STOP_REQUESTED, "Stop requested" } });
+  const std::unordered_map < PoseTrackingStatusCode, std::string > POSE_TRACKING_STATUS_CODE_MAP(
+    {{PoseTrackingStatusCode::INVALID, "Invalid"},
+      {PoseTrackingStatusCode::SUCCESS, "Success"},
+      {PoseTrackingStatusCode::NO_RECENT_TARGET_POSE, "No recent target pose"},
+      {PoseTrackingStatusCode::NO_RECENT_END_EFFECTOR_POSE, "No recent end effector pose"},
+      {PoseTrackingStatusCode::STOP_REQUESTED, "Stop requested"}});
 
 /**
  * Class PoseTracking - subscribe to a target pose.
  * Servo toward the target pose.
  */
-class PoseTracking
-{
+  class PoseTracking
+  {
 public:
-  /** \brief Constructor. Loads ROS parameters under the given namespace. */
-  PoseTracking(const rclcpp::Node::SharedPtr& node, const ServoParameters::SharedConstPtr& servo_parameters,
-               const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor);
+    /** \brief Constructor. Loads ROS parameters under the given namespace. */
+    PoseTracking(
+      const rclcpp::Node::SharedPtr & node,
+      const ServoParameters::SharedConstPtr & servo_parameters,
+      const planning_scene_monitor::PlanningSceneMonitorPtr & planning_scene_monitor);
 
-  PoseTrackingStatusCode moveToPose(const Eigen::Vector3d& positional_tolerance, const double angular_tolerance,
-                                    const double target_pose_timeout);
+    PoseTrackingStatusCode moveToPose(
+      const Eigen::Vector3d & positional_tolerance, const double angular_tolerance,
+      const double target_pose_timeout);
 
-  /** \brief A method for a different thread to stop motion and return early from control loop */
-  void stopMotion();
+    /** \brief A method for a different thread to stop motion and return early from control loop */
+    void stopMotion();
 
-  /** \brief Change PID parameters. Motion is stopped before the update */
-  void updatePIDConfig(const double x_proportional_gain, const double x_integral_gain, const double x_derivative_gain,
-                       const double y_proportional_gain, const double y_integral_gain, const double y_derivative_gain,
-                       const double z_proportional_gain, const double z_integral_gain, const double z_derivative_gain,
-                       const double angular_proportional_gain, const double angular_integral_gain,
-                       const double angular_derivative_gain);
+    /** \brief Change PID parameters. Motion is stopped before the update */
+    void updatePIDConfig(
+      const double x_proportional_gain, const double x_integral_gain,
+      const double x_derivative_gain,
+      const double y_proportional_gain, const double y_integral_gain,
+      const double y_derivative_gain,
+      const double z_proportional_gain, const double z_integral_gain,
+      const double z_derivative_gain,
+      const double angular_proportional_gain, const double angular_integral_gain,
+      const double angular_derivative_gain);
 
-  void getPIDErrors(double& x_error, double& y_error, double& z_error, double& orientation_error);
+    void getPIDErrors(
+      double & x_error, double & y_error, double & z_error,
+      double & orientation_error);
 
-  /**
-   * Get the End Effector link transform.
-   * The transform from the MoveIt planning frame to EE link
-   *
-   * @param transform the transform that will be calculated
-   * @return true if a valid transform was available
-   */
-  bool getCommandFrameTransform(geometry_msgs::msg::TransformStamped& transform);
+    /**
+     * Get the End Effector link transform.
+     * The transform from the MoveIt planning frame to EE link
+     *
+     * @param transform the transform that will be calculated
+     * @return true if a valid transform was available
+     */
+    bool getCommandFrameTransform(geometry_msgs::msg::TransformStamped & transform);
 
-  /** \brief Re-initialize the target pose to an empty message. Can be used to reset motion between waypoints. */
-  void resetTargetPose();
+    /** \brief Re-initialize the target pose to an empty message. Can be used to reset motion between waypoints. */
+    void resetTargetPose();
 
-  // moveit_servo::Servo instance. Public so we can access member functions like setPaused()
-  std::unique_ptr<moveit_servo::Servo> servo_;
+    // moveit_servo::Servo instance. Public so we can access member functions like setPaused()
+    std::unique_ptr < moveit_servo::Servo > servo_;
 
 private:
-  /** \brief Load ROS parameters for controller settings. */
-  void readROSParams();
+    /** \brief Load ROS parameters for controller settings. */
+    void readROSParams();
 
-  /** \brief Initialize a PID controller and add it to vector of controllers */
-  void initializePID(const PIDConfig& pid_config, std::vector<control_toolbox::Pid>& pid_vector);
+    /** \brief Initialize a PID controller and add it to vector of controllers */
+    void initializePID(
+      const PIDConfig & pid_config,
+      std::vector < control_toolbox::Pid > & pid_vector);
 
-  /** \brief Return true if a target pose has been received within timeout [seconds] */
-  bool haveRecentTargetPose(const double timeout);
+    /** \brief Return true if a target pose has been received within timeout [seconds] */
+    bool haveRecentTargetPose(const double timeout);
 
-  /** \brief Return true if an end effector pose has been received within timeout [seconds] */
-  bool haveRecentEndEffectorPose(const double timeout);
+    /** \brief Return true if an end effector pose has been received within timeout [seconds] */
+    bool haveRecentEndEffectorPose(const double timeout);
 
-  /** \brief Check if XYZ, roll/pitch/yaw tolerances are satisfied */
-  bool satisfiesPoseTolerance(const Eigen::Vector3d& positional_tolerance, const double angular_tolerance);
+    /** \brief Check if XYZ, roll/pitch/yaw tolerances are satisfied */
+    bool satisfiesPoseTolerance(
+      const Eigen::Vector3d & positional_tolerance,
+      const double angular_tolerance);
 
-  /** \brief Subscribe to the target pose on this topic */
-  void targetPoseCallback(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg);
+    /** \brief Subscribe to the target pose on this topic */
+    void targetPoseCallback(const geometry_msgs::msg::PoseStamped::ConstSharedPtr & msg);
 
-  /** \brief Update PID controller target positions & orientations */
-  void updateControllerSetpoints();
+    /** \brief Update PID controller target positions & orientations */
+    void updateControllerSetpoints();
 
-  /** \brief Update PID controller states (positions & orientations) */
-  void updateControllerStateMeasurements();
+    /** \brief Update PID controller states (positions & orientations) */
+    void updateControllerStateMeasurements();
 
-  /** \brief Use PID controllers to calculate a full spatial velocity toward a pose */
-  geometry_msgs::msg::TwistStamped::ConstSharedPtr calculateTwistCommand();
+    /** \brief Use PID controllers to calculate a full spatial velocity toward a pose */
+    geometry_msgs::msg::TwistStamped::ConstSharedPtr calculateTwistCommand();
 
-  /** \brief Reset flags and PID controllers after a motion completes */
-  void doPostMotionReset();
+    /** \brief Reset flags and PID controllers after a motion completes */
+    void doPostMotionReset();
 
-  rclcpp::Node::SharedPtr node_;
-  moveit_servo::ServoParameters::SharedConstPtr servo_parameters_;
+    rclcpp::Node::SharedPtr node_;
+    moveit_servo::ServoParameters::SharedConstPtr servo_parameters_;
 
-  planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
-  moveit::core::RobotModelConstPtr robot_model_;
-  // Joint group used for controlling the motions
-  std::string move_group_name_;
+    planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
+    moveit::core::RobotModelConstPtr robot_model_;
+    // Joint group used for controlling the motions
+    std::string move_group_name_;
 
-  rclcpp::WallRate loop_rate_;
+    rclcpp::WallRate loop_rate_;
 
-  // ROS interface to Servo
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_stamped_pub_;
+    // ROS interface to Servo
+    rclcpp::Publisher < geometry_msgs::msg::TwistStamped > ::SharedPtr twist_stamped_pub_;
 
-  std::vector<control_toolbox::Pid> cartesian_position_pids_;
-  std::vector<control_toolbox::Pid> cartesian_orientation_pids_;
-  // Cartesian PID configs
-  PIDConfig x_pid_config_, y_pid_config_, z_pid_config_, angular_pid_config_;
+    std::vector < control_toolbox::Pid > cartesian_position_pids_;
+    std::vector < control_toolbox::Pid > cartesian_orientation_pids_;
+    // Cartesian PID configs
+    PIDConfig x_pid_config_, y_pid_config_, z_pid_config_, angular_pid_config_;
 
-  // Transforms w.r.t. planning_frame_
-  Eigen::Isometry3d command_frame_transform_;
-  rclcpp::Time command_frame_transform_stamp_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
-  geometry_msgs::msg::PoseStamped target_pose_;
-  mutable std::mutex target_pose_mtx_;
+    // Transforms w.r.t. planning_frame_
+    Eigen::Isometry3d command_frame_transform_;
+    rclcpp::Time command_frame_transform_stamp_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
+    geometry_msgs::msg::PoseStamped target_pose_;
+    mutable std::mutex target_pose_mtx_;
 
-  // Subscribe to target pose
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr target_pose_sub_;
+    // Subscribe to target pose
+    rclcpp::Subscription < geometry_msgs::msg::PoseStamped > ::SharedPtr target_pose_sub_;
 
-  tf2_ros::Buffer transform_buffer_;
-  tf2_ros::TransformListener transform_listener_;
+    tf2_ros::Buffer transform_buffer_;
+    tf2_ros::TransformListener transform_listener_;
 
-  // Expected frame name, for error checking and transforms
-  std::string planning_frame_;
+    // Expected frame name, for error checking and transforms
+    std::string planning_frame_;
 
-  // Flag that a different thread has requested a stop.
-  std::atomic<bool> stop_requested_;
+    // Flag that a different thread has requested a stop.
+    std::atomic < bool > stop_requested_;
 
-  std::optional<double> angular_error_;
-};
+    std::optional < double > angular_error_;
+  };
 
 // using alias
-using PoseTrackingPtr = std::shared_ptr<PoseTracking>;
+  using PoseTrackingPtr = std::shared_ptr < PoseTracking >;
 }  // namespace moveit_servo

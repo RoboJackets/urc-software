@@ -55,16 +55,15 @@ public:
    * @param twist A TwistStamped message to update in prep for publishing
    */
   bool convertJoyToCmd(
-    const std::vector<float>& axes, const std::vector<int>& buttons,
-    std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist,
-    std::unique_ptr<control_msgs::msg::JointJog>& joint);
+    const std::vector<float> & axes, const std::vector<int> & buttons,
+    std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist,
+    std::unique_ptr<control_msgs::msg::JointJog> & joint);
 
-  JoyToServoPub(const rclcpp::NodeOptions& options);
+  JoyToServoPub(const rclcpp::NodeOptions & options);
   ~JoyToServoPub() override;
   void joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg);
 
-  void updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons);
-  
+  void updateCmdFrame(std::string & frame_name, const std::vector<int> & buttons);
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
@@ -81,11 +80,11 @@ private:
   std::string joint_topic;
   std::string base_frame_id;
   std::string eef_frame_id;
-  
+
 
   // Some axes have offsets (e.g. the default trigger position is 1.0 not 0)
   // This will map the default values for the axes
-  std::map<Axis, double> AXIS_DEFAULTS = { {LEFT_TRIGGER, 1.0}, {RIGHT_TRIGGER, 1.0}};
+  std::map<Axis, double> AXIS_DEFAULTS = {{LEFT_TRIGGER, 1.0}, {RIGHT_TRIGGER, 1.0}};
   std::map<Button, double> BUTTON_DEFAULTS;
 
 };  // class JoyToServoPub

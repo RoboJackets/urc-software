@@ -51,58 +51,59 @@ namespace moveit_servo
 /**
  * Class Servo - Jacobian based robot control with collision avoidance.
  */
-class Servo
-{
+  class Servo
+  {
 public:
-  Servo(const rclcpp::Node::SharedPtr& node, const ServoParameters::SharedConstPtr& parameters,
-        const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor);
+    Servo(
+      const rclcpp::Node::SharedPtr & node, const ServoParameters::SharedConstPtr & parameters,
+      const planning_scene_monitor::PlanningSceneMonitorPtr & planning_scene_monitor);
 
-  ~Servo();
+    ~Servo();
 
-  /** \brief start servo node */
-  void start();
+    /** \brief start servo node */
+    void start();
 
-  /** \brief Pause or unpause processing servo commands while keeping the timers alive */
-  void setPaused(bool paused);
+    /** \brief Pause or unpause processing servo commands while keeping the timers alive */
+    void setPaused(bool paused);
 
-  /**
-   * Get the MoveIt planning link transform.
-   * The transform from the MoveIt planning frame to robot_link_command_frame
-   *
-   * @param transform the transform that will be calculated
-   * @return true if a valid transform was available
-   */
-  bool getCommandFrameTransform(Eigen::Isometry3d& transform);
-  bool getCommandFrameTransform(geometry_msgs::msg::TransformStamped& transform);
+    /**
+     * Get the MoveIt planning link transform.
+     * The transform from the MoveIt planning frame to robot_link_command_frame
+     *
+     * @param transform the transform that will be calculated
+     * @return true if a valid transform was available
+     */
+    bool getCommandFrameTransform(Eigen::Isometry3d & transform);
+    bool getCommandFrameTransform(geometry_msgs::msg::TransformStamped & transform);
 
-  /**
-   * Get the End Effector link transform.
-   * The transform from the MoveIt planning frame to EE link
-   *
-   * @param transform the transform that will be calculated
-   * @return true if a valid transform was available
-   */
-  bool getEEFrameTransform(Eigen::Isometry3d& transform);
-  bool getEEFrameTransform(geometry_msgs::msg::TransformStamped& transform);
+    /**
+     * Get the End Effector link transform.
+     * The transform from the MoveIt planning frame to EE link
+     *
+     * @param transform the transform that will be calculated
+     * @return true if a valid transform was available
+     */
+    bool getEEFrameTransform(Eigen::Isometry3d & transform);
+    bool getEEFrameTransform(geometry_msgs::msg::TransformStamped & transform);
 
-  /** \brief Get the parameters used by servo node. */
-  const ServoParameters::SharedConstPtr& getParameters() const;
+    /** \brief Get the parameters used by servo node. */
+    const ServoParameters::SharedConstPtr & getParameters() const;
 
-  // Give test access to private/protected methods
-  friend class ServoFixture;
+    // Give test access to private/protected methods
+    friend class ServoFixture;
 
 private:
-  // Pointer to the collision environment
-  planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
+    // Pointer to the collision environment
+    planning_scene_monitor::PlanningSceneMonitorPtr planning_scene_monitor_;
 
-  // The stored servo parameters
-  ServoParameters::SharedConstPtr parameters_;
+    // The stored servo parameters
+    ServoParameters::SharedConstPtr parameters_;
 
-  ServoCalcs servo_calcs_;
-  CollisionCheck collision_checker_;
-};
+    ServoCalcs servo_calcs_;
+    CollisionCheck collision_checker_;
+  };
 
 // ServoPtr using alias
-using ServoPtr = std::shared_ptr<Servo>;
+  using ServoPtr = std::shared_ptr < Servo >;
 
 }  // namespace moveit_servo

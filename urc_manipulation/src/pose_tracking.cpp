@@ -44,25 +44,23 @@ static const rclcpp::Logger LOGGER = rclcpp::get_logger("moveit_servo.pose_track
 constexpr size_t LOG_THROTTLE_PERIOD = 10;  // sec
 
 // Helper template for declaring and getting ros param
-template <typename T>
-void declareOrGetParam(T& output_value, const std::string& param_name, const rclcpp::Node::SharedPtr& node,
-                       const rclcpp::Logger& logger, const T default_value = T{})
+template<typename T>
+void declareOrGetParam(
+  T & output_value, const std::string & param_name, const rclcpp::Node::SharedPtr & node,
+  const rclcpp::Logger & logger, const T default_value = T{})
 {
-  try
-  {
-    if (node->has_parameter(param_name))
-    {
+  try {
+    if (node->has_parameter(param_name)) {
       node->get_parameter<T>(param_name, output_value);
-    }
-    else
-    {
+    } else {
       output_value = node->declare_parameter<T>(param_name, default_value);
     }
-  }
-  catch (const rclcpp::exceptions::InvalidParameterTypeException& e)
-  {
+  } catch (const rclcpp::exceptions::InvalidParameterTypeException & e) {
     RCLCPP_WARN_STREAM(logger, "InvalidParameterTypeException(" << param_name << "): " << e.what());
-    RCLCPP_ERROR_STREAM(logger, "Error getting parameter \'" << param_name << "\', check parameter type in YAML file");
+    RCLCPP_ERROR_STREAM(
+      logger,
+      "Error getting parameter \'" << param_name <<
+        "\', check parameter type in YAML file");
     throw e;
   }
 
@@ -72,9 +70,10 @@ void declareOrGetParam(T& output_value, const std::string& param_name, const rcl
 
 namespace moveit_servo
 {
-PoseTracking::PoseTracking(const rclcpp::Node::SharedPtr& node, const ServoParameters::SharedConstPtr& servo_parameters,
-                           const planning_scene_monitor::PlanningSceneMonitorPtr& planning_scene_monitor)
-  : node_(node)
+PoseTracking::PoseTracking(
+  const rclcpp::Node::SharedPtr & node, const ServoParameters::SharedConstPtr & servo_parameters,
+  const planning_scene_monitor::PlanningSceneMonitorPtr & planning_scene_monitor)
+: node_(node)
   , servo_parameters_(servo_parameters)
   , planning_scene_monitor_(planning_scene_monitor)
   , loop_rate_(1.0 / servo_parameters->publish_period)
@@ -98,16 +97,19 @@ PoseTracking::PoseTracking(const rclcpp::Node::SharedPtr& node, const ServoParam
 
   // Connect to Servo ROS interfaces
   target_pose_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
-      "target_pose", rclcpp::SystemDefaultsQoS(),
-      [this](const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg) { return targetPoseCallback(msg); });
+    "target_pose", rclcpp::SystemDefaultsQoS(),
+    [this](const geometry_msgs::msg::PoseStamped::ConstSharedPtr & msg) {
+      return targetPoseCallback(msg);
+    });
 
   // Publish outgoing twist commands to the Servo object
   twist_stamped_pub_ = node_->create_publisher<geometry_msgs::msg::TwistStamped>(
-      servo_->getParameters()->cartesian_command_in_topic, rclcpp::SystemDefaultsQoS());
+    servo_->getParameters()->cartesian_command_in_topic, rclcpp::SystemDefaultsQoS());
 }
 
-PoseTrackingStatusCode PoseTracking::moveToPose(const Eigen::Vector3d& positional_tolerance,
-                                                const double angular_tolerance, const double target_pose_timeout)
+PoseTrackingStatusCode PoseTracking::moveToPose(
+  const Eigen::Vector3d & positional_tolerance,
+  const double angular_tolerance, const double target_pose_timeout)
 {
   // Reset stop requested flag before starting motions
   stop_requested_ = false;
@@ -115,18 +117,17 @@ PoseTrackingStatusCode PoseTracking::moveToPose(const Eigen::Vector3d& positiona
   // The target pose may get updated by new messages as the robot moves (in a callback function).
   const rclcpp::Time start_time = node_->now();
 
-  while ((!haveRecentTargetPose(target_pose_timeout) || !haveRecentEndEffectorPose(target_pose_timeout)) &&
-         ((node_->now() - start_time).seconds() < target_pose_timeout))
+  while ((!haveRecentTargetPose(target_pose_timeout) ||
+    !haveRecentEndEffectorPose(target_pose_timeout)) &&
+    ((node_->now() - start_time).seconds() < target_pose_timeout))
   {
-    if (servo_->getCommandFrameTransform(command_frame_transform_))
-    {
+    if (servo_->getCommandFrameTransform(command_frame_transform_)) {
       command_frame_transform_stamp_ = node_->now();
     }
     std::this_thread::sleep_for(1ms);
   }
 
-  if (!haveRecentTargetPose(target_pose_timeout))
-  {
+  if (!haveRecentTargetPose(target_pose_timeout)) {
     RCLCPP_ERROR_STREAM(LOGGER, "The target pose was not updated recently. Aborting.");
     return PoseTrackingStatusCode::NO_RECENT_TARGET_POSE;
   }
@@ -136,29 +137,24 @@ PoseTrackingStatusCode PoseTracking::moveToPose(const Eigen::Vector3d& positiona
   // - Target pose becomes outdated
   // - Command frame transform becomes outdated
   // - Another thread requested a stop
-  while (rclcpp::ok())
-  {
-    if (satisfiesPoseTolerance(positional_tolerance, angular_tolerance))
-    {
+  while (rclcpp::ok()) {
+    if (satisfiesPoseTolerance(positional_tolerance, angular_tolerance)) {
       RCLCPP_INFO_STREAM(LOGGER, "The target pose is achieved!");
       break;
     }
     // Attempt to update robot pose
-    if (servo_->getCommandFrameTransform(command_frame_transform_))
-    {
+    if (servo_->getCommandFrameTransform(command_frame_transform_)) {
       command_frame_transform_stamp_ = node_->now();
     }
 
     // Check that end-effector pose (command frame transform) is recent enough.
-    if (!haveRecentEndEffectorPose(target_pose_timeout))
-    {
+    if (!haveRecentEndEffectorPose(target_pose_timeout)) {
       RCLCPP_ERROR_STREAM(LOGGER, "The end effector pose was not updated in time. Aborting.");
       doPostMotionReset();
       return PoseTrackingStatusCode::NO_RECENT_END_EFFECTOR_POSE;
     }
 
-    if (stop_requested_)
-    {
+    if (stop_requested_) {
       RCLCPP_INFO_STREAM(LOGGER, "Halting servo motion, a stop was requested.");
       doPostMotionReset();
       return PoseTrackingStatusCode::STOP_REQUESTED;
@@ -167,9 +163,10 @@ PoseTrackingStatusCode PoseTracking::moveToPose(const Eigen::Vector3d& positiona
     // Compute servo command from PID controller output and send it to the Servo object, for execution
     twist_stamped_pub_->publish(*calculateTwistCommand());
 
-    if (!loop_rate_.sleep())
-    {
-      RCLCPP_WARN_STREAM_THROTTLE(LOGGER, *node_->get_clock(), LOG_THROTTLE_PERIOD, "Target control rate was missed");
+    if (!loop_rate_.sleep()) {
+      RCLCPP_WARN_STREAM_THROTTLE(
+        LOGGER,
+        *node_->get_clock(), LOG_THROTTLE_PERIOD, "Target control rate was missed");
     }
   }
 
@@ -184,9 +181,10 @@ void PoseTracking::readROSParams()
   declareOrGetParam(planning_frame_, ns + ".planning_frame", node_, LOGGER);
   declareOrGetParam(move_group_name_, ns + ".move_group_name", node_, LOGGER);
 
-  if (!planning_scene_monitor_->getRobotModel()->hasJointModelGroup(move_group_name_))
-  {
-    RCLCPP_ERROR_STREAM(LOGGER, "Unable to find the specified joint model group: " << move_group_name_);
+  if (!planning_scene_monitor_->getRobotModel()->hasJointModelGroup(move_group_name_)) {
+    RCLCPP_ERROR_STREAM(
+      LOGGER,
+      "Unable to find the specified joint model group: " << move_group_name_);
   }
 
   double publish_period;
@@ -220,25 +218,31 @@ void PoseTracking::readROSParams()
   declareOrGetParam(angular_pid_config_.k_d, ns + ".angular_derivative_gain", node_, LOGGER);
 }
 
-void PoseTracking::initializePID(const PIDConfig& pid_config, std::vector<control_toolbox::Pid>& pid_vector)
+void PoseTracking::initializePID(
+  const PIDConfig & pid_config,
+  std::vector<control_toolbox::Pid> & pid_vector)
 {
   bool use_anti_windup = true;
-  pid_vector.push_back(control_toolbox::Pid(pid_config.k_p, pid_config.k_i, pid_config.k_d, pid_config.windup_limit,
-                                            -pid_config.windup_limit, use_anti_windup));
+  pid_vector.push_back(
+    control_toolbox::Pid(
+      pid_config.k_p, pid_config.k_i, pid_config.k_d, pid_config.windup_limit,
+      -pid_config.windup_limit, use_anti_windup));
 }
 
 bool PoseTracking::haveRecentTargetPose(const double timespan)
 {
   std::lock_guard<std::mutex> lock(target_pose_mtx_);
-  return ((node_->now() - target_pose_.header.stamp).seconds() < timespan);
+  return (node_->now() - target_pose_.header.stamp).seconds() < timespan;
 }
 
 bool PoseTracking::haveRecentEndEffectorPose(const double timespan)
 {
-  return ((node_->now() - command_frame_transform_stamp_).seconds() < timespan);
+  return (node_->now() - command_frame_transform_stamp_).seconds() < timespan;
 }
 
-bool PoseTracking::satisfiesPoseTolerance(const Eigen::Vector3d& positional_tolerance, const double angular_tolerance)
+bool PoseTracking::satisfiesPoseTolerance(
+  const Eigen::Vector3d & positional_tolerance,
+  const double angular_tolerance)
 {
   std::lock_guard<std::mutex> lock(target_pose_mtx_);
   double x_error = target_pose_.pose.position.x - command_frame_transform_.translation()(0);
@@ -246,31 +250,31 @@ bool PoseTracking::satisfiesPoseTolerance(const Eigen::Vector3d& positional_tole
   double z_error = target_pose_.pose.position.z - command_frame_transform_.translation()(2);
 
   // If uninitialized, likely haven't received the target pose yet.
-  if (!angular_error_)
+  if (!angular_error_) {
     return false;
+  }
 
-  return ((std::abs(x_error) < positional_tolerance(0)) && (std::abs(y_error) < positional_tolerance(1)) &&
-          (std::abs(z_error) < positional_tolerance(2)) && (std::abs(*angular_error_) < angular_tolerance));
+  return (std::abs(x_error) < positional_tolerance(0)) &&
+         (std::abs(y_error) < positional_tolerance(1)) &&
+         (std::abs(z_error) < positional_tolerance(2)) &&
+         (std::abs(*angular_error_) < angular_tolerance);
 }
 
-void PoseTracking::targetPoseCallback(const geometry_msgs::msg::PoseStamped::ConstSharedPtr& msg)
+void PoseTracking::targetPoseCallback(const geometry_msgs::msg::PoseStamped::ConstSharedPtr & msg)
 {
   std::lock_guard<std::mutex> lock(target_pose_mtx_);
   target_pose_ = *msg;
   // If the target pose is not defined in planning frame, transform the target pose.
-  if (target_pose_.header.frame_id != planning_frame_)
-  {
-    try
-    {
-      geometry_msgs::msg::TransformStamped target_to_planning_frame = transform_buffer_.lookupTransform(
-          planning_frame_, target_pose_.header.frame_id, rclcpp::Time(0), rclcpp::Duration(100ms));
+  if (target_pose_.header.frame_id != planning_frame_) {
+    try {
+      geometry_msgs::msg::TransformStamped target_to_planning_frame =
+        transform_buffer_.lookupTransform(
+        planning_frame_, target_pose_.header.frame_id, rclcpp::Time(0), rclcpp::Duration(100ms));
       tf2::doTransform(target_pose_, target_pose_, target_to_planning_frame);
 
       // Prevent doTransform from copying a stamp of 0, which will cause the haveRecentTargetPose check to fail servo motions
       target_pose_.header.stamp = node_->now();
-    }
-    catch (const tf2::TransformException& ex)
-    {
+    } catch (const tf2::TransformException & ex) {
       RCLCPP_WARN_STREAM(LOGGER, ex.what());
       return;
     }
@@ -283,7 +287,7 @@ geometry_msgs::msg::TwistStamped::ConstSharedPtr PoseTracking::calculateTwistCom
   auto msg = moveit::util::make_shared_from_pool<geometry_msgs::msg::TwistStamped>();
 
   // Get twist components from PID controllers
-  geometry_msgs::msg::Twist& twist = msg->twist;
+  geometry_msgs::msg::Twist & twist = msg->twist;
   Eigen::Quaterniond q_desired;
 
   // Scope mutex locking only to operations which require access to target pose.
@@ -293,18 +297,22 @@ geometry_msgs::msg::TwistStamped::ConstSharedPtr PoseTracking::calculateTwistCom
 
     // Position
     twist.linear.x = cartesian_position_pids_[0].computeCommand(
-        target_pose_.pose.position.x - command_frame_transform_.translation()(0), loop_rate_.period().count());
+      target_pose_.pose.position.x - command_frame_transform_.translation()(0),
+      loop_rate_.period().count());
     twist.linear.y = cartesian_position_pids_[1].computeCommand(
-        target_pose_.pose.position.y - command_frame_transform_.translation()(1), loop_rate_.period().count());
+      target_pose_.pose.position.y - command_frame_transform_.translation()(1),
+      loop_rate_.period().count());
     twist.linear.z = cartesian_position_pids_[2].computeCommand(
-        target_pose_.pose.position.z - command_frame_transform_.translation()(2), loop_rate_.period().count());
+      target_pose_.pose.position.z - command_frame_transform_.translation()(2),
+      loop_rate_.period().count());
 
     // Orientation algorithm:
     // - Find the orientation error as a quaternion: q_error = q_desired * q_current ^ -1
     // - Use the angle-axis PID controller to calculate an angular rate
     // - Convert to angular velocity for the TwistStamped message
-    q_desired = Eigen::Quaterniond(target_pose_.pose.orientation.w, target_pose_.pose.orientation.x,
-                                   target_pose_.pose.orientation.y, target_pose_.pose.orientation.z);
+    q_desired = Eigen::Quaterniond(
+      target_pose_.pose.orientation.w, target_pose_.pose.orientation.x,
+      target_pose_.pose.orientation.y, target_pose_.pose.orientation.z);
   }
 
   Eigen::Quaterniond q_current(command_frame_transform_.rotation());
@@ -316,7 +324,7 @@ geometry_msgs::msg::TwistStamped::ConstSharedPtr PoseTracking::calculateTwistCom
   angular_error_ = axis_angle.angle();
 
   double ang_vel_magnitude =
-      cartesian_orientation_pids_[0].computeCommand(*angular_error_, loop_rate_.period().count());
+    cartesian_orientation_pids_[0].computeCommand(*angular_error_, loop_rate_.period().count());
   twist.angular.x = ang_vel_magnitude * axis_angle.axis()[0];
   twist.angular.y = ang_vel_magnitude * axis_angle.axis()[1];
   twist.angular.z = ang_vel_magnitude * axis_angle.axis()[2];
@@ -353,12 +361,13 @@ void PoseTracking::doPostMotionReset()
   cartesian_orientation_pids_[0].reset();
 }
 
-void PoseTracking::updatePIDConfig(const double x_proportional_gain, const double x_integral_gain,
-                                   const double x_derivative_gain, const double y_proportional_gain,
-                                   const double y_integral_gain, const double y_derivative_gain,
-                                   const double z_proportional_gain, const double z_integral_gain,
-                                   const double z_derivative_gain, const double angular_proportional_gain,
-                                   const double angular_integral_gain, const double angular_derivative_gain)
+void PoseTracking::updatePIDConfig(
+  const double x_proportional_gain, const double x_integral_gain,
+  const double x_derivative_gain, const double y_proportional_gain,
+  const double y_integral_gain, const double y_derivative_gain,
+  const double z_proportional_gain, const double z_integral_gain,
+  const double z_derivative_gain, const double angular_proportional_gain,
+  const double angular_integral_gain, const double angular_derivative_gain)
 {
   stopMotion();
 
@@ -386,7 +395,9 @@ void PoseTracking::updatePIDConfig(const double x_proportional_gain, const doubl
   doPostMotionReset();
 }
 
-void PoseTracking::getPIDErrors(double& x_error, double& y_error, double& z_error, double& orientation_error)
+void PoseTracking::getPIDErrors(
+  double & x_error, double & y_error, double & z_error,
+  double & orientation_error)
 {
   double dummy1, dummy2;
   cartesian_position_pids_.at(0).getCurrentPIDErrors(x_error, dummy1, dummy2);
@@ -402,7 +413,7 @@ void PoseTracking::resetTargetPose()
   target_pose_.header.stamp = rclcpp::Time(RCL_ROS_TIME);
 }
 
-bool PoseTracking::getCommandFrameTransform(geometry_msgs::msg::TransformStamped& transform)
+bool PoseTracking::getCommandFrameTransform(geometry_msgs::msg::TransformStamped & transform)
 {
   return servo_->getCommandFrameTransform(transform);
 }

@@ -11,17 +11,16 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
 
   declare_parameter<std::string>("twist_topic", "/servo_node/delta_twist_cmds");
   get_parameter<std::string>("twist_topic", twist_topic);
-  
+
   declare_parameter<std::string>("joint_topic", "/servo_node/delta_joint_cmds");
   get_parameter<std::string>("joint_topic", joint_topic);
 
   declare_parameter<std::string>("base_frame_id", "arm_base_link");
   get_parameter<std::string>("base_frame_id", base_frame_id);
-  
+
   declare_parameter<std::string>("eef_frame_id", "leftgripper");
   get_parameter<std::string>("eef_frame_id", eef_frame_id);
-  
-  
+
 
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
@@ -33,7 +32,8 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
   twist_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
     twist_topic,
     rclcpp::SystemDefaultsQoS());
-  joint_pub_ = this->create_publisher<control_msgs::msg::JointJog>(joint_topic,
+  joint_pub_ = this->create_publisher<control_msgs::msg::JointJog>(
+    joint_topic,
     rclcpp::SystemDefaultsQoS());
   collision_pub_ = create_publisher<moveit_msgs::msg::PlanningScene>(
     "/planning_scene",
@@ -53,7 +53,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
       collision_object.header.frame_id = "base_frame_id"; //TODO: base_frame_id
       collision_object.id = "box";
 
-      
+
       // Create a solid primitive to represent the rover body
       // Prevents the arm from colliding into the rover
       shape_msgs::msg::SolidPrimitive rover_body;
@@ -70,7 +70,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
       collision_object.primitives.push_back(rover_body);
       collision_object.primitive_poses.push_back(rover_body_pose);
       collision_object.operation = collision_object.ADD;
-      
+
 
       moveit_msgs::msg::PlanningSceneWorld psw;
       psw.collision_objects.push_back(collision_object);
@@ -89,14 +89,14 @@ JoyToServoPub::~JoyToServoPub()
   }
 }
 
-bool JoyToServoPub::convertJoyToCmd(const std::vector<float>& axes, const std::vector<int>& buttons,
-                     std::unique_ptr<geometry_msgs::msg::TwistStamped>& twist,
-                     std::unique_ptr<control_msgs::msg::JointJog>& joint)
+bool JoyToServoPub::convertJoyToCmd(
+  const std::vector<float> & axes, const std::vector<int> & buttons,
+  std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist,
+  std::unique_ptr<control_msgs::msg::JointJog> & joint)
 {
   // Give joint jogging priority because it is only buttons
   // If any joint jog command is requested, we are only publishing joint commands
-  if (buttons[A] || buttons[B] || buttons[X] || buttons[Y] || axes[D_PAD_X] || axes[D_PAD_Y])
-  {
+  if (buttons[A] || buttons[B] || buttons[X] || buttons[Y] || axes[D_PAD_X] || axes[D_PAD_Y]) {
     // Map the D_PAD to the proximal joints
     joint->joint_names.push_back("shoulderjoint");
     joint->velocities.push_back(axes[D_PAD_X]);
@@ -133,16 +133,17 @@ bool JoyToServoPub::convertJoyToCmd(const std::vector<float>& axes, const std::v
  * @param frame_name Set the command frame to this
  * @param buttons The vector of discrete controller button values
  */
-void JoyToServoPub::updateCmdFrame(std::string& frame_name, const std::vector<int>& buttons)
+void JoyToServoPub::updateCmdFrame(std::string & frame_name, const std::vector<int> & buttons)
 {
-  if (buttons[CHANGE_VIEW] && frame_name == eef_frame_id)
+  if (buttons[CHANGE_VIEW] && frame_name == eef_frame_id) {
     frame_name = base_frame_id;
-  else if (buttons[MENU] && frame_name == base_frame_id)
+  } else if (buttons[MENU] && frame_name == base_frame_id) {
     frame_name = eef_frame_id;
+  }
 }
 
 
-void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr& msg)
+void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 {
   // Create the messages we might publish
   auto twist_msg = std::make_unique<geometry_msgs::msg::TwistStamped>();
@@ -152,15 +153,12 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr& msg)
   updateCmdFrame(frame_to_publish_, msg->buttons);
 
   // Convert the joystick message to Twist or JointJog and publish
-  if (convertJoyToCmd(msg->axes, msg->buttons, twist_msg, joint_msg))
-  {
+  if (convertJoyToCmd(msg->axes, msg->buttons, twist_msg, joint_msg)) {
     // publish the TwistStamped
     twist_msg->header.frame_id = frame_to_publish_;
     twist_msg->header.stamp = this->now();
     twist_pub_->publish(std::move(twist_msg));
-  }
-  else
-  {
+  } else {
     // publish the JointJog
     joint_msg->header.stamp = this->now();
     joint_msg->header.frame_id = "elbowjoint";

@@ -36,41 +36,44 @@
 
 namespace moveit_servo
 {
-ParameterDescriptorBuilder& ParameterDescriptorBuilder::type(uint8_t type)
+ParameterDescriptorBuilder & ParameterDescriptorBuilder::type(uint8_t type)
 {
   msg_.type = type;
   return *this;
 }
 
-ParameterDescriptorBuilder& ParameterDescriptorBuilder::description(const std::string& description)
+ParameterDescriptorBuilder & ParameterDescriptorBuilder::description(
+  const std::string & description)
 {
   msg_.description = description;
   return *this;
 }
 
-ParameterDescriptorBuilder& ParameterDescriptorBuilder::additionalConstraints(const std::string& additional_constraints)
+ParameterDescriptorBuilder & ParameterDescriptorBuilder::additionalConstraints(
+  const std::string & additional_constraints)
 {
   msg_.additional_constraints = additional_constraints;
   return *this;
 }
 
-ParameterDescriptorBuilder& ParameterDescriptorBuilder::readOnly(bool read_only)
+ParameterDescriptorBuilder & ParameterDescriptorBuilder::readOnly(bool read_only)
 {
   msg_.read_only = read_only;
   return *this;
 }
 
 // In rolling (not in Foxy)
-ParameterDescriptorBuilder& ParameterDescriptorBuilder::dynamicTyping(bool dynamic_typing)
+ParameterDescriptorBuilder & ParameterDescriptorBuilder::dynamicTyping(bool dynamic_typing)
 {
   msg_.dynamic_typing = dynamic_typing;
   return *this;
 }
 
-ParameterDescriptorBuilder&
-ParameterDescriptorBuilder::floatingPointRange(double from_value /*= std::numeric_limits<double>::min()*/,
-                                               double to_value /*= std::numeric_limits<double>::max()*/,
-                                               double step /*= 0*/)
+ParameterDescriptorBuilder &
+ParameterDescriptorBuilder::floatingPointRange(
+  double from_value /*= std::numeric_limits<double>::min()*/,
+  double to_value /*= std::numeric_limits<double>::max()*/,
+  double step /*= 0*/)
 {
   msg_.floating_point_range.resize(1);
   msg_.floating_point_range[0].from_value = from_value;
@@ -79,10 +82,11 @@ ParameterDescriptorBuilder::floatingPointRange(double from_value /*= std::numeri
   return *this;
 }
 
-ParameterDescriptorBuilder&
-ParameterDescriptorBuilder::integerRange(int64_t from_value /*= std::numeric_limits<int64_t>::min()*/,
-                                         int64_t to_value /*= std::numeric_limits<int64_t>::max()*/,
-                                         int64_t step /*= 0*/)
+ParameterDescriptorBuilder &
+ParameterDescriptorBuilder::integerRange(
+  int64_t from_value /*= std::numeric_limits<int64_t>::min()*/,
+  int64_t to_value /*= std::numeric_limits<int64_t>::max()*/,
+  int64_t step /*= 0*/)
 {
   msg_.integer_range.resize(1);
   msg_.integer_range[0].from_value = from_value;

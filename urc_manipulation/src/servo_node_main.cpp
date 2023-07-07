@@ -39,7 +39,7 @@
 
 #include <moveit_servo/servo_node.h>
 
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 

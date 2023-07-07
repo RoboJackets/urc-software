@@ -46,6 +46,6 @@
 
 namespace moveit_servo
 {
-using ServoServer [[deprecated("use ServoNode from servo_node.h")]] = ServoNode;
+  using ServoServer[[deprecated("use ServoNode from servo_node.h")]] = ServoNode;
 
 }  // namespace moveit_servo
