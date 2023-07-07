@@ -28,11 +28,14 @@ import xacro
 
 
 def generate_launch_description():
+    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+
     gazebo = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-                                                launch_arguments={'verbose': 'true'}.items()
-             )
+        PythonLaunchDescriptionSource(
+        os.path.join(pkg_gazebo_ros, 'launch', '/gazebo.launch.py'),
+        ),
+        launch_arguments={'verbose': 'true'}.items()
+    )
 
     gazebo_ros2_control_demos_path = os.path.join(
         get_package_share_directory('gazebo_ros2_control_demos'))
