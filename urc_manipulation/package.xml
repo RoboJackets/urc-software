@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>moveit_common</depend>
 
+  <depend>controller_manager</depend>
   <depend>control_msgs</depend>
   <depend>control_toolbox</depend>
   <depend>rclcpp</depend>
