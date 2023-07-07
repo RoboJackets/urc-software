@@ -31,7 +31,7 @@ jobs:
         working-directory: colcon_ws
         run: |
           source /opt/ros/humble/setup.bash
-          sudo apt-get install ros-humble-controller-manager
+          sudo apt-get install ros-humble-controller-manager -y
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
           colcon build
