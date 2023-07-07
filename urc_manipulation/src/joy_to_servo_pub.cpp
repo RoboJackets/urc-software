@@ -48,32 +48,7 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
   collision_pub_thread_ = std::thread(
     [this]() {
       rclcpp::sleep_for(std::chrono::seconds(3));
-      // Create collision object, in the way of servoing
-      moveit_msgs::msg::CollisionObject collision_object;
-      collision_object.header.frame_id = "base_frame_id"; //TODO: base_frame_id
-      collision_object.id = "box";
-
-
-      // Create a solid primitive to represent the rover body
-      // Prevents the arm from colliding into the rover
-      shape_msgs::msg::SolidPrimitive rover_body;
-      rover_body.type = rover_body.BOX;
-      //TODO These are made up numbers, fix them later
-      rover_body.dimensions = {0.01, 0.05, 0.05};
-
-      geometry_msgs::msg::Pose rover_body_pose;
-      // Made up numbers, change later
-      rover_body_pose.position.x = 0.5;
-      rover_body_pose.position.y = 0.8;
-      rover_body_pose.position.z = 0.1;
-
-      collision_object.primitives.push_back(rover_body);
-      collision_object.primitive_poses.push_back(rover_body_pose);
-      collision_object.operation = collision_object.ADD;
-
-
       moveit_msgs::msg::PlanningSceneWorld psw;
-      psw.collision_objects.push_back(collision_object);
 
       auto ps = std::make_unique<moveit_msgs::msg::PlanningScene>();
       ps->world = psw;
