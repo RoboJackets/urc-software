@@ -25,6 +25,7 @@ jobs:
           source /opt/ros/humble/setup.bash
           sudo apt-get update
           sudo apt-get upgrade -y
+          sudo apt-cache policy ros-humble-controller-manager
 
       - name: Build
         shell: bash
