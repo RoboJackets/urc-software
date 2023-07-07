@@ -1,15 +1,15 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess, RegisterEventHandler
-from launch.event_handlers import (OnProcessStart, OnProcessExit)
+from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import Command, LaunchConfiguration, TextSubstitution
+from launch.substitutions import TextSubstitution
 import os
 from xacro import process_file
-from tempfile import NamedTemporaryFile
 
-#Wallii_ArmV3
-#wallii.xacro
+
+
+
 def generate_launch_description():
     urdf_path = 'urdf/wallii.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
@@ -21,16 +21,16 @@ def generate_launch_description():
     # Explanation for this convoluted logic/text replacement:
     # To load files in ros2, nodes like the ones used in moveit2
     # need to use paths relative to a package they are located in.
-    # However, the spawn_entity.py script needs the absolute file 
+    # However, the spawn_entity.py script needs the absolute file
     # path to load model files, which causes issues when trying to
     # load the two together. Thus, this text replacement gets rid
-    # of that issue by processing the xacro/urdf file and adding 
-    # the absolute file path as a replacement string for the 
+    # of that issue by processing the xacro/urdf file and adding
+    # the absolute file path as a replacement string for the
     # relative path that nodes within moveit2 use.
 
     # If there is a more elegant way to solve this issue, please
     # bring it up and try to implement it in your workspace.
-    # Elegant methods would NOT involve directly modifying the 
+    # Elegant methods would NOT involve directly modifying the
     # source code of either the moveit robot model loader or spawn_entity.py...
 
     replacement_pattern = "package://urc_gazebo"
