@@ -108,9 +108,9 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         wallii,
-        #control,
-        #ground_truth,
-        #aruco_detector,
-        #aruco_location
+        control,
+        ground_truth,
+        aruco_detector,
+        aruco_location
         # sim_color_detector
     ])

@@ -23,7 +23,9 @@
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="leftgripper" parent_link="claw" group="gripper"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <!--  Uncomment this if needed. Not needed with current urdf configuration
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="base_link" child_link="arm_base_link"/>
+    -->
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="arm_base_link" link2="shoulder" reason="Adjacent"/>
     <disable_collisions link1="bicep" link2="elbow" reason="Adjacent"/>

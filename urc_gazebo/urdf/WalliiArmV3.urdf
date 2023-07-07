@@ -88,7 +88,7 @@
   </link>
   <joint
     name="shoulderjoint"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.00028389 0.0254 0.62708"
       rpy="0 0 0" />
@@ -98,11 +98,6 @@
       link="shoulder" />
     <axis
       xyz="0 0 -1" />
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0" />
     <dynamics
       damping="60.0"
       friction="4.0" />
@@ -271,7 +266,7 @@
   </link>
   <joint
     name="forearmjoint"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="-0.12103 0.046323 0.23626"
       rpy="0 0 0" />
@@ -281,11 +276,6 @@
       link="forearm" />
     <axis
       xyz="0 0 -1" />
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0" />
     <dynamics
       damping="60.0"
       friction="4.0" />
@@ -393,7 +383,7 @@
   </link>
   <joint
     name="clawjoint"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="-0.23582 -0.11071 -0.034131"
       rpy="0 0 0" />
@@ -403,11 +393,6 @@
       link="claw" />
     <axis
       xyz="1 0 0" />
-    <limit
-      lower="-3.14"
-      upper="3.14"
-      effort="0"
-      velocity="0" />
     <dynamics
       damping="60.0"
       friction="4.0" />

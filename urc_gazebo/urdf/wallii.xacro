@@ -5,6 +5,7 @@
   <xacro:include filename="walli_prop.xacro"/>
   <xacro:include filename="walli_inertials.xacro"/>
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+  <!-- Import wallii arm urdf to walli's urdf. -->
   <xacro:include filename="WalliiArmV3.urdf"/>
   
   <!--- Something about this macro breaks the urdf parser. -->
@@ -40,6 +41,9 @@
               rpy="${degrees_90} 0 0"/>
       <axis xyz="0 0 -1"/>
       <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
+      <dynamics
+      damping="0"
+      friction="4.0" />
     </joint>
 
     
@@ -93,8 +97,7 @@
     <parent link="base_link"/>
     <child link="body"/>
   </joint>
-  
-    <!-- breaking urdf parser -->
+
   <!-- Wheels    -->
   <xacro:wheel lr_prefix="left_bogie" fr_prefix="front"
                lr_pos="${track / 2}"
@@ -129,6 +132,11 @@
     <dynamics damping="60.0" friction="4.0"/>
   </joint>
     
+    <!-- 
+    Mock/Untested ros2 control scheme for operating the rover with ros2 control.
+    This matches how the control is supposed to be set up, but is commented out
+    because the way the urdf is designed, it interferes with the arm control.
+    -->
     <!--
     <ros2_control name="rover_control" type="system">
     <hardware>
@@ -360,9 +368,9 @@
     </joint>
     <!-- collision range = min sensing distance -->
     <!-- gpu does gpu acceleration -->
-    <!-- <xacro:VLP-16 parent="lidar_support" name="lidar" topic="/scan" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
+    <xacro:VLP-16 parent="lidar_support" name="lidar" topic="/scan" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
         <origin xyz="${lidar_x} 0.0 ${lidar_z}" rpy="0 ${lidar_pitch} 0" />
-    </xacro:VLP-16> -->
+    </xacro:VLP-16>
   
   <!-- cameras -->
   <link name="cam/center">
@@ -385,7 +393,7 @@
   <joint name="center_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 -.14"/>
+	<origin xyz="0.15 0 -0.1" rpy = "0 0 -.14"/>
 	<parent link="imu"/>
 	<child link="cam/center"/>
    </joint>
@@ -442,7 +450,7 @@
   <joint name="left_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 1.5"/>
+	<origin xyz="0 0.1 0.0" rpy = "0 0 1.5"/>
 	<parent link="base_link"/>
 	<child link="cam/left"/>
    </joint>
@@ -500,7 +508,7 @@
   <joint name="right_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 -1.5"/>
+	<origin xyz="0 -0.1 0.0" rpy = "0 0 -1.5"/>
 	<parent link="base_link"/>
 	<child link="cam/right"/>
    </joint>
