@@ -70,26 +70,26 @@ def generate_launch_description():
     )
     
     return LaunchDescription([
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                        target_action=spawn_robot,
+                        on_exit=[load_joint_state_controller],
+                )
+        ),
     	RegisterEventHandler(
-    		event_handler=OnProcessExit(
-    			target_action=spawn_robot,
-    			on_exit=[load_joint_state_controller],
-    		)
-    	),
-    	RegisterEventHandler(
-    		event_handler=OnProcessExit(
-    			target_action=load_joint_state_controller,
-			on_exit=[load_joint_trajectory_controller],
-    		)
-    	),
-    	RegisterEventHandler(
-    		event_handler=OnProcessExit(
-    			target_action=load_joint_state_controller,
-    			on_exit=[gorilla_grip],
-    		)
-    	),
-    	
+                event_handler=OnProcessExit(
+                        target_action=load_joint_state_controller,
+                        on_exit=[load_joint_trajectory_controller],
+                )
+        ),
+        RegisterEventHandler(
+                event_handler=OnProcessExit(
+                        target_action=load_joint_state_controller,
+                        on_exit=[gorilla_grip],
+                )
+        ),
+
         robot_state_publisher,
         spawn_robot,
-        
+   
     ])
