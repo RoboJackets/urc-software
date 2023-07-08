@@ -29,9 +29,12 @@
   <depend>pluginlib</depend>
   <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
+  <depend>joint_state_publisher_gui</depend>
   <depend>gazebo_ros_pkgs</depend>
   <depend>ros2launch</depend>
   <depend>velodyne_simulator</depend>
+  <depend>xacro</depend>
+  <depend>rviz</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

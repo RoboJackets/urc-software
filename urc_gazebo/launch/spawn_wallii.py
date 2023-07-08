@@ -5,12 +5,19 @@ from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
 from xacro import process_file
+import launch
+import launch_ros
+from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
     urdf_path = 'urdf/wallii.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
+
+    pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_gazebo').find('urc_gazebo')
+    default_model_path = os.path.join(pkg_share, 'urdf/wallii.xacro')
+    default_rviz_config_path = os.path.join(pkg_share, 'config/rviz_config.rviz')
 
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
@@ -42,7 +49,7 @@ def generate_launch_description():
                    '-topic', '/robot_description']
     )
 
-    robot_state_publisher = Node(
+    robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
@@ -50,6 +57,25 @@ def generate_launch_description():
             {"robot_description": robot_desc}],
         output='screen'
     )
+    # joint_state_publisher_node = launch_ros.actions.Node(
+    #     package='joint_state_publisher',
+    #     executable='joint_state_publisher',
+    #     name='joint_state_publisher',
+    #     condition=launch.conditions.UnlessCondition(LaunchConfiguration('gui'))
+    # )
+    # joint_state_publisher_gui_node = launch_ros.actions.Node(
+    #     package='joint_state_publisher_gui',
+    #     executable='joint_state_publisher_gui',
+    #     name='joint_state_publisher_gui',
+    #     condition=launch.conditions.IfCondition(LaunchConfiguration('gui'))
+    # )
+    # rviz_node = launch_ros.actions.Node(
+    #     package='rviz2',
+    #     executable='rviz2',
+    #     name='rviz2',
+    #     output='screen',
+    #     arguments=['-d', LaunchConfiguration('rvizconfig')],
+    # )
 
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
@@ -89,7 +115,17 @@ def generate_launch_description():
                 )
         ),
 
-        robot_state_publisher,
+
+        launch.actions.DeclareLaunchArgument(name='gui', default_value='True',
+                                            description='Flag to enable joint_state_publisher_gui'),
+        launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
+                                            description='Absolute path to robot urdf file'),
+        launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
+                                            description='Absolute path to rviz config file'),
+        robot_state_publisher_node,
+        # joint_state_publisher_node,
+        # joint_state_publisher_gui_node,
+        # rviz_node,
         spawn_robot,
 
     ])
