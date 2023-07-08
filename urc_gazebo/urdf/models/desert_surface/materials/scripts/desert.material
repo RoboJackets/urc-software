@@ -9,9 +9,9 @@ material Gazebo/Desert
       specular 0.01 0.01 0.01 1.0 2.0
       texture_unit
       {
-        texture desert_sand.jpg
+        texture mars_texture.jpg
         filtering trilinear
-        scale 0.25 0.25
+        scale 0.02 0.02
       }
     }
   }
