@@ -1,5 +1,6 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
+#include <control_msgs/msg/joint_jog.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <moveit_msgs/msg/planning_scene.hpp>
 #include <rclcpp/client.hpp>
@@ -53,29 +54,38 @@ public:
    * @param buttons The vector of discrete controller button values
    * @param twist A TwistStamped message to update in prep for publishing
    */
-  void convertJoyToCmd(
+  bool convertJoyToCmd(
     const std::vector<float> & axes, const std::vector<int> & buttons,
-    std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist);
+    std::unique_ptr<geometry_msgs::msg::TwistStamped> & twist,
+    std::unique_ptr<control_msgs::msg::JointJog> & joint);
 
   JoyToServoPub(const rclcpp::NodeOptions & options);
   ~JoyToServoPub() override;
   void joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg);
 
+  void updateCmdFrame(std::string & frame_name, const std::vector<int> & buttons);
+
 private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_sub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr twist_pub_;
+  rclcpp::Publisher<control_msgs::msg::JointJog>::SharedPtr joint_pub_;
   rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr collision_pub_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr servo_start_client_;
 
+  std::string frame_to_publish_;
   std::thread collision_pub_thread_;
 
   std::string joy_topic;
   std::string twist_topic;
+  std::string joint_topic;
   std::string base_frame_id;
+  std::string eef_frame_id;
+
 
   // Some axes have offsets (e.g. the default trigger position is 1.0 not 0)
   // This will map the default values for the axes
   std::map<Axis, double> AXIS_DEFAULTS = {{LEFT_TRIGGER, 1.0}, {RIGHT_TRIGGER, 1.0}};
+  std::map<Button, double> BUTTON_DEFAULTS;
 
 };  // class JoyToServoPub
 

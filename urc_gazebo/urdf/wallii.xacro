@@ -5,31 +5,12 @@
   <xacro:include filename="walli_prop.xacro"/>
   <xacro:include filename="walli_inertials.xacro"/>
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+  <!-- Import wallii arm urdf to walli's urdf. -->
+  <xacro:include filename="WalliiArmV3.urdf"/>
+  
+  <!--- Something about this macro breaks the urdf parser. -->
   <!-- The "wheel" macro defines an axle carrier, axle, and wheel. -->
   <xacro:macro name="wheel" params="lr_prefix fr_prefix lr_pos fr_pos">
-    <joint name="${lr_prefix}_${fr_prefix}_axle" type="continuous">
-      <parent link="base_link"/>
-      <child link="${lr_prefix}_${fr_prefix}_wheel"/>
-      <origin xyz="${fr_pos}
-                   ${lr_pos}
-                   ${- body_clearance}"
-              rpy="${degrees_90} 0 0"/>
-      <axis xyz="0 0 -1"/>
-      <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
-    </joint>
-    <ros2_control name="GazeboSystem" type="system">
-      <transmission name="${lr_prefix}_${fr_prefix}_axle_trans">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="${lr_prefix}_${fr_prefix}_axle">
-          <hardwareInterface>VelocityJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="${lr_prefix}_${fr_prefix}_axle_act">
-          <hardwareInterface>VelocityJointInterface</hardwareInterface>
-          <mechanicalReduction>1</mechanicalReduction>
-        </actuator>
-      </transmission>
-    </ros2_control>
-
     <link name="${lr_prefix}_${fr_prefix}_wheel">
       <visual>
         <origin xyz="0 0 0"/>
@@ -50,12 +31,27 @@
           inner_rad="${hub_dia / 2}" outer_rad="${tire_dia / 2}"
           height="${tire_width}" mass="${wheel_mass}"/>
     </link>
+    
+    <joint name="${lr_prefix}_${fr_prefix}_axle" type="continuous">
+      <parent link="base_link"/>
+      <child link="${lr_prefix}_${fr_prefix}_wheel"/>
+      <origin xyz="${fr_pos}
+                   ${lr_pos}
+                   ${- body_clearance}"
+              rpy="${degrees_90} 0 0"/>
+      <axis xyz="0 0 -1"/>
+      <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
+      <dynamics
+      damping="0"
+      friction="4.0" />
+    </joint>
 
+    
     <gazebo reference="${lr_prefix}_${fr_prefix}_wheel">
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
-
+  
   <!-- base_link must have geometry so that its axes can be displayed in
        rviz. -->
   <link name="base_link">
@@ -69,26 +65,182 @@
   <gazebo reference="base_link">
     <material>Gazebo/Green</material>
   </gazebo>
+  
+    <!-- body -->
+  <link name="body">
+    <visual>
+      <origin xyz="0 0 ${-body_height / 2}"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+      <material name="body_mat"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 ${-body_height / 2}"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+    </collision>
+
+    <xacro:solid_cuboid_inertial
+        width="${body_length}" depth="${body_width}"
+        height="${body_height}" mass="${body_mass}">
+      <origin xyz="0 0 ${-body_height / 2}"/>
+    </xacro:solid_cuboid_inertial>
+  </link>
+  <gazebo reference="body">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <joint name="base_link_to_chasis" type="fixed">
+    <parent link="base_link"/>
+    <child link="body"/>
+  </joint>
+
+  <!-- Wheels    -->
+  <xacro:wheel lr_prefix="left_bogie" fr_prefix="front"
+               lr_pos="${track / 2}"
+               fr_pos="${x_center_bogie + wheelbase_bogie / 2}"
+               />
+  <xacro:wheel lr_prefix="left_bogie" fr_prefix="rear"
+               lr_pos="${track / 2}"
+               fr_pos="${x_center_bogie - wheelbase_bogie / 2}"
+               />
+  <xacro:wheel lr_prefix="left_rocker" fr_prefix="rear"
+               lr_pos="${track / 2}"
+               fr_pos="${x_center_rocker - wheelbase_rocker / 2}"
+               />
+  <xacro:wheel lr_prefix="right_bogie" fr_prefix="front"
+               lr_pos="${- track / 2}"
+               fr_pos="${x_center_bogie + wheelbase_bogie / 2}"
+               />
+  <xacro:wheel lr_prefix="right_bogie" fr_prefix="rear"
+               lr_pos="${- track / 2}"
+               fr_pos="${x_center_bogie - wheelbase_bogie / 2}"
+               />
+  <xacro:wheel lr_prefix="right_rocker" fr_prefix="rear"
+               lr_pos="${- track / 2}"
+               fr_pos="${x_center_rocker - wheelbase_rocker / 2}"
+               />
+  
+  <!-- connect rover and arm -->
+  <joint name="arm_to_rover" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="arm_base_link"/>
+    <dynamics damping="60.0" friction="4.0"/>
+  </joint>
+    
+    <!-- 
+    Mock/Untested ros2 control scheme for operating the rover with ros2 control.
+    This matches how the control is supposed to be set up, but is commented out
+    because the way the urdf is designed, it interferes with the arm control.
+    -->
+    <!--
+    <ros2_control name="rover_control" type="system">
+    <hardware>
+      <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
+    </hardware>
+
+    <joint name="left_bogie_front_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="left_bogie_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="left_rocker_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="right_bogie_front_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="right_bogie_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    
+    <joint name="right_rocker_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+
+    <transmission name="rover_transmission">
+      <plugin>transmission_interface/SimpleTransmission</plugin>
+      <joint name="left_bogie_front_axle" role="left_bogie_front_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      
+      <joint name="left_bogie_rear_axle" role="left_bogie_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      
+      <joint name="left_rocker_rear_axle" role="left_rocker_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      
+      <joint name="right_bogie_front_axle" role="right_bogie_front_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      
+      <joint name="right_bogie_rear_axle" role="right_bogie_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      
+      <joint name="right_rocker_rear_axle" role="right_rocket_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+        
+    </transmission>
+    </ros2_control>
+    -->
 
   <link name="imu">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </visual>
     
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
       
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
   </link>
 
   <joint name="imu_joint" type="fixed">
 		<axis xyz="1 0 0"/>
-		<origin xyz="0 0 0.05"/>
+		<origin xyz="0 0 0.1"/>
 		<parent link="base_link"/>
 		<child link="imu"/>
 	</joint>
@@ -166,17 +318,17 @@
   <link name="gps">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </visual>
     
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
       
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
   </link>
   
    <joint name="gps_joint" type="fixed">
@@ -224,27 +376,26 @@
   <link name="cam/center">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </visual>
 
     
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
       
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
   </link>
   
   <joint name="center_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 -.14"/>
+	<origin xyz="0.15 0 -0.1" rpy = "0 0 -.14"/>
 	<parent link="imu"/>
 	<child link="cam/center"/>
-	
    </joint>
 
    <gazebo reference="cam/center">
@@ -283,23 +434,23 @@
   <link name="cam/left">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </visual>
     
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
       
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
   </link>
   
   <joint name="left_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 1.5"/>
+	<origin xyz="0 0.1 0.0" rpy = "0 0 1.5"/>
 	<parent link="base_link"/>
 	<child link="cam/left"/>
    </joint>
@@ -341,23 +492,23 @@
   <link name="cam/right">
     <visual>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </visual>
     
     <collision>
       <geometry>
-        <box size="0.1 0.1 0.1"/>
+        <box size="0.01 0.01 0.01"/>
       </geometry>
     </collision>
       
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
   </link>
   
   <joint name="right_cam_joint" type="fixed">
 	<axis xyz="1 0 0"/>
 	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0 0.05" rpy = "0 0 -1.5"/>
+	<origin xyz="0 -0.1 0.0" rpy = "0 0 -1.5"/>
 	<parent link="base_link"/>
 	<child link="cam/right"/>
    </joint>
@@ -394,64 +545,6 @@
       </camera>
     </sensor>
   </gazebo>
-
-  <!-- body -->
-  <link name="body">
-    <visual>
-      <origin xyz="0 0 ${-body_height / 2}"/>
-      <geometry>
-        <box size="${body_length} ${body_width} ${body_height}"/>
-      </geometry>
-      <material name="body_mat"/>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 ${-body_height / 2}"/>
-      <geometry>
-        <box size="${body_length} ${body_width} ${body_height}"/>
-      </geometry>
-    </collision>
-
-    <xacro:solid_cuboid_inertial
-        width="${body_length}" depth="${body_width}"
-        height="${body_height}" mass="${body_mass}">
-      <origin xyz="0 0 ${-body_height / 2}"/>
-    </xacro:solid_cuboid_inertial>
-  </link>
-  <gazebo reference="body">
-    <material>Gazebo/Grey</material>
-  </gazebo>
-
-  <joint name="base_link_to_chasis" type="fixed">
-    <parent link="base_link"/>
-    <child link="body"/>
-  </joint>
-
-  <!-- Wheels -->
-  <xacro:wheel lr_prefix="left_bogie" fr_prefix="front"
-               lr_pos="${track / 2}"
-               fr_pos="${x_center_bogie + wheelbase_bogie / 2}"
-               />
-  <xacro:wheel lr_prefix="left_bogie" fr_prefix="rear"
-               lr_pos="${track / 2}"
-               fr_pos="${x_center_bogie - wheelbase_bogie / 2}"
-               />
-  <xacro:wheel lr_prefix="left_rocker" fr_prefix="rear"
-               lr_pos="${track / 2}"
-               fr_pos="${x_center_rocker - wheelbase_rocker / 2}"
-               />
-  <xacro:wheel lr_prefix="right_bogie" fr_prefix="front"
-               lr_pos="${- track / 2}"
-               fr_pos="${x_center_bogie + wheelbase_bogie / 2}"
-               />
-  <xacro:wheel lr_prefix="right_bogie" fr_prefix="rear"
-               lr_pos="${- track / 2}"
-               fr_pos="${x_center_bogie - wheelbase_bogie / 2}"
-               />
-  <xacro:wheel lr_prefix="right_rocker" fr_prefix="rear"
-               lr_pos="${- track / 2}"
-               fr_pos="${x_center_rocker - wheelbase_rocker / 2}"
-               />
 
   <gazebo>
     <sensor name="imu" type="imu">
@@ -577,11 +670,5 @@
       </plugin>
   
   </gazebo>
-  
-  <ros2_control name="GazeboSystem" type="system">
-    <hardware>
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-    </hardware>
-  </ros2_control>
 
 </robot>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="WalliiArmV3">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm">
+        <joint name="shoulderjoint"/>
+        <joint name="bicepjoint"/>
+        <joint name="elbowjoint"/>
+        <joint name="forearmjoint"/>
+        <joint name="wristjoint"/>
+        <joint name="clawjoint"/>
+    </group>
+    <group name="gripper">
+        <joint name="leftgripperjoint"/>
+    </group>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="leftgripper" parent_link="claw" group="gripper"/>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <!--  Uncomment this if needed. Not needed with current urdf configuration
+    <virtual_joint name="virtual_joint" type="fixed" parent_frame="base_link" child_link="arm_base_link"/>
+    -->
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="arm_base_link" link2="shoulder" reason="Adjacent"/>
+    <disable_collisions link1="bicep" link2="elbow" reason="Adjacent"/>
+    <disable_collisions link1="bicep" link2="shoulder" reason="Adjacent"/>
+    <disable_collisions link1="claw" link2="elbow" reason="Never"/>
+    <disable_collisions link1="claw" link2="leftgripper" reason="Adjacent"/>
+    <disable_collisions link1="claw" link2="rightgripper" reason="Adjacent"/>
+    <disable_collisions link1="claw" link2="wrist" reason="Adjacent"/>
+    <disable_collisions link1="elbow" link2="forearm" reason="Adjacent"/>
+    <disable_collisions link1="elbow" link2="wrist" reason="Never"/>
+    <disable_collisions link1="forearm" link2="wrist" reason="Adjacent"/>
+    <disable_collisions link1="leftgripper" link2="wrist" reason="Never"/>
+    <disable_collisions link1="rightgripper" link2="wrist" reason="Never"/>
+</robot>
