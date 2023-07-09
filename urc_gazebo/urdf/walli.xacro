@@ -59,7 +59,6 @@
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
-    <!-- Wheels    -->
   <xacro:wheel prefix="left_front_wheel"   x_reflect="1" y_reflect="-1"/>
   <xacro:wheel prefix="left_center_wheel"  x_reflect="0" y_reflect="-1"/>
   <xacro:wheel prefix="left_rear_wheel"    x_reflect="-1" y_reflect="-1"/>
@@ -82,96 +81,6 @@
     <child link="arm_base_link"/>
     <dynamics damping="60.0" friction="4.0"/>
   </joint>
-    
-    <!-- 
-    Mock/Untested ros2 control scheme for operating the rover with ros2 control.
-    This matches how the control is supposed to be set up, but is commented out
-    because the way the urdf is designed, it interferes with the arm control.
-    -->
-    <!--
-    <ros2_control name="rover_control" type="system">
-    <hardware>
-      <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
-    </hardware>
-
-    <joint name="left_bogie_front_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-    
-    <joint name="left_bogie_rear_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-    
-    <joint name="left_rocker_rear_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-    
-    <joint name="right_bogie_front_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-    
-    <joint name="right_bogie_rear_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-    
-    <joint name="right_rocker_rear_axle">
-      <command_interface name="velocity">
-        <param name="min">-1</param>
-        <param name="max">1</param>
-      </command_interface>
-      <state_interface name="velocity"/>
-    </joint>
-
-
-    <transmission name="rover_transmission">
-      <plugin>transmission_interface/SimpleTransmission</plugin>
-      <joint name="left_bogie_front_axle" role="left_bogie_front_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-      
-      <joint name="left_bogie_rear_axle" role="left_bogie_rear_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-      
-      <joint name="left_rocker_rear_axle" role="left_rocker_rear_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-      
-      <joint name="right_bogie_front_axle" role="right_bogie_front_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-      
-      <joint name="right_bogie_rear_axle" role="right_bogie_rear_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-      
-      <joint name="right_rocker_rear_axle" role="right_rocket_rear_axle">
-        <mechanical_reduction>1</mechanical_reduction>
-      </joint>
-        
-    </transmission>
-    </ros2_control>
-    -->
 
   <!-- IMU -->
   <link name="imu_link">
@@ -365,12 +274,15 @@
     <gazebo reference="cam/${orientation}">
       <sensor name="${orientation}_sensor" type="camera">
         <plugin name="${orientation}_sensor" filename="libgazebo_ros_camera.so">
-        <ros>
-          <namespace>/image</namespace>
-          <remapping>~/image_raw:=${orientation}_img</remapping>
-          <remapping>~/camera_info:=camera_info</remapping>
-        </ros>
-        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+          <ros>
+            <namespace>/image</namespace>
+            <remapping>~/image_raw:=${orientation}_img</remapping>
+            <remapping>~/camera_info:=${orientation}_camera_info</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+          <camera_name>${orientation}_camera</camera_name>
+          <frame_name>${orientation}_tf</frame_name>
+          <hack_baseline>0.07</hack_baseline>
         </plugin>
         <always_on>true</always_on>
         <update_rate>100</update_rate>
@@ -402,126 +314,103 @@
   <gazebo>
     <sensor name="imu" type="imu">
       <always_on>true</always_on>
-      <!-- Publish at 30 hz -->
       <update_rate>30</update_rate>
       <plugin name="imu" filename="libgazebo_ros_imu_sensor.so">
         <ros>
-          <!-- Will publish to /imu/data -->
           <namespace>/imu</namespace>
           <argument>~/out:=data</argument>
         </ros>
         <frame_name>imu</frame_name>
       </plugin>
-    </sensor>    
-    
-    <sensor type="camera" name="center_sensor">
-          <!-- Set always_on only sensor, not on plugin -->
-          <always_on>0</always_on>
+    </sensor>            
+    <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <update_rate>30.0</update_rate>
+      <ros>
+        <namespace>/ground_truth</namespace>
+        <remapping>odom:=state_raw</remapping>
+      </ros>
+      <body_name>base_link</body_name>
+      <frame_name>world</frame_name>
 
-          <!-- Set update_rate only sensor, not on plugin -->
-          <update_rate>1</update_rate>
-
-          <!-- Use camera, not camera_triggered -->
-          <plugin name="center_sensor" filename="libgazebo_ros_camera.so">
-            <!-- Change namespace, camera name and topics so:
-                 * Images are published to: /custom_ns/custom_camera/custom_image
-                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
-            -->
-            <ros>
-              <namespace>/image</namespace>
-              <argument>~/image_raw:=center_img</argument>
-              <argument>~/camera_info:=center_info</argument>
-            </ros>
-
-            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
-            <camera_name>center_camera</camera_name>
-
-            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
-            <frame_name>center_tf</frame_name>
-
-            <hack_baseline>0.07</hack_baseline>
-
-            <!-- No need to repeat distortion parameters or to set autoDistortion -->
-          </plugin>
-        </sensor>
-     
-     <sensor type="camera" name="left_sensor">
-          <!-- Set always_on only sensor, not on plugin -->
-          <always_on>0</always_on>
-
-          <!-- Set update_rate only sensor, not on plugin -->
-          <update_rate>1</update_rate>
-
-          <!-- Use camera, not camera_triggered -->
-          <plugin name="left_sensor" filename="libgazebo_ros_camera.so">
-            <!-- Change namespace, camera name and topics so:
-                 * Images are published to: /custom_ns/custom_camera/custom_image
-                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
-            -->
-            <ros>
-              <namespace>/image</namespace>
-              <argument>~/image_raw:=left_img</argument>
-              <argument>~/camera_info:=left_info</argument>
-            </ros>
-
-            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
-            <camera_name>left_camera</camera_name>
-
-            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
-            <frame_name>left_tf</frame_name>
-
-            <hack_baseline>0.07</hack_baseline>
-
-            <!-- No need to repeat distortion parameters or to set autoDistortion -->
-          </plugin>
-        </sensor>
-      
-      <sensor type="camera" name="right_sensor">
-          <!-- Set always_on only sensor, not on plugin -->
-          <always_on>0</always_on>
-
-          <!-- Set update_rate only sensor, not on plugin -->
-          <update_rate>1</update_rate>
-
-          <!-- Use camera, not camera_triggered -->
-          <plugin name="right_sensor" filename="libgazebo_ros_camera.so">
-            <!-- Change namespace, camera name and topics so:
-                 * Images are published to: /custom_ns/custom_camera/custom_image
-                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
-            -->
-            <ros>
-              <namespace>/image</namespace>
-              <argument>~/image_raw:=right_img</argument>
-              <argument>~/camera_info:=right_info</argument>
-            </ros>
-
-            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
-            <camera_name>right_camera</camera_name>
-
-            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
-            <frame_name>right_tf</frame_name>
-
-            <hack_baseline>0.07</hack_baseline>
-
-            <!-- No need to repeat distortion parameters or to set autoDistortion -->
-          </plugin>
-        </sensor>
-        
-      <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
-        <alwaysOn>true</alwaysOn>
-        <update_rate>30.0</update_rate>
-        <ros>
-          <namespace>/ground_truth</namespace>
-          <remapping>odom:=state_raw</remapping>
-        </ros>
-        <body_name>base_link</body_name>
-        <frame_name>world</frame_name>
-
-        <xyz_offset>0 0 0</xyz_offset>
-        <rpy_offset>0.0 0.0 0.0</rpy_offset>
-        <gaussian_noise>0.00</gaussian_noise>
-      </plugin>
-  
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0.0 0.0 0.0</rpy_offset>
+      <gaussian_noise>0.00</gaussian_noise>
+    </plugin>
   </gazebo>
 
 </robot>
+
+    <!-- Mock/Untested ros2 control scheme for operating the rover with ros2 control.
+    This matches how the control is supposed to be set up, but is commented out
+    because the way the urdf is designed, it interferes with the arm control. -->
+    <!--
+    <ros2_control name="rover_control" type="system">
+    <hardware>
+      <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
+    </hardware>
+    <joint name="left_bogie_front_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="left_bogie_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="left_rocker_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_bogie_front_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_bogie_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_rocker_rear_axle">
+      <command_interface name="velocity">
+        <param name="min">-1</param>
+        <param name="max">1</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <transmission name="rover_transmission">
+      <plugin>transmission_interface/SimpleTransmission</plugin>
+      <joint name="left_bogie_front_axle" role="left_bogie_front_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      <joint name="left_bogie_rear_axle" role="left_bogie_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      <joint name="left_rocker_rear_axle" role="left_rocker_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      <joint name="right_bogie_front_axle" role="right_bogie_front_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      <joint name="right_bogie_rear_axle" role="right_bogie_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+      <joint name="right_rocker_rear_axle" role="right_rocket_rear_axle">
+        <mechanical_reduction>1</mechanical_reduction>
+      </joint>
+    </transmission>
+    </ros2_control>
+    -->
