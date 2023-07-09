@@ -322,13 +322,12 @@
 
    <!-- LIDAR -->
    <link name="lidar_support">
-        <visual>
-            <geometry>
-                <box size="${lidar_support_x_dim} ${lidar_support_y_dim} ${lidar_support_z_dim}"/>
-            </geometry>
-        </visual>
+      <visual>
+          <geometry>
+              <box size="${lidar_support_x_dim} ${lidar_support_y_dim} ${lidar_support_z_dim}"/>
+          </geometry>
+      </visual>
     </link>
-
     <joint name="base_link_to_lidar_support" type="fixed">
         <parent link="base_link"/>
         <child link="lidar_support"/>
@@ -339,181 +338,67 @@
     <xacro:VLP-16 parent="lidar_support" name="lidar" topic="/scan" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
         <origin xyz="${lidar_x} 0.0 ${lidar_z}" rpy="0 ${lidar_pitch} 0" />
     </xacro:VLP-16>
-  
-  <!-- cameras -->
-  <link name="cam/center">
-    <visual>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
 
-    
-    <collision>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </collision>
-      
-    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
-  </link>
-  
-  <joint name="center_cam_joint" type="fixed">
-	<axis xyz="1 0 0"/>
-	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0.15 0 -0.1" rpy = "0 0 -.14"/>
-	<parent link="imu_link"/>
-	<child link="cam/center"/>
-   </joint>
 
-   <gazebo reference="cam/center">
-    <sensor name="center_sensor" type="camera">
-        <plugin name="center_sensor" filename="libgazebo_ros_camera.so">
+
+  <xacro:macro name="camera" params="orientation origin_x origin_y origin_z yaw">
+    <link name="cam/${orientation}">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
+    </link>
+    <joint name="${orientation}_cam_joint" type="fixed">
+  	  <axis xyz="1 0 0"/>
+      <!-- Camera Orientation-->
+	    <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy = "0 0 ${yaw}"/>
+	    <parent link="base_link"/>
+	    <child link="cam/${orientation}"/>
+    </joint>
+    <gazebo reference="cam/${orientation}">
+      <sensor name="${orientation}_sensor" type="camera">
+        <plugin name="${orientation}_sensor" filename="libgazebo_ros_camera.so">
         <ros>
           <namespace>/image</namespace>
-          <remapping>~/image_raw:=center_img</remapping>
+          <remapping>~/image_raw:=${orientation}_img</remapping>
           <remapping>~/camera_info:=camera_info</remapping>
         </ros>
         <initial_orientation_as_reference>false</initial_orientation_as_reference>
-      </plugin>
-      <always_on>true</always_on>
-      <update_rate>100</update_rate>
-      <visualize>true</visualize>
-      <camera name="cam/center">
-	<horizontal_fov>1.3962634</horizontal_fov>
-	<image>
-	<width>800</width>
-	<height>800</height>
-	<format>R8G8B8</format>
-	</image>
-	<clip>
-	<near>0.02</near>
-	<far>300</far>
-	</clip>
-	<noise>
-	<type>gaussian</type>
-	<mean>0</mean>
-	<stddev>0.007</stddev>
-	</noise>
-      </camera>
-    </sensor>
-  </gazebo>
-  
-  <link name="cam/left">
-    <visual>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
+        </plugin>
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <camera name="cam/${orientation}">
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>800</width>
+            <height>800</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  <xacro:camera orientation="center" origin_x="0.15" origin_y="0"    origin_z="-0.1" yaw="-0.14"/>
+  <xacro:camera orientation="left"   origin_x="0"    origin_y="0.1"  origin_z="0"    yaw="1.5"/>
+  <xacro:camera orientation="right"  origin_x="0"    origin_y="-0.1" origin_z="0"    yaw="-1.5"/>
     
-    <collision>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </collision>
-      
-    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
-  </link>
-  
-  <joint name="left_cam_joint" type="fixed">
-	<axis xyz="1 0 0"/>
-	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 0.1 0.0" rpy = "0 0 1.5"/>
-	<parent link="base_link"/>
-	<child link="cam/left"/>
-   </joint>
-
-   <gazebo reference="cam/left">
-    <sensor name="left_sensor" type="camera">
-        <plugin name="left_sensor" filename="libgazebo_ros_camera.so">
-        <ros>
-          <namespace>/image</namespace>
-          <remapping>~/image_raw:=left_img</remapping>
-          <remapping>~/camera_info:=camera_info</remapping>
-        </ros>
-        <initial_orientation_as_reference>false</initial_orientation_as_reference>
-      </plugin>
-      <always_on>true</always_on>
-      <update_rate>100</update_rate>
-      <visualize>true</visualize>
-      <camera name="cam/left">
-        <horizontal_fov>1.3962634</horizontal_fov>
-	<image>
-	<width>800</width>
-	<height>800</height>
-	<format>R8G8B8</format>
-	</image>
-	<clip>
-	<near>0.02</near>
-	<far>300</far>
-	</clip>
-	<noise>
-	<type>gaussian</type>
-	<mean>0</mean>
-	<stddev>0.007</stddev>
-	</noise> 
-      </camera>
-    </sensor>
-  </gazebo>
-  
-  
-  <link name="cam/right">
-    <visual>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </visual>
-    
-    <collision>
-      <geometry>
-        <box size="0.01 0.01 0.01"/>
-      </geometry>
-    </collision>
-      
-    <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
-  </link>
-  
-  <joint name="right_cam_joint" type="fixed">
-	<axis xyz="1 0 0"/>
-	<!-- Edit these parameters to change camera orientation -->
-	<origin xyz="0 -0.1 0.0" rpy = "0 0 -1.5"/>
-	<parent link="base_link"/>
-	<child link="cam/right"/>
-   </joint>
-   
-   <gazebo reference="cam/right">
-    <sensor name="right_sensor" type="camera">
-        <plugin name="right_sensor" filename="libgazebo_ros_camera.so">
-        <ros>
-          <namespace>/image</namespace>
-          <remapping>~/image_raw:=right_img</remapping>
-          <remapping>~/camera_info:=camera_info</remapping>
-        </ros>
-        <initial_orientation_as_reference>false</initial_orientation_as_reference>
-      </plugin>
-      <always_on>true</always_on>
-      <update_rate>100</update_rate>
-      <visualize>true</visualize>
-      <camera name="cam/right">
-        <horizontal_fov>1.3962634</horizontal_fov>
-	<image>
-	<width>800</width>
-	<height>800</height>
-	<format>R8G8B8</format>
-	</image>
-	<clip>
-	<near>0.02</near>
-	<far>300</far>
-	</clip>
-	<noise>
-	<type>gaussian</type>
-	<mean>0</mean>
-	<stddev>0.007</stddev>
-	</noise>
-      </camera>
-    </sensor>
-  </gazebo>
-
   <gazebo>
     <sensor name="imu" type="imu">
       <always_on>true</always_on>
