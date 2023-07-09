@@ -11,12 +11,12 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    urdf_path = 'urdf/wallii.xacro'
+    urdf_path = 'urdf/walli.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_gazebo').find('urc_gazebo')
-    default_model_path = os.path.join(pkg_share, 'urdf/wallii.xacro')
+    default_model_path = os.path.join(pkg_share, 'urdf/walli.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'config/rviz_config.rviz')
 
     robot_description_config = process_file(xacro_file)
@@ -45,7 +45,7 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'wallii', '-x', '0', '-y', '0', '-z', '0.3',
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.3',
                    '-topic', '/robot_description']
     )
 

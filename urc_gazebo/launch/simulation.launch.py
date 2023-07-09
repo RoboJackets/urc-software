@@ -21,9 +21,9 @@ def generate_launch_description():
         launch_arguments={"world": world_path}.items()
     )
 
-    wallii = IncludeLaunchDescription(
+    walli = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_gazebo, "launch", "spawn_wallii.py")
+            os.path.join(pkg_urc_gazebo, "launch", "spawn_walli.py")
         )
     )
 
@@ -91,7 +91,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         gazebo,
-        wallii,
+        walli,
         control,
         ground_truth
         # aruco_detector,
