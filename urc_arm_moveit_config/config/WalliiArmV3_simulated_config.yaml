@@ -1,7 +1,7 @@
 ###############################################
 # Modify all parameters related to servoing here
 ###############################################
-use_gazebo: true # Whether the robot is started in a Gazebo simulation environment
+use_gazebo: false # Whether the robot is started in a Gazebo simulation environment
 
 ## Properties of incoming commands
 command_in_type: "unitless" # "unitless"> in the range [-1:1], as if from joystick. "speed_units"> cmds are in m/s and rad/s
@@ -39,7 +39,7 @@ is_primary_planning_scene_monitor: false
 
 ## MoveIt properties
 move_group_name:  arm  # 'arm' for arm, 'gripper' for gripper
-planning_frame: world  # The MoveIt planning frame. Often 'base_link' or 'world'
+planning_frame: arm_base_link # world  # The MoveIt planning frame. Often 'base_link' or 'world'
 
 ## Other frames
 ee_frame_name: leftgripper  # The name of the end effector link, used to return the EE pose

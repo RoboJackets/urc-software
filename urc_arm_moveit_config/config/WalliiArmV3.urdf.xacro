@@ -3,7 +3,9 @@
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
 
     <!-- Import WalliiArmV3 urdf file -->
-    <xacro:include filename="$(find urc_gazebo)/urdf/wallii.xacro" />
+    <!-- wallii.xacro -->
+    <!-- WalliiArmV3.urdf -->
+    <xacro:include filename="$(find urc_gazebo)/urdf/WalliiArmV3.urdf" />
 
     <!-- Import control_xacro -->
     <xacro:include filename="WalliiArmV3.ros2_control.xacro" />
