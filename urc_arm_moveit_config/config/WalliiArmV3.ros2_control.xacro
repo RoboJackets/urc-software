@@ -8,7 +8,7 @@
                 
                 <!-- gazebo_ros2_control/GazeboSystem -->
                 <!-- mock_components/GenericSystem -->
-                <plugin>mock_components/GenericSystem</plugin>
+                <plugin>gazebo_ros2_control/GazeboSystem</plugin>
             </hardware>
             <joint name="shoulderjoint">
                 <command_interface name="position"/>
