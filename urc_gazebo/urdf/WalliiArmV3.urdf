@@ -558,10 +558,9 @@
   
   <ros2_control name="arm_control" type="system">
     <hardware>
-      <!-- TODO make a launch param to switch between real/fake hardware -->
-      <!-- gazebo_ros2_control/GazeboSystem -->
-      <!-- mock_components/GenericSystem -->
-      <plugin>mock_components/GenericSystem</plugin>
+      <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin> <!--Use for functionality in Gazebo-->
+      <!--<plugin>mock_components/GenericSystem</plugin>--> <!--Use for functionality in Gazebo-->
       <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
     </hardware>
 
