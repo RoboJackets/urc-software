@@ -9,11 +9,11 @@ import launch
 import launch_ros
 from launch.substitutions import LaunchConfiguration
 
-
 def generate_launch_description():
     urdf_path = 'urdf/walli.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_gazebo').find('urc_gazebo')
     default_model_path = os.path.join(pkg_share, 'urdf/walli.xacro')
@@ -39,7 +39,6 @@ def generate_launch_description():
 
     replacement_pattern = "package://urc_gazebo"
     new_pattern = get_package_share_directory('urc_gazebo')
-
     robot_desc = robot_desc.replace(replacement_pattern, new_pattern)
 
     spawn_robot = Node(
@@ -48,34 +47,45 @@ def generate_launch_description():
         arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.3',
                    '-topic', '/robot_description']
     )
-
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
         parameters=[
-            {"robot_description": robot_desc}],
+            {"robot_description": robot_desc},
+            {"use_sim_time": use_sim_time}
+        ],
         output='screen'
     )
-    # joint_state_publisher_node = launch_ros.actions.Node(
-    #     package='joint_state_publisher',
-    #     executable='joint_state_publisher',
-    #     name='joint_state_publisher',
-    #     condition=launch.conditions.UnlessCondition(LaunchConfiguration('gui'))
-    # )
-    # joint_state_publisher_gui_node = launch_ros.actions.Node(
-    #     package='joint_state_publisher_gui',
-    #     executable='joint_state_publisher_gui',
-    #     name='joint_state_publisher_gui',
-    #     condition=launch.conditions.IfCondition(LaunchConfiguration('gui'))
-    # )
-    # rviz_node = launch_ros.actions.Node(
-    #     package='rviz2',
-    #     executable='rviz2',
-    #     name='rviz2',
-    #     output='screen',
-    #     arguments=['-d', LaunchConfiguration('rvizconfig')],
-    # )
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        condition=launch.conditions.UnlessCondition(LaunchConfiguration('gui')),
+        parameters=[{"use_sim_time": use_sim_time}]
+    )
+    joint_state_publisher_gui_node = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui',
+        condition=launch.conditions.IfCondition(LaunchConfiguration('gui')),
+        parameters=[{"use_sim_time": use_sim_time}]
+    )
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', LaunchConfiguration('rvizconfig')],
+        parameters=[{"use_sim_time": use_sim_time}]
+    )
+    robot_localization_node = launch_ros.actions.Node(
+       package='robot_localization',
+       executable='ekf_node',
+       name='ekf_filter_node',
+       output='screen',
+       parameters=[os.path.join(pkg_share, 'config/ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+    )
 
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
@@ -122,10 +132,12 @@ def generate_launch_description():
                                             description='Absolute path to robot urdf file'),
         launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
                                             description='Absolute path to rviz config file'),
+        launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
+                                            description='Flag to enable use_sim_time'),
         robot_state_publisher_node,
-        # joint_state_publisher_node,
-        # joint_state_publisher_gui_node,
-        # rviz_node,
+        joint_state_publisher_node,
+        joint_state_publisher_gui_node,
+        rviz_node,
+        robot_localization_node,
         spawn_robot,
-
     ])

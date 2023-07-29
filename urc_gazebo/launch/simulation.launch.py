@@ -1,8 +1,10 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 import os
@@ -12,7 +14,9 @@ def generate_launch_description():
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/flat_world.world")
+    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/nav2_world.sdf")
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -33,7 +37,8 @@ def generate_launch_description():
             output='screen',
             parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-                                     'control_params.yaml'])
+                                     'control_params.yaml']),
+                {"use_sim_time": use_sim_time}
             ],
             remappings=[
                 ("/control/right_wheel_shock_controller/command",
@@ -52,18 +57,19 @@ def generate_launch_description():
         )
 
     ground_truth = Node(
-           package='urc_gazebo',
-           executable='urc_gazebo_GroundTruth',
-           output='screen',
-           parameters=[
+            package='urc_gazebo',
+            executable='urc_gazebo_GroundTruth',
+            output='screen',
+            parameters=[
                 PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-                                     'ground_truth_params.yaml'])
-           ],
-           remappings=[
+                                     'ground_truth_params.yaml']),
+                {"use_sim_time": use_sim_time}
+            ],
+            remappings=[
                 ("/ground_truth/odometry/filtered", "/odometry/filtered"),
                 ("/ground_truth/ground_truth", "/ground_truth"),
                 ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw")
-           ]
+            ]
        )
 
     # aruco_detector = Node(
@@ -87,6 +93,11 @@ def generate_launch_description():
     #             ("/aruco_location/aruco_location", "/aruco_location")
     #         ]
     # )
+    
+    ExecuteProcess(
+        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_path]
+        , output='screen'
+    )
 
 
     return LaunchDescription([

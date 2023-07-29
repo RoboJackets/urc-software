@@ -83,12 +83,14 @@ install(
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install launch, gazebo, and config files
+# Install relevant directories
 install(
   DIRECTORY
   launch
   urdf
   config
+  rviz
+  src
   DESTINATION share/${PROJECT_NAME}/
 )
 
