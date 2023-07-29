@@ -558,18 +558,12 @@
   
   <ros2_control name="arm_control" type="system">
     <hardware>
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <!-- gazebo_ros2_control/GazeboSystem -->
+      <!-- mock_components/GenericSystem -->
+      <plugin>mock_components/GenericSystem</plugin>
       <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
     </hardware>
-    <joint name ="arm_joint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      
+
       <joint name ="shoulderjoint">
         <command_interface name="position" />
         <state_interface name="position">
