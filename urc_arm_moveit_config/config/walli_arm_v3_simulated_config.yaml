@@ -39,7 +39,7 @@ is_primary_planning_scene_monitor: false
 
 ## MoveIt properties
 move_group_name:  arm  # 'arm' for arm, 'gripper' for gripper
-planning_frame: world  # The MoveIt planning frame. Often 'base_link' or 'world'
+planning_frame: world # world  # The MoveIt planning frame. Often 'base_link' or 'world'
 
 ## Other frames
 ee_frame_name: leftgripper  # The name of the end effector link, used to return the EE pose

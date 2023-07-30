@@ -19,8 +19,8 @@ def generate_launch_description():
 
     moveit_config = (
         MoveItConfigsBuilder("urc_arm")
-        .robot_description(file_path="config/walliArmV3.urdf.xacro")
-        .robot_description_semantic(file_path="config/walliArmV3.srdf")
+        .robot_description(file_path="config/walli_arm_v3.urdf.xacro")
+        .robot_description_semantic(file_path="config/walli_arm_v3.srdf")
         .trajectory_execution(file_path="config/moveit_controllers.yaml")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
         .planning_scene_monitor(
@@ -32,7 +32,7 @@ def generate_launch_description():
 
     # Get parameters for the Servo node
     servo_yaml = os.path.join(
-        arm_moveit_pkg_path, "/config/walliArmV3_simulated_config.yaml"
+        arm_moveit_pkg_path, "/config/walli_arm_v3_simulated_config.yaml"
     )
     servo_params = {"moveit_servo": servo_yaml}
 

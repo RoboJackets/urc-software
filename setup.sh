@@ -51,10 +51,8 @@ image_tag="humble"
 
 # Function to get the current working directory
 get_cwd() {
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        echo "$(dirname "$(readlink "$0")")"
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        echo "$(dirname "$(readlink -f "$0")")"
+    if [[ "$(uname -s)" == "Darwin" || "$(uname -s)" == "Linux" ]]; then
+        echo "$(pwd)"
     elif [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* ]]; then
         dir="$(dirname "$(readlink -f "$BASH_SOURCE")" | sed 's/^[A-Za-z]://')"
         echo "/$(echo "$dir" | sed 's/\\/\//g' | sed 's/://')"
@@ -84,8 +82,9 @@ start_container() {
         echo "Container $container_name started."
     else
         # Run the container and mount with additional options on first creation
+        docker pull --platform=linux/amd64 "$image_name:$image_tag"
         docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/home/ubuntu/urc_container" "$image_name:$image_tag"
-        echo "Container $container_name created and started."
+        echo "Container $container_name pulled, created, and started"
     fi
 }
 
@@ -93,7 +92,7 @@ start_container() {
 stop_container() {
     # Stop the container
     docker stop "$container_name" >/dev/null 2>&1
-    echo "Container $container_name stopped."
+    echo "Container $container_name stopped"
 }
 
 # Function to display usage instructions
