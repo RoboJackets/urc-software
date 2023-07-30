@@ -561,7 +561,7 @@
       <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
       <!--Use for functionality in Gazebo-->
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-      <!--Use for functionality in RViz2-->
+      <!--Use for functionality in RViz-->
       <!-- <plugin>mock_components/GenericSystem</plugin> -->
       <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
     </hardware>
