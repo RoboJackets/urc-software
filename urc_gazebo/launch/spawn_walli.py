@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import ExecuteProcess, RegisterEventHandler
+from launch.actions import ExecuteProcess, RegisterEventHandler, DeclareLaunchArgument
 from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
@@ -87,7 +87,7 @@ def generate_launch_description():
         output='screen',
         parameters=[os.path.join(pkg_share, 'config/ekf.yaml'),
                     {'use_sim_time': LaunchConfiguration('use_sim_time')}
-        ]
+                    ]
     )
 
     load_joint_state_controller = ExecuteProcess(
@@ -129,15 +129,18 @@ def generate_launch_description():
         ),
 
 
-        launch.actions.DeclareLaunchArgument(name='gui', default_value='True',
-                                            description='Flag to enable joint_state_publisher_gui'),
-        launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
-                                            description='Absolute path to robot urdf file'),
-        launch.actions.DeclareLaunchArgument(name='rvizconfig',
-                                            default_value=default_rviz_config_path,
-                                            description='Absolute path to rviz config file'),
-        launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
-                                            description='Flag to enable use_sim_time'),
+        DeclareLaunchArgument(name='gui',
+                              default_value='True',
+                              description='Flag to enable joint_state_publisher_gui'),
+        DeclareLaunchArgument(name='model',
+                              default_value=default_model_path,
+                              description='Absolute path to robot urdf file'),
+        DeclareLaunchArgument(name='rvizconfig',
+                              default_value=default_rviz_config_path,
+                              description='Absolute path to rviz config file'),
+        DeclareLaunchArgument(name='use_sim_time',
+                              default_value='True',
+                              description='Flag to enable use_sim_time'),
         robot_state_publisher_node,
         joint_state_publisher_node,
         joint_state_publisher_gui_node,
