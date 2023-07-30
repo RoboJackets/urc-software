@@ -9,7 +9,7 @@
               <!-- Use for functionality in Gazebo -->
               <plugin>gazebo_ros2_control/GazeboSystem</plugin> 
               <!--Use for functionality in RVIZ2-->
-              <plugin>mock_components/GenericSystem</plugin>
+              <!-- <plugin>mock_components/GenericSystem</plugin> -->
             </hardware>
             <joint name="shoulderjoint">
                 <command_interface name="position"/>
