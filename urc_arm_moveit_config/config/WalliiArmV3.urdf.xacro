@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="WalliiArmV3">
     <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+    <!-- mock_components/GenericSystem -->
+    <xacro:arg name="use_hardware" default="gazebo_ros2_control/GazeboSystem"/>
 
     <!-- Import WalliiArmV3 urdf file -->
-    <xacro:include filename="$(find urc_gazebo)/urdf/wallii.xacro" />
+    <!-- wallii.xacro -->
+    <!-- WalliiArmV3.urdf -->
+    <xacro:include filename="$(find urc_gazebo)/urdf/WalliiArmV3.urdf" />
 
     <!-- Import control_xacro -->
     <xacro:include filename="WalliiArmV3.ros2_control.xacro" />

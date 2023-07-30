@@ -555,24 +555,17 @@
   <gazebo reference="rightgripperjoint">
     <implicitSpringDamper>true</implicitSpringDamper>
   </gazebo>
-  <!-- mock_components/GenericSystem -->
-  <!-- gazebo_ros2_control/GazeboSystem -->
- 
-
-    <ros2_control name="arm_control" type="system">
+  
+  <ros2_control name="arm_control" type="system">
     <hardware>
+      <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
+      <!--Use for functionality in Gazebo-->
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <!--Use for functionality in RViz-->
+      <!-- <plugin>mock_components/GenericSystem</plugin> -->
       <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
     </hardware>
-    <joint name ="arm_joint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      
+
       <joint name ="shoulderjoint">
         <command_interface name="position" />
         <state_interface name="position">

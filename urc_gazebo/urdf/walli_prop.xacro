@@ -2,6 +2,8 @@
  -->
 <robot name="walli_prop" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:property name="realhardware" value="false"/>
+
    <!-- Degree-to-radian conversions -->
   <xacro:property name="degrees_45" value="0.785398163"/>
   <xacro:property name="degrees_90" value="1.57079633"/>
