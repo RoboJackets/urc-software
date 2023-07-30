@@ -89,7 +89,6 @@ install(
   launch
   urdf
   config
-  rviz
   src
   DESTINATION share/${PROJECT_NAME}/
 )
