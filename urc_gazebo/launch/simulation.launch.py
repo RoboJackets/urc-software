@@ -15,7 +15,6 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/nav2_world.sdf")
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     gazebo = IncludeLaunchDescription(

@@ -1,3 +1,4 @@
+<!-- This is just an example world from Nav2 docs-->
 <sdf version='1.7'>
   <world name='default'>
     <light name='sun' type='directional'>
