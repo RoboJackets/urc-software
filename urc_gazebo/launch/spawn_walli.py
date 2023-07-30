@@ -9,6 +9,7 @@ import launch
 import launch_ros
 from launch.substitutions import LaunchConfiguration
 
+
 def generate_launch_description():
     urdf_path = 'urdf/walli.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
@@ -80,11 +81,13 @@ def generate_launch_description():
         parameters=[{"use_sim_time": use_sim_time}]
     )
     robot_localization_node = launch_ros.actions.Node(
-       package='robot_localization',
-       executable='ekf_node',
-       name='ekf_filter_node',
-       output='screen',
-       parameters=[os.path.join(pkg_share, 'config/ekf.yaml'), {'use_sim_time': LaunchConfiguration('use_sim_time')}]
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[os.path.join(pkg_share, 'config/ekf.yaml'),
+                    {'use_sim_time': LaunchConfiguration('use_sim_time')}
+        ]
     )
 
     load_joint_state_controller = ExecuteProcess(
@@ -130,7 +133,8 @@ def generate_launch_description():
                                             description='Flag to enable joint_state_publisher_gui'),
         launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
                                             description='Absolute path to robot urdf file'),
-        launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
+        launch.actions.DeclareLaunchArgument(name='rvizconfig',
+                                            default_value=default_rviz_config_path,
                                             description='Absolute path to rviz config file'),
         launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
                                             description='Flag to enable use_sim_time'),

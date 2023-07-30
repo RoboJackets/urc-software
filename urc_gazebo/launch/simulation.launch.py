@@ -72,39 +72,39 @@ def generate_launch_description():
             ]
        )
 
-    # aruco_detector = Node(
-    #         package='urc_aruco',
-    #         executable='urc_aruco_ArucoDetector',
-    #         output='screen',
-    #         parameters=[
-    #             PathJoinSubstitution([FindPackageShare('urc_aruco'), 'config',
-    #                                  'aruco_detector_params.yaml'])
-    #         ],
-    #         remappings=[
-    #             ("/aruco_detector/aruco_detection", "/aruco_detection")
-    #         ]
-    #     )
+    aruco_detector = Node(
+            package='urc_aruco',
+            executable='urc_aruco_ArucoDetector',
+            output='screen',
+            parameters=[
+                PathJoinSubstitution([FindPackageShare('urc_aruco'), 'config',
+                                     'aruco_detector_params.yaml'])
+            ],
+            remappings=[
+                ("/aruco_detector/aruco_detection", "/aruco_detection")
+            ]
+        )
 
-    # aruco_location = Node(
-    #         package='urc_aruco',
-    #         executable='urc_aruco_ArucoLocation',
-    #         output='screen',
-    #         remappings=[
-    #             ("/aruco_location/aruco_location", "/aruco_location")
-    #         ]
-    # )
-    
-    ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_path]
-        , output='screen'
+    aruco_location = Node(
+            package='urc_aruco',
+            executable='urc_aruco_ArucoLocation',
+            output='screen',
+            remappings=[
+                ("/aruco_location/aruco_location", "/aruco_location")
+            ]
     )
 
+    ExecuteProcess(
+        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s',
+             'libgazebo_ros_factory.so', world_path],
+        output='screen'
+    )
 
     return LaunchDescription([
         gazebo,
         walli,
         control,
-        ground_truth
-        # aruco_detector,
-        # aruco_location
+        ground_truth,
+        aruco_detector,
+        aruco_location
     ])
