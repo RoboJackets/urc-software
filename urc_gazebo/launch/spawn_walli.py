@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess, RegisterEventHandler, DeclareLaunchArgument
-from launch.event_handlers import OnProcessExit, OnProcessStart
+from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
 from xacro import process_file
