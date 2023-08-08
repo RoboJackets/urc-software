@@ -127,7 +127,7 @@ def generate_launch_description():
                         on_exit=[gorilla_grip],
                 )
         ),
-	RegisterEventHandler(
+        RegisterEventHandler(
                 event_handler=OnProcessExit(
                         target_action=load_joint_trajectory_controller,
                         on_exit=[rviz_node],
