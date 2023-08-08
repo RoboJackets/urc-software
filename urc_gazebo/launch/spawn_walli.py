@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess, RegisterEventHandler, DeclareLaunchArgument
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessExit, OnProcessStart
 from ament_index_python.packages import get_package_share_directory
 import os
 from xacro import process_file
@@ -127,7 +127,12 @@ def generate_launch_description():
                         on_exit=[gorilla_grip],
                 )
         ),
-
+	RegisterEventHandler(
+                event_handler=OnProcessExit(
+                        target_action=load_joint_trajectory_controller,
+                        on_exit=[rviz_node],
+                )
+        ),
 
         DeclareLaunchArgument(name='gui',
                               default_value='True',
@@ -144,7 +149,6 @@ def generate_launch_description():
         robot_state_publisher_node,
         joint_state_publisher_node,
         joint_state_publisher_gui_node,
-        rviz_node,
         robot_localization_node,
-        spawn_robot,
+        spawn_robot
     ])
