@@ -350,7 +350,7 @@
       </sensor>
     </gazebo>
   </xacro:macro>
-  <xacro:camera orientation="center" origin_x="0.15" origin_y="0"    origin_z="-0.1" yaw="-0.14"/>
+  <xacro:camera orientation="center" origin_x="0.1" origin_y="0"    origin_z="0" yaw="-0.14"/>
   <xacro:camera orientation="left"   origin_x="0"    origin_y="0.1"  origin_z="0"    yaw="1.5"/>
   <xacro:camera orientation="right"  origin_x="0"    origin_y="-0.1" origin_z="0"    yaw="-1.5"/>
 
@@ -381,7 +381,7 @@
 <joint name="camera_joint" type="fixed">
   <parent link="base_link"/>
   <child link="camera_link"/>
-  <origin xyz="0.215 0 0.05" rpy="0 0 0"/>
+  <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
 </joint>
 
 <link name="camera_depth_frame"/>
