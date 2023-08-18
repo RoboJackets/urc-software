@@ -3,6 +3,6 @@ from moveit_configs_utils.launches import generate_rsp_launch
 
 
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder("WalliiArmV3",
+    moveit_config = MoveItConfigsBuilder("walli_arm_v3",
                                          package_name="urc_arm_moveit_config").to_moveit_configs()
     return generate_rsp_launch(moveit_config)

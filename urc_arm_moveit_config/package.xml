@@ -4,7 +4,7 @@
   <name>urc_arm_moveit_config</name>
   <version>0.3.0</version>
   <description>
-     An automatically generated package with all the configuration and launch files for using the WalliiArmV3 with the MoveIt Motion Planning Framework
+     An automatically generated package with all the configuration and launch files for using the walli_arm_v3 with the MoveIt Motion Planning Framework
   </description>
   <maintainer email="mkerner1876@gmail.com">Matthew Kerner</maintainer>
 
