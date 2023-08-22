@@ -15,7 +15,8 @@ def generate_launch_description():
                                      'motor_controller_params.yaml'])
             ],
             remappings=[
-                ("/motor_controller/encoders", "/encoders")
+                ("/motor_controller/encoders", "/encoders"),
+                ("/motor_controller/motors", "/motors")
             ]
         )
 
