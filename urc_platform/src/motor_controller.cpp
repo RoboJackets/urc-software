@@ -5,7 +5,9 @@ namespace motor_controller
 
 namespace ip = boost::asio::ip;
 
-MotorControllerWrapper::MotorControllerDriver::MotorControllerDriver(std::string ip_addr_server, int port)
+MotorControllerWrapper::MotorControllerDriver::MotorControllerDriver(
+  std::string ip_addr_server,
+  int port)
 {
   this->ip_addr_server_ = ip_addr_server;
   this->port_ = port;
@@ -32,10 +34,11 @@ bool MotorControllerWrapper::MotorControllerDriver::getEncoderTicks(DriveEncoder
   return status;
 }
 
-bool MotorControllerWrapper::MotorControllerDriver::setSpeed(RequestMessage &message) {
+bool MotorControllerWrapper::MotorControllerDriver::setSpeed(RequestMessage & message)
+{
   uint8_t buffer[256];
   size_t response_length;
-  
+
   pb_ostream_t ostream = pb_ostream_from_buffer(buffer, sizeof(buffer));
   bool status = pb_encode(&ostream, RequestMessage_fields, &message);
   response_length = ostream.bytes_written;
@@ -66,13 +69,13 @@ MotorControllerWrapper::MotorControllerWrapper(const rclcpp::NodeOptions & optio
   _motor_sub = create_subscription<urc_msgs::msg::VelocityPair>(
     "~/motors",
     rclcpp::SystemDefaultsQoS(),
-    [this](const urc_msgs::msg::VelocityPair vel) { sendSpeed(vel); }
+    [this](const urc_msgs::msg::VelocityPair vel) {sendSpeed(vel);}
   );
 
   timer_ = this->create_wall_timer(
     std::chrono::duration<double>(1.0 / publish_encoder_ticks_frequency_),
-    [this]() { publishEncoderTicks(); }
-  );  
+    [this]() {publishEncoderTicks();}
+  );
 }
 
 void MotorControllerWrapper::publishEncoderTicks()
@@ -96,16 +99,25 @@ void MotorControllerWrapper::publishEncoderTicks()
 
 }
 
-void MotorControllerWrapper::sendSpeed(const urc_msgs::msg::VelocityPair &vel) {
-    
+void MotorControllerWrapper::sendSpeed(const urc_msgs::msg::VelocityPair & vel)
+{
+
   RequestMessage requestMessage;
   requestMessage.requestSpeed = true;
   requestMessage.requestDiagnostics = false;
-  requestMessage.leftSpeed = velocityToCounts(std::clamp(static_cast<const float&>(vel.left_velocity), MIN_SPEED, MAX_SPEED));
-  requestMessage.rightSpeed = velocityToCounts(std::clamp(static_cast<const float&>(vel.right_velocity), MIN_SPEED, MAX_SPEED));
+  requestMessage.leftSpeed =
+    velocityToCounts(
+    std::clamp(
+      static_cast<const float &>(vel.left_velocity), MIN_SPEED,
+      MAX_SPEED));
+  requestMessage.rightSpeed =
+    velocityToCounts(
+    std::clamp(
+      static_cast<const float &>(vel.right_velocity), MIN_SPEED,
+      MAX_SPEED));
   requestMessage.duration = 1500;
   requestMessage.timestamp = (int32_t) this->get_clock()->now().seconds();
-  
+
   bool success = driver->setSpeed(requestMessage);
 }
 

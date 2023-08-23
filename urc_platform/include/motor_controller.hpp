@@ -44,9 +44,9 @@ public:
     void motorsEnable();
     void motorsDisable();
     void motorsSleep();
-    int available() { return sock_->available(); }
-    bool getEncoderTicks(DriveEncodersMessage &message);
-    bool setSpeed(RequestMessage &message);
+    int available() {return sock_->available();}
+    bool getEncoderTicks(DriveEncodersMessage & message);
+    bool setSpeed(RequestMessage & message);
     int getPortNumber();
   };
 
@@ -64,9 +64,9 @@ public:
   const float MIN_SPEED = -1 * MAX_SPEED;
 
   void publishEncoderTicks();
-  void sendSpeed(const urc_msgs::msg::VelocityPair &vel);
-  int velocityToCounts(float vel) { return (int)(vel * VEL_TO_COUNTS_FACTOR); }
-  float countsToVelocity(int counts) { return (counts / VEL_TO_COUNTS_FACTOR); }
+  void sendSpeed(const urc_msgs::msg::VelocityPair & vel);
+  int velocityToCounts(float vel) {return (int)(vel * VEL_TO_COUNTS_FACTOR);}
+  float countsToVelocity(int counts) {return counts / VEL_TO_COUNTS_FACTOR;}
 };
 
 }
