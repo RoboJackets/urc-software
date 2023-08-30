@@ -1,9 +1,9 @@
 moveit_setup_assistant_config:
   urdf:
     package: urc_gazebo
-    relative_path: urdf/walli_arm_v3.urdf
+    relative_path: urdf/walli_arm.urdf
   srdf:
-    relative_path: config/walli_arm_v3.srdf
+    relative_path: config/walli_arm.srdf
   package_settings:
     author_name: Matthew Kerner
     author_email: mkerner1876@gmail.com
