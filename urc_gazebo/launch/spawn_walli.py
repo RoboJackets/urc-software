@@ -38,9 +38,10 @@ def generate_launch_description():
     # Elegant methods would NOT involve directly modifying the
     # source code of either the moveit robot model loader or spawn_entity.py...
 
-    replacement_pattern = "package://urc_gazebo"
-    new_pattern = get_package_share_directory('urc_gazebo')
-    robot_desc = robot_desc.replace(replacement_pattern, new_pattern)
+    # replacement_pattern = "package://urc_gazebo"
+    # new_pattern = get_package_share_directory('file://$(find package_name)')
+    # new_pattern = "file://$(find package_name)"
+    # robot_desc = robot_desc.replace(replacement_pattern, new_pattern)
 
     spawn_robot = Node(
         package='gazebo_ros',
