@@ -23,26 +23,6 @@ def generate_launch_description():
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
 
-    # Explanation for this convoluted logic/text replacement:
-    # To load files in ros2, nodes like the ones used in moveit2
-    # need to use paths relative to a package they are located in.
-    # However, the spawn_entity.py script needs the absolute file
-    # path to load model files, which causes issues when trying to
-    # load the two together. Thus, this text replacement gets rid
-    # of that issue by processing the xacro/urdf file and adding
-    # the absolute file path as a replacement string for the
-    # relative path that nodes within moveit2 use.
-
-    # If there is a more elegant way to solve this issue, please
-    # bring it up and try to implement it in your workspace.
-    # Elegant methods would NOT involve directly modifying the
-    # source code of either the moveit robot model loader or spawn_entity.py...
-
-    # replacement_pattern = "package://urc_gazebo"
-    # new_pattern = get_package_share_directory('file://$(find package_name)')
-    # new_pattern = "file://$(find package_name)"
-    # robot_desc = robot_desc.replace(replacement_pattern, new_pattern)
-
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
