@@ -4,7 +4,7 @@ function App() {
   const ROS = new ROSLIB.Ros({ url: "ws://localhost:9090" });
   return (
     <div className="App w-screen h-screen">
-      <DriverStation />
+      <DriverStation ROS={ROS} />
     </div>
   );
 }

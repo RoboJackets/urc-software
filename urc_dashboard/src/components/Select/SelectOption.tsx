@@ -2,7 +2,7 @@ interface SelectOptionProps {
   value: string;
   idx: number;
   curIdx: number;
-  setCurIdx: Function;
+  updateIdx: Function;
 }
 
 export const SelectOption = (props: SelectOptionProps) => {
@@ -14,7 +14,7 @@ export const SelectOption = (props: SelectOptionProps) => {
         styling +
         (props.idx === props.curIdx ? " bg-neutral-700 text-white" : "")
       }
-      onClick={() => props.setCurIdx(props.idx)}
+      onClick={() => props.updateIdx(props.idx)}
     >
       {props.value}
     </div>
