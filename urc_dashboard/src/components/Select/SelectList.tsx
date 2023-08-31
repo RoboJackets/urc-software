@@ -9,7 +9,7 @@ export const SelectList = (props: SelectListProps) => {
   const [curIdx, setCurIdx] = useState<number>(0);
 
   return (
-    <div className="flex flex-col w-min p-1 gap-1 border border-neutral-700 rounded-md m-2">
+    <div className="flex flex-col p-1 gap-1 border border-neutral-700 rounded-md h-min">
       {props.values.map((value, idx) => (
         <SelectOption
           value={value}

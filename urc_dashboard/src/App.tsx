@@ -1,9 +1,9 @@
-import { SelectList } from "./components/SelectList";
+import { DriverStation } from "./components/DriverStation";
 
 function App() {
   return (
     <div className="App w-screen h-screen">
-      <SelectList values={["Teleop", "Auto", "Test"]} />
+      <DriverStation />
     </div>
   );
 }

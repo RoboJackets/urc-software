@@ -7,7 +7,7 @@ interface SelectOptionProps {
 
 export const SelectOption = (props: SelectOptionProps) => {
   let styling =
-    "w-full text-sm py-2 px-3 hover:cursor-pointer text-center rounded-md text-neutral-400 hover:text-white";
+    "w-full text-sm whitespace-nowrap p-2 hover:cursor-pointer text-center rounded-md text-neutral-400 hover:text-white";
   return (
     <div
       className={
