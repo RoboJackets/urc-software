@@ -26,6 +26,7 @@ export const SelectList = (props: SelectListProps) => {
     <div className="flex flex-col p-1 gap-1 border border-neutral-700 rounded-md h-min">
       {props.values.map((value, idx) => (
         <SelectOption
+          key={idx}
           value={value}
           idx={idx}
           curIdx={curIdx}
