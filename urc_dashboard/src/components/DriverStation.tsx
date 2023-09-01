@@ -12,7 +12,7 @@ export const DriverStation = (props: DriverStationProps) => {
       <div className="font-bold text-lg mb-1">Driver Station</div>
       <div className="flex gap-2">
         <Modes ROS={props.ROS} />
-        <StatusList />
+        <StatusList ROS={props.ROS} />
       </div>
     </div>
   );
