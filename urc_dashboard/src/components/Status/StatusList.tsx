@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { StatusOption } from "./StatusOption";
 import ROSLIB from "roslib";
+import { State } from "../DriverStation";
 
 interface StatusListProps {
   ROS: ROSLIB.Ros;
+  states: Record<string, State>;
 }
 
 enum StatusColors {
@@ -43,7 +45,7 @@ export const StatusList = (props: StatusListProps) => {
   const [gamepadStatus, setGamepadStatus] = useState<StatusColors>(
     StatusColors.RED
   );
-  const desired: number = 1;
+  const desired: number = props.states.controllers.idx + 1;
 
   props.ROS.on("connection", () => setBridgeStatus(StatusColors.GREEN));
   // TODO: somehow print the errors from ROS?
@@ -71,11 +73,11 @@ export const StatusList = (props: StatusListProps) => {
     var nonzero = false;
     arr.forEach((element) => {
       if (typeof element == typeof 0.0) {
-        if (inputDeadzone(element, deadzone) != 0) {
+        if (inputDeadzone(element, deadzone) !== 0) {
           nonzero = true;
         }
       } else {
-        if (inputDeadzone(element.value, deadzone) != 0) {
+        if (inputDeadzone(element.value, deadzone) !== 0) {
           nonzero = true;
         }
       }
@@ -140,7 +142,14 @@ export const StatusList = (props: StatusListProps) => {
     setGamepads((prev) => prev.filter((gamepad) => gamepad !== event.gamepad));
   });
 
-  // TODO: switch controller order method.
+  // use switchMethod in code
+  // update desired ptr to pull from Modes component
+
+  const switchGamepadOrder = () => {
+    if (gamepads.length === 2) {
+      setGamepads((prev) => [prev[1], prev[0]]);
+    }
+  };
   return (
     <div className="border border-neutral-700 rounded-lg p-2 flex flex-col gap-2 h-min">
       <div className="text-center font-bold">Status</div>
