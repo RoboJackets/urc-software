@@ -20,16 +20,16 @@ export const StatusList = (props: StatusListProps) => {
     StatusColors.RED
   );
 
-  // const heartbeatTopic = new ROSLIB.Topic({
-  //   ros: props.ROS,
-  //   name: "/heartbeat",
-  //   messageType: "std_msgs/String",
-  // });
+  const heartbeatTopic = new ROSLIB.Topic({
+    ros: props.ROS,
+    name: "/heartbeat",
+    messageType: "std_msgs/msg/Header",
+  });
 
   const [robotStatus, setRobotStatus] = useState<StatusColors>(
     StatusColors.RED
   );
-  // const [lastTimestamp, setLastTimestamp] = useState(0);
+  const [lastTimestamp, setLastTimestamp] = useState(0);
   const [gamepadStatus, setGamepadStatus] = useState<StatusColors>(
     StatusColors.RED
   );
@@ -39,14 +39,27 @@ export const StatusList = (props: StatusListProps) => {
   props.ROS.on("error", () => setBridgeStatus(StatusColors.YELLOW));
   props.ROS.on("close", () => setBridgeStatus(StatusColors.RED));
 
-  // check infinte run bug?
+  useEffect(() => {
+    heartbeatTopic.subscribe((message: any) => {
+      setLastTimestamp(message.stamp.sec);
+    });
+  });
+
+  setInterval(() => {
+    if (Date.now() / 1000 - lastTimestamp > 1) {
+      setRobotStatus(StatusColors.RED);
+    } else {
+      setRobotStatus(StatusColors.GREEN);
+    }
+  });
+
   useEffect(() => {
     if (props.gamepads.length === desired) {
       setGamepadStatus(StatusColors.GREEN);
     } else {
       setGamepadStatus(StatusColors.RED);
     }
-  });
+  }, [props.gamepads, desired]);
 
   return (
     <div className="border border-neutral-700 rounded-lg p-2 flex flex-col gap-2 h-min">

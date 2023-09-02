@@ -16,8 +16,6 @@ export interface State {
 }
 
 export const DriverStation = (props: DriverStationProps) => {
-  // TODO: define a gamepad listener object, and publish the gamepad inputs
-
   const [controlIdx, setControlIdx] = useState<number>(0);
   const [controllerIdx, setControllerIdx] = useState<number>(0);
   const [toggleIdx, setToggleIdx] = useState<number>(0);
