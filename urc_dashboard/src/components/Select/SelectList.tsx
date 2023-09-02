@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SelectOption } from "./SelectOption";
 import ROSLIB from "roslib";
 import { State } from "../DriverStation";

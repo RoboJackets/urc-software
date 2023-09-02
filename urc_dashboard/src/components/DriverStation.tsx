@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modes } from "./Modes";
 import { StatusList } from "./Status/StatusList";
+import { GamepadListener } from "./GamepadListener";
 
 interface DriverStationProps {
   ROS: ROSLIB.Ros;
@@ -20,6 +21,7 @@ export const DriverStation = (props: DriverStationProps) => {
   const [controlIdx, setControlIdx] = useState<number>(0);
   const [controllerIdx, setControllerIdx] = useState<number>(0);
   const [toggleIdx, setToggleIdx] = useState<number>(0);
+  const [gamepads, setGamepads] = useState<Gamepad[]>([]);
 
   const states: Record<string, State> = {
     controls: {
@@ -49,7 +51,13 @@ export const DriverStation = (props: DriverStationProps) => {
       <div className="font-bold text-lg mb-1">Driver Station</div>
       <div className="flex gap-2">
         <Modes ROS={props.ROS} states={states} />
-        <StatusList ROS={props.ROS} states={states} />
+        <StatusList ROS={props.ROS} states={states} gamepads={gamepads} />
+        <GamepadListener
+          ROS={props.ROS}
+          states={states}
+          gamepads={gamepads}
+          setGamepads={setGamepads}
+        />
       </div>
     </div>
   );
