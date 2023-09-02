@@ -20,7 +20,7 @@ export const SelectList = (props: SelectListProps) => {
 
   const updateIdx = (idx: number) => {
     setCurIdx(idx);
-    topic.publish(props.values[idx]);
+    topic.publish(new ROSLIB.Message({ data: props.values[idx] }));
   };
   return (
     <div className="flex flex-col p-1 gap-1 border border-neutral-700 rounded-md h-min">
