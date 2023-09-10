@@ -3,5 +3,13 @@
 @tailwind utilities;
 
 body {
-  @apply bg-black text-white;
+  @apply bg-black text-white text-sm;
+}
+
+.card-title {
+  @apply text-center font-bold text-base;
+}
+
+.card {
+  @apply border border-neutral-700 rounded-lg p-2 flex h-min gap-2 flex-col w-min;
 }

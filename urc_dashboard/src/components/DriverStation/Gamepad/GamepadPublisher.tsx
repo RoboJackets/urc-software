@@ -1,24 +1,22 @@
 import ROSLIB from "roslib";
 
-interface GamepadListenerProps {
+interface GamepadPublisherProps {
   ROS: ROSLIB.Ros;
-  driverGamepadIdx: any;
-  setDriverGamepadIdx: any;
-  armGamepadIdx: any;
-  setArmGamepadIdx: any;
+  driverGamepadIdx: number;
+  armGamepadIdx: number;
 }
 
-export const GamepadListener = (props: GamepadListenerProps) => {
+export const GamepadPublisher = (props: GamepadPublisherProps) => {
   const driverTopic = new ROSLIB.Topic({
     ros: props.ROS,
-    name: "/driverController",
-    messageType: "std_msgs/String",
+    name: "/driverGamepad",
+    messageType: "sensor_msgs/msg/Joy",
   });
 
   const armTopic = new ROSLIB.Topic({
     ros: props.ROS,
-    name: "/operatorController",
-    messageType: "std_msgs/String",
+    name: "/driverGamepad",
+    messageType: "sensor_msgs/msg/Joy",
   });
 
   const inputDeadzone = (num: number, deadzone: number) => {
@@ -42,7 +40,7 @@ export const GamepadListener = (props: GamepadListenerProps) => {
     return nonzero;
   };
 
-  const publishMovementInput = (gamepad: any, topic: ROSLIB.Topic) => {
+  const publishMovementInput = (gamepad: Gamepad, topic: ROSLIB.Topic) => {
     let joy_msg = new ROSLIB.Message({
       axes: [
         0.0,
@@ -62,19 +60,22 @@ export const GamepadListener = (props: GamepadListenerProps) => {
     topic.publish(joy_msg);
   };
 
-  // checkNonZero logic, refactoring needed
   setInterval(() => {
-    if (navigator.getGamepads()[props.driverGamepadIdx]) {
-      publishMovementInput(
-        navigator.getGamepads()[props.driverGamepadIdx],
-        driverTopic
-      );
+    const driveGamepad = navigator.getGamepads()[props.driverGamepadIdx];
+    const armGamepad = navigator.getGamepads()[props.armGamepadIdx];
+    if (
+      driveGamepad &&
+      checkNonzero(driveGamepad.axes, 0.02) &&
+      checkNonzero(driveGamepad.buttons, 0.02)
+    ) {
+      publishMovementInput(driveGamepad, driverTopic);
     }
-    if (navigator.getGamepads()[props.driverGamepadIdx]) {
-      publishMovementInput(
-        navigator.getGamepads()[props.armGamepadIdx],
-        armTopic
-      );
+    if (
+      armGamepad &&
+      checkNonzero(armGamepad.axes, 0.02) &&
+      checkNonzero(armGamepad.buttons, 0.02)
+    ) {
+      publishMovementInput(armGamepad, armTopic);
     }
   }, 100);
 

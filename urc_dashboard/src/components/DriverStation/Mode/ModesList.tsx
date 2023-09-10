@@ -1,18 +1,18 @@
-import { SelectOption } from "./SelectOption";
+import { ModesOption } from "./ModesOptions";
 import ROSLIB from "roslib";
-import { State } from "../DriverStation/DriverStation";
+import { Mode } from "./Modes";
 
-interface SelectListProps {
-  state: State;
+interface ModesListProps {
+  mode: Mode;
   ROS: ROSLIB.Ros;
 }
 
-export const SelectList = (props: SelectListProps) => {
-  const setCurIdx = props.state.setIdx;
-  const curIdx = props.state.idx;
-  const values = props.state.values;
-  const topicName = props.state.topicName;
-  const messageType = props.state.messageType;
+export const ModesList = (props: ModesListProps) => {
+  const setCurIdx = props.mode.setIdx;
+  const curIdx = props.mode.idx;
+  const values = props.mode.values;
+  const topicName = props.mode.topicName;
+  const messageType = props.mode.messageType;
 
   const topic = new ROSLIB.Topic({
     ros: props.ROS,
@@ -27,7 +27,7 @@ export const SelectList = (props: SelectListProps) => {
   return (
     <div className="flex flex-col p-1 gap-1 border border-neutral-700 rounded-md h-min">
       {values.map((value: string, idx: number) => (
-        <SelectOption
+        <ModesOption
           key={idx}
           value={value}
           idx={idx}

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { StatusOption } from "./StatusOption";
+import { Status } from "./Status";
 import ROSLIB from "roslib";
 
-interface StatusListProps {
+interface StatusesProps {
   ROS: ROSLIB.Ros;
 }
 
@@ -12,28 +12,26 @@ enum StatusColors {
   GREEN = "bg-green-500",
 }
 
-export const StatusList = (props: StatusListProps) => {
+export const Statuses = (props: StatusesProps) => {
   const [bridgeStatus, setBridgeStatus] = useState<StatusColors>(
     StatusColors.RED
   );
-
-  const heartbeatTopic = new ROSLIB.Topic({
-    ros: props.ROS,
-    name: "/heartbeat",
-    messageType: "std_msgs/msg/Header",
-  });
-
   const [robotStatus, setRobotStatus] = useState<StatusColors>(
     StatusColors.RED
   );
   const [lastTimestamp, setLastTimestamp] = useState(0);
-  const [gamepadStatus, setGamepadStatus] = useState<StatusColors>(
-    StatusColors.RED
-  );
 
+  // ROSBRIDGE CONNECTION STATUS
   props.ROS.on("connection", () => setBridgeStatus(StatusColors.GREEN));
   props.ROS.on("error", () => setBridgeStatus(StatusColors.YELLOW));
   props.ROS.on("close", () => setBridgeStatus(StatusColors.RED));
+
+  // ROBOT CONNECTION STATUS
+  const heartbeatTopic = new ROSLIB.Topic({
+    ros: props.ROS,
+    name: "/heartbeat",
+    messageType: "builtin_interfaces/msg/Time",
+  });
 
   useEffect(() => {
     heartbeatTopic.subscribe((message: any) => {
@@ -50,10 +48,10 @@ export const StatusList = (props: StatusListProps) => {
   });
 
   return (
-    <div className="border border-neutral-700 rounded-lg p-2 flex flex-col gap-2 h-min">
-      <div className="text-center font-bold">Status</div>
-      <StatusOption value="Rosbridge" color={bridgeStatus} />
-      <StatusOption value="Robot" color={robotStatus} />
+    <div className="card">
+      <div className="card-title">Status</div>
+      <Status value="Rosbridge" color={bridgeStatus} />
+      <Status value="Robot" color={robotStatus} />
     </div>
   );
 };

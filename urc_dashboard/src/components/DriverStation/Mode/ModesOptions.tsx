@@ -1,13 +1,13 @@
-interface SelectOptionProps {
+interface ModesOptionProps {
   value: string;
   idx: number;
   curIdx: number;
   updateIdx: Function;
 }
 
-export const SelectOption = (props: SelectOptionProps) => {
+export const ModesOption = (props: ModesOptionProps) => {
   let styling =
-    "w-full text-sm whitespace-nowrap p-2 hover:cursor-pointer text-center rounded-md text-neutral-400 hover:text-white";
+    "w-full whitespace-nowrap p-2 hover:cursor-pointer text-center rounded-md text-neutral-400 hover:text-white";
   return (
     <div
       className={
