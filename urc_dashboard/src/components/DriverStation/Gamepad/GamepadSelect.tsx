@@ -25,7 +25,7 @@ export const GamepadSelect = (props: GamepadSelectProps) => {
 
   return (
     <div className="card">
-      <div className="font-bold text-center">Gamepads</div>
+      <div className="card-title">Gamepads</div>
       <GamepadDropdown operatorType={"Drive"} setState={setDriverGamepadIdx} />
       <GamepadDropdown operatorType={"Arm"} setState={setArmGamepadIdx} />
       <GamepadPublisher
