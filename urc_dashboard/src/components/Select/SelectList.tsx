@@ -1,6 +1,6 @@
 import { SelectOption } from "./SelectOption";
 import ROSLIB from "roslib";
-import { State } from "../DriverStation";
+import { State } from "../DriverStation/DriverStation";
 
 interface SelectListProps {
   state: State;

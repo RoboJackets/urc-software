@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { StatusOption } from "./StatusOption";
 import ROSLIB from "roslib";
-import { State } from "../DriverStation";
 
 interface StatusListProps {
   ROS: ROSLIB.Ros;
-  states: Record<string, State>;
-  gamepads: Gamepad[];
 }
 
 enum StatusColors {
@@ -33,7 +30,6 @@ export const StatusList = (props: StatusListProps) => {
   const [gamepadStatus, setGamepadStatus] = useState<StatusColors>(
     StatusColors.RED
   );
-  const desired: number = props.states.controllers.idx + 1;
 
   props.ROS.on("connection", () => setBridgeStatus(StatusColors.GREEN));
   props.ROS.on("error", () => setBridgeStatus(StatusColors.YELLOW));
@@ -53,19 +49,10 @@ export const StatusList = (props: StatusListProps) => {
     }
   });
 
-  useEffect(() => {
-    if (props.gamepads.length === desired) {
-      setGamepadStatus(StatusColors.GREEN);
-    } else {
-      setGamepadStatus(StatusColors.RED);
-    }
-  }, [props.gamepads, desired]);
-
   return (
     <div className="border border-neutral-700 rounded-lg p-2 flex flex-col gap-2 h-min">
       <div className="text-center font-bold">Status</div>
       <StatusOption value="Rosbridge" color={bridgeStatus} />
-      <StatusOption value="Gamepads" color={gamepadStatus} />
       <StatusOption value="Robot" color={robotStatus} />
     </div>
   );

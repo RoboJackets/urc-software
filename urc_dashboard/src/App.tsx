@@ -1,4 +1,4 @@
-import { DriverStation } from "./components/DriverStation";
+import { DriverStation } from "./components/DriverStation/DriverStation";
 import ROSLIB from "roslib";
 function App() {
   const ROS = new ROSLIB.Ros({ url: "ws://localhost:9090" });

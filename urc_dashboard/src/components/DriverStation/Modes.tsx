@@ -1,5 +1,5 @@
 import { State } from "./DriverStation";
-import { SelectList } from "./Select/SelectList";
+import { SelectList } from "../Select/SelectList";
 
 interface ModesProps {
   ROS: ROSLIB.Ros;
@@ -12,7 +12,6 @@ export const Modes = (props: ModesProps) => {
       <div className="font-bold text-center">Modes</div>
       <div className="flex gap-2">
         <SelectList state={props.states.controls} ROS={props.ROS} />
-        <SelectList state={props.states.controllers} ROS={props.ROS} />
         <SelectList state={props.states.toggle} ROS={props.ROS} />
       </div>
     </div>

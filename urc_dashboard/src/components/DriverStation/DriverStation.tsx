@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Modes } from "./Modes";
-import { StatusList } from "./Status/StatusList";
+import { StatusList } from "../Status/StatusList";
 import { GamepadListener } from "./GamepadListener";
+import { ControllerSelector } from "./ControllerSelector";
 
 interface DriverStationProps {
   ROS: ROSLIB.Ros;
@@ -17,9 +18,10 @@ export interface State {
 
 export const DriverStation = (props: DriverStationProps) => {
   const [controlIdx, setControlIdx] = useState<number>(0);
-  const [controllerIdx, setControllerIdx] = useState<number>(0);
   const [toggleIdx, setToggleIdx] = useState<number>(0);
-  const [gamepads, setGamepads] = useState<Gamepad[]>([]);
+  const [driverGamepadIdx, setDriverGamepadIdx] = useState<number>(0);
+  const [armGamepadIndex, setArmGamepadIdx] = useState<number>(0);
+  const [gamepadCounter, setGamepadCounter] = useState<number>(0);
 
   const states: Record<string, State> = {
     controls: {
@@ -27,13 +29,6 @@ export const DriverStation = (props: DriverStationProps) => {
       idx: controlIdx,
       setIdx: setControlIdx,
       topicName: "/settings/control_modes",
-      messageType: "std_msgs/String",
-    },
-    controllers: {
-      values: ["1 Controller", "2 Controllers"],
-      idx: controllerIdx,
-      setIdx: setControllerIdx,
-      topicName: "/settings/controllers",
       messageType: "std_msgs/String",
     },
     toggle: {
@@ -44,19 +39,38 @@ export const DriverStation = (props: DriverStationProps) => {
       messageType: "std_msgs/String",
     },
   };
+
+  window.addEventListener("gamepadconnected", (event) => {
+    setGamepadCounter(gamepadCounter + 1);
+  });
+
+  window.addEventListener("gamepaddisconnected", (event) => {
+    setGamepadCounter(gamepadCounter - 1);
+  });
+
   return (
     <div className="flex flex-col border border-neutral-700 rounded-xl w-min text-center p-2 m-5">
-      <div className="font-bold text-lg mb-1">Driver Station</div>
+      <div className="font-bold text-lg mb-1 whitespace-nowrap">
+        Driver Station
+      </div>
       <div className="flex gap-2">
         <Modes ROS={props.ROS} states={states} />
-        <StatusList ROS={props.ROS} states={states} gamepads={gamepads} />
+        <StatusList ROS={props.ROS} />
         <GamepadListener
           ROS={props.ROS}
-          states={states}
-          gamepads={gamepads}
-          setGamepads={setGamepads}
+          driverGamepadIdx={driverGamepadIdx}
+          setDriverGamepadIdx={setDriverGamepadIdx}
+          armGamepadIdx={armGamepadIndex}
+          setArmGamepadIdx={setArmGamepadIdx}
         />
       </div>
+      <ControllerSelector
+        driverGamepadIdx={driverGamepadIdx}
+        setDriverGamepadIdx={setDriverGamepadIdx}
+        armGamepadIdx={armGamepadIndex}
+        setArmGamepadIdx={setArmGamepadIdx}
+        gamepadCounter={gamepadCounter}
+      />
     </div>
   );
 };
