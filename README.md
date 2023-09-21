@@ -53,7 +53,7 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 * [Slack](https://robojackets.slack.com/)
 * [Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)  
 * [Software Training 2023](https://github.com/RoboJackets/software-training) *Be sure to understand the content in this tuturial if you are a new member*
-* [Software Training: Old/Advanced](https://github.com/RoboJackets/software-training-old) *Feel free to watch the videos or do the projects in the old software training if you want to support you knowledge on ROS2, C++, or Robotics Theory *
+* [Software Training: Old/Advanced](https://github.com/RoboJackets/software-training-old) *Feel free to watch the videos or do the projects in the old software training if you want to support you knowledge on ROS2, C++, or Robotics Theory*
 * [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)  
 * [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
 * [Nav2 Documentation](https://navigation.ros.org/)  
