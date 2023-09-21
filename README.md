@@ -39,7 +39,6 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
 
 
 ## Installation Instructions
-
 You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
 - [NoVNC Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Strongly recommended!**
 - [Dual-booted or Native Linux installation](documents/installation/ubuntu_installation.md) *Ask a returning member!*
@@ -50,5 +49,14 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 - [Drone Repository](https://github.com/RoboJackets/urc-drone)
 - [Firmware Repository](https://github.com/RoboJackets/urc-firmware/tree/master)
 
-## Communications
-Join our slack [here!](https://robojackets.slack.com/)
+## Important Links
+[Slack](https://robojackets.slack.com/)
+[Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)
+[Software Training 2023](https://github.com/RoboJackets/software-training)
+- Be sure to understand the content in this tuturial if you are a new member.
+[Software Training: Old/Advanced](https://github.com/RoboJackets/software-training-old)
+- Feel free to watch the videos or do the projects in the old software training if you want to support you knowledge on ROS2, C++, or Robotics Theory.
+[ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)
+[MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)
+[Nav2 Documentation](https://navigation.ros.org/)
+[ROS2 Documentation](https://control.ros.org/master/index.html)
