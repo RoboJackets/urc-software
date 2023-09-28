@@ -57,5 +57,5 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 * [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)  
 * [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
 * [Nav2 Documentation](https://navigation.ros.org/)  
-* [ROS2 Documentation](https://control.ros.org/master/index.html)  
+* [ROS2 Control Documentation](https://control.ros.org/master/index.html)  
   
