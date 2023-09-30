@@ -21,18 +21,19 @@ export const Statuses = (props: StatusesProps) => {
   );
   const [lastTimestamp, setLastTimestamp] = useState(0);
 
-  // ROSBRIDGE CONNECTION STATUS
+  // Rosbridge Status
   props.ROS.on("connection", () => setBridgeStatus(StatusColors.GREEN));
   props.ROS.on("error", () => setBridgeStatus(StatusColors.YELLOW));
   props.ROS.on("close", () => setBridgeStatus(StatusColors.RED));
 
-  // ROBOT CONNECTION STATUS
+  // Heartbeat Topic
   const heartbeatTopic = new ROSLIB.Topic({
     ros: props.ROS,
     name: "/heartbeat",
     messageType: "builtin_interfaces/msg/Time",
   });
 
+  // Subscribe to heartbeat topic
   useEffect(() => {
     heartbeatTopic.subscribe((message: any) => {
       setLastTimestamp(message.stamp.sec);

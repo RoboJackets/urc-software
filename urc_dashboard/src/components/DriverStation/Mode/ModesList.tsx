@@ -14,6 +14,7 @@ export const ModesList = (props: ModesListProps) => {
   const topicName = props.mode.topicName;
   const messageType = props.mode.messageType;
 
+  // Mode Specific Topic
   const topic = new ROSLIB.Topic({
     ros: props.ROS,
     name: topicName,

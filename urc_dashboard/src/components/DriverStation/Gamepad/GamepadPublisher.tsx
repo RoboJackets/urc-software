@@ -19,6 +19,7 @@ export const GamepadPublisher = (props: GamepadPublisherProps) => {
     messageType: "sensor_msgs/msg/Joy",
   });
 
+  // Helper Functions
   const inputDeadzone = (num: number, deadzone: number) => {
     return Math.abs(num) < deadzone ? 0 : num;
   };
@@ -40,6 +41,7 @@ export const GamepadPublisher = (props: GamepadPublisherProps) => {
     return nonzero;
   };
 
+  // Publish Movement Method
   const publishMovementInput = (gamepad: Gamepad, topic: ROSLIB.Topic) => {
     let joy_msg = new ROSLIB.Message({
       axes: [
@@ -60,6 +62,7 @@ export const GamepadPublisher = (props: GamepadPublisherProps) => {
     topic.publish(joy_msg);
   };
 
+  // Publish Gamepad Movement Every 100ms
   setInterval(() => {
     const driveGamepad = navigator.getGamepads()[props.driverGamepadIdx];
     const armGamepad = navigator.getGamepads()[props.armGamepadIdx];
