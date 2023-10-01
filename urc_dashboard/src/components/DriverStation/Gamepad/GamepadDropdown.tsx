@@ -8,6 +8,8 @@ export const GamepadDropdown = (props: GamepadDropdownProps) => {
   const gamepadAlias: Record<string, string> = {
     "Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)":
       "PS5 Controller",
+    "Xbox Series X Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b12)":
+      "Xbox X Controller",
   };
 
   return (
