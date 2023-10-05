@@ -33,7 +33,7 @@ function publishMovementInput(gamepad) {
             inputDeadzone(gamepad.axes[1], 0.02),
             0.0,
             0.0,
-            inputDeadzone(gamepad.axes[3], 0.02)
+            inputDeadzone(gamepad.axes[4], 0.02)
         ],
         buttons: [
             gamepad.buttons[0].pressed ? 1 : 0,
