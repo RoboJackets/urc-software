@@ -26,3 +26,12 @@ Consists of three main components:
 - We need to have two different plugins, one for the real robot and another for gazebo
 
 
+# Instructions for Starting ROS2 Control (for now, requires commenting out the arm version)
+1. Start the simulation with `ros2 launch urc_gazebo simulation.launch.py`
+2. (Optional) Check the available hardware interfaces with `ros2 control list_hardware_interfaces`
+3. Start the controller manager for diff_cont: `ros2 run controller_manager spawner diff_cont`
+4. Start the controller manager for joint_broad: `ros2 run controller_manager spawner joint_broad`
+5. Start the teleop_twist_keyboard node and remap topics: `ros2 run teleop_twist_keyboard teleop_twist_keyboard  --ros-args -r /cmd_vel:=/diff_cont/cmd_vel_unstamped`
+6. (Optional) If you want to confirm that messages are being correctly published to `/diff_cont/cmd_vel_unstamped`, then run `ros2 topic echo /diff_cont/cmd_vel_unstamped`
+7. Press keys on the keyboard WITHIN the terminal that you started `teleop_twist_keyboard` in order to control the rover in Gazebo
+

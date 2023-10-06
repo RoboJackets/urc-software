@@ -310,15 +310,15 @@
     <implicitSpringDamper>true</implicitSpringDamper>
   </gazebo>
   
-  <ros2_control name="arm_control" type="system">
-    <hardware>
+  <!-- <ros2_control name="arm_control" type="system">
+    <hardware> -->
       <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
       <!--Use for functionality in Gazebo-->
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      <!-- <plugin>gazebo_ros2_control/GazeboSystem</plugin> -->
       <!--Use for functionality in RViz-->
       <!-- <plugin>mock_components/GenericSystem</plugin> -->
-      <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin>
-    </hardware>
+      <!-- <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin> -->
+    <!-- </hardware>
 
       <joint name ="shoulderjoint">
         <command_interface name="position" />
@@ -395,6 +395,6 @@
       <plugin name ="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
         <parameters>file://$(find urc_gazebo)/urdf/config/RoboticArm_params.yaml</parameters>
       </plugin>
-    </gazebo>
+    </gazebo> -->
 
 </robot>

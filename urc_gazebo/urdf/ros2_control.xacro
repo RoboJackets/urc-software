@@ -57,7 +57,7 @@
     </ros2_control>
 
     <gazebo>
-        <plugin name="gazebo_ros2_control/user" filename="libgazebo_ros2_control.so">
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
             <parameters>$(find urc_gazebo)/config/my_controllers.yaml</parameters>
         </plugin>
     </gazebo>
