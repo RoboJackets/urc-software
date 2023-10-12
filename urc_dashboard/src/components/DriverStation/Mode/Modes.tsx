@@ -15,7 +15,7 @@ export interface Mode {
 
 export const Modes = (props: ModesProps) => {
   const [controlIdx, setControlIdx] = useState<number>(0);
-  const [toggleIdx, setToggleIdx] = useState<number>(0);
+  const [toggleIdx, setToggleIdx] = useState<number>(1);
 
   const modes: Record<string, Mode> = {
     controls: {
