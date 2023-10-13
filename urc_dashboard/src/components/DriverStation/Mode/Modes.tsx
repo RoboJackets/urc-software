@@ -33,6 +33,17 @@ export const Modes = (props: ModesProps) => {
       messageType: "std_msgs/Bool",
     },
   };
+
+  document.addEventListener('keydown', function (event) {
+    // console.log(`Key: ${event.key} with keycode ${event.keyCode} has been pressed`);
+    if (event.key === " ") {
+      setToggleIdx(1);
+    }
+    if (event.key === "Enter" && event.ctrlKey && event.shiftKey) {
+      setToggleIdx(0);
+    };
+  });
+
   return (
     <div className="flex gap-2">
       <div className="card">

@@ -13,7 +13,7 @@ Install the dependencies:
 npm install
 ```
 
-Follow the instructions in urc_teleop package to launch Foxglove, and the websocket.
+Follow the instructions in [`urc_teleop`](../urc_teleop/README.md) package to launch Foxglove, and the websocket.
 
 Run the server:
 
@@ -21,4 +21,10 @@ Run the server:
 npm start
 ```
 
-This will start an application on localhost:3000
+This will start an application on `localhost:3000`
+
+---
+
+# Keyboard Shortcuts
+1. **Enable**: Control + Shift + Enter
+2. **Disable**: Spacebar
