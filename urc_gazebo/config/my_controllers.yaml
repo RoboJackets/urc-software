@@ -19,13 +19,13 @@ diff_cont:
     left_wheel_names: ['left_front_wheel_joint', 'left_center_wheel_joint', 'left_rear_wheel_joint']
     right_wheel_names: ['right_front_wheel_joint', 'right_center_wheel_joint', 'right_rear_wheel_joint']
     wheel_separation: 0.05
-    wheel_radius: 0.05
+    wheel_radius: 0.03
 
     use_stamped_vel: false
 
     # open_loop: false    
 
-    # wheels_per_side: x
+    wheels_per_side: 3
     # wheel_separation_multiplier: x
     # left_wheel_radius_multiplier: x
     # right_wheel_radius_multiplier: x

@@ -3,7 +3,7 @@
   <xacro:include filename="walli_prop.xacro"/>
   <xacro:include filename="walli_inertials.xacro"/>
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
-  <xacro:include filename="walli_arm.urdf"/>
+  <!-- <xacro:include filename="walli_arm.urdf"/> -->
   <xacro:include filename="ros2_control.xacro"/>
 
   
@@ -33,7 +33,7 @@
   <xacro:macro name="wheel" params="prefix x_reflect y_reflect">
     <link name="${prefix}_link">
       <visual>
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <!-- <origin xyz="0 0 0" rpy="${y_reflect * pi/2} 0 0" /> -->
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
@@ -42,7 +42,7 @@
         </material>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <!-- <origin xyz="0 0 0" rpy="${y_reflect * pi/2} 0 0"/> -->
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
@@ -52,10 +52,10 @@
     <joint name="${prefix}_joint" type="continuous">
       <parent link="base_link"/>
       <child link="${prefix}_link"/>
-      <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="0 0 0"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
-      <dynamics damping="0" friction="4.0" />
+      <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="${pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <!-- <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
+      <dynamics damping="0" friction="4.0" /> -->
     </joint>
     <gazebo reference="${prefix}_link">
       <material>Gazebo/Black</material>
@@ -76,13 +76,6 @@
     <origin xyz="0.0 0.0 ${-(wheel_radius+wheel_zoff)}" rpy="0 0 0"/>
   </joint>
   
-  <!-- Arm Joint -->
-  <joint name="arm_to_rover" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="arm_base_link"/>
-    <dynamics damping="60.0" friction="4.0"/>
-  </joint>
 
   <!-- IMU -->
   <link name="imu_link">
