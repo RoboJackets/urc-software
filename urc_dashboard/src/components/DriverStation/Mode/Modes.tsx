@@ -34,10 +34,13 @@ export const Modes = (props: ModesProps) => {
     },
   };
   return (
-    <div className="card">
-      <div className="card-title">Modes</div>
-      <div className="flex gap-2">
+    <div className="flex gap-2">
+      <div className="card">
+        <div className="card-title">Mode</div>
         <ModesList mode={modes.controls} ROS={props.ROS} />
+      </div>
+      <div className="card">
+        <div className="card-title">State</div>
         <ModesList mode={modes.toggle} ROS={props.ROS} />
       </div>
     </div>

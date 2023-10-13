@@ -7,12 +7,12 @@ interface ModesOptionProps {
 
 export const ModesOption = (props: ModesOptionProps) => {
   let styling =
-    "w-full whitespace-nowrap p-2 hover:cursor-pointer text-center rounded-md text-neutral-400 hover:text-white";
+    "w-full whitespace-nowrap p-2 text-center rounded-md text-neutral-400 select-none";
   return (
     <div
       className={
         styling +
-        (props.idx === props.curIdx ? " bg-neutral-700 text-white" : "")
+        (props.idx === props.curIdx ? " bg-neutral-700 text-white" : " hover:cursor-pointer hover:bg-slate-50 hover:text-white")
       }
       onClick={() => props.updateIdx(props.idx)}
     >
