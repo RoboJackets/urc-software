@@ -34,14 +34,14 @@ export const Modes = (props: ModesProps) => {
     },
   };
 
-  document.addEventListener('keydown', function (event) {
+  document.addEventListener("keydown", function (event) {
     // console.log(`Key: ${event.key} with keycode ${event.keyCode} has been pressed`);
     if (event.key === " ") {
       setToggleIdx(1);
     }
     if (event.key === "Enter" && event.ctrlKey && event.shiftKey) {
       setToggleIdx(0);
-    };
+    }
   });
 
   return (

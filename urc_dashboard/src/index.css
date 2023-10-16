@@ -7,9 +7,34 @@ body {
 }
 
 .card-title {
+  @apply text-center font-bold text-lg;
+}
+
+.card-subtitle {
   @apply text-center font-bold text-base;
 }
 
 .card {
   @apply border border-neutral-700 rounded-lg p-2 flex h-min gap-2 flex-col w-min;
+}
+
+.leaflet-container {
+  @apply h-[30vw] w-[30vw] rounded-md;
+}
+
+.waypoint-marker {
+  @apply p-2 bg-yellow-500 rounded-sm shadow-black shadow-lg border-gray-200 border-2;
+}
+
+.robot-marker {
+  @apply p-2 bg-green-500 rounded-sm shadow-black shadow-lg border-gray-200 border-2;
+}
+
+.marker-content {
+  transform: translate(-0.25vw, -50%);
+  /* not centered in the marker rn */
+}
+
+input {
+  @apply bg-neutral-800 border-none rounded-md outline-none p-2 w-20 text-center placeholder:text-neutral-400;
 }

@@ -50,7 +50,7 @@ export const Statuses = (props: StatusesProps) => {
 
   return (
     <div className="card">
-      <div className="card-title">Status</div>
+      <div className="card-subtitle">Status</div>
       <Status value="Rosbridge" color={bridgeStatus} />
       <Status value="Robot" color={robotStatus} />
     </div>
