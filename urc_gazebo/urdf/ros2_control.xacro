@@ -59,8 +59,6 @@
             <state_interface name="velocity"/>
             <state_interface name="position"/>
         </joint>
-
-<!-- 
       <joint name ="shoulderjoint">
         <command_interface name="position" />
         <state_interface name="position">
@@ -129,7 +127,7 @@
         </state_interface>
         <state_interface name="velocity"/>
         <state_interface name="effort"/>
-      </joint> -->
+      </joint>
     </ros2_control>
 
     <gazebo>
