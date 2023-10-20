@@ -1,4 +1,4 @@
-# URC Aruco
+# URC Perception
 
 This package is a collection of nodes focused on detecting and mapping ARUCO tags.
 
