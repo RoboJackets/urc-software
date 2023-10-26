@@ -5,4 +5,4 @@
 *.css linguist-detectable=false
 
 # Exclude vendor libraries from stats
-urc_teleop/gui/js/WebViewer/** linguist-vendored
+urc_dashboard/gui/js/WebViewer/** linguist-vendored

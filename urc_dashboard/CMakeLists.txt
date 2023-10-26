@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(urc_teleop)
+project(urc_dashboard)
 
 include(../cmake/default_settings.cmake)
 
