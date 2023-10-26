@@ -1,16 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Map } from "./Map";
 import { Waypoints } from "./Waypoints/Waypoints";
 import { Waypoint } from "./Waypoints/WaypointInterface";
 import { Odometry } from "./Odometry/Odometry";
-
-export const Navigation = () => {
+import ROSLIB from "roslib";
+interface NavigationPrpos {
+  ROS: ROSLIB.Ros;
+}
+export const Navigation = (props: NavigationPrpos) => {
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [odometry, setOdometry] = useState<Odometry>({ lat: 0, lng: 0 });
 
-  // TODO: subscribe to odometry ROS topic.
+  const odometryTopic = new ROSLIB.Topic({
+    ros: props.ROS,
+    name: "add_topic_name_here",
+    messageType: "add_topic_type_here",
+  });
 
-  // TODO: publish to waypoints ROS topic.
+  useEffect(() => {
+    odometryTopic.subscribe((message: any) => {
+      setOdometry(message);
+    });
+  });
 
   const addWaypoint = (newWaypoint: Waypoint) => {
     setWaypoints((prevWaypoints) => [...prevWaypoints, newWaypoint]);

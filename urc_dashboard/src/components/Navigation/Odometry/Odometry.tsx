@@ -7,7 +7,6 @@ interface OdometryProps {
 }
 
 export const Odometry = (props: OdometryProps) => {
-  const d = "0";
   return (
     <div className="card">
       <div className="card-subtitle">Odometry</div>
