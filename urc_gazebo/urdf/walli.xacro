@@ -30,10 +30,10 @@
   
 
   <!-- Wheels -->
-  <xacro:macro name="wheel" params="prefix x_reflect y_reflect">
+  <xacro:macro name="wheel" params="prefix x_reflect y_reflect z_reflect">
     <link name="${prefix}_link">
       <visual>
-        <!-- <origin xyz="0 0 0" rpy="${y_reflect * pi/2} 0 0" /> -->
+        <origin xyz="0 0 0" rpy="0 0 ${z_reflect * pi}" />
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
@@ -42,7 +42,7 @@
         </material>
       </visual>
       <collision>
-        <!-- <origin xyz="0 0 0" rpy="${y_reflect * pi/2} 0 0"/> -->
+        <origin xyz="0 0 0" rpy="0 0 ${z_reflect * pi}" />
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
@@ -54,19 +54,17 @@
       <child link="${prefix}_link"/>
       <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="${pi/2} 0 0"/>
       <axis xyz="0 0 1"/>
-      <!-- <limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>
-      <dynamics damping="0" friction="4.0" /> -->
     </joint>
     <gazebo reference="${prefix}_link">
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
-  <xacro:wheel prefix="left_front_wheel"   x_reflect="1" y_reflect="1"/>
-  <xacro:wheel prefix="left_center_wheel"  x_reflect="0" y_reflect="1"/>
-  <xacro:wheel prefix="left_rear_wheel"    x_reflect="-1" y_reflect="1"/>
-  <xacro:wheel prefix="right_front_wheel"  x_reflect="1" y_reflect="-1"/>
-  <xacro:wheel prefix="right_center_wheel" x_reflect="0" y_reflect="-1"/>
-  <xacro:wheel prefix="right_rear_wheel"   x_reflect="-1" y_reflect="-1"/>
+  <xacro:wheel prefix="left_front_wheel"   x_reflect="1" y_reflect="1" z_reflect="0"/>
+  <xacro:wheel prefix="left_center_wheel"  x_reflect="0" y_reflect="1" z_reflect="0"/>
+  <xacro:wheel prefix="left_rear_wheel"    x_reflect="-1" y_reflect="1" z_reflect="0"/>
+  <xacro:wheel prefix="right_front_wheel"  x_reflect="1" y_reflect="-1" z_reflect="1"/>
+  <xacro:wheel prefix="right_center_wheel" x_reflect="0" y_reflect="-1" z_reflect="1"/>
+  <xacro:wheel prefix="right_rear_wheel"   x_reflect="-1" y_reflect="-1" z_reflect="1"/>
 
   <!-- Robot Footprint -->
   <link name="base_footprint"/>

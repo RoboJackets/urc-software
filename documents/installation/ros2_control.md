@@ -8,8 +8,12 @@
 ### ros2_control Component
 Consists of three main components:
 - Diff Drive Controller
-- Controller Manager
-- Hardware Interface
+- Controller Manager (connects the controllers and hardware-abstraction sides of the ros2_control framewor)
+- Hardware Interface (are used by ROS control in conjunction with one of the available ROS controllers to send (hardware_interface::RobotHW::write) commands to the hardware and receive (hardware_interface::RobotHW::read) states from the robot's resources (joints, sensors, actuators))
+<br></br>
+**Diagram:**
+
+![ROS2_Control_Diagram](https://control.ros.org/master/_images/components_architecture.png "ROS2 Control Diagram")
 
 - Diff Drive controller converts command velocities into req. motor velocities 
 - Hardware interface converts abstract wheel velocity into motor hardware commands
@@ -28,10 +32,10 @@ Consists of three main components:
 
 # Instructions for Starting ROS2 Control (for now, requires commenting out the arm version)
 1. Start the simulation with `ros2 launch urc_gazebo simulation.launch.py`
-2. (Optional) Check the available hardware interfaces with `ros2 control list_hardware_interfaces`
-3. Start the controller manager for diff_cont: `ros2 run controller_manager spawner diff_cont`
-4. Start the controller manager for joint_broad: `ros2 run controller_manager spawner joint_broad`
-5. Start the teleop_twist_keyboard node and remap topics: `ros2 run teleop_twist_keyboard teleop_twist_keyboard  --ros-args -r /cmd_vel:=/diff_cont/cmd_vel_unstamped`
+2. (Optional) Check the available hardware interfaces with `ros2 control list_hardware_interfaces` (will allow you to see the fake hardware interfaces provided by ROS2 Control to be used on the simulation rover)
+3. Start the controller manager for diff_cont: `ros2 run controller_manager spawner diff_cont` to connect between the fake simulation hardware and the controls (keyboard and controller)
+4. Start the controller manager for joint_broad: `ros2 run controller_manager spawner joint_broad` (doing the same for the joint broadcaster instead of the diff drive controller)
+5. Start the teleop_twist_keyboard node and remap topics: `ros2 run teleop_twist_keyboard teleop_twist_keyboard  --ros-args -r /cmd_vel:=/diff_cont/cmd_vel_unstamped` (should allow you to publish twist messages - angle and velocity - to diff_cont/cmd_vel_unstamped).
 6. (Optional) If you want to confirm that messages are being correctly published to `/diff_cont/cmd_vel_unstamped`, then run `ros2 topic echo /diff_cont/cmd_vel_unstamped`
 7. Press keys on the keyboard WITHIN the terminal that you started `teleop_twist_keyboard` in order to control the rover in Gazebo
 
