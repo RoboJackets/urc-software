@@ -39,3 +39,11 @@ Consists of three main components:
 6. (Optional) If you want to confirm that messages are being correctly published to `/diff_cont/cmd_vel_unstamped`, then run `ros2 topic echo /diff_cont/cmd_vel_unstamped`
 7. Press keys on the keyboard WITHIN the terminal that you started `teleop_twist_keyboard` in order to control the rover in Gazebo
 
+# Using a Joystick
+- Use the same set of instructions, until and including step 4.
+- Run `sudo modprobe xpad` for controller setup.
+- Run `ros2 launch teleop_twist_joy teleop-launch.py joy_config:='xbox'` to get the controller listener running.
+- Then, run `ros2 run teleop_twist_joy teleop_node --ros-args -r  /cmd_vel:=/diff_cont/cmd_vel_unstamped` to convert /joy messages to /cmd_vel and remap to the proper topic
+- Use the controller bumpers to move the rover
+**We need better controls than this, we need to redo the controller listener.**
+
