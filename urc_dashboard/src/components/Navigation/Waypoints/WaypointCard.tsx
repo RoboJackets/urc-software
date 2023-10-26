@@ -1,7 +1,7 @@
-import { Waypoint } from "./WaypointInterface";
+import { Coordinate } from "../CoordinateInterface";
 
 interface WaypointCardProps {
-  waypoint: Waypoint;
+  waypoint: Coordinate;
   deleteWaypoint: (id: number) => void;
 }
 

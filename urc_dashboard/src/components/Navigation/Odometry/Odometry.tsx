@@ -1,9 +1,7 @@
-export interface Odometry {
-  lat: number;
-  lng: number;
-}
+import { Coordinate } from "../CoordinateInterface";
+
 interface OdometryProps {
-  odometry: Odometry;
+  odometry: Coordinate;
 }
 
 export const Odometry = (props: OdometryProps) => {

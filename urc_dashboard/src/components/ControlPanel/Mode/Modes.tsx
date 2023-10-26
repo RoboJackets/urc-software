@@ -35,7 +35,6 @@ export const Modes = (props: ModesProps) => {
   };
 
   document.addEventListener("keydown", function (event) {
-    // console.log(`Key: ${event.key} with keycode ${event.keyCode} has been pressed`);
     if (event.key === " ") {
       setToggleIdx(1);
     }

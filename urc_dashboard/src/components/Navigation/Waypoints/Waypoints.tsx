@@ -1,10 +1,10 @@
 import { AddWaypoint } from "./AddWaypoint";
 import { WaypointCard } from "./WaypointCard";
-import { Waypoint } from "./WaypointInterface";
+import { Coordinate } from "../CoordinateInterface";
 
 interface WaypointsProps {
-  waypoints: Waypoint[];
-  addWaypoint: (waypoint: Waypoint) => void;
+  waypoints: Coordinate[];
+  addWaypoint: (waypoint: Coordinate) => void;
   deleteWaypoint: (id: number) => void;
 }
 

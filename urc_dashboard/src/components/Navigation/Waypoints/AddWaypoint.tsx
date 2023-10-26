@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Waypoint } from "./WaypointInterface";
+import { Coordinate } from "../CoordinateInterface";
 
 interface AddWaypointProps {
-  addWaypoint: (waypoint: Waypoint) => void;
+  addWaypoint: (waypoint: Coordinate) => void;
 }
 
 export const AddWaypoint = (props: AddWaypointProps) => {

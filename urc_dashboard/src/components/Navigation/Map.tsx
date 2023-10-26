@@ -3,12 +3,11 @@ import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
 import { useState } from "react";
-import { Waypoint } from "./Waypoints/WaypointInterface";
-import { Odometry } from "./Odometry/Odometry";
+import { Coordinate } from "./CoordinateInterface";
 
 interface MapProps {
-  waypoints: Waypoint[];
-  odometry: Odometry;
+  waypoints: Coordinate[];
+  odometry: Coordinate;
 }
 export const Map = (props: MapProps) => {
   const [status, setStatus] = useState(true);
@@ -19,7 +18,7 @@ export const Map = (props: MapProps) => {
   const lat: number = 0;
   const lng: number = 0;
 
-  const createCustomIcon = (waypoint: Waypoint) => {
+  const createCustomIcon = (waypoint: Coordinate) => {
     return L.divIcon({
       className: "waypoint-marker",
       html: `<div class="marker-content">${waypoint.id}</div>`,

@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 import { Map } from "./Map";
 import { Waypoints } from "./Waypoints/Waypoints";
-import { Waypoint } from "./Waypoints/WaypointInterface";
+import { Coordinate } from "./CoordinateInterface";
 import { Odometry } from "./Odometry/Odometry";
 import ROSLIB from "roslib";
 interface NavigationPrpos {
   ROS: ROSLIB.Ros;
 }
 export const Navigation = (props: NavigationPrpos) => {
-  const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
-  const [odometry, setOdometry] = useState<Odometry>({ lat: 0, lng: 0 });
+  const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
+  const [odometry, setOdometry] = useState<Coordinate>({
+    lat: 0,
+    lng: 0,
+    id: -1,
+  });
 
   const odometryTopic = new ROSLIB.Topic({
     ros: props.ROS,
-    name: "add_topic_name_here",
-    messageType: "add_topic_type_here",
+    name: "/odometry",
+    messageType: "nav_msgs/Odometry",
   });
 
   useEffect(() => {
@@ -23,7 +27,7 @@ export const Navigation = (props: NavigationPrpos) => {
     });
   });
 
-  const addWaypoint = (newWaypoint: Waypoint) => {
+  const addWaypoint = (newWaypoint: Coordinate) => {
     setWaypoints((prevWaypoints) => [...prevWaypoints, newWaypoint]);
   };
 
