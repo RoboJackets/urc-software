@@ -10,8 +10,8 @@ interface NavigationPrpos {
 export const Navigation = (props: NavigationPrpos) => {
   const [waypoints, setWaypoints] = useState<Coordinate[]>([]);
   const [odometry, setOdometry] = useState<Coordinate>({
-    lat: 0,
-    lng: 0,
+    lat: 38.409,
+    lng: -110.7917,
     id: -1,
   });
 

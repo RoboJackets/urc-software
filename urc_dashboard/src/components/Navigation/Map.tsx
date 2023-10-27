@@ -15,8 +15,8 @@ export const Map = (props: MapProps) => {
   const toggleStatus = () => {
     setStatus(!status);
   };
-  const lat: number = 0;
-  const lng: number = 0;
+  const lat: number = 38.409;
+  const lng: number = -110.7917;
 
   const createCustomIcon = (waypoint: Coordinate) => {
     return L.divIcon({
@@ -33,10 +33,10 @@ export const Map = (props: MapProps) => {
     <div className=" card">
       <MapContainer
         center={[lat, lng]}
-        zoom={2}
+        zoom={11}
         maxBounds={[
-          [lat, lng],
-          [lat, lng],
+          [38.48, -110.87],
+          [38.33, -110.71],
         ]}
       >
         {props.waypoints.map((waypoint) => (
@@ -55,7 +55,7 @@ export const Map = (props: MapProps) => {
         {status ? (
           <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
         ) : (
-          <TileLayer url="/static/map/{y}.png" errorTileUrl="error" />
+          <TileLayer url="/static/map/{z}/{x}/{y}.png" errorTileUrl="error" />
         )}
       </MapContainer>
       <button
