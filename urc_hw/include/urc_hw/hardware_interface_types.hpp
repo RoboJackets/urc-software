@@ -3,18 +3,18 @@
 namespace urc_hardware::types
 {
 // kinematics & dynamics
-constexpr char HW_IF_POSITION[] = "position";
-constexpr char HW_IF_VELOCITY[] = "velocity";
-constexpr char HW_IF_ACCELERATION[] = "acceleration";
-constexpr char HW_IF_EFFORT[] = "effort";
+constexpr char HW_POSITION[] = "position";
+constexpr char HW_VELOCITY[] = "velocity";
+constexpr char HW_ACCELERATION[] = "acceleration";
+constexpr char HW_EFFORT[] = "effort";
+
+// signals
+constexpr char HW_CMD[] = "command";
 
 // measurement values
-constexpr char HW_IF_CURRENT[] = "current";
-constexpr char HW_IF_VOLTAGE[] = "voltage";
-constexpr char HW_IF_TEMERATURE[] = "temperature";
+constexpr char HW_SCALAR_MEASUREMENT[] = "scalar_measurement";
 
 // control flags & status
-constexpr char HW_IF_GENERAL_STATUS[] = "general_status";
-constexpr char HW_IF_CONTROL_FLAG[] = "control_flag";
+constexpr char HW_FLAG[] = "flag";
 
 }  // namespace urc_hardware::types

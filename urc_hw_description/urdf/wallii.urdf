@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot name="wallii" xmlns:xacro="http://ros.org/wiki/xacro">
+    <ros2_control name="wallii" type="system">
+        <hardware>
+            <plugin>urc_hw/TestHardware</plugin>
+            <param name="serial_port">/dev/ttyACM0</param>
+        </hardware>
+        <joint name="base">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="primary">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="end_effector">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="gripper">
+            <command_interface name="position" />
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+        </joint>
+
+        <sensor name="battery">
+            <state_interface name="scalar_measurement" />
+        </sensor>
+        <sensor name="imu">
+            <state_interface name="scalar_measurement" />
+            <state_interface name="scalar_measurement" />
+            <state_interface name="scalar_measurement" />
+            <state_interface name="scalar_measurement" />
+        </sensor>
+
+        <gpio name="status_indication">
+            <state_interface name="command" />
+        </gpio>
+    </ros2_control>
+</robot>

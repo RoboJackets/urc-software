@@ -17,9 +17,12 @@ add_library(
     urc_hw
     SHARED
     src/hardware/eth.cpp
+    src/hardware/serial.cpp
     src/hardware_interfaces/test_hardware.cpp
     include/urc_hw/hardware/eth.hpp
+    include/urc_hw/hardware/serial.hpp
     include/urc_hw/hardware_interfaces/test_hardware.hpp
+    include/urc_hw/hardware_interface_types.hpp
 )
 
 target_compile_features(urc_hw PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
@@ -36,6 +39,7 @@ ament_target_dependencies(
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
 target_compile_definitions(urc_hw PRIVATE "urc_hw_BUILDING_LIBRARY")
+pluginlib_export_plugin_description_file(hardware_interface urc_hw.xml)
 
 install(
     DIRECTORY include/
