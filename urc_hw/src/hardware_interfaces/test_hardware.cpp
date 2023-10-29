@@ -191,6 +191,7 @@ hardware_interface::CallbackReturn TestHardware::on_activate(const rclcpp_lifecy
   //   return hardware_interface::CallbackReturn::ERROR;
   // }
   // eth_ = std::make_shared<hardware::EthernetSocket>("127.0.0.1", std::stoi(ethernet_port_name));
+  status_light_cmd = 0.0;
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware started");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -216,8 +217,7 @@ hardware_interface::return_type TestHardware::write(const rclcpp::Time&, const r
   packet.status_light_command = static_cast<int>(status_light_cmd);
   std::cout << packet.status_light_command << std::endl;
   std::string message = packet.encode();
-  // this->eth_->sendMessage(message.c_str(), sizeof(message));
-  // std::cout << message.c_str() << "  " << sizeof(message) << std::endl;
+  this->eth_->sendMessage(, sizeof(message));
   return hardware_interface::return_type::OK;
 }
 

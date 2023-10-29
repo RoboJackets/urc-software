@@ -14,6 +14,8 @@
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
 #include <rclcpp_lifecycle/state.hpp>
+#include "std_msgs/msg/float32.hpp"
+#include <std_msgs/msg/detail/float32__struct.hpp>
 #include <vector>
 
 #include "pluginlib/class_list_macros.hpp"
@@ -53,10 +55,9 @@ controller_interface::CallbackReturn TestHardwareController::on_configure(const 
 
   RCLCPP_INFO(get_node()->get_logger(), "Start configurations...");
 
-  indication_light_command_subscription_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
-      "/cmd_indication", rclcpp::SystemDefaultsQoS(),
-      [this](const std::shared_ptr<geometry_msgs::msg::Twist> callback) {
-        this->indication_light_command_.writeFromNonRT(std::make_shared<double>(callback->linear.x));
+  indication_light_command_subscription_ = get_node()->create_subscription<std_msgs::msg::Float32>(
+      "/cmd_indication", rclcpp::SystemDefaultsQoS(), [this](const std::shared_ptr<std_msgs::msg::Float32> callback) {
+        this->indication_light_command_.writeFromNonRT(std::make_shared<double>(callback->data));
       });
 
   RCLCPP_INFO(get_node()->get_logger(), "Configuration success!");

@@ -16,6 +16,7 @@
 #include <rclcpp_lifecycle/state.hpp>
 #include "realtime_tools/realtime_tools/realtime_buffer.h"
 #include <geometry_msgs/msg/twist_stamped.hpp>
+#include <std_msgs/msg/detail/float32__struct.hpp>
 #include <string>
 #include <vector>
 
@@ -58,7 +59,7 @@ protected:
 
   // indication light related
   std::string indication_light_name;
-  std::shared_ptr<rclcpp::Subscription<geometry_msgs::msg::Twist>> indication_light_command_subscription_;
+  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Float32>> indication_light_command_subscription_;
   realtime_tools::RealtimeBuffer<std::shared_ptr<double>> indication_light_command_;
 
   // imu related
