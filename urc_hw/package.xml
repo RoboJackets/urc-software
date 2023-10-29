@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>hardware_interface</depend>
+  <depend>urc_util</depend>
   <depend>rclcpp</depend>
   <depend>pluginlib</depend>
 
