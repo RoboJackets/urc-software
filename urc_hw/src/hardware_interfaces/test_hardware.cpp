@@ -102,22 +102,7 @@ hardware_interface::CallbackReturn TestHardware::on_init(const hardware_interfac
   }
 
   // check other sensors & predefined flags
-  if (info_.sensors[0].state_interfaces.size() != 1)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger("TestHardware"),
-                 "Error during initlization: expect 1 state interface (battery voltage)");
-    return hardware_interface::CallbackReturn::ERROR;
-  }
-
-  if (info_.sensors[0].state_interfaces[0].name != urc_hardware::types::HW_SCALAR_MEASUREMENT)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger("TestHardware"),
-                 "Error during initlization: sensor has state interface %s. Expect %s.",
-                 info_.sensors[0].state_interfaces[0].name.c_str(), urc_hardware::types::HW_SCALAR_MEASUREMENT);
-    return hardware_interface::CallbackReturn::ERROR;
-  }
-
-  if (info_.sensors[1].state_interfaces.size() != 4)
+  if (info_.sensors[0].state_interfaces.size() != 4)
   {
     RCLCPP_ERROR(rclcpp::get_logger("TestHardware"),
                  "Error during initlization: expect 4 state interfaces for sensor 2 (imu quaternion readings)");
@@ -169,13 +154,11 @@ std::vector<hardware_interface::StateInterface> TestHardware::export_state_inter
     state_interfaces.emplace_back(component.name, urc_hardware::types::HW_VELOCITY,
                                   &this->test_joint_velocity_states_[i]);
   }
-  state_interfaces.emplace_back(info_.sensors[0].name, urc_hardware::types::HW_SCALAR_MEASUREMENT,
-                                &this->battery_voltage_);
-  for (unsigned long i = 1; i < info_.sensors.size(); ++i)
-  {
-    state_interfaces.emplace_back(info_.sensors[i].name, urc_hardware::types::HW_SCALAR_MEASUREMENT,
-                                  &this->imu_quaternion_readings_[i - 1]);
-  }
+
+  state_interfaces.emplace_back(info_.sensors[1].name, "quaternion.w", &this->imu_quaternion_readings_[0]);
+  state_interfaces.emplace_back(info_.sensors[1].name, "quaternion.x", &this->imu_quaternion_readings_[0]);
+  state_interfaces.emplace_back(info_.sensors[1].name, "quaternion.y", &this->imu_quaternion_readings_[0]);
+  state_interfaces.emplace_back(info_.sensors[1].name, "quaternion.z", &this->imu_quaternion_readings_[0]);
 
   return state_interfaces;
 }

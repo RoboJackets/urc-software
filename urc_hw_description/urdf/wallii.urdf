@@ -26,14 +26,11 @@
             <state_interface name="velocity" />
         </joint>
 
-        <sensor name="battery">
-            <state_interface name="scalar_measurement" />
-        </sensor>
         <sensor name="imu">
-            <state_interface name="scalar_measurement" />
-            <state_interface name="scalar_measurement" />
-            <state_interface name="scalar_measurement" />
-            <state_interface name="scalar_measurement" />
+            <state_interface name="quaternion.w" />
+            <state_interface name="quaternion.x" />
+            <state_interface name="quaternion.y" />
+            <state_interface name="quaternion.z" />
         </sensor>
 
         <gpio name="status_indication">

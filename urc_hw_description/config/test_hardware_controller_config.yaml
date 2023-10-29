@@ -1,0 +1,20 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+  joint_state_controller:s
+    type: joint_state_controller/JointStateController
+  
+  test_hardware_controller:
+    type: urc_controllers/TestHardwareController
+
+test_hardware_controller:
+  ros__parameters:
+    base_joint_name: base
+    primary_joint_name: primary
+    end_effector_joint_name: end_effector
+    gripper_joint_name: gripper
+
+    imu_name: imu
+
+    

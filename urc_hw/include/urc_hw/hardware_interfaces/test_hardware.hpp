@@ -38,7 +38,6 @@ private:
   std::vector<double> test_joint_position_states_;
   std::vector<double> test_joint_velocity_states_;
   std::vector<double> imu_quaternion_readings_;
-  double battery_voltage_;
   // hardware resources
   // std::shared_ptr<std::ostream> out;
   std::string out_header_name;
