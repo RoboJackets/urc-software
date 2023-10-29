@@ -14,7 +14,8 @@ test_hardware_controller:
     primary_joint_name: primary
     end_effector_joint_name: end_effector
     gripper_joint_name: gripper
-
+    
+    indication_light_name: indication
     imu_name: imu
 
     

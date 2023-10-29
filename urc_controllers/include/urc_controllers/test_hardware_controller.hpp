@@ -5,6 +5,7 @@
 #include <controller_interface/controller_interface.hpp>
 #include <functional>
 #include <geometry_msgs/msg/detail/quaternion__struct.hpp>
+#include <geometry_msgs/msg/detail/twist__struct.hpp>
 #include <hardware_interface/handle.hpp>
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <memory>
@@ -56,7 +57,7 @@ protected:
 
   // indication light related
   std::string indication_light_name;
-  std::shared_ptr<rclcpp::Subscription<double>> indication_light_command_subscription_;
+  std::shared_ptr<rclcpp::Subscription<geometry_msgs::msg::Twist>> indication_light_command_subscription_;
   realtime_tools::RealtimeBuffer<std::shared_ptr<double>> indication_light_command_;
 
   // imu related

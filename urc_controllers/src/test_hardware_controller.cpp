@@ -6,8 +6,10 @@
 #include <controller_interface/controller_interface.hpp>
 #include <controller_interface/controller_interface_base.hpp>
 #include <functional>
+#include <geometry_msgs/msg/detail/twist__struct.hpp>
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <memory>
+#include <ostream>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
@@ -43,21 +45,23 @@ controller_interface::CallbackReturn TestHardwareController::on_configure(const 
   imu_name = get_node()->get_parameter("imu_name").as_string();
 
   if (base_joint_name.empty() || primary_joint_name.empty() || end_effector_joint_name.empty() ||
-      gripper_joint_name.empty())
+      gripper_joint_name.empty() || indication_light_name.empty() || imu_name.empty())
   {
     RCLCPP_ERROR(get_node()->get_logger(), "Parameter empty.");
     return CallbackReturn::ERROR;
   }
 
-  indication_light_command_subscription_ = get_node()->create_subscription<double>(
-      "/cmd_indication", rclcpp::SystemDefaultsQoS(),
-      [this](const std::shared_ptr<double> callback) { indication_light_command_.writeFromNonRT(callback); });
+  RCLCPP_INFO(get_node()->get_logger(), "Start configurations...");
+
+  indication_light_command_subscription_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
+      "/cmd_indication", rclcpp::SystemDefaultsQoS(), [this](const std::shared_ptr<geometry_msgs::msg::Twist>) { ; });
+
+  RCLCPP_INFO(get_node()->get_logger(), "Configuration success!");
   return CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn TestHardwareController::on_activate(const rclcpp_lifecycle::State&)
 {
-  indication_light_command_.writeFromNonRT(std::make_shared<double>(0.0));
   for (auto& interface : command_interfaces_)
   {
     if (command_interface_map_.find(interface.get_interface_name()) == command_interface_map_.end())
@@ -104,7 +108,7 @@ controller_interface::InterfaceConfiguration TestHardwareController::command_int
   controller_interface::InterfaceConfiguration command_interfaces_configuration;
   command_interfaces_configuration.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  RCLCPP_INFO(get_node()->get_logger(), "Configuring TestHardwarweController...");
+  RCLCPP_INFO(get_node()->get_logger(), "Exporting command interface configurations..");
 
   command_interfaces_configuration.names.push_back(base_joint_name + "/" + urc_hardware::types::HW_POSITION);
   command_interfaces_configuration.names.push_back(primary_joint_name + "/" + urc_hardware::types::HW_POSITION);
@@ -112,6 +116,7 @@ controller_interface::InterfaceConfiguration TestHardwareController::command_int
   command_interfaces_configuration.names.push_back(gripper_joint_name + "/" + urc_hardware::types::HW_POSITION);
 
   command_interfaces_configuration.names.push_back(indication_light_name + "/" + urc_hardware::types::HW_CMD);
+  command_interfaces_configuration.names.push_back("indication/command");
 
   return command_interfaces_configuration;
 }
