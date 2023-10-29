@@ -1,10 +1,10 @@
 <library path="urc_controllers">
-    <class name="urc_controller/TestHardwareController"
-        type="debict::mecanumbot::controller::MecanumbotDriveController"
+    <class name="urc_controllers/TestHardwareController"
+        type="urc_controllers::TestHardwareController"
         base_class_type="controller_interface::ControllerInterface"
     >
         <description>
-            Drive controller for mecanumbot
+            Test hardware controller
         </description>
     </class>
 </library>

@@ -14,18 +14,19 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(urc_hw REQUIRED)
+find_package(urc_util REQUIRED)
 
 add_library(
   ${PROJECT_NAME}
   SHARED
   src/test_hardware_controller.cpp
+  include/urc_controllers/test_hardware_controller.hpp
 )
 
-target_include_directories(
-  ${PROJECT_NAME}
-  PRIVATE
-  include
-)
+target_compile_features(urc_controllers PUBLIC c_std_99 cxx_std_17)
+target_include_directories(urc_controllers PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
 
 ament_target_dependencies(
   ${PROJECT_NAME}
@@ -36,10 +37,24 @@ ament_target_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
+  urc_util
 )
 
-# pluginlib_export_plugin_description_file(controller_interface mecanumbot_controller.xml)
+target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
+pluginlib_export_plugin_description_file(controller_interface test_hardware_controller.xml)
 
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+    TARGETS urc_controllers
+    EXPORT export_${PROJECT_NAME}
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 
 ament_export_include_directories(
   include
@@ -54,6 +69,11 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
+  urc_util
+)
+
+ament_export_targets(
+    export_${PROJECT_NAME}
 )
 
 ament_package()

@@ -49,7 +49,7 @@ public:
   Transmit a std::string to the endpoint
   @param[in] msg the string to transmit
   */
-  void sendMessage(char* message, size_t len);
+  void sendMessage(const char* message, size_t len);
 
   /**
   read a message from the UDP connection

@@ -1,12 +1,12 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
+    update_rate: 120
 
-  joint_state_controller:s
-    type: joint_state_controller/JointStateController
-  
-  test_hardware_controller:
-    type: urc_controllers/TestHardwareController
+    joint_state_controller:
+      type: joint_state_controller/JointStateController
+    
+    test_hardware_controller:
+      type: urc_controllers/TestHardwareController
 
 test_hardware_controller:
   ros__parameters:

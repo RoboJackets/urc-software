@@ -14,6 +14,9 @@
 #include <rclcpp_lifecycle/state.hpp>
 #include <vector>
 
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(urc_controllers::TestHardwareController, controller_interface::ControllerInterface);
+
 namespace urc_controllers
 
 {
@@ -54,6 +57,7 @@ controller_interface::CallbackReturn TestHardwareController::on_configure(const 
 
 controller_interface::CallbackReturn TestHardwareController::on_activate(const rclcpp_lifecycle::State&)
 {
+  indication_light_command_.writeFromNonRT(std::make_shared<double>(0.0));
   for (auto& interface : command_interfaces_)
   {
     if (command_interface_map_.find(interface.get_interface_name()) == command_interface_map_.end())

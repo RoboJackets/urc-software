@@ -41,6 +41,8 @@ private:
   // hardware resources
   // std::shared_ptr<std::ostream> out;
   std::string out_header_name;
+  std::string serial_port_name;
+  std::string ethernet_port_name;
   std::shared_ptr<urc_hardware::hardware::EthernetSocket> eth_;
   std::shared_ptr<urc_hardware::hardware::Serial> serial_;
 };

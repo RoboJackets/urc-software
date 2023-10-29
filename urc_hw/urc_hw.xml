@@ -1,10 +1,10 @@
 <library path="urc_hw">
   <class name="urc_hw/TestHardware"
-    type="urc_hw::hardware::MecanumbotHardware"
+    type="urc_hardware::hardware_interfaces::TestHardware"
     base_class_type="hardware_interface::SystemInterface"
   >
     <description>
-        TestHardware
+      TestHardware
     </description>
   </class>
 </library>

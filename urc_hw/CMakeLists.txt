@@ -12,6 +12,7 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(urc_util REQUIRED)
 
 add_library(
     urc_hw
@@ -33,6 +34,7 @@ ament_target_dependencies(
     urc_hw
     "hardware_interface"
     "rclcpp"
+    "urc_util"
     "pluginlib"
 )
 

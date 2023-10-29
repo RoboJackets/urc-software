@@ -31,7 +31,7 @@ EthernetSocket::~EthernetSocket()
   this->sock_->shutdown(ip::udp::socket::shutdown_send);
 }
 
-void EthernetSocket::sendMessage(char* message, size_t len)
+void EthernetSocket::sendMessage(const char* message, size_t len)
 {
   ip::udp::endpoint senderEndpoint(ip::address_v4::broadcast(), 8443);
   this->sock_->send_to(boost::asio::buffer(message, len), senderEndpoint);

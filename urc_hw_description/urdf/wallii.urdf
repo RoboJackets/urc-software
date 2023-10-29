@@ -4,6 +4,8 @@
         <hardware>
             <plugin>urc_hw/TestHardware</plugin>
             <param name="serial_port">/dev/ttyACM0</param>
+            <param name="ethernet_port">5000</param>
+            <param name="out_header">Robojackets</param>
         </hardware>
         <joint name="base">
             <command_interface name="position" />
@@ -34,7 +36,7 @@
         </sensor>
 
         <gpio name="status_indication">
-            <state_interface name="command" />
+            <command_interface name="command" />
         </gpio>
     </ros2_control>
 </robot>
