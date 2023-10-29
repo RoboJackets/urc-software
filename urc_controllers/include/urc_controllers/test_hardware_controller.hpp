@@ -6,6 +6,7 @@
 #include <functional>
 #include <geometry_msgs/msg/detail/quaternion__struct.hpp>
 #include <geometry_msgs/msg/detail/twist__struct.hpp>
+#include <geometry_msgs/msg/detail/twist_stamped__struct.hpp>
 #include <hardware_interface/handle.hpp>
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <memory>

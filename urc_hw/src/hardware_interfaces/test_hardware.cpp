@@ -214,6 +214,7 @@ hardware_interface::return_type TestHardware::write(const rclcpp::Time&, const r
   EthernetStdPacket packet;
   packet.header_message = out_header_name;
   packet.status_light_command = static_cast<int>(status_light_cmd);
+  std::cout << packet.status_light_command << std::endl;
   std::string message = packet.encode();
   // this->eth_->sendMessage(message.c_str(), sizeof(message));
   // std::cout << message.c_str() << "  " << sizeof(message) << std::endl;

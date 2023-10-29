@@ -54,7 +54,10 @@ controller_interface::CallbackReturn TestHardwareController::on_configure(const 
   RCLCPP_INFO(get_node()->get_logger(), "Start configurations...");
 
   indication_light_command_subscription_ = get_node()->create_subscription<geometry_msgs::msg::Twist>(
-      "/cmd_indication", rclcpp::SystemDefaultsQoS(), [this](const std::shared_ptr<geometry_msgs::msg::Twist>) { ; });
+      "/cmd_indication", rclcpp::SystemDefaultsQoS(),
+      [this](const std::shared_ptr<geometry_msgs::msg::Twist> callback) {
+        this->indication_light_command_.writeFromNonRT(std::make_shared<double>(callback->linear.x));
+      });
 
   RCLCPP_INFO(get_node()->get_logger(), "Configuration success!");
   return CallbackReturn::SUCCESS;
@@ -116,8 +119,6 @@ controller_interface::InterfaceConfiguration TestHardwareController::command_int
   command_interfaces_configuration.names.push_back(gripper_joint_name + "/" + urc_hardware::types::HW_POSITION);
 
   command_interfaces_configuration.names.push_back(indication_light_name + "/" + urc_hardware::types::HW_CMD);
-  command_interfaces_configuration.names.push_back("indication/command");
-
   return command_interfaces_configuration;
 }
 
