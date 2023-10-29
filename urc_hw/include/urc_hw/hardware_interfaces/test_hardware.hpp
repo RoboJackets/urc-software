@@ -10,6 +10,7 @@
 #include "hardware_interface/system_interface.hpp"
 #include "urc_hw/hardware/eth.hpp"
 #include "urc_hw/hardware_interface_types.hpp"
+#include <boost/asio/io_service.hpp>
 #include <memory>
 
 namespace urc_hardware::hardware_interfaces

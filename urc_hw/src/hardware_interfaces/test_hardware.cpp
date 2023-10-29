@@ -5,12 +5,11 @@
 #include "urc_hw/hardware/serial.hpp"
 #include <cstdint>
 #include <memory>
+#include <ostream>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <string>
 #include <urc_hw/hardware/eth.hpp>
-#include "urc_hw/protocal/eth_packet.hpp"
-
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::TestHardware, hardware_interface::SystemInterface);
 
@@ -190,7 +189,7 @@ hardware_interface::CallbackReturn TestHardware::on_activate(const rclcpp_lifecy
   //   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware failed to open serial port");
   //   return hardware_interface::CallbackReturn::ERROR;
   // }
-  // eth_ = std::make_shared<hardware::EthernetSocket>("127.0.0.1", std::stoi(ethernet_port_name));
+  eth_ = std::make_shared<hardware::EthernetSocket>("127.0.0.1", std::stoi(ethernet_port_name));
   status_light_cmd = 0.0;
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware started");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -200,7 +199,7 @@ hardware_interface::CallbackReturn TestHardware::on_deactivate(const rclcpp_life
 {
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware stopping ...");
 
-  // eth_.reset();
+  eth_.reset();
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware stopped");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -212,12 +211,10 @@ hardware_interface::return_type TestHardware::read(const rclcpp::Time&, const rc
 
 hardware_interface::return_type TestHardware::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
-  EthernetStdPacket packet;
-  packet.header_message = out_header_name;
-  packet.status_light_command = static_cast<int>(status_light_cmd);
-  std::cout << packet.status_light_command << std::endl;
-  std::string message = packet.encode();
-  this->eth_->sendMessage(, sizeof(message));
+  std::string message = std::to_string((static_cast<int>(status_light_cmd)));
+  // std::cout << message << std::endl;
+  std::cout << eth_->getIP() << "  " << eth_->getPort() << std::endl;
+  this->eth_->sendMessage(message.c_str(), sizeof(message.c_str()));
   return hardware_interface::return_type::OK;
 }
 
