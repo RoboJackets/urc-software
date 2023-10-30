@@ -1,0 +1,3 @@
+heartbeat_publisher:
+  ros__parameters:
+    heartbeatInterval: 500
