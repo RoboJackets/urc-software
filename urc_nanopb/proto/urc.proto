@@ -1,52 +1,26 @@
 syntax = "proto2";
 
-// Filled out by mbed (server), sent to the ROS node (client)
-message ResponseMessage {
-    optional float p_l = 1;
-    optional float p_r = 2;
-    optional float i_l = 3;
-    optional float i_r = 4;
-    optional float d_l = 5;
-    optional float d_r = 6;
-
-    optional float speed_l = 7;
-    optional float speed_r = 8;
-    optional float dt_sec = 9;
-
-    optional float voltage = 10;
-    optional bool estop = 11;
-
-    optional float kv_l = 12;
-    optional float kv_r = 13;
-
-    // Output sent to motors
-    // Should range from 0 - 255 (ie. uchar)
-    optional uint32 left_output = 14;
-    optional uint32 right_output = 15;
+// Reports the encoder ticks for each arm joint
+message ArmEncodersMessage {
+    required int32 shoulderLiftTicks    = 1;
+    required int32 shouldSwivelTicks    = 2;
+    required int32 elbowLiftTicks       = 3;
+    required int32 elbowSwivelTicks     = 4;
+    required int32 wristLiftTicks       = 5;
+    required int32 wristSwivelTicks     = 6;
 }
 
-// Filled out by ROS node, sent to mbed
-message RequestMessage {
-    optional float p_l = 1;
-    optional float p_r = 2;
-    optional float i_l = 3;
-    optional float i_r = 4;
-    optional float d_l = 5;
-    optional float d_r = 6;
-
-    optional float speed_l = 7 [default = 0];
-    optional float speed_r = 8 [default = 0];
-
-    optional float kv_l = 9;
-    optional float kv_r = 10;
+message DriveEncodersMessage {  
+    optional int32 leftSpeed            = 1;        
+    optional int32 rightSpeed           = 2;
+    required int32 timestamp            = 3;
 }
 
-message DriveEncodersMessage {          
-    required int32 frontLeftTicks       = 1;
-    required int32 middleLeftTicks      = 2;
-    required int32 backLeftTicks        = 3;
-    required int32 frontRightTicks      = 4;
-    required int32 middleRightTicks     = 5;
-    required int32 backRightTicks       = 6;
-    required int32 timestamp            = 7;
+message RequestMessage {  
+    required bool  requestSpeed         = 1;
+    required bool  requestDiagnostics   = 2;
+    optional int32 leftSpeed            = 3;        
+    optional int32 rightSpeed           = 4;
+    optional int32 duration             = 5;
+    required int32 timestamp            = 6;
 }

@@ -24,7 +24,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-          sudo apt-get upgrade -y
+          sudo apt-get --with-new-pkgs upgrade -y
 
       - name: Build
         shell: bash
@@ -52,7 +52,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           sudo apt-get update
-          sudo apt-get upgrade -y
+          sudo apt-get --with-new-pkgs upgrade -y
 
       - name: Colcon Test
         shell: bash

@@ -11,6 +11,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(moveit_msgs REQUIRED)
+find_package(control_msgs REQUIRED)
 
 
 include_directories(
@@ -29,6 +30,7 @@ set(dependencies
   geometry_msgs
   std_srvs
   moveit_msgs
+  control_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -74,5 +76,3 @@ ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
 ament_package()
-
-

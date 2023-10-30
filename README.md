@@ -1,4 +1,4 @@
-# urc-rover [![CI Status Badge](https://github.com/RoboJackets/urc-software/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-software/actions)
+# urc-software [![CI Status Badge](https://github.com/RoboJackets/urc-software/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-software/actions)
 
 Welcome to the RoboJackets/RoboNav software repo for the University Rover Challenge (URC)! This document will give you a brief description of the repo's layout and an overview of the repo.
 
@@ -34,11 +34,15 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
   _A collection of utility nodes and classes_
 
 ## Installation Instructions
-
+**Essential** <br />
 You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
 
 - [NoVNC Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Strongly recommended!**
 - [Dual-booted or Native Linux installation](documents/installation/ubuntu_installation.md) _Ask a returning member!_
+
+**Specific Features**
+- [XBox Controller Setup](documents/installation/controller_setup.md)
+- [Depth Camera Setup](documents/installation/camera_setup.md)
 
 ## Helpful Resources
 
@@ -47,6 +51,19 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 - [Drone Repository](https://github.com/RoboJackets/urc-drone)
 - [Firmware Repository](https://github.com/RoboJackets/urc-firmware/tree/master)
 
+<<<<<<< HEAD
 ## Communications
 
 Join our slack [here!](https://robojackets.slack.com/)
+=======
+## Important Links
+* [Slack](https://robojackets.slack.com/)
+* [Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)  
+* [Software Training 2023](https://github.com/RoboJackets/software-training) *Be sure to understand the content in this tuturial if you are a new member*
+* [Software Training: Old/Advanced](https://github.com/RoboJackets/software-training-old) *Supplemental knowledge on ROS2, C++, or Robotics Theory*
+* [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)  
+* [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
+* [Nav2 Documentation](https://navigation.ros.org/)  
+* [ROS2 Control Documentation](https://control.ros.org/master/index.html)  
+  
+>>>>>>> master

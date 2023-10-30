@@ -1,8 +1,8 @@
 # Docker Installation
 
 Doing a Docker installation is a great method for setting up the repository on any operating system
-that isn't Ubuntu 22.0colcon b4. It is a faster and more lightweight alternative to a traditional Virtual Machine.
-In addition, you can run GUI applications like Gazebo using the NoVNC desktop environment.
+that isn't Ubuntu 22.04. It is a faster and more lightweight alternative to a traditional Virtual Machine.
+In addition, you can still run GUI applications like Gazebo using the NoVNC desktop environment.
 
 ## 1. Install Docker
 

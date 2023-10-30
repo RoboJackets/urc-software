@@ -2,17 +2,27 @@
  -->
 <robot name="walli_prop" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:property name="realhardware" value="false"/>
+
    <!-- Degree-to-radian conversions -->
   <xacro:property name="degrees_45" value="0.785398163"/>
   <xacro:property name="degrees_90" value="1.57079633"/>
 
+
+  <!-- New Properties from NAV2-->
+  <xacro:property name="base_length"    value="0.300"/>
+  <xacro:property name="base_width"     value="0.250"/>
+  <xacro:property name="base_height"    value="0.050"/>
+  <xacro:property name="base_mass"      value="3.000"/>
+  <xacro:property name="base_clearance" value="0.200"/>
+  <xacro:property name="wheel_radius" value="0.05"/>
+  <xacro:property name="wheel_width" value="0.075"/>
+  <xacro:property name="wheel_ygap" value="0.025"/>
+  <xacro:property name="wheel_zoff" value="0.05"/>
+  <xacro:property name="wheel_xoff" value="0.12"/>
+
   <!-- body_length is measured along the x axis, body_width
        along the y axis, and body_height along the z axis. -->
-  <xacro:property name="body_length"    value="0.300"/>
-  <xacro:property name="body_width"     value="0.250"/>
-  <xacro:property name="body_height"    value="0.050"/>
-  <xacro:property name="body_mass"      value="3.000"/>
-  <xacro:property name="body_clearance" value="0.200"/>
 
   <xacro:property name="wheelbase_rocker" value="0.350"/>
   <xacro:property name="wheelbase_bogie"  value="0.200"/>
@@ -54,12 +64,9 @@
   
    <!-- Lidar -->
     <xacro:property name="lidar_pitch" value="0.0"/>
-    <xacro:property name="lidar_x" value="0.127"/>
-    <xacro:property name="lidar_z" value="0.8486"/>
+    <xacro:property name="lidar_x" value="0.12"/>
+    <xacro:property name="lidar_z" value="0.12"/>
     <xacro:property name="lidar_hz" value="10"/>
     <xacro:property name="lidar_samples" value="500"/>
-    <xacro:property name="lidar_support_x_dim" value="0.2"/>
-    <xacro:property name="lidar_support_y_dim" value="0.08"/>
-    <xacro:property name="lidar_support_z_dim" value="0.01"/>
 
 </robot>
