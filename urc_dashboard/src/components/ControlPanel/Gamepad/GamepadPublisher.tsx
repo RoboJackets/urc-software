@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import ROSLIB from "roslib";
 
 interface GamepadPublisherProps {
@@ -7,16 +8,21 @@ interface GamepadPublisherProps {
 }
 
 export const GamepadPublisher = (props: GamepadPublisherProps) => {
-  const driverTopic = new ROSLIB.Topic({
-    ros: props.ROS,
-    name: "/driverGamepad",
-    messageType: "sensor_msgs/msg/Joy",
-  });
+  let driverTopic: any;
+  let armTopic: any;
 
-  const armTopic = new ROSLIB.Topic({
-    ros: props.ROS,
-    name: "/driverGamepad",
-    messageType: "sensor_msgs/msg/Joy",
+  useEffect(() => {
+    driverTopic = new ROSLIB.Topic({
+      ros: props.ROS,
+      name: "/driverGamepad",
+      messageType: "sensor_msgs/msg/Joy",
+    });
+
+    armTopic = new ROSLIB.Topic({
+      ros: props.ROS,
+      name: "/driverGamepad",
+      messageType: "sensor_msgs/msg/Joy",
+    });
   });
 
   // Helper Functions

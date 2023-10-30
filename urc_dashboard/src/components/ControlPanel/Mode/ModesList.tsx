@@ -1,6 +1,7 @@
 import { ModesOption } from "./ModesOptions";
 import ROSLIB from "roslib";
 import { Mode } from "./Modes";
+import { useEffect } from "react";
 
 interface ModesListProps {
   mode: Mode;
@@ -15,10 +16,14 @@ export const ModesList = (props: ModesListProps) => {
   const messageType = props.mode.messageType;
 
   // Mode Specific Topic
-  const topic = new ROSLIB.Topic({
-    ros: props.ROS,
-    name: topicName,
-    messageType: messageType,
+  let topic: any;
+
+  useEffect(() => {
+    topic = new ROSLIB.Topic({
+      ros: props.ROS,
+      name: topicName,
+      messageType: messageType,
+    });
   });
 
   const updateIdx = (idx: number) => {

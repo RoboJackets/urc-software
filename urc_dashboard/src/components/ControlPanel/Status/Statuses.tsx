@@ -26,15 +26,15 @@ export const Statuses = (props: StatusesProps) => {
   props.ROS.on("error", () => setBridgeStatus(StatusColors.YELLOW));
   props.ROS.on("close", () => setBridgeStatus(StatusColors.RED));
 
-  // Heartbeat Topic
-  const heartbeatTopic = new ROSLIB.Topic({
-    ros: props.ROS,
-    name: "/heartbeat",
-    messageType: "builtin_interfaces/msg/Time",
-  });
-
   // Subscribe to heartbeat topic
   useEffect(() => {
+    // Heartbeat Topic
+    const heartbeatTopic = new ROSLIB.Topic({
+      ros: props.ROS,
+      name: "/heartbeat",
+      messageType: "builtin_interfaces/msg/Time",
+    });
+
     heartbeatTopic.subscribe((message: any) => {
       setLastTimestamp(message.stamp.sec);
     });
