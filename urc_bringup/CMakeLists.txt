@@ -14,7 +14,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
-add_executable(heartbeat src/heartbeat.cpp)
+add_executable(heartbeat src/heartbeat.cpp) 
+# replace this with a node registration, add some verbose logs?
 ament_target_dependencies(heartbeat rclcpp std_msgs)
 
 install(TARGETS
