@@ -45,7 +45,7 @@ private:
   std::string serial_port_name;
   std::string udp_address;
   std::string udp_port;
-  std::shared_ptr<UDPSocket<4096>> udp_;
+  std::shared_ptr<UDPSocket<1024>> udp_;
   std::shared_ptr<urc_hardware::hardware::Serial> serial_;
 };
 

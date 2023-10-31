@@ -14,7 +14,7 @@ print(f"UDP server is listening on {server_ip}:{server_port}")
 
 while True:
     # Receive data from a client
-    data, client_address = server_socket.recvfrom(4096)
+    data, client_address = server_socket.recvfrom(1024)
 
     # Process the received data (in this example, we just print it)
     print(f"Received data from {client_address}: {data.decode('utf-8')}")

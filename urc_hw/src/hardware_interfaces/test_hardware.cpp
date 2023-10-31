@@ -194,7 +194,7 @@ std::vector<hardware_interface::CommandInterface> TestHardware::export_command_i
 
 hardware_interface::CallbackReturn TestHardware::on_activate(const rclcpp_lifecycle::State&)
 {
-  udp_ = std::make_shared<UDPSocket<4096>>(true);
+  udp_ = std::make_shared<UDPSocket<1024>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
   status_light_cmd = 0.0;
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware started");
