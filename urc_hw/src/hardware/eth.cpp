@@ -1,28 +1,27 @@
 #include "urc_hw/hardware/eth.hpp"
+#include <boost/asio/ip/address_v4.hpp>
+#include <boost/system/error_code.hpp>
+#include <iostream>
+#include <memory>
+#include <ostream>
 
 namespace ip = boost::asio::ip;
 
 namespace urc_hardware::hardware
 {
 
-EthernetSocket::EthernetSocket(int port)
-{
-  ip::udp::endpoint endpoint(ip::udp::v4(), port);
-  this->sock_ = std::make_unique<ip::udp::socket>(io_service_, endpoint);
-}
-
-EthernetSocket::EthernetSocket(std::string ip_addr, int port)
+EthernetSocket::EthernetSocket(std::string ip_addr, int port) : resolver(io_service)
 {
   // resolve all possible endpoints
-  ip::udp::resolver resolver(io_service_);
-  ip::udp::resolver::query query(ip_addr, std::to_string(port));
-  ip::udp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
   // look through endpoints and hit socket's connect() member function until
   // a successful UDP connection is established
-  this->sock_ = std::make_unique<ip::udp::socket>(io_service_);
-  RCLCPP_INFO(rclcpp::get_logger("Ethernet"), "Establishing connection to port %d...", port);
-  boost::asio::connect(*sock_, endpoint_iterator);
+  this->sock_ = std::make_unique<ip::udp::socket>(io_service);
+  RCLCPP_INFO(rclcpp::get_logger("Ethernet"), "Establishing connection...");
+  sender_endpoint_ =
+      std::make_unique<boost::asio::ip::udp::endpoint>(boost::asio::ip::address_v4::from_string(ip_addr), port);
+  boost::system::error_code err;
+  sock_->connect(*sender_endpoint_, err);
 }
 
 EthernetSocket::~EthernetSocket()
@@ -33,8 +32,7 @@ EthernetSocket::~EthernetSocket()
 
 void EthernetSocket::sendMessage(const char* message, size_t len)
 {
-  ip::udp::endpoint senderEndpoint(ip::address_v4::broadcast(), 8443);
-  this->sock_->send_to(boost::asio::buffer(message, len), senderEndpoint);
+  this->sock_->send_to(boost::asio::buffer(message, len), *sender_endpoint_);
 }
 
 size_t EthernetSocket::readMessage(unsigned char (&buffer)[256])

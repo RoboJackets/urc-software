@@ -8,9 +8,9 @@
 #include "iostream"
 #include "rclcpp/rclcpp.hpp"
 #include "hardware_interface/system_interface.hpp"
-#include "urc_hw/hardware/eth.hpp"
 #include "urc_hw/hardware_interface_types.hpp"
-#include <boost/asio/io_service.hpp>
+#include "async_sockets/basesocket.hpp"
+#include "async_sockets/udpsocket.hpp"
 #include <memory>
 
 namespace urc_hardware::hardware_interfaces
@@ -44,7 +44,7 @@ private:
   std::string out_header_name;
   std::string serial_port_name;
   std::string ethernet_port_name;
-  std::shared_ptr<urc_hardware::hardware::EthernetSocket> eth_;
+  std::shared_ptr<UDPSocket<4096>> udp_;
   std::shared_ptr<urc_hardware::hardware::Serial> serial_;
 };
 

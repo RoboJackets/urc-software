@@ -24,6 +24,9 @@ add_library(
     include/urc_hw/hardware/serial.hpp
     include/urc_hw/hardware_interfaces/test_hardware.hpp
     include/urc_hw/hardware_interface_types.hpp
+
+    include/async_sockets/basesocket.hpp
+    include/async_sockets/udpsocket.hpp
 )
 
 target_compile_features(urc_hw PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17

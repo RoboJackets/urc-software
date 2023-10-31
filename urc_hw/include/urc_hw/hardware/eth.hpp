@@ -3,6 +3,9 @@
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/io_service.hpp>
+#include <boost/asio/ip/tcp.hpp>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -76,8 +79,10 @@ public:
   std::string getBoostVersion();
 
 private:
-  boost::asio::io_service io_service_;                  // provides core io functionality
+  boost::asio::io_service io_service;  // provides core io functionality
+  boost::asio::ip::udp::resolver resolver;
   std::unique_ptr<boost::asio::ip::udp::socket> sock_;  // udp connection socket
+  std::unique_ptr<boost::asio::ip::udp::endpoint> sender_endpoint_;
 };
 
 }  // namespace urc_hardware::hardware

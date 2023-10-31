@@ -1,8 +1,10 @@
 #include "urc_hw/hardware_interfaces/test_hardware.hpp"
+#include "async_sockets/udpsocket.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "algorithm"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "urc_hw/hardware/serial.hpp"
+#include <boost/asio/ip/address_v4.hpp>
 #include <cstdint>
 #include <memory>
 #include <ostream>
@@ -189,7 +191,8 @@ hardware_interface::CallbackReturn TestHardware::on_activate(const rclcpp_lifecy
   //   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware failed to open serial port");
   //   return hardware_interface::CallbackReturn::ERROR;
   // }
-  eth_ = std::make_shared<hardware::EthernetSocket>("127.0.0.1", std::stoi(ethernet_port_name));
+  udp_ = std::make_shared<UDPSocket<4096>>(true);
+  udp_->Connect("localhost", std::stoi(ethernet_port_name));
   status_light_cmd = 0.0;
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware started");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -199,7 +202,7 @@ hardware_interface::CallbackReturn TestHardware::on_deactivate(const rclcpp_life
 {
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware stopping ...");
 
-  eth_.reset();
+  udp_->Close();
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware stopped");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -212,9 +215,7 @@ hardware_interface::return_type TestHardware::read(const rclcpp::Time&, const rc
 hardware_interface::return_type TestHardware::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
   std::string message = std::to_string((static_cast<int>(status_light_cmd)));
-  // std::cout << message << std::endl;
-  std::cout << eth_->getIP() << "  " << eth_->getPort() << std::endl;
-  this->eth_->sendMessage(message.c_str(), sizeof(message.c_str()));
+  udp_->Send(message);
   return hardware_interface::return_type::OK;
 }
 
