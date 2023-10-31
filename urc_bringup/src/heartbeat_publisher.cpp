@@ -15,16 +15,13 @@ HeartbeatPublisher::HeartbeatPublisher(const rclcpp::NodeOptions & options)
     std::bind(&HeartbeatPublisher::timerCallback, this));
 }
 
-
 void HeartbeatPublisher::timerCallback()
 {
-
   auto message = std_msgs::msg::Header();
   message.stamp = now();
   heartbeat_publisher->publish(message);
 }
 
 }
-
 
 RCLCPP_COMPONENTS_REGISTER_NODE(heartbeat_publisher::HeartbeatPublisher)
