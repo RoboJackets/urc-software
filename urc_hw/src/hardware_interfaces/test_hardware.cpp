@@ -40,14 +40,23 @@ hardware_interface::CallbackReturn TestHardware::on_init(const hardware_interfac
   serial_ = std::make_shared<urc_hardware::hardware::Serial>();
   serial_port_name = info_.hardware_parameters["serial_port"];
 
-  if (info_.hardware_parameters.find("ethernet_port") == info_.hardware_parameters.end())
+  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end())
   {
     RCLCPP_ERROR(rclcpp::get_logger("TestHardware"),
-                 "Error during initialization: 'ethernet_port' configuration not "
+                 "Error during initialization: 'udp_address' configuration not "
+                 "found. Expect to enter the udp server address.");
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+  if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end())
+  {
+    RCLCPP_ERROR(rclcpp::get_logger("TestHardware"),
+                 "Error during initialization: 'udp_port' configuration not "
                  "found. Expect to enter the port number.");
     return hardware_interface::CallbackReturn::ERROR;
   }
-  ethernet_port_name = info_.hardware_parameters["ethernet_port"];
+
+  udp_address = info_.hardware_parameters["udp_address"];
+  udp_port = info_.hardware_parameters["udp_port"];
 
   if (info_.hardware_parameters.find("out_header") == info_.hardware_parameters.end())
   {
@@ -185,14 +194,8 @@ std::vector<hardware_interface::CommandInterface> TestHardware::export_command_i
 
 hardware_interface::CallbackReturn TestHardware::on_activate(const rclcpp_lifecycle::State&)
 {
-  // serial_ = std::make_shared<hardware::Serial>();
-  // if (serial_->open(serial_port_name) != hardware::return_type::SUCCESS)
-  // {
-  //   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware failed to open serial port");
-  //   return hardware_interface::CallbackReturn::ERROR;
-  // }
   udp_ = std::make_shared<UDPSocket<4096>>(true);
-  udp_->Connect("localhost", std::stoi(ethernet_port_name));
+  udp_->Connect(udp_address, std::stoi(udp_port));
   status_light_cmd = 0.0;
   RCLCPP_INFO(rclcpp::get_logger("TestHardware"), "TestHardware started");
   return hardware_interface::CallbackReturn::SUCCESS;

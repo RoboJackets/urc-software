@@ -43,7 +43,8 @@ private:
   // std::shared_ptr<std::ostream> out;
   std::string out_header_name;
   std::string serial_port_name;
-  std::string ethernet_port_name;
+  std::string udp_address;
+  std::string udp_port;
   std::shared_ptr<UDPSocket<4096>> udp_;
   std::shared_ptr<urc_hardware::hardware::Serial> serial_;
 };
