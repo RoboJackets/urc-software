@@ -18,6 +18,14 @@ public:
   hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
   hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override;
   hardware_interface::return_type write(const rclcpp::Time& time, const rclcpp::Duration& period) override;
+  
+  double publish_encoder_ticks_frequency_;
+  const int ENCODER_CPR = 6144;
+  const float WHEEL_RADIUS = 0.170;
+  const float VEL_TO_COUNTS_FACTOR = ENCODER_CPR / (2 * M_PI * WHEEL_RADIUS);
+  const int QPPR = 15562;
+  const float MAX_SPEED = QPPR / VEL_TO_COUNTS_FACTOR;
+  const float MIN_SPEED = -1 * MAX_SPEED;
 
 private:
   // commands
