@@ -20,9 +20,13 @@ add_library(
     src/hardware/eth.cpp
     src/hardware/serial.cpp
     src/hardware_interfaces/test_hardware.cpp
+    src/hardware_interfaces/imu.cpp
+    src/hardware_interfaces/status_light.cpp
     include/urc_hw/hardware/eth.hpp
     include/urc_hw/hardware/serial.hpp
     include/urc_hw/hardware_interfaces/test_hardware.hpp
+    include/urc_hw/hardware_interfaces/imu.hpp
+    include/urc_hw/hardware_interfaces/status_light.hpp
     include/urc_hw/hardware_interface_types.hpp
 
     include/async_sockets/basesocket.hpp

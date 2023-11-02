@@ -30,7 +30,7 @@ public:
 
 private:
   // basic info
-  const std::string hardware_interface_name = "Status Light";
+  const std::string hardware_interface_name;
   // states
   std::vector<double> signals;  // [0]: color choice, [1]: display mode(e.g. flashing / idle / double flashing)
 

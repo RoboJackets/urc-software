@@ -1,20 +1,26 @@
 #include "urc_hw/hardware_interfaces/imu.hpp"
 #include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/sensor_interface.hpp"
 #include "pluginlib/class_list_macros.hpp"
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 
-PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SensorInterface);
+PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::IMU, hardware_interface::SensorInterface);
 
 namespace urc_hardware::hardware_interfaces
 {
 
-StatusLight::StatusLight() = default;
-StatusLight::~StatusLight() = default;
+IMU::IMU() : hardware_interface_name("IMU"){};
+IMU::~IMU() = default;
 
-hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface::HardwareInfo& info)
+hardware_interface::CallbackReturn IMU::on_init(const hardware_interface::HardwareInfo& info)
 {
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Initializing IMU for robot %s..", info_.name.c_str());
+
+  if (hardware_interface::SensorInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
+  {
+    return hardware_interface::CallbackReturn::ERROR;
+  }
 
   if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end())
   {
@@ -60,7 +66,7 @@ hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn IMU::on_configure(const rclcpp_lifecycle::State&)
 {
   quaternions.resize(4);
   linear_accelerations.resize(3);
@@ -73,7 +79,7 @@ hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecy
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface> StatusLight::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> IMU::export_state_interfaces()
 {
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Exporting state interfaces...");
 
@@ -82,11 +88,17 @@ std::vector<hardware_interface::StateInterface> StatusLight::export_state_interf
   state_interfaces.emplace_back("imu_sensor", "quaternion.x", &this->quaternions[1]);
   state_interfaces.emplace_back("imu_sensor", "quaternion.y", &this->quaternions[2]);
   state_interfaces.emplace_back("imu_sensor", "quaternion.z", &this->quaternions[3]);
+  state_interfaces.emplace_back("imu_sensor", "linear_acceleration.x", &this->linear_accelerations[0]);
+  state_interfaces.emplace_back("imu_sensor", "linear_acceleration.y", &this->linear_accelerations[1]);
+  state_interfaces.emplace_back("imu_sensor", "linear_acceleration.z", &this->linear_accelerations[2]);
+  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.r", &this->angular_accelerations[0]);
+  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.p", &this->angular_accelerations[1]);
+  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.y", &this->angular_accelerations[2]);
 
   return state_interfaces;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn IMU::on_activate(const rclcpp_lifecycle::State&)
 {
   udp_ = std::make_shared<UDPSocket<1024>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
@@ -94,15 +106,15 @@ hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecyc
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn IMU::on_deactivate(const rclcpp_lifecycle::State&)
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopping ...");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopping...");
   udp_->Close();
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopped");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopped.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type IMU::read(const rclcpp::Time&, const rclcpp::Duration&)
 {
   return hardware_interface::return_type::OK;
 }

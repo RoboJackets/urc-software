@@ -1,43 +1,38 @@
 <?xml version="1.0"?>
 <robot name="wallii" xmlns:xacro="http://ros.org/wiki/xacro">
-    <ros2_control name="wallii" type="system">
+    <ros2_control name="wallii_others" type="system">
         <hardware>
-            <plugin>urc_hw/TestHardware</plugin>
+            <plugin>urc_hw/StatusLight</plugin>
             <param name="serial_port">/dev/ttyACM0</param>
             <param name="udp_address">127.0.0.1</param>
             <param name="udp_port">5000</param>
             <param name="out_header">Robojackets</param>
         </hardware>
-        <joint name="base">
-            <command_interface name="position" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-        </joint>
-        <joint name="primary">
-            <command_interface name="position" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-        </joint>
-        <joint name="end_effector">
-            <command_interface name="position" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-        </joint>
-        <joint name="gripper">
-            <command_interface name="position" />
-            <state_interface name="position" />
-            <state_interface name="velocity" />
-        </joint>
 
-        <sensor name="imu">
+        <gpio name="status_light">
+            <command_interface name="command.color" />
+            <command_interface name="command.display" />
+        </gpio>
+    </ros2_control>
+
+    <ros2_control name="wallii_sensors" type="sensor">
+        <hardware>
+            <plugin>urc_hw/IMU</plugin>
+            <param name="udp_address">127.0.0.1</param>
+            <param name="udp_port">5000</param>
+        </hardware>
+
+        <sensor name="imu_sensor">
             <state_interface name="quaternion.w" />
             <state_interface name="quaternion.x" />
             <state_interface name="quaternion.y" />
             <state_interface name="quaternion.z" />
+            <state_interface name="linear_acceleration.x" />
+            <state_interface name="linear_acceleration.y" />
+            <state_interface name="linear_acceleration.z" />
+            <state_interface name="angular_acceleration.r" />
+            <state_interface name="angular_acceleration.p" />
+            <state_interface name="angular_acceleration.y" />
         </sensor>
-
-        <gpio name="indication">
-            <command_interface name="command" />
-        </gpio>
     </ros2_control>
 </robot>

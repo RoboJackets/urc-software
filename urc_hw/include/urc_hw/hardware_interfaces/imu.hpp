@@ -12,11 +12,11 @@
 namespace urc_hardware::hardware_interfaces
 {
 
-class StatusLight : public hardware_interface::SensorInterface
+class IMU : public hardware_interface::SensorInterface
 {
 public:
-  StatusLight();
-  ~StatusLight();
+  IMU();
+  ~IMU();
 
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& hardware_info) override;
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
@@ -27,7 +27,7 @@ public:
 
 private:
   // basic info
-  const std::string hardware_interface_name = "IMU";
+  const std::string hardware_interface_name;
   // states
   std::vector<double> quaternions;
   std::vector<double> linear_accelerations;

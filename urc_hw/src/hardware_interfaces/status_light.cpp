@@ -1,22 +1,31 @@
 #include "urc_hw/hardware_interfaces/status_light.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
+#include "hardware_interface/system_interface.hpp"
+#include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
+#include <rclcpp/duration.hpp>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
+#include <rclcpp/time.hpp>
 
 PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SystemInterface);
 
 namespace urc_hardware::hardware_interfaces
 {
 
-StatusLight::StatusLight() = default;
+StatusLight::StatusLight() : hardware_interface_name("Status Light"){};
 StatusLight::~StatusLight() = default;
 
 hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface::HardwareInfo& info)
 {
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Initializing Status Light for robot %s..",
               info_.name.c_str());
+
+  if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
+  {
+    return hardware_interface::CallbackReturn::ERROR;
+  }
 
   if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end())
   {
@@ -43,7 +52,7 @@ hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface
   }
 
   bool find_light = false;
-  for (hardware_interface::ComponentInfo component : info_.sensors)
+  for (hardware_interface::ComponentInfo component : info_.gpios)
   {
     if (component.name == "status_light")
     {
@@ -104,6 +113,11 @@ hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifec
 }
 
 hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rclcpp::Duration&)
+{
+  return hardware_interface::return_type::OK;
+}
+
+hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
   return hardware_interface::return_type::OK;
 }

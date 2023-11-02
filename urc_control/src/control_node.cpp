@@ -15,7 +15,6 @@ int main(int argc, char* argv[])
   // Setup the controller manager node
   std::string controller_manager_node_name = "controller_manager";
   std::shared_ptr<rclcpp::Executor> executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
-  RCLCPP_INFO(rclcpp::get_logger("Test"), "tst");
 
   auto controller_manager_node =
       std::make_shared<controller_manager::ControllerManager>(executor, controller_manager_node_name);
