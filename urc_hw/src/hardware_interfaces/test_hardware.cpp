@@ -11,7 +11,6 @@
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <string>
-#include <urc_hw/hardware/eth.hpp>
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::TestHardware, hardware_interface::SystemInterface);
 
