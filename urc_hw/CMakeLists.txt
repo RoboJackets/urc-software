@@ -12,17 +12,17 @@ find_package(ament_cmake_ros REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(nanopb REQUIRED)
 find_package(urc_util REQUIRED)
+find_package(urc_nanopb REQUIRED)
 
 add_library(
     urc_hw
     SHARED
-    src/hardware/eth.cpp
     src/hardware/serial.cpp
     src/hardware_interfaces/test_hardware.cpp
     src/hardware_interfaces/imu.cpp
     src/hardware_interfaces/status_light.cpp
-    include/urc_hw/hardware/eth.hpp
     include/urc_hw/hardware/serial.hpp
     include/urc_hw/hardware_interfaces/test_hardware.hpp
     include/urc_hw/hardware_interfaces/imu.hpp
@@ -41,7 +41,9 @@ ament_target_dependencies(
     urc_hw
     "hardware_interface"
     "rclcpp"
+    "nanopb"
     "urc_util"
+    "urc_nanopb"
     "pluginlib"
 )
 

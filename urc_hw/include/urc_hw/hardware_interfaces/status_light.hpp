@@ -1,14 +1,20 @@
 #ifndef URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP
 #define URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP
 
-#include "hardware_interface/handle.hpp"
-#include "hardware_interface/system_interface.hpp"
 #include "memory"
 #include "vector"
+#include "string"
+
+#include "hardware_interface/handle.hpp"
+#include "hardware_interface/system_interface.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "async_sockets/basesocket.hpp"
 #include "async_sockets/udpsocket.hpp"
-#include <string>
+#include "pb_encode.h"
+#include "urc_nanopb/urc.pb.h"
+#include <cstdint>
+#include <memory>
+#include <pb.h>
 
 namespace urc_hardware::hardware_interfaces
 {
@@ -38,6 +44,10 @@ private:
   std::shared_ptr<UDPSocket<1024>> udp_;
   std::string udp_address;
   std::string udp_port;
+
+  // nanopb
+  StatusLightCommand packet;
+  uint8_t buffer[20];
 };
 
 }  // namespace urc_hardware::hardware_interfaces

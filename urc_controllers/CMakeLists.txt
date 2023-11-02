@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(urc_hw REQUIRED)
 find_package(urc_util REQUIRED)
+find_package(urc_nanopb REQUIRED)
 
 add_library(
   ${PROJECT_NAME}
@@ -38,6 +39,7 @@ ament_target_dependencies(
   rclcpp_lifecycle
   urc_hw
   urc_util
+  urc_nanopb
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")

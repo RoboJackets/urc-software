@@ -7,6 +7,8 @@
 #include "hardware_interface/sensor_interface.hpp"
 #include "async_sockets/basesocket.hpp"
 #include "async_sockets/udpsocket.hpp"
+#include "urc_nanopb/urc.pb.h"
+#include "pb_decode.h"
 #include <string>
 
 namespace urc_hardware::hardware_interfaces
@@ -37,6 +39,10 @@ private:
   std::shared_ptr<UDPSocket<1024>> udp_;
   std::string udp_address;
   std::string udp_port;
+
+  // nanopb
+  IMUMessage packet;
+  uint8_t buffer[20];
 };
 
 }  // namespace urc_hardware::hardware_interfaces

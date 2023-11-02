@@ -24,3 +24,25 @@ message RequestMessage {
     optional int32 duration             = 5;
     required int32 timestamp            = 6;
 }
+
+message IMUMessage {
+    required int32 timestamp = 1;
+
+    optional float quaternionX = 2;
+    optional float quaternionY = 3;
+    optional float quaternionZ = 4;
+    optional float quaternionW = 5;
+
+    optional float linearAccelX = 6;
+    optional float linearAccelY = 7;
+    optional float linearAccelZ = 8;
+
+    optional float angularAccelR = 9;
+    optional float angularAccelP = 10;
+    optional float angualrAccelY = 11;
+}
+
+message StatusLightCommand {
+    optional int32 color = 1;
+    optional int32 display = 2;
+}

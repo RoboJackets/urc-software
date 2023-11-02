@@ -1,13 +1,9 @@
 #include "urc_hw/hardware_interfaces/status_light.hpp"
-#include "hardware_interface/handle.hpp"
-#include "hardware_interface/hardware_info.hpp"
-#include "hardware_interface/system_interface.hpp"
-#include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
-#include <rclcpp/duration.hpp>
-#include <rclcpp/logger.hpp>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/time.hpp>
+#include <cstddef>
+#include <pb.h>
+#include <pb_encode.h>
+#include <urc_nanopb/urc.pb.h>
 
 PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SystemInterface);
 
@@ -75,6 +71,7 @@ hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecy
 {
   signals.resize(2);
   std::fill(signals.begin(), signals.end(), 0.0);
+  packet = StatusLightCommand_init_default;
 
   RCLCPP_INFO_ONCE(rclcpp::get_logger(hardware_interface_name), "Succesfully zeroed all commands on configure.");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -119,6 +116,12 @@ hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rcl
 
 hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
+  packet.color = signals[0];
+  packet.display = signals[1];
+
+  pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
+  pb_encode(&stream, StatusLightCommand_fields, &packet);
+  udp_->Send((char*)buffer);
   return hardware_interface::return_type::OK;
 }
 
