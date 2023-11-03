@@ -16,13 +16,4 @@
       Status Light.
     </description>
   </class>
-
-  <!-- <class name="urc_hw/TestHardware"
-    type="urc_hardware::hardware_interfaces::TestHardware"
-    base_class_type="hardware_interface::SystemInterface"
-  >
-    <description>
-      TestHardware.
-    </description>
-  </class> -->
 </library>

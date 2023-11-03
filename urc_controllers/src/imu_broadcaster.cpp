@@ -28,14 +28,11 @@ controller_interface::CallbackReturn IMUBroadcaster::on_configure(const rclcpp_l
   imu_name = get_node()->get_parameter("imu_name").as_string();
   if (imu_name.empty())
   {
-    RCLCPP_INFO(get_node()->get_logger(),
-                "Need to have 'imu_name' parameter in the configuration file. Fail to find one.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Need to have 'imu_name' parameter in the configuration file. Fail to find one.");
     return controller_interface::CallbackReturn::FAILURE;
   }
 
-  RCLCPP_INFO(get_node()->get_logger(), "Start publishers..");
-  imu_state_publisher_ = get_node()->create_publisher<sensor_msgs::msg::Imu>("state_imu", rclcpp::SystemDefaultsQoS());
-  RCLCPP_INFO(get_node()->get_logger(), "Successfully create publishers!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -60,8 +57,6 @@ controller_interface::InterfaceConfiguration IMUBroadcaster::state_interface_con
 
 controller_interface::CallbackReturn IMUBroadcaster::on_activate(const rclcpp_lifecycle::State&)
 {
-  RCLCPP_INFO(get_node()->get_logger(), "Activating...");
-  // ensure one and only one required loaned state interface is initialised.
   for (auto& interface : state_interfaces_)
   {
     const auto interface_ptr = std::find(IMU_INTERFACES.begin(), IMU_INTERFACES.end(), interface.get_interface_name());
@@ -79,12 +74,15 @@ controller_interface::CallbackReturn IMUBroadcaster::on_activate(const rclcpp_li
     return controller_interface::CallbackReturn::ERROR;
   }
 
-  RCLCPP_INFO(get_node()->get_logger(), "IMU broadcaster activated!");
+  imu_state_publisher_ = get_node()->create_publisher<sensor_msgs::msg::Imu>("state_imu", rclcpp::SystemDefaultsQoS());
+
+  RCLCPP_INFO(get_node()->get_logger(), "IMU Broadcaster activated!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn IMUBroadcaster::on_deactivate(const rclcpp_lifecycle::State&)
 {
+  imu_state_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -108,7 +106,6 @@ controller_interface::CallbackReturn IMUBroadcaster::on_shutdown(const rclcpp_li
 
 controller_interface::return_type IMUBroadcaster::update(const rclcpp::Time& time, const rclcpp::Duration&)
 {
-  //   RCLCPP_INFO(get_node()->get_logger(), "updating...");
   sensor_msgs::msg::Imu imu_message;
   imu_message.header.stamp = time;
 

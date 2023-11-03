@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   controller_manager_node->configure_controller("imu_broadcaster");
   controller_manager_node->configure_controller("status_light_controller");
 
-  start_controllers.push_back("imu_broadcaster");
+  // start_controllers.push_back("imu_broadcaster");
   start_controllers.push_back("status_light_controller");
   controller_manager_node->switch_controller(start_controllers, stop_controllers, 1,
                                              controller_manager_msgs::srv::SwitchController::Request::BEST_EFFORT);

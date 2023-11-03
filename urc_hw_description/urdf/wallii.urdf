@@ -6,12 +6,11 @@
             <param name="serial_port">/dev/ttyACM0</param>
             <param name="udp_address">127.0.0.1</param>
             <param name="udp_port">5000</param>
-            <param name="out_header">Robojackets</param>
         </hardware>
 
         <gpio name="status_light">
-            <command_interface name="command.color" />
-            <command_interface name="command.display" />
+            <command_interface name="color" />
+            <command_interface name="display" />
         </gpio>
     </ros2_control>
 

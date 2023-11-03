@@ -15,8 +15,6 @@ IMU::~IMU() = default;
 
 hardware_interface::CallbackReturn IMU::on_init(const hardware_interface::HardwareInfo& info)
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Initializing IMU for robot %s..", info_.name.c_str());
-
   if (hardware_interface::SensorInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
   {
     return hardware_interface::CallbackReturn::ERROR;
@@ -65,7 +63,6 @@ hardware_interface::CallbackReturn IMU::on_init(const hardware_interface::Hardwa
   quaternions.resize(4);
   linear_accelerations.resize(3);
   angular_accelerations.resize(3);
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU initialization success.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -74,15 +71,11 @@ hardware_interface::CallbackReturn IMU::on_configure(const rclcpp_lifecycle::Sta
   std::fill(quaternions.begin(), quaternions.end(), 0.0);
   std::fill(linear_accelerations.begin(), linear_accelerations.end(), 0.0);
   std::fill(angular_accelerations.begin(), angular_accelerations.end(), 0.0);
-
-  RCLCPP_INFO_ONCE(rclcpp::get_logger(hardware_interface_name), "Succesfully zeroed all states on configure.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::StateInterface> IMU::export_state_interfaces()
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Exporting state interfaces...");
-
   std::vector<hardware_interface::StateInterface> state_interfaces;
 
   state_interfaces.emplace_back("imu_sensor", "orientation.x", &this->quaternions[0]);
@@ -103,15 +96,14 @@ hardware_interface::CallbackReturn IMU::on_activate(const rclcpp_lifecycle::Stat
 {
   udp_ = std::make_shared<UDPSocket<1024>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU started!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn IMU::on_deactivate(const rclcpp_lifecycle::State&)
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopping...");
   udp_->Close();
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU stopped.");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 

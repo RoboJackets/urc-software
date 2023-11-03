@@ -33,29 +33,25 @@ controller_interface::CallbackReturn StatusLightController::on_configure(const r
   status_light_name = get_node()->get_parameter("status_light_name").as_string();
   if (status_light_name.empty())
   {
-    RCLCPP_INFO(get_node()->get_logger(),
-                "Need to have 'status_light_name' parameter in the configuration file. Fail to find one.");
+    RCLCPP_ERROR(get_node()->get_logger(),
+                 "Need to have 'status_light_name' parameter in the configuration file. Fail to find one.");
     return controller_interface::CallbackReturn::FAILURE;
   }
-
-  RCLCPP_INFO(get_node()->get_logger(), "Start subscribers...");
-
-  RCLCPP_INFO(get_node()->get_logger(), "Successfully create publishers!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::InterfaceConfiguration StatusLightController::state_interface_configuration() const
+controller_interface::InterfaceConfiguration StatusLightController::command_interface_configuration() const
 {
-  controller_interface::InterfaceConfiguration state_interfaces_configuration;
-  state_interfaces_configuration.type = controller_interface::interface_configuration_type::INDIVIDUAL;
+  controller_interface::InterfaceConfiguration command_interfaces_configuration;
+  command_interfaces_configuration.type = controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  return state_interfaces_configuration;
+  command_interfaces_configuration.names.push_back(status_light_name + "/" + "color");
+  command_interfaces_configuration.names.push_back(status_light_name + "/" + "display");
+  return command_interfaces_configuration;
 }
 
 controller_interface::CallbackReturn StatusLightController::on_activate(const rclcpp_lifecycle::State&)
 {
-  RCLCPP_INFO(get_node()->get_logger(), "Activating...");
-  // ensure one and only one required loaned state interface is initialised.
   for (auto& interface : command_interfaces_)
   {
     const auto interface_ptr =
@@ -70,7 +66,7 @@ controller_interface::CallbackReturn StatusLightController::on_activate(const rc
 
   if (command_interface_map.size() != 2)
   {
-    RCLCPP_ERROR(get_node()->get_logger(), "Not all interface is initialized!");
+    RCLCPP_ERROR(get_node()->get_logger(), "Not all interfaces are initialized!");
     return controller_interface::CallbackReturn::ERROR;
   }
 
@@ -83,7 +79,7 @@ controller_interface::CallbackReturn StatusLightController::on_activate(const rc
         display_command_.writeFromNonRT(static_cast<double>(message->data));
       });
 
-  RCLCPP_INFO(get_node()->get_logger(), "Status light controller activated!");
+  RCLCPP_INFO(get_node()->get_logger(), "StatusLightController activated!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
 

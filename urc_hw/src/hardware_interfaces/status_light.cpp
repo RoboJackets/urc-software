@@ -10,14 +10,11 @@ PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_
 namespace urc_hardware::hardware_interfaces
 {
 
-StatusLight::StatusLight() : hardware_interface_name("Status Light"){};
+StatusLight::StatusLight() : hardware_interface_name("Status Light"), signals(2, 0){};
 StatusLight::~StatusLight() = default;
 
 hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface::HardwareInfo& info)
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Initializing Status Light for robot %s..",
-              info_.name.c_str());
-
   if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
   {
     return hardware_interface::CallbackReturn::ERROR;
@@ -62,33 +59,27 @@ hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface
     RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Not able to find sensor named 'status_light'.");
     return CallbackReturn::ERROR;
   }
-
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status Light initialization success.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State&)
 {
-  signals.resize(2);
   std::fill(signals.begin(), signals.end(), 0.0);
   packet = StatusLightCommand_init_default;
 
-  RCLCPP_INFO_ONCE(rclcpp::get_logger(hardware_interface_name), "Succesfully zeroed all commands on configure.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::CommandInterface> StatusLight::export_command_interfaces()
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Exporting command interfaces...");
   std::vector<hardware_interface::CommandInterface> command_interfaces;
-  command_interfaces.emplace_back("status_light", "command.color", &this->signals[0]);
-  command_interfaces.emplace_back("status_light", "command.display", &this->signals[1]);
+  command_interfaces.emplace_back("status_light", "color", &this->signals[0]);
+  command_interfaces.emplace_back("status_light", "display", &this->signals[1]);
   return command_interfaces;
 }
 
 std::vector<hardware_interface::StateInterface> StatusLight::export_state_interfaces()
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Exporting state interfaces...");
   std::vector<hardware_interface::StateInterface> state_interfaces;
   return state_interfaces;
 }
@@ -97,15 +88,14 @@ hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecyc
 {
   udp_ = std::make_shared<UDPSocket<1024>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status Light started!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State&)
 {
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status Light stopping ...");
   udp_->Close();
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status Light stopped");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
