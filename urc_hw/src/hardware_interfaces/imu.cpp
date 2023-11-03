@@ -62,15 +62,15 @@ hardware_interface::CallbackReturn IMU::on_init(const hardware_interface::Hardwa
     return CallbackReturn::ERROR;
   }
 
+  quaternions.resize(4);
+  linear_accelerations.resize(3);
+  angular_accelerations.resize(3);
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "IMU initialization success.");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn IMU::on_configure(const rclcpp_lifecycle::State&)
 {
-  quaternions.resize(4);
-  linear_accelerations.resize(3);
-  angular_accelerations.resize(3);
   std::fill(quaternions.begin(), quaternions.end(), 0.0);
   std::fill(linear_accelerations.begin(), linear_accelerations.end(), 0.0);
   std::fill(angular_accelerations.begin(), angular_accelerations.end(), 0.0);
@@ -84,16 +84,17 @@ std::vector<hardware_interface::StateInterface> IMU::export_state_interfaces()
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Exporting state interfaces...");
 
   std::vector<hardware_interface::StateInterface> state_interfaces;
-  state_interfaces.emplace_back("imu_sensor", "quaternion.w", &this->quaternions[0]);
-  state_interfaces.emplace_back("imu_sensor", "quaternion.x", &this->quaternions[1]);
-  state_interfaces.emplace_back("imu_sensor", "quaternion.y", &this->quaternions[2]);
-  state_interfaces.emplace_back("imu_sensor", "quaternion.z", &this->quaternions[3]);
+
+  state_interfaces.emplace_back("imu_sensor", "orientation.x", &this->quaternions[0]);
+  state_interfaces.emplace_back("imu_sensor", "orientation.y", &this->quaternions[1]);
+  state_interfaces.emplace_back("imu_sensor", "orientation.z", &this->quaternions[2]);
+  state_interfaces.emplace_back("imu_sensor", "orientation.w", &this->quaternions[3]);
   state_interfaces.emplace_back("imu_sensor", "linear_acceleration.x", &this->linear_accelerations[0]);
   state_interfaces.emplace_back("imu_sensor", "linear_acceleration.y", &this->linear_accelerations[1]);
   state_interfaces.emplace_back("imu_sensor", "linear_acceleration.z", &this->linear_accelerations[2]);
-  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.r", &this->angular_accelerations[0]);
-  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.p", &this->angular_accelerations[1]);
-  state_interfaces.emplace_back("imu_sensor", "angular_acceleration.y", &this->angular_accelerations[2]);
+  state_interfaces.emplace_back("imu_sensor", "angular_velocity.x", &this->angular_accelerations[0]);
+  state_interfaces.emplace_back("imu_sensor", "angular_velocity.y", &this->angular_accelerations[1]);
+  state_interfaces.emplace_back("imu_sensor", "angular_velocity.z", &this->angular_accelerations[2]);
 
   return state_interfaces;
 }

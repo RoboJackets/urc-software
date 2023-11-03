@@ -23,16 +23,16 @@
         </hardware>
 
         <sensor name="imu_sensor">
-            <state_interface name="quaternion.w" />
-            <state_interface name="quaternion.x" />
-            <state_interface name="quaternion.y" />
-            <state_interface name="quaternion.z" />
+            <state_interface name="orientation.x" />
+            <state_interface name="orientation.y" />
+            <state_interface name="orientation.z" />
+            <state_interface name="orientation.w" />
             <state_interface name="linear_acceleration.x" />
             <state_interface name="linear_acceleration.y" />
             <state_interface name="linear_acceleration.z" />
-            <state_interface name="angular_acceleration.r" />
-            <state_interface name="angular_acceleration.p" />
-            <state_interface name="angular_acceleration.y" />
+            <state_interface name="angular_velocity.x" />
+            <state_interface name="angular_velocity.y" />
+            <state_interface name="angular_velocity.z" />
         </sensor>
     </ros2_control>
 </robot>

@@ -4,7 +4,25 @@
         base_class_type="controller_interface::ControllerInterface"
     >
         <description>
-            Test hardware controller
+            Test hardware controller.
+        </description>
+    </class>
+
+    <class name="urc_controllers/IMUBroadcaster"
+        type="urc_controllers::IMUBroadcaster"
+        base_class_type="controller_interface::ControllerInterface"
+    >
+        <description>
+            Imu broadcaster.
+        </description>
+    </class>
+
+    <class name="urc_controllers/StatusLightController"
+        type="urc_controllers::StatusLightController"
+        base_class_type="controller_interface::ControllerInterface"
+    >
+        <description>
+            Status light controller.
         </description>
     </class>
 </library>

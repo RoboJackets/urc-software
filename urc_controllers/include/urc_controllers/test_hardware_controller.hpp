@@ -2,23 +2,19 @@
 #ifndef TEST_HARDWARE_CONTROLLER_HPP_
 #define TEST_HARDWARE_CONTROLLER_HPP_
 
+#include <string>
+#include <vector>
+
+#include "realtime_tools/realtime_buffer.h"
 #include <controller_interface/controller_interface.hpp>
-#include <functional>
-#include <geometry_msgs/msg/detail/quaternion__struct.hpp>
-#include <geometry_msgs/msg/detail/twist__struct.hpp>
-#include <geometry_msgs/msg/detail/twist_stamped__struct.hpp>
-#include <hardware_interface/handle.hpp>
 #include <hardware_interface/loaned_command_interface.hpp>
-#include <memory>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/subscription.hpp>
 #include <rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp>
 #include <rclcpp_lifecycle/state.hpp>
-#include "realtime_tools/realtime_tools/realtime_buffer.h"
 #include <geometry_msgs/msg/twist_stamped.hpp>
-#include <std_msgs/msg/detail/float32__struct.hpp>
-#include <string>
-#include <vector>
+#include "geometry_msgs/msg/quaternion.hpp"
+#include <std_msgs/msg/float32.hpp>
 
 namespace urc_controllers
 {

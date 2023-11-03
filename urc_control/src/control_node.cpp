@@ -4,6 +4,7 @@
 #include <rclcpp/logging.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <controller_manager/controller_manager.hpp>
+#include "controller_interface/controller_interface.hpp"
 #include <realtime_tools/thread_priority.hpp>
 
 int const kSchedPriority = 50;
@@ -62,11 +63,13 @@ int main(int argc, char* argv[])
   RCLCPP_INFO(controller_manager_node->get_logger(), "Update rate is %d Hz",
               controller_manager_node->get_update_rate());
   RCLCPP_INFO(controller_manager_node->get_logger(), "Loading controllers...");
-  // controller_manager_node->load_controller("joint_state_controller", "joint_state_controller/JointStateController");
-  controller_manager_node->load_controller("test_hardware_controller", "urc_controllers/TestHardwareController");
-  controller_manager_node->configure_controller("test_hardware_controller");
+  controller_manager_node->load_controller("imu_broadcaster", "urc_controllers/IMUBroadcaster");
+  controller_manager_node->load_controller("status_light_controller", "urc_controllers/StatusLightController");
+  controller_manager_node->configure_controller("imu_broadcaster");
+  controller_manager_node->configure_controller("status_light_controller");
 
-  start_controllers.push_back("test_hardware_controller");
+  start_controllers.push_back("imu_broadcaster");
+  start_controllers.push_back("status_light_controller");
   controller_manager_node->switch_controller(start_controllers, stop_controllers, 1,
                                              controller_manager_msgs::srv::SwitchController::Request::BEST_EFFORT);
 

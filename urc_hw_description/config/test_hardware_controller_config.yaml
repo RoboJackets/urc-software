@@ -2,20 +2,18 @@ controller_manager:
   ros__parameters:
     update_rate: 120
 
-    joint_state_controller:
-      type: joint_state_controller/JointStateController
-    
-    test_hardware_controller:
-      type: urc_controllers/TestHardwareController
+    imu_broadcaster:
+      type: urc_controllers/IMUBroadcaster
 
-test_hardware_controller:
+    status_light_controller:
+      type: urc_controllers/StatusLightController
+
+imu_broadcaster:
   ros__parameters:
-    base_joint_name: base
-    primary_joint_name: primary
-    end_effector_joint_name: end_effector
-    gripper_joint_name: gripper
-    
-    indication_light_name: indication
-    imu_name: imu
+    imu_name: imu_sensor
+
+status_light_controller:
+  ros__parameters:
+    status_light_name: status_light
 
     
