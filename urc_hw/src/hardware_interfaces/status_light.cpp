@@ -92,7 +92,7 @@ std::vector<hardware_interface::StateInterface> StatusLight::export_state_interf
 
 hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecycle::State&)
 {
-  udp_ = std::make_shared<UDPSocket<1024>>(true);
+  udp_ = std::make_shared<UDPSocket<128>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -122,26 +122,6 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rc
 
   bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
   message_length = stream.bytes_written;
-
-  // {
-  //   StatusLightCommand message = StatusLightCommand_init_zero;
-
-  //   /* Create a stream that reads from the buffer. */
-  //   pb_istream_t stream = pb_istream_from_buffer(buffer, message_length);
-
-  //   /* Now we are ready to decode the message. */
-  //   bool status = pb_decode(&stream, StatusLightCommand_fields, &message);
-
-  //   /* Check for errors... */
-  //   if (!status)
-  //   {
-  //     printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
-  //   }
-
-  //   /* Print the data contained in the message. */
-  //   printf("%.2f", signals[0]);
-  //   printf("Your lucky number was %d!\n", (int)message.color);
-  // }
 
   if (!status)
   {

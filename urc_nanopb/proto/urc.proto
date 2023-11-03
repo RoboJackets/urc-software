@@ -37,9 +37,9 @@ message IMUMessage {
     optional float linearAccelY = 7;
     optional float linearAccelZ = 8;
 
-    optional float angularAccelR = 9;
-    optional float angularAccelP = 10;
-    optional float angualrAccelY = 11;
+    optional float angularVelocityX = 9;
+    optional float angularVelocityY = 10;
+    optional float angularVelocityZ = 11;
 }
 
 message StatusLightCommand {

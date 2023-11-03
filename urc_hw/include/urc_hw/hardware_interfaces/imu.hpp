@@ -9,6 +9,7 @@
 #include "async_sockets/udpsocket.hpp"
 #include "urc_nanopb/urc.pb.h"
 #include "pb_decode.h"
+#include <async_sockets/udpserver.hpp>
 #include <string>
 
 namespace urc_hardware::hardware_interfaces
@@ -33,16 +34,17 @@ private:
   // states
   std::vector<double> quaternions;
   std::vector<double> linear_accelerations;
-  std::vector<double> angular_accelerations;
+  std::vector<double> angular_velocities;
 
   // hardware resources
-  std::shared_ptr<UDPSocket<1024>> udp_;
+  std::shared_ptr<UDPServer<128>> udp_;
   std::string udp_address;
   std::string udp_port;
+  std::string udp_self_address;
+  std::string udp_self_port;
 
   // nanopb
-  IMUMessage packet;
-  uint8_t buffer[20];
+  uint8_t buffer[128];
 };
 
 }  // namespace urc_hardware::hardware_interfaces

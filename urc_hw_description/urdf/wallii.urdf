@@ -19,6 +19,8 @@
             <plugin>urc_hw/IMU</plugin>
             <param name="udp_address">127.0.0.1</param>
             <param name="udp_port">5000</param>
+            <param name="udp_self_address">127.0.0.1</param>
+            <param name="udp_self_port">7000</param>
         </hardware>
 
         <sensor name="imu_sensor">

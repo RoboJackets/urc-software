@@ -41,7 +41,7 @@ private:
   std::vector<double> signals;  // [0]: color choice, [1]: display mode(e.g. flashing / idle / double flashing)
 
   // hardware resources
-  std::shared_ptr<UDPSocket<1024>> udp_;
+  std::shared_ptr<UDPSocket<128>> udp_;
   std::string udp_address;
   std::string udp_port;
 
