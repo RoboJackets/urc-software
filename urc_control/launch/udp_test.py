@@ -1,4 +1,7 @@
 import socket
+import urc_pb2
+import google.protobuf as pb
+
 
 # Define the server's IP address and port
 server_ip = "127.0.0.1"  # Replace with your server's IP address
@@ -16,9 +19,6 @@ while True:
     # Receive data from a client
     data, client_address = server_socket.recvfrom(1024)
 
-    # Process the received data (in this example, we just print it)
-    print(f"Received data from {client_address}: {data.decode('utf-8')}")
-
-    # Optionally, send a response back to the client
-    response = "Hello, client!"
-    server_socket.sendto(response.encode('utf-8'), client_address)
+    msg = urc_pb2.StatusLightCommand()
+    msg.ParseFromString(data)
+    print(msg.color, "  ", msg.display)

@@ -1,8 +1,16 @@
 #include "urc_hw/hardware_interfaces/status_light.hpp"
+#include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
 #include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <iostream>
+#include <iterator>
+#include <ostream>
 #include <pb.h>
 #include <pb_encode.h>
+#include <pb_decode.h>
+#include <string>
 #include <urc_nanopb/urc.pb.h>
 
 PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SystemInterface);
@@ -65,8 +73,6 @@ hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface
 hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State&)
 {
   std::fill(signals.begin(), signals.end(), 0.0);
-  packet = StatusLightCommand_init_default;
-
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -106,12 +112,42 @@ hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rcl
 
 hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
-  packet.color = signals[0];
-  packet.display = signals[1];
-
+  StatusLightCommand message = StatusLightCommand_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
-  pb_encode(&stream, StatusLightCommand_fields, &packet);
-  udp_->Send((char*)buffer);
+
+  message.color = signals[0];
+  message.has_color = true;
+  message.display = signals[1];
+  message.has_display = true;
+
+  bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
+  message_length = stream.bytes_written;
+
+  // {
+  //   StatusLightCommand message = StatusLightCommand_init_zero;
+
+  //   /* Create a stream that reads from the buffer. */
+  //   pb_istream_t stream = pb_istream_from_buffer(buffer, message_length);
+
+  //   /* Now we are ready to decode the message. */
+  //   bool status = pb_decode(&stream, StatusLightCommand_fields, &message);
+
+  //   /* Check for errors... */
+  //   if (!status)
+  //   {
+  //     printf("Decoding failed: %s\n", PB_GET_ERROR(&stream));
+  //   }
+
+  //   /* Print the data contained in the message. */
+  //   printf("%.2f", signals[0]);
+  //   printf("Your lucky number was %d!\n", (int)message.color);
+  // }
+
+  if (!status)
+  {
+    return hardware_interface::return_type::ERROR;
+  }
+  udp_->Send((char*)buffer, sizeof(buffer));
   return hardware_interface::return_type::OK;
 }
 

@@ -46,8 +46,8 @@ private:
   std::string udp_port;
 
   // nanopb
-  StatusLightCommand packet;
-  uint8_t buffer[20];
+  uint8_t buffer[StatusLightCommand_size];
+  size_t message_length;
 };
 
 }  // namespace urc_hardware::hardware_interfaces
