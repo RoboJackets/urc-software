@@ -35,5 +35,21 @@
             <state_interface name="angular_velocity.y" />
             <state_interface name="angular_velocity.z" />
         </sensor>
+        <!-- 
+        <sensor name="battery_management">
+            <state_interface name="main_voltage" />
+            <state_interface name="charge_percentage" />
+            <state_interface name="discharge_current" />
+            <state_interface name="temperature" />
+
+            <state_interface name="cell1_voltage" />
+            <state_interface name="cell2_voltage" />
+            <state_interface name="cell3_voltage" />
+            <state_interface name="cell4_voltage" />
+            <state_interface name="cell5_voltage" />
+            <state_interface name="cell6_voltage" />
+            <state_interface name="cell7_voltage" />
+            <state_interface name="cell8_voltage" />
+        </sensor> -->
     </ros2_control>
 </robot>

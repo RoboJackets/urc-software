@@ -22,10 +22,13 @@ add_library(
     src/hardware/serial.cpp
     src/hardware_interfaces/imu.cpp
     src/hardware_interfaces/status_light.cpp
+    # src/hardware_interfaces/batttery_management.cpp
     include/urc_hw/hardware/serial.hpp
     include/urc_hw/hardware_interfaces/imu.hpp
     include/urc_hw/hardware_interfaces/status_light.hpp
+    # include/urc_hw/hardware_interfaces/battery_management.hpp
     include/urc_hw/hardware_interface_types.hpp
+    
 
     include/async_sockets/basesocket.hpp
     include/async_sockets/udpsocket.hpp
