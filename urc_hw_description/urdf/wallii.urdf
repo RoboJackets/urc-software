@@ -4,7 +4,7 @@
         <hardware>
             <plugin>urc_hw/StatusLight</plugin>
             <param name="serial_port">/dev/ttyACM0</param>
-            <param name="udp_address">127.0.0.1</param>
+            <param name="udp_address">143.215.63.147</param>
             <param name="udp_port">5000</param>
         </hardware>
 
