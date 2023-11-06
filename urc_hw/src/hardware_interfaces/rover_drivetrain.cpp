@@ -46,81 +46,74 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(const hardware_inter
   udp_address = info_.hardware_parameters["udp_address"];
   udp_port = info_.hardware_parameters["udp_port"];
 
-  if (info.gpios.size() == 0)
+  bool find_drivetrain = false;
+  for (hardware_interface::ComponentInfo component : info_.joints)
   {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Should have at least one gpio to be the Status Light.");
-    return CallbackReturn::ERROR;
-  }
-
-  bool find_light = false;
-  for (hardware_interface::ComponentInfo component : info_.gpios)
-  {
-    if (component.name == "status_light")
+    if (component.name == "rover_drivetrain")
     {
-      find_light = true;
+      find_drivetrain = true;
       break;
     }
   }
 
-  if (!find_light)
+  if (!find_drivetrain)
   {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Not able to find sensor named 'status_light'.");
+    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Not able to find sensor named 'rover_drivetrain'.");
     return CallbackReturn::ERROR;
   }
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn RoverDrivetrain::on_configure(const rclcpp_lifecycle::State&)
 {
   std::fill(signals.begin(), signals.end(), 0.0);
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::CommandInterface> StatusLight::export_command_interfaces()
+std::vector<hardware_interface::CommandInterface> RoverDrivetrain::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
-  command_interfaces.emplace_back("status_light", "color", &this->signals[0]);
-  command_interfaces.emplace_back("status_light", "display", &this->signals[1]);
+  command_interfaces.emplace_back("rover_drivetrain", "leftSpeed", &this->signals[0]);
+  command_interfaces.emplace_back("rover_drivetrain", "rightSpeed", &this->signals[1]);
   return command_interfaces;
 }
 
-std::vector<hardware_interface::StateInterface> StatusLight::export_state_interfaces()
+std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
   return state_interfaces;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lifecycle::State&)
 {
   udp_ = std::make_shared<UDPSocket<128>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight activated!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Rover Drivetrain activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn RoverDrivetrain::on_deactivate(const rclcpp_lifecycle::State&)
 {
   udp_->Close();
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight deactivated!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Rover Drivetrain deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type RoverDrivetrain::read(const rclcpp::Time&, const rclcpp::Duration&)
 {
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, const rclcpp::Duration&)
 {
-  StatusLightCommand message = StatusLightCommand_init_zero;
+  DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.color = signals[0];
-  message.has_color = true;
-  message.display = signals[1];
-  message.has_display = true;
+  message.leftSpeed = signals[0];
+  message.rightSpeed = signals[1];
+  message.timestamp = std::chrono::system_clock::now().count();
 
-  bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
+  bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;
 
   if (!status)
