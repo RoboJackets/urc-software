@@ -19,6 +19,6 @@ while True:
     # Receive data from a client
     data, client_address = server_socket.recvfrom(1024)
 
-    msg = urc_pb2.StatusLightCommand()
-    msg.ParseFromString(data)
+    msg = urc_pb2.IMUMessage()
+
     print(msg.color, "  ", msg.display)

@@ -42,7 +42,36 @@ message IMUMessage {
     optional float angularVelocityZ = 11;
 }
 
+
+message BattereyMessage {
+    // cell voltages
+    optional float mainVoltage = 1;
+
+    optional float cell1Voltage = 2;
+    optional float cell2Voltage = 3;
+    optional float cell3Voltage = 4;
+    optional float cell4Voltage = 5;
+    optional float cell5Voltage = 6;
+    optional float cell6Voltage = 7;
+    optional float cell7Voltage = 8;
+    optional float cell8Voltage = 9;
+
+    // charge state
+    optional float chargePercentage = 10;
+    
+    // discharge state
+    optional float dischargeCurrent = 11;
+}
+
+/**
+Commands.
+- StatusLightCommand - statuslight states
+**/
+
 message StatusLightCommand {
     optional int32 color = 1;
     optional int32 display = 2;
 }
+
+
+
