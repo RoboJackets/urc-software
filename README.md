@@ -51,7 +51,6 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 - [Drone Repository](https://github.com/RoboJackets/urc-drone)
 - [Firmware Repository](https://github.com/RoboJackets/urc-firmware/tree/master)
 
-<<<<<<< HEAD
 ## Communications
 
 Join our slack [here!](https://robojackets.slack.com/)
@@ -65,5 +64,3 @@ Join our slack [here!](https://robojackets.slack.com/)
 * [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
 * [Nav2 Documentation](https://navigation.ros.org/)  
 * [ROS2 Control Documentation](https://control.ros.org/master/index.html)  
-  
->>>>>>> master
