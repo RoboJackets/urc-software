@@ -10,6 +10,8 @@
 #include <pb.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
+#include <rclcpp/clock.hpp>
+#include <rclcpp/time.hpp>
 #include <string>
 #include <urc_nanopb/urc.pb.h>
 

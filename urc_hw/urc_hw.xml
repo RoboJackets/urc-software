@@ -16,4 +16,13 @@
       Status Light.
     </description>
   </class>
+
+  <class name="urc_hw/BatteryManagement"
+    type="urc_hardware::hardware_interfaces::BatteryManagement"
+    base_class_type="hardware_interface::SensorInterface"
+  >
+    <description>
+      Battery management.
+    </description>
+  </class>
 </library>

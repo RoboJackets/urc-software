@@ -55,6 +55,13 @@ controller_interface::InterfaceConfiguration IMUBroadcaster::state_interface_con
   return state_interfaces_configuration;
 }
 
+controller_interface::InterfaceConfiguration IMUBroadcaster::command_interface_configuration() const
+{
+  auto config = controller_interface::InterfaceConfiguration();
+  config.type = controller_interface::interface_configuration_type::NONE;
+  return config;
+}
+
 controller_interface::CallbackReturn IMUBroadcaster::on_activate(const rclcpp_lifecycle::State&)
 {
   for (auto& interface : state_interfaces_)

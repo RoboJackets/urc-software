@@ -10,6 +10,7 @@
 #include "urc_nanopb/urc.pb.h"
 #include "pb_decode.h"
 #include <async_sockets/udpserver.hpp>
+#include <mutex>
 #include <set>
 #include <string>
 #include <vector>
@@ -44,9 +45,13 @@ private:
 
   // nanopb
   uint8_t buffer[128];
+  void decode(const char* buf, ssize_t size);
+  BatteryMessage current_message;
+  std::mutex guard;
 
   // mapping
-  std::set<std::string> interface_names{ "main_voltage", "charge_percentage", "discharge_current", "temperature" };
+  const std::set<std::string> INTERFACE_NAMES{ "main_voltage", "charge_percentage", "discharge_current",
+                                               "temperature" };
 };
 
 }  // namespace urc_hardware::hardware_interfaces

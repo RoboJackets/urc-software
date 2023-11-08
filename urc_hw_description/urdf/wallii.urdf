@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="wallii" xmlns:xacro="http://ros.org/wiki/xacro">
-    <ros2_control name="wallii_others" type="system">
+    <ros2_control name="status_light" type="system">
         <hardware>
             <plugin>urc_hw/StatusLight</plugin>
             <param name="serial_port">/dev/ttyACM0</param>
@@ -14,7 +14,33 @@
         </gpio>
     </ros2_control>
 
-    <ros2_control name="wallii_sensors" type="sensor">
+    <ros2_control name="battery_management" type="sensor">
+        <hardware>
+            <plugin>urc_hw/BatteryManagement</plugin>
+            <param name="udp_address">127.0.0.1</param>
+            <param name="udp_port">5000</param>
+            <param name="udp_self_address">127.0.0.1</param>
+            <param name="udp_self_port">7000</param>
+        </hardware>
+
+        <sensor name="battery_management">
+            <state_interface name="main_voltage" />
+            <state_interface name="charge_percentage" />
+            <state_interface name="discharge_current" />
+            <state_interface name="temperature" />
+
+            <state_interface name="cell1_voltage" />
+            <state_interface name="cell2_voltage" />
+            <state_interface name="cell3_voltage" />
+            <state_interface name="cell4_voltage" />
+            <state_interface name="cell5_voltage" />
+            <state_interface name="cell6_voltage" />
+            <state_interface name="cell7_voltage" />
+            <state_interface name="cell8_voltage" />
+        </sensor>
+    </ros2_control>
+
+    <ros2_control name="imu" type="sensor">
         <hardware>
             <plugin>urc_hw/IMU</plugin>
             <param name="udp_address">127.0.0.1</param>
@@ -35,21 +61,5 @@
             <state_interface name="angular_velocity.y" />
             <state_interface name="angular_velocity.z" />
         </sensor>
-        <!-- 
-        <sensor name="battery_management">
-            <state_interface name="main_voltage" />
-            <state_interface name="charge_percentage" />
-            <state_interface name="discharge_current" />
-            <state_interface name="temperature" />
-
-            <state_interface name="cell1_voltage" />
-            <state_interface name="cell2_voltage" />
-            <state_interface name="cell3_voltage" />
-            <state_interface name="cell4_voltage" />
-            <state_interface name="cell5_voltage" />
-            <state_interface name="cell6_voltage" />
-            <state_interface name="cell7_voltage" />
-            <state_interface name="cell8_voltage" />
-        </sensor> -->
     </ros2_control>
 </robot>

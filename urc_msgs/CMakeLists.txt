@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/LandingLocations.msg"
   "msg/ArucoDetection.msg"
   "msg/ArucoLocation.msg"
+  "msg/BatteryInfo.msg"
 
   DEPENDENCIES
   std_msgs

@@ -17,6 +17,7 @@
   <depend>urc_util</depend>
   <depend>urc_hw</depend>
   <depend>urc_nanopb</depend>
+  <depend>urc_msgs</depend>
 
   <build_depend>pluginlib</build_depend>
 
