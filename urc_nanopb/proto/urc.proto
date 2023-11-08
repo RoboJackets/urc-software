@@ -43,7 +43,7 @@ message IMUMessage {
 }
 
 
-message BattereyMessage {
+message BatteryMessage {
     // cell voltages
     optional float mainVoltage = 1;
 
@@ -73,5 +73,8 @@ message StatusLightCommand {
     optional int32 display = 2;
 }
 
+message ScienceModuleCommand {
+    required int32 rotateTurntable = 1;
+}
 
 
