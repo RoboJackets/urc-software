@@ -81,6 +81,12 @@ std::vector<hardware_interface::CommandInterface> RoverDrivetrain::export_comman
 std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_1_velocity", &this->encoderVelocities[0]);
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_2_velocity", &this->encoderVelocities[1]);
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_3_velocity", &this->encoderVelocities[2]);
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_4_velocity", &this->encoderVelocities[3]);
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_5_velocity", &this->encoderVelocities[4]);
+  state_interfaces.emplace_back("rover_drivetrain", "wheel_6_velocity", &this->encoderVelocities[5]);
   return state_interfaces;
 }
 
@@ -111,7 +117,9 @@ hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, cons
 
   message.leftSpeed = signals[0];
   message.rightSpeed = signals[1];
-  message.timestamp = std::chrono::system_clock::now().count();
+  rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
+  double current_time = clock->now().seconds();
+  message.timestamp = (int) current_time;
 
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;
