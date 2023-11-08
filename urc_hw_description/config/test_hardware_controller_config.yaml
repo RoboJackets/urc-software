@@ -12,6 +12,11 @@ imu_broadcaster:
   ros__parameters:
     imu_name: imu_sensor
 
+bms_broadcaster:
+  ros__parameters:
+    bms_name: battery_management
+    cell_num: 6
+
 status_light_controller:
   ros__parameters:
     status_light_name: status_light

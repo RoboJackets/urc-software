@@ -1,6 +1,6 @@
 
-#ifndef URC_CONTROLLERS__IMU_BROADCASTER_HPP_
-#define URC_CONTROLLERS__IMU_BROADCASTER_HPP_
+#ifndef URC_CONTROLLERS__BMS_BROADCASTER_HPP_
+#define URC_CONTROLLERS__BMS_BROADCASTER_HPP_
 
 #include <controller_interface/controller_interface.hpp>
 #include <functional>
@@ -20,21 +20,22 @@
 #include "realtime_tools/realtime_tools/realtime_buffer.h"
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <sensor_msgs/msg/detail/imu__struct.hpp>
-#include "std_msgs/msg/int8.hpp"
-#include <std_msgs/msg/detail/int8__struct.hpp>
+#include <std_msgs/msg/detail/float32__struct.hpp>
+#include "urc_msgs/msg/battery_info.hpp"
 #include <string>
+#include <urc_msgs/msg/detail/battery_info__struct.hpp>
 #include <vector>
 
 namespace urc_controllers
 {
 
-class StatusLightController : public controller_interface::ControllerInterface
+class BMSBroadcaster : public controller_interface::ControllerInterface
 {
 public:
-  StatusLightController();
+  BMSBroadcaster();
 
-  controller_interface::InterfaceConfiguration command_interface_configuration() const override;
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
+  controller_interface::InterfaceConfiguration command_interface_configuration() const override;
 
   controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
@@ -53,19 +54,18 @@ public:
   controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State& previous_state) override;
 
 protected:
-  // status_light related
-  std::string status_light_name;
-  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Int8>> color_command_subscriber_;
-  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Int8>> display_command_subscriber_;
-  realtime_tools::RealtimeBuffer<double> color_command_;
-  realtime_tools::RealtimeBuffer<double> display_command_;
+  // imu related
+  std::string bms_name;
+  int cell_num;
+  rclcpp::Publisher<urc_msgs::msg::BatteryInfo>::SharedPtr battery_info_publisher_;
 
-  // command interfaces
-  std::unordered_map<std::string, std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
-      command_interface_map;
-  const std::vector<std::string> STATUS_LIGHT_INTERFACES{ "color", "display" };
+  // state interfaces
+  std::unordered_map<std::string, std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedStateInterface>>>
+      state_interfaces_map_;
+  const std::set<std::string> INTERFACE_NAMES{ "main_voltage", "charge_percentage", "discharge_current",
+                                               "temperature" };
 };
 
 }  // namespace urc_controllers
 
-#endif  // URC_CONTROLLERS__IMU_BROADCASTER_HPP_
+#endif  // URC_CONTROLLERS__BMD_BROADCASTER_HPP_

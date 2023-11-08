@@ -15,6 +15,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(urc_hw REQUIRED)
 find_package(urc_util REQUIRED)
+find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
 
 add_library(
@@ -23,9 +24,11 @@ add_library(
   src/test_hardware_controller.cpp
   src/imu_broadcaster.cpp
   src/status_light_controller.cpp
+  src/bms_broadcaster.cpp
   include/urc_controllers/test_hardware_controller.hpp
   include/urc_controllers/imu_broadcaster.hpp
   include/urc_controllers/status_light_controller.hpp
+  include/urc_controllers/bms_broadcaster.hpp
 )
 
 target_compile_features(urc_controllers PUBLIC c_std_99 cxx_std_17)
@@ -44,6 +47,7 @@ ament_target_dependencies(
   urc_hw
   urc_util
   urc_nanopb
+  urc_msgs
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")

@@ -50,6 +50,11 @@ controller_interface::InterfaceConfiguration StatusLightController::command_inte
   return command_interfaces_configuration;
 }
 
+controller_interface::InterfaceConfiguration StatusLightController::state_interface_configuration() const
+{
+  return controller_interface::InterfaceConfiguration();
+}
+
 controller_interface::CallbackReturn StatusLightController::on_activate(const rclcpp_lifecycle::State&)
 {
   for (auto& interface : command_interfaces_)

@@ -8,6 +8,15 @@
         </description>
     </class>
 
+    <class name="urc_controllers/BMSBroadcaster"
+        type="urc_controllers::BMSBroadcaster"
+        base_class_type="controller_interface::ControllerInterface"
+    >
+        <description>
+            BMS broadcaster.
+        </description>
+    </class>
+
     <class name="urc_controllers/StatusLightController"
         type="urc_controllers::StatusLightController"
         base_class_type="controller_interface::ControllerInterface"
