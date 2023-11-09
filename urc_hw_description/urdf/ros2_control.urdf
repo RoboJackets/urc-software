@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="wallii" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
     <ros2_control name="wallii_others" type="system">
         <hardware>
             <plugin>urc_hw/StatusLight</plugin>
