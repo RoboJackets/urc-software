@@ -8,6 +8,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosbridge_server REQUIRED)
 
 include_directories(
   include
@@ -22,6 +23,7 @@ set(dependencies
   rclcpp
   rclcpp_components
   std_msgs
+  rosbridge_server
 )
 
 ament_target_dependencies(${PROJECT_NAME}
