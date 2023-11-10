@@ -15,12 +15,16 @@
 #include <string>
 #include <urc_nanopb/urc.pb.h>
 
-PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SystemInterface);
+PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::RoverDrivetrain, hardware_interface::SystemInterface);
 
 namespace urc_hardware::hardware_interfaces
 {
 
-RoverDrivetrain::RoverDrivetrain() : hardware_interface_name("Rover Drivetrain"), signals(2, 0){};
+RoverDrivetrain::RoverDrivetrain()
+  : hardware_interface_name("Rover Drivetrain")
+  , velocity_rps_commands(2, 0)
+  , velocity_rps_states(2, 0)
+  , velocity_rps_breakdown(6, 0){};
 RoverDrivetrain::~RoverDrivetrain() = default;
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_init(const hardware_interface::HardwareInfo& info)
@@ -48,47 +52,36 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(const hardware_inter
   udp_address = info_.hardware_parameters["udp_address"];
   udp_port = info_.hardware_parameters["udp_port"];
 
-  bool find_drivetrain = false;
-  for (hardware_interface::ComponentInfo component : info_.joints)
-  {
-    if (component.name == "rover_drivetrain")
-    {
-      find_drivetrain = true;
-      break;
-    }
-  }
-
-  if (!find_drivetrain)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Not able to find sensor named 'rover_drivetrain'.");
-    return CallbackReturn::ERROR;
-  }
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_configure(const rclcpp_lifecycle::State&)
 {
-  std::fill(signals.begin(), signals.end(), 0.0);
+  std::fill(velocity_rps_commands.begin(), velocity_rps_commands.end(), 0.0);
+  std::fill(velocity_rps_states.begin(), velocity_rps_states.end(), 0.0);
+  std::fill(velocity_rps_breakdown.begin(), velocity_rps_breakdown.end(), 0.0);
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 std::vector<hardware_interface::CommandInterface> RoverDrivetrain::export_command_interfaces()
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
-  command_interfaces.emplace_back("rover_drivetrain", "leftSpeed", &this->signals[0]);
-  command_interfaces.emplace_back("rover_drivetrain", "rightSpeed", &this->signals[1]);
+  command_interfaces.emplace_back("left_wheel", "velocity", &this->velocity_rps_commands[0]);
+  command_interfaces.emplace_back("right_wheel", "velocity", &this->velocity_rps_commands[1]);
   return command_interfaces;
 }
 
 std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_interfaces()
 {
   std::vector<hardware_interface::StateInterface> state_interfaces;
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_1_velocity", &this->encoderVelocities[0]);
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_2_velocity", &this->encoderVelocities[1]);
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_3_velocity", &this->encoderVelocities[2]);
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_4_velocity", &this->encoderVelocities[3]);
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_5_velocity", &this->encoderVelocities[4]);
-  state_interfaces.emplace_back("rover_drivetrain", "wheel_6_velocity", &this->encoderVelocities[5]);
+  state_interfaces.emplace_back("left_wheel", "velocity", &this->velocity_rps_states[0]);
+  state_interfaces.emplace_back("right_wheel", "velocity", &this->velocity_rps_states[1]);
+  state_interfaces.emplace_back("left_wheel", "velocity.front", &this->velocity_rps_breakdown[0]);
+  state_interfaces.emplace_back("left_wheel", "velocity.mid", &this->velocity_rps_breakdown[1]);
+  state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[2]);
+  state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[3]);
+  state_interfaces.emplace_back("right_wheel", "velocity.mid", &this->velocity_rps_breakdown[4]);
+  state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[5]);
   return state_interfaces;
 }
 
@@ -112,16 +105,18 @@ hardware_interface::return_type RoverDrivetrain::read(const rclcpp::Time&, const
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, const rclcpp::Duration& d)
 {
+  if (d.seconds() < 0.001)
+    return hardware_interface::return_type::OK;
   DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = signals[0];
-  message.rightSpeed = signals[1];
+  message.leftSpeed = velocity_rps_commands[0];
+  message.rightSpeed = velocity_rps_commands[1];
   rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
   double current_time = clock->now().seconds();
-  message.timestamp = (int) current_time;
+  message.timestamp = (int)current_time;
 
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;

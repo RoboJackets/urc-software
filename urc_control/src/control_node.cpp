@@ -66,13 +66,16 @@ int main(int argc, char* argv[])
   controller_manager_node->load_controller("imu_broadcaster", "urc_controllers/IMUBroadcaster");
   controller_manager_node->load_controller("bms_broadcaster", "urc_controllers/BMSBroadcaster");
   controller_manager_node->load_controller("status_light_controller", "urc_controllers/StatusLightController");
+  controller_manager_node->load_controller("rover_drivetrain_controller", "diff_drive_controller/DiffDriveController");
   controller_manager_node->configure_controller("imu_broadcaster");
+  controller_manager_node->configure_controller("rover_drivetrain_controller");
   controller_manager_node->configure_controller("bms_broadcaster");
   controller_manager_node->configure_controller("status_light_controller");
 
   start_controllers.push_back("imu_broadcaster");
   start_controllers.push_back("bms_broadcaster");
   start_controllers.push_back("status_light_controller");
+  start_controllers.push_back("rover_drivetrain_controller");
   controller_manager_node->switch_controller(start_controllers, stop_controllers, 1,
                                              controller_manager_msgs::srv::SwitchController::Request::BEST_EFFORT);
 

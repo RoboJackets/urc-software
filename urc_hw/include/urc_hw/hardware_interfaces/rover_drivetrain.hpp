@@ -28,9 +28,8 @@ public:
   RoverDrivetrain();
   ~RoverDrivetrain();
 
-
   hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& hardware_info) override;
-  hardware_interface::CallbackReturn RoverDrivetrain::on_configure(const rclcpp_lifecycle::State&) override;
+  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State&) override;
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
   hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
@@ -57,12 +56,10 @@ private:
   // std::vector<double> wheel_current_states_;
   // std::vector<double> wheel_temperature_states;
 
-
   // states
-  std::vector<double> signals; // [0] = left velocity, [1] = right velocity
-
-  std::vector<double> encoderVelocities;
-
+  std::vector<double> velocity_rps_commands;  // velocities are in RPS!
+  std::vector<double> velocity_rps_states;
+  std::vector<double> velocity_rps_breakdown;
 
   // hardware resources
   std::shared_ptr<UDPSocket<128>> udp_;

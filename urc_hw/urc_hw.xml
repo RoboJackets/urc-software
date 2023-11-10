@@ -1,4 +1,13 @@
 <library path="urc_hw">
+  <class name="urc_hw/RoverDrivetrain"
+    type="urc_hardware::hardware_interfaces::RoverDrivetrain"
+    base_class_type="hardware_interface::SystemInterface"
+  >
+    <description>
+      Rover drivetrain.
+    </description>
+  </class>
+
   <class name="urc_hw/IMU"
     type="urc_hardware::hardware_interfaces::IMU"
     base_class_type="hardware_interface::SensorInterface"

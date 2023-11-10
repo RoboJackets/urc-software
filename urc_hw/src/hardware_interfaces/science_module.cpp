@@ -48,7 +48,8 @@ hardware_interface::CallbackReturn ScienceModule::on_init(const hardware_interfa
 
   if (info.gpios.size() == 0)
   {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Should have at least one gpio to be the Science Module.");
+    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Should have at least one gpio to be the Science "
+                                                              "Module.");
     return CallbackReturn::ERROR;
   }
 
