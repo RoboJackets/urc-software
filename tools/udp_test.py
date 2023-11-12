@@ -22,4 +22,4 @@ while True:
     msg = urc_pb2.DriveEncodersMessage()
     msg.ParseFromString(data)
 
-    print(msg.leftSpeed)
+    print(msg.leftSpeed, "  ", msg.rightSpeed)
