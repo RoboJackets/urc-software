@@ -43,7 +43,6 @@ Consists of three main components:
 - Use the same set of instructions, until and including step 4.
 - Run `sudo modprobe xpad` for controller setup.
 - Run `ros2 launch teleop_twist_joy teleop-launch.py joy_config:='xbox'` to get the controller listener running.
-- Then, run `ros2 run teleop_twist_joy teleop_node --ros-args -r  /cmd_vel:=/diff_cont/cmd_vel_unstamped` to convert /joy messages to /cmd_vel and remap to the proper topic
-- Use the controller bumpers to move the rover
-**We need better controls than this, we need to redo the controller listener.**
+- Then, run `ros2 launch urc_platform joystick.launch.py` to convert /joy messages to /diff_cont/cmd_vel_unstamped
+- Use the left joystick to move the rover
 

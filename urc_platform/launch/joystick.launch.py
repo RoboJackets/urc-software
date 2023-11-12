@@ -16,7 +16,7 @@ def generate_launch_description():
             ],
             remappings=[
                 ("/joystick_driver/joy", "/joy"),
-                ("/joystick_driver/motors", "/motors")
+                ("/joystick_driver/motors", "/diff_cont/cmd_vel_unstamped")
             ]
         )
 

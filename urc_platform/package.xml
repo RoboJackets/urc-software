@@ -16,6 +16,7 @@
   <depend>std_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>diagnostic_updater</depend>
   <depend>urc_nanopb</depend>
   <depend>usb_cam</depend>
