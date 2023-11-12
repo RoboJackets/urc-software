@@ -105,18 +105,18 @@ hardware_interface::return_type RoverDrivetrain::read(const rclcpp::Time&, const
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, const rclcpp::Duration& d)
+hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time& time, const rclcpp::Duration& duration)
 {
-  if (d.seconds() < 0.001)
+  if (duration.seconds() < 0.001)
     return hardware_interface::return_type::OK;
   DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
   message.leftSpeed = velocity_rps_commands[0];
+  message.has_leftSpeed = true;
   message.rightSpeed = velocity_rps_commands[1];
-  rclcpp::Clock::SharedPtr clock = std::make_shared<rclcpp::Clock>(RCL_ROS_TIME);
-  double current_time = clock->now().seconds();
-  message.timestamp = (int)current_time;
+  message.has_rightSpeed = true;
+  message.timestamp = time.nanoseconds();
 
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;
@@ -126,6 +126,7 @@ hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time&, cons
     return hardware_interface::return_type::ERROR;
   }
   udp_->Send((char*)buffer, sizeof(buffer));
+
   return hardware_interface::return_type::OK;
 }
 

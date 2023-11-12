@@ -17,8 +17,9 @@ print(f"UDP server is listening on {server_ip}:{server_port}")
 
 while True:
     # Receive data from a client
-    data, client_address = server_socket.recvfrom(1024)
+    data, client_address = server_socket.recvfrom(128)
 
-    msg = urc_pb2.IMUMessage()
+    msg = urc_pb2.DriveEncodersMessage()
+    msg.ParseFromString(data)
 
-    print(msg.color, "  ", msg.display)
+    print(msg.leftSpeed)
