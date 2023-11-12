@@ -23,8 +23,6 @@ private:
 
   std::unique_ptr<diagnostic_updater::Updater> updater_ptr;
   double linearVel, angularVel, angularVelScale;
-  // int leftJoyAxis, rightJoyAxis;
-  // bool leftInverted, rightInverted;
 
   void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
   void joyCallback(const sensor_msgs::msg::Joy & msg);
