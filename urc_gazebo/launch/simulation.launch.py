@@ -72,11 +72,11 @@ def generate_launch_description():
        )
 
     aruco_detector = Node(
-            package='urc_aruco',
-            executable='urc_aruco_ArucoDetector',
+            package='urc_perception',
+            executable='urc_perception_ArucoDetector',
             output='screen',
             parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_aruco'), 'config',
+                PathJoinSubstitution([FindPackageShare('urc_perception'), 'config',
                                      'aruco_detector_params.yaml'])
             ],
             remappings=[
@@ -85,8 +85,8 @@ def generate_launch_description():
         )
 
     aruco_location = Node(
-            package='urc_aruco',
-            executable='urc_aruco_ArucoLocation',
+            package='urc_perception',
+            executable='urc_perception_ArucoLocation',
             output='screen',
             remappings=[
                 ("/aruco_location/aruco_location", "/aruco_location")
