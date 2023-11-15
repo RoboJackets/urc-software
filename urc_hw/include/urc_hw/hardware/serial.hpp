@@ -27,15 +27,15 @@ public:
   Serial();
   ~Serial();
 
-  return_type open(const std::string& port_name);
+  return_type open(const std::string & port_name);
   return_type close();
-  return_type read_frames(std::vector<SerialHdlcFrame>& frames);
-  return_type write_frame(const uint8_t* data, size_t size);
+  return_type read_frames(std::vector<SerialHdlcFrame> & frames);
+  return_type write_frame(const uint8_t * data, size_t size);
   bool is_open() const;
 
 protected:
   void encode_byte(uint8_t data);
-  void decode_byte(uint8_t data, std::vector<SerialHdlcFrame>& frames);
+  void decode_byte(uint8_t data, std::vector<SerialHdlcFrame> & frames);
   uint16_t crc_update(uint16_t crc, uint8_t data);
 
 private:

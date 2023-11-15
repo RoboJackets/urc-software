@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -18,7 +17,7 @@
 using namespace urc_hardware::hardware;
 
 Serial::Serial()
-  : serial_port_(-1)
+: serial_port_(-1)
   , rx_frame_length_(0)
   , rx_frame_crc_(HDLC_CRC_INIT_VALUE)
   , rx_frame_escape_(false)
@@ -32,12 +31,11 @@ Serial::~Serial()
   close();
 }
 
-return_type Serial::open(const std::string& port_name)
+return_type Serial::open(const std::string & port_name)
 {
   serial_port_ = ::open(port_name.c_str(), O_RDWR | O_NOCTTY);
 
-  if (serial_port_ < 0)
-  {
+  if (serial_port_ < 0) {
     fprintf(stderr, "Failed to open serial port: %s (%d)\n", strerror(errno), errno);
     return return_type::ERROR;
   }
@@ -45,8 +43,7 @@ return_type Serial::open(const std::string& port_name)
   struct termios tty_config
   {
   };
-  if (::tcgetattr(serial_port_, &tty_config) != 0)
-  {
+  if (::tcgetattr(serial_port_, &tty_config) != 0) {
     fprintf(stderr, "Failed to get serial port configuration: %s (%d)\n", strerror(errno), errno);
     close();
     return return_type::ERROR;
@@ -73,8 +70,7 @@ return_type Serial::open(const std::string& port_name)
   }
   */
 
-  if (::tcsetattr(serial_port_, TCSANOW, &tty_config) != 0)
-  {
+  if (::tcsetattr(serial_port_, TCSANOW, &tty_config) != 0) {
     fprintf(stderr, "Failed to set serial port configuration: %s (%d)\n", strerror(errno), errno);
     close();
     return return_type::ERROR;
@@ -85,37 +81,33 @@ return_type Serial::open(const std::string& port_name)
 
 return_type Serial::close()
 {
-  if (is_open())
-  {
+  if (is_open()) {
     ::close(serial_port_);
     serial_port_ = -1;
   }
   return return_type::SUCCESS;
 }
 
-return_type Serial::read_frames(std::vector<SerialHdlcFrame>& frames)
+return_type Serial::read_frames(std::vector<SerialHdlcFrame> & frames)
 {
   // Read data from the serial port
   const ssize_t num_bytes = ::read(serial_port_, rx_buffer_, 200);
-  if (num_bytes == -1)
-  {
+  if (num_bytes == -1) {
     fprintf(stderr, "Failed to read serial port data: %s (%d)\n", strerror(errno), errno);
     return return_type::ERROR;
   }
 
-  for (ssize_t i = 0; i < num_bytes; i++)
-  {
+  for (ssize_t i = 0; i < num_bytes; i++) {
     decode_byte(rx_buffer_[i], frames);
   }
 
   return return_type::SUCCESS;
 }
 
-return_type Serial::write_frame(const uint8_t* data, size_t size)
+return_type Serial::write_frame(const uint8_t * data, size_t size)
 {
   std::cout << data << "\n";
-  if (!is_open())
-  {
+  if (!is_open()) {
     return return_type::ERROR;
   }
 
@@ -123,8 +115,7 @@ return_type Serial::write_frame(const uint8_t* data, size_t size)
   tx_frame_length_ = 0;
   tx_frame_crc_ = HDLC_CRC_INIT_VALUE;
   tx_frame_buffer_[tx_frame_length_++] = HDLC_FRAME_BOUNDRY_FLAG;
-  for (size_t i = 0; i < size; i++)
-  {
+  for (size_t i = 0; i < size; i++) {
     tx_frame_crc_ = crc_update(tx_frame_crc_, data[i]);
     encode_byte(data[i]);
   }
@@ -132,8 +123,7 @@ return_type Serial::write_frame(const uint8_t* data, size_t size)
   encode_byte(((tx_frame_crc_ >> 8) & 0xFF));
   tx_frame_buffer_[tx_frame_length_++] = HDLC_FRAME_BOUNDRY_FLAG;
 
-  if (::write(serial_port_, tx_frame_buffer_, tx_frame_length_) == -1)
-  {
+  if (::write(serial_port_, tx_frame_buffer_, tx_frame_length_) == -1) {
     fprintf(stderr, "Failed to write serial port data: %s (%d)\n", strerror(errno), errno);
     return return_type::ERROR;
   }
@@ -148,24 +138,21 @@ bool Serial::is_open() const
 
 void Serial::encode_byte(uint8_t data)
 {
-  if (data == HDLC_ESCAPE_FLAG || data == HDLC_FRAME_BOUNDRY_FLAG)
-  {
+  if (data == HDLC_ESCAPE_FLAG || data == HDLC_FRAME_BOUNDRY_FLAG) {
     tx_frame_buffer_[tx_frame_length_++] = HDLC_ESCAPE_FLAG;
     data ^= HDLC_ESCAPE_XOR;
   }
   tx_frame_buffer_[tx_frame_length_++] = data;
 }
 
-void Serial::decode_byte(uint8_t data, std::vector<SerialHdlcFrame>& frames)
+void Serial::decode_byte(uint8_t data, std::vector<SerialHdlcFrame> & frames)
 {
-  if (data == HDLC_FRAME_BOUNDRY_FLAG)
-  {
-    if (rx_frame_escape_)
-    {
+  if (data == HDLC_FRAME_BOUNDRY_FLAG) {
+    if (rx_frame_escape_) {
       rx_frame_escape_ = false;
-    }
-    else if (rx_frame_length_ >= 2 &&
-             rx_frame_crc_ == ((rx_frame_buffer_[rx_frame_length_ - 1] << 8) | rx_frame_buffer_[rx_frame_length_ - 2]))
+    } else if (rx_frame_length_ >= 2 &&
+      rx_frame_crc_ ==
+      ((rx_frame_buffer_[rx_frame_length_ - 1] << 8) | rx_frame_buffer_[rx_frame_length_ - 2]))
     {
       SerialHdlcFrame frame;
       memcpy(frame.data, rx_frame_buffer_, rx_frame_length_ - 2);
@@ -177,27 +164,23 @@ void Serial::decode_byte(uint8_t data, std::vector<SerialHdlcFrame>& frames)
     return;
   }
 
-  if (data == HDLC_ESCAPE_FLAG)
-  {
+  if (data == HDLC_ESCAPE_FLAG) {
     rx_frame_escape_ = true;
     return;
   }
 
-  if (rx_frame_escape_)
-  {
+  if (rx_frame_escape_) {
     rx_frame_escape_ = false;
     data ^= HDLC_ESCAPE_XOR;
   }
 
   rx_frame_buffer_[rx_frame_length_] = data;
-  if (rx_frame_length_ >= 2)
-  {
+  if (rx_frame_length_ >= 2) {
     rx_frame_crc_ = crc_update(rx_frame_crc_, rx_frame_buffer_[rx_frame_length_ - 2]);
   }
   rx_frame_length_++;
 
-  if (rx_frame_length_ == SERIAL_SERIAL_FRAME_MAX_SIZE)
-  {
+  if (rx_frame_length_ == SERIAL_SERIAL_FRAME_MAX_SIZE) {
     rx_frame_length_ = 0;
     rx_frame_crc_ = HDLC_CRC_INIT_VALUE;
   }
@@ -207,5 +190,6 @@ uint16_t Serial::crc_update(uint16_t crc, uint8_t data)
 {
   data ^= (uint8_t)(crc & 0xFF);
   data ^= (data << 4);
-  return ((((uint16_t)data << 8) | ((uint8_t)(crc >> 8) & 0xFF)) ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3));
+  return (((uint16_t)data <<
+         8) | ((uint8_t)(crc >> 8) & 0xFF)) ^ (uint8_t)(data >> 4) ^ ((uint16_t)data << 3);
 }

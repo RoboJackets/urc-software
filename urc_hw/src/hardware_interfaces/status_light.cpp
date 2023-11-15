@@ -13,64 +13,69 @@
 #include <string>
 #include <urc_nanopb/urc.pb.h>
 
-PLUGINLIB_EXPORT_CLASS(urc_hardware::hardware_interfaces::StatusLight, hardware_interface::SystemInterface);
+PLUGINLIB_EXPORT_CLASS(
+  urc_hardware::hardware_interfaces::StatusLight,
+  hardware_interface::SystemInterface);
 
 namespace urc_hardware::hardware_interfaces
 {
 
-StatusLight::StatusLight() : hardware_interface_name("Status Light"), signals(2, 0){};
+StatusLight::StatusLight()
+: hardware_interface_name("Status Light"), signals(2, 0) {}
 StatusLight::~StatusLight() = default;
 
-hardware_interface::CallbackReturn StatusLight::on_init(const hardware_interface::HardwareInfo& info)
+hardware_interface::CallbackReturn StatusLight::on_init(
+  const hardware_interface::HardwareInfo & info)
 {
-  if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
+  if (hardware_interface::SystemInterface::on_init(info) !=
+    hardware_interface::CallbackReturn::SUCCESS)
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end())
-  {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name),
-                 "Error during initialization: 'udp_address' configuration not "
-                 "found. Expect to enter the udp server address.");
+  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end()) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger(hardware_interface_name),
+      "Error during initialization: 'udp_address' configuration not "
+      "found. Expect to enter the udp server address.");
     return hardware_interface::CallbackReturn::ERROR;
   }
-  if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end())
-  {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name),
-                 "Error during initialization: 'udp_port' configuration not "
-                 "found. Expect to enter the port number.");
+  if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end()) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger(hardware_interface_name),
+      "Error during initialization: 'udp_port' configuration not "
+      "found. Expect to enter the port number.");
     return hardware_interface::CallbackReturn::ERROR;
   }
 
   udp_address = info_.hardware_parameters["udp_address"];
   udp_port = info_.hardware_parameters["udp_port"];
 
-  if (info.gpios.size() == 0)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Should have at least one gpio to be the Status Light.");
+  if (info.gpios.size() == 0) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger(
+        hardware_interface_name), "Should have at least one gpio to be the Status Light.");
     return CallbackReturn::ERROR;
   }
 
   bool find_light = false;
-  for (hardware_interface::ComponentInfo component : info_.gpios)
-  {
-    if (component.name == "status_light")
-    {
+  for (hardware_interface::ComponentInfo component : info_.gpios) {
+    if (component.name == "status_light") {
       find_light = true;
       break;
     }
   }
 
-  if (!find_light)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger(hardware_interface_name), "Not able to find sensor named 'status_light'.");
+  if (!find_light) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger(
+        hardware_interface_name), "Not able to find sensor named 'status_light'.");
     return CallbackReturn::ERROR;
   }
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn StatusLight::on_configure(const rclcpp_lifecycle::State &)
 {
   std::fill(signals.begin(), signals.end(), 0.0);
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -90,7 +95,7 @@ std::vector<hardware_interface::StateInterface> StatusLight::export_state_interf
   return state_interfaces;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecycle::State &)
 {
   udp_ = std::make_shared<UDPSocket<128>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
@@ -98,19 +103,19 @@ hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecyc
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State&)
+hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State &)
 {
   udp_->Close();
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type StatusLight::read(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type StatusLight::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rclcpp::Duration&)
+hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
   StatusLightCommand message = StatusLightCommand_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
@@ -123,11 +128,10 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time&, const rc
   bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
   message_length = stream.bytes_written;
 
-  if (!status)
-  {
+  if (!status) {
     return hardware_interface::return_type::ERROR;
   }
-  udp_->Send((char*)buffer, sizeof(buffer));
+  udp_->Send((char *)buffer, sizeof(buffer));
   return hardware_interface::return_type::OK;
 }
 
