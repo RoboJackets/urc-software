@@ -19,27 +19,28 @@ PLUGINLIB_EXPORT_CLASS(urc_controllers::BMSBroadcaster, controller_interface::Co
 namespace urc_controllers
 {
 
-BMSBroadcaster::BMSBroadcaster() : battery_info_publisher_(nullptr){};
+BMSBroadcaster::BMSBroadcaster()
+: battery_info_publisher_(nullptr) {}
 
 controller_interface::CallbackReturn BMSBroadcaster::on_init()
 {
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_configure(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_configure(const rclcpp_lifecycle::State &)
 {
   bms_name = get_node()->get_parameter("bms_name").as_string();
-  if (bms_name.empty())
-  {
-    RCLCPP_ERROR(get_node()->get_logger(),
-                 "Need to have 'bms_name' parameter in the configuration file. Fail to find one.");
+  if (bms_name.empty()) {
+    RCLCPP_ERROR(
+      get_node()->get_logger(),
+      "Need to have 'bms_name' parameter in the configuration file. Fail to find one.");
     return controller_interface::CallbackReturn::FAILURE;
   }
   cell_num = get_node()->get_parameter("cell_num").as_int();
-  if (cell_num < 0)
-  {
-    RCLCPP_ERROR(get_node()->get_logger(),
-                 "Need to have 'cell_num' parameter in the configuration file. Fail to find one.");
+  if (cell_num < 0) {
+    RCLCPP_ERROR(
+      get_node()->get_logger(),
+      "Need to have 'cell_num' parameter in the configuration file. Fail to find one.");
     return controller_interface::CallbackReturn::FAILURE;
   }
 
@@ -49,16 +50,17 @@ controller_interface::CallbackReturn BMSBroadcaster::on_configure(const rclcpp_l
 controller_interface::InterfaceConfiguration BMSBroadcaster::state_interface_configuration() const
 {
   controller_interface::InterfaceConfiguration state_interfaces_configuration;
-  state_interfaces_configuration.type = controller_interface::interface_configuration_type::INDIVIDUAL;
+  state_interfaces_configuration.type =
+    controller_interface::interface_configuration_type::INDIVIDUAL;
 
-  for (std::string s : INTERFACE_NAMES)
-  {
+  for (std::string s : INTERFACE_NAMES) {
     state_interfaces_configuration.names.push_back(bms_name + "/" + s);
   }
 
-  for (int i = 1; i <= cell_num; ++i)
-  {
-    state_interfaces_configuration.names.push_back(bms_name + "/" + "cell" + std::to_string(i) + "_voltage");
+  for (int i = 1; i <= cell_num; ++i) {
+    state_interfaces_configuration.names.push_back(
+      bms_name + "/" + "cell" + std::to_string(
+        i) + "_voltage");
   }
 
   return state_interfaces_configuration;
@@ -71,57 +73,61 @@ controller_interface::InterfaceConfiguration BMSBroadcaster::command_interface_c
   return config;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_activate(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_activate(const rclcpp_lifecycle::State &)
 {
-  for (auto& interface : state_interfaces_)
-  {
+  for (auto & interface : state_interfaces_) {
     state_interfaces_map_.emplace(
-        interface.get_interface_name(),
-        std::make_shared<std::reference_wrapper<hardware_interface::LoanedStateInterface>>(interface));
+      interface.get_interface_name(),
+      std::make_shared<std::reference_wrapper<hardware_interface::LoanedStateInterface>>(interface));
   }
 
   battery_info_publisher_ =
-      get_node()->create_publisher<urc_msgs::msg::BatteryInfo>("state_battery", rclcpp::SystemDefaultsQoS());
+    get_node()->create_publisher<urc_msgs::msg::BatteryInfo>(
+    "state_battery",
+    rclcpp::SystemDefaultsQoS());
 
   RCLCPP_INFO(get_node()->get_logger(), "BMS Broadcaster activated!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_deactivate(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_deactivate(const rclcpp_lifecycle::State &)
 {
   battery_info_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_cleanup(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_cleanup(const rclcpp_lifecycle::State &)
 {
   battery_info_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_error(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_error(const rclcpp_lifecycle::State &)
 {
   battery_info_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn BMSBroadcaster::on_shutdown(const rclcpp_lifecycle::State&)
+controller_interface::CallbackReturn BMSBroadcaster::on_shutdown(const rclcpp_lifecycle::State &)
 {
   battery_info_publisher_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::return_type BMSBroadcaster::update(const rclcpp::Time&, const rclcpp::Duration&)
+controller_interface::return_type BMSBroadcaster::update(
+  const rclcpp::Time &,
+  const rclcpp::Duration &)
 {
   urc_msgs::msg::BatteryInfo battery_message;
   battery_message.cell_voltage = state_interfaces_map_["main_voltage"]->get().get_value();
-  battery_message.cell_charge_percentage = state_interfaces_map_["charge_percentage"]->get().get_value();
-  battery_message.cell_discharge_current = state_interfaces_map_["discharge_current"]->get().get_value();
+  battery_message.cell_charge_percentage =
+    state_interfaces_map_["charge_percentage"]->get().get_value();
+  battery_message.cell_discharge_current =
+    state_interfaces_map_["discharge_current"]->get().get_value();
   battery_message.cell_temperature = state_interfaces_map_["temperature"]->get().get_value();
-  for (int i = 1; i <= cell_num; ++i)
-  {
+  for (int i = 1; i <= cell_num; ++i) {
     battery_message.cell_voltages.emplace_back(
-        state_interfaces_map_["cell" + std::to_string(i) + "_voltage"]->get().get_value());
+      state_interfaces_map_["cell" + std::to_string(i) + "_voltage"]->get().get_value());
   }
 
   battery_info_publisher_->publish(battery_message);

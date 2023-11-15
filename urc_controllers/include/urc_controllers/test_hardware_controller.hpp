@@ -1,4 +1,3 @@
-
 #ifndef TEST_HARDWARE_CONTROLLER_HPP_
 #define TEST_HARDWARE_CONTROLLER_HPP_
 
@@ -30,21 +29,29 @@ public:
 
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-  controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+    const rclcpp::Time & time,
+    const rclcpp::Duration & period) override;
 
   controller_interface::CallbackReturn on_init() override;
 
-  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & previous_state)
+  override;
 
 protected:
   // joints related
@@ -55,7 +62,8 @@ protected:
 
   // indication light related
   std::string indication_light_name;
-  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Float32>> indication_light_command_subscription_;
+  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Float32>>
+  indication_light_command_subscription_;
   realtime_tools::RealtimeBuffer<std::shared_ptr<double>> indication_light_command_;
 
   // imu related
@@ -63,8 +71,9 @@ protected:
   std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::Quaternion>> imu_publisher_;
 
   // command interfaces
-  std::unordered_map<std::string, std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
-      command_interface_map_;
+  std::unordered_map<std::string,
+    std::vector<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
+  command_interface_map_;
 
 private:
   bool reset();

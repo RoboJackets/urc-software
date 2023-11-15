@@ -1,4 +1,3 @@
-
 #ifndef URC_CONTROLLERS__IMU_BROADCASTER_HPP_
 #define URC_CONTROLLERS__IMU_BROADCASTER_HPP_
 
@@ -36,21 +35,29 @@ public:
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-  controller_interface::return_type update(const rclcpp::Time& time, const rclcpp::Duration& period) override;
+  controller_interface::return_type update(
+    const rclcpp::Time & time,
+    const rclcpp::Duration & period) override;
 
   controller_interface::CallbackReturn on_init() override;
 
-  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state)
+  override;
 
-  controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State& previous_state) override;
+  controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & previous_state)
+  override;
 
 protected:
   // status_light related
@@ -61,9 +68,10 @@ protected:
   realtime_tools::RealtimeBuffer<double> display_command_;
 
   // command interfaces
-  std::unordered_map<std::string, std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
-      command_interface_map;
-  const std::vector<std::string> STATUS_LIGHT_INTERFACES{ "color", "display" };
+  std::unordered_map<std::string,
+    std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
+  command_interface_map;
+  const std::vector<std::string> STATUS_LIGHT_INTERFACES{"color", "display"};
 };
 
 }  // namespace urc_controllers
