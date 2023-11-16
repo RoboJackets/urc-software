@@ -1,7 +1,5 @@
 import socket
-import urc_pb2
-import google.protobuf as pb
-
+import tools.udp.urc_pb2 as urc_pb2
 
 # Define the server's IP address and port
 server_ip = "127.0.0.1"  # Replace with your server's IP address

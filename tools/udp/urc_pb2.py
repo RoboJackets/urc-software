@@ -23,8 +23,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
 )
 
 
-
-
 _ARMENCODERSMESSAGE = _descriptor.Descriptor(
   name='ArmEncodersMessage',
   full_name='ArmEncodersMessage',
