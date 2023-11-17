@@ -4,7 +4,7 @@
   <xacro:include filename="walli_inertials.xacro"/>
   <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
   <xacro:include filename="walli_arm.urdf"/>
-  <xacro:include filename="ros2_control.urdf"/>
+  <xacro:include filename="ros2_control.xacro"/>
   
   <!-- Rover Base Link -->
   <link name="base_link">
