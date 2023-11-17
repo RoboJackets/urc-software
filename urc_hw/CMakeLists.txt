@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.8)
 project(urc_hw)
 
 
-if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
-endif ()
+endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -33,7 +33,6 @@ add_library(
     include/urc_hw/hardware_interfaces/science_module.hpp
 
     include/urc_hw/hardware_interface_types.hpp
-    
 
     include/async_sockets/basesocket.hpp
     include/async_sockets/udpsocket.hpp
@@ -70,7 +69,7 @@ install(
     RUNTIME DESTINATION bin
 )
 
-if (BUILD_TESTING)
+if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
@@ -80,7 +79,7 @@ if (BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
-endif ()
+endif()
 
 ament_export_include_directories(
     include
