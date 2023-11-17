@@ -16,10 +16,24 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
   _Where all our submodules are located_
 - **urc_analysis**
   _Nodes used for scientific analysis_
+- **urc_arm_moveit_config**
+  _Moveit config folder for rover arm_
+- **urc_bringup**
+  _Location of the universal launch file + heartbeat node_
+- **urc_control** *deprecated*
+  _Controller manager node and controllers bring up_
+- **urc_controllers**
+  _ros2-control controllers_
 - **urc_gazebo**
   _Helper nodes used for simulation purposes_
+- **urc_hw**
+  _ros2-control hardware interaface_
+- **urc_hw_description**
+  _URDF description for the rover_
 - **urc_manipulation**
   _Collection of nodes used for the robotic arm_
+- **urc_nanopb**
+  _nanopb related files and settings_
 - **urc_msgs**
   _Custom ROS messages used in various packages_
 - **urc_platform**
