@@ -367,19 +367,19 @@ DESCRIPTOR.message_types_by_name['StatusLightCommand'] = _STATUSLIGHTCOMMAND
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ArmEncodersMessage = _reflection.GeneratedProtocolMessageType(
-  'ArmEncodersMessage', (_message.Message,), {
-    'DESCRIPTOR': _ARMENCODERSMESSAGE,
-    '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
-    # @@protoc_insertion_point(class_scope:ArmEncodersMessage)
-})
+    'ArmEncodersMessage', (_message.Message,), {
+        'DESCRIPTOR': _ARMENCODERSMESSAGE,
+        '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
+        # @@protoc_insertion_point(class_scope:ArmEncodersMessage)
+    })
 _sym_db.RegisterMessage(ArmEncodersMessage)
 
 DriveEncodersMessage = _reflection.GeneratedProtocolMessageType(
-  'DriveEncodersMessage', (_message.Message,), {
-    'DESCRIPTOR': _DRIVEENCODERSMESSAGE,
-    '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
-    # @@protoc_insertion_point(class_scope:DriveEncodersMessage)
-})
+    'DriveEncodersMessage', (_message.Message,), {
+        'DESCRIPTOR': _DRIVEENCODERSMESSAGE,
+        '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
+        # @@protoc_insertion_point(class_scope:DriveEncodersMessage)
+    })
 _sym_db.RegisterMessage(DriveEncodersMessage)
 
 RequestMessage = _reflection.GeneratedProtocolMessageType('RequestMessage', (_message.Message,), {
@@ -397,11 +397,11 @@ IMUMessage = _reflection.GeneratedProtocolMessageType('IMUMessage', (_message.Me
 _sym_db.RegisterMessage(IMUMessage)
 
 StatusLightCommand = _reflection.GeneratedProtocolMessageType(
-  'StatusLightCommand', (_message.Message,), {
-    'DESCRIPTOR': _STATUSLIGHTCOMMAND,
-    '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
-    # @@protoc_insertion_point(class_scope:StatusLightCommand)
-})
+    'StatusLightCommand', (_message.Message,), {
+        'DESCRIPTOR': _STATUSLIGHTCOMMAND,
+        '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
+        # @@protoc_insertion_point(class_scope:StatusLightCommand)
+    })
 _sym_db.RegisterMessage(StatusLightCommand)
 
 
