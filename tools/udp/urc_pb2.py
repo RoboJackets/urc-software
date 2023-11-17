@@ -120,21 +120,21 @@ _DRIVEENCODERSMESSAGE = _descriptor.Descriptor(
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='rightSpeed', full_name='DriveEncodersMessage.rightSpeed', index=1,
             number=2, type=5, cpp_type=1, label=1,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='timestamp', full_name='DriveEncodersMessage.timestamp', index=2,
             number=3, type=5, cpp_type=1, label=2,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
     ],
     extensions=[
     ],
@@ -166,42 +166,42 @@ _REQUESTMESSAGE = _descriptor.Descriptor(
             has_default_value=False, default_value=False,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='requestDiagnostics', full_name='RequestMessage.requestDiagnostics', index=1,
             number=2, type=8, cpp_type=7, label=2,
             has_default_value=False, default_value=False,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='leftSpeed', full_name='RequestMessage.leftSpeed', index=2,
             number=3, type=5, cpp_type=1, label=1,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='rightSpeed', full_name='RequestMessage.rightSpeed', index=3,
             number=4, type=5, cpp_type=1, label=1,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='duration', full_name='RequestMessage.duration', index=4,
             number=5, type=5, cpp_type=1, label=1,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='timestamp', full_name='RequestMessage.timestamp', index=5,
             number=6, type=5, cpp_type=1, label=2,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
     ],
     extensions=[
     ],
@@ -335,14 +335,14 @@ _STATUSLIGHTCOMMAND = _descriptor.Descriptor(
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
         _descriptor.FieldDescriptor(
             name='display', full_name='StatusLightCommand.display', index=1,
             number=2, type=5, cpp_type=1, label=1,
             has_default_value=False, default_value=0,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
-            serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+            serialized_options=None, file=DESCRIPTOR, create_key=_descriptor._internal_create_key),
     ],
     extensions=[
     ],
@@ -366,14 +366,16 @@ DESCRIPTOR.message_types_by_name['IMUMessage'] = _IMUMESSAGE
 DESCRIPTOR.message_types_by_name['StatusLightCommand'] = _STATUSLIGHTCOMMAND
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ArmEncodersMessage = _reflection.GeneratedProtocolMessageType('ArmEncodersMessage', (_message.Message,), {
+ArmEncodersMessage = _reflection.GeneratedProtocolMessageType(
+  'ArmEncodersMessage', (_message.Message,), {
     'DESCRIPTOR': _ARMENCODERSMESSAGE,
     '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
     # @@protoc_insertion_point(class_scope:ArmEncodersMessage)
 })
 _sym_db.RegisterMessage(ArmEncodersMessage)
 
-DriveEncodersMessage = _reflection.GeneratedProtocolMessageType('DriveEncodersMessage', (_message.Message,), {
+DriveEncodersMessage = _reflection.GeneratedProtocolMessageType(
+  'DriveEncodersMessage', (_message.Message,), {
     'DESCRIPTOR': _DRIVEENCODERSMESSAGE,
     '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
     # @@protoc_insertion_point(class_scope:DriveEncodersMessage)
@@ -394,7 +396,8 @@ IMUMessage = _reflection.GeneratedProtocolMessageType('IMUMessage', (_message.Me
 })
 _sym_db.RegisterMessage(IMUMessage)
 
-StatusLightCommand = _reflection.GeneratedProtocolMessageType('StatusLightCommand', (_message.Message,), {
+StatusLightCommand = _reflection.GeneratedProtocolMessageType(
+  'StatusLightCommand', (_message.Message,), {
     'DESCRIPTOR': _STATUSLIGHTCOMMAND,
     '__module__': 'src.urc_software.urc_nanopb.proto.urc_pb2'
     # @@protoc_insertion_point(class_scope:StatusLightCommand)
