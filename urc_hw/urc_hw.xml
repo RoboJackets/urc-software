@@ -1,0 +1,37 @@
+<library path="urc_hw">
+  <class name="urc_hw/RoverDrivetrain"
+    type="urc_hardware::hardware_interfaces::RoverDrivetrain"
+    base_class_type="hardware_interface::SystemInterface"
+  >
+    <description>
+      Rover drivetrain.
+    </description>
+  </class>
+
+  <class name="urc_hw/IMU"
+    type="urc_hardware::hardware_interfaces::IMU"
+    base_class_type="hardware_interface::SensorInterface"
+  >
+    <description>
+      IMU Sensor.
+    </description>
+  </class>
+
+  <class name="urc_hw/StatusLight"
+    type="urc_hardware::hardware_interfaces::StatusLight"
+    base_class_type="hardware_interface::SystemInterface"
+  >
+    <description>
+      Status Light.
+    </description>
+  </class>
+
+  <class name="urc_hw/BatteryManagement"
+    type="urc_hardware::hardware_interfaces::BatteryManagement"
+    base_class_type="hardware_interface::SensorInterface"
+  >
+    <description>
+      Battery management.
+    </description>
+  </class>
+</library>
