@@ -7,12 +7,9 @@ include(../cmake/default_settings.cmake)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
-find_package(urc_nanopb REQUIRED)
-find_package(urc_util REQUIRED)
 find_package(usb_cam REQUIRED)
 
 include_directories(
@@ -21,20 +18,15 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/motor_controller.cpp
   src/joystick_driver.cpp
-  src/motor_controller.cpp
 )
 
 set(dependencies
   rclcpp
   rclcpp_components
-  urc_msgs
   std_msgs
   sensor_msgs
   diagnostic_updater
-  urc_nanopb
-  urc_util
   usb_cam
 )
 
@@ -43,12 +35,6 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 # Node registration
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "motor_controller::MotorControllerWrapper"
-  EXECUTABLE ${PROJECT_NAME}_MotorController
-)
-
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"

@@ -12,7 +12,8 @@ This is the central bring-up package for the whole ros2_control system used in U
 Simply type in command line:
 
 ```
-ros2 launch urc_control bringup.launch.py
+ros2 launch urc_control allbringup.launch.py
 ```
 
-Everything will go live.
+Everything will go live. The script will start controll manager, and then the controll manager wil load the controllers via spanwers.
+If you want to change the controllers being launched, just change the `allbringup.launch.py` under `launch` directory.

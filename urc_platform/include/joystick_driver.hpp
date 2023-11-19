@@ -1,13 +1,14 @@
 #ifndef JOYSTICK_DRIVER_H
 #define JOYSTICK_DRIVER_H
 
+#include "geometry_msgs/msg/twist_stamped.hpp"
+#include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 #include <memory>
-#include <urc_msgs/msg/velocity_pair.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
-#include <diagnostic_updater/diagnostic_updater.hpp>
-#include <diagnostic_updater/publisher.hpp>
+#include <std_msgs/msg/detail/int8__struct.hpp>
+#include <utility>
 
 namespace joystick_driver
 {
@@ -17,18 +18,15 @@ public:
   explicit JoystickDriver(const rclcpp::NodeOptions & options);
 
 private:
-  rclcpp::Publisher<urc_msgs::msg::VelocityPair>::SharedPtr _cmd_publisher;
-  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr _joy_subscriber;
+  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subscriber;
+  void JoyCallback(const sensor_msgs::msg::Joy & msg);
 
-  std::unique_ptr<diagnostic_updater::Updater> updater_ptr;
-  double absoluteMaxVel, maxVel, maxVelIncr;
-  int leftJoyAxis, rightJoyAxis;
-  bool leftInverted, rightInverted;
-
-  void joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat);
-  void joyCallback(const sensor_msgs::msg::Joy & msg);
+  // drivetrain
+  std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> drivetrain_cmd_publisher;
+  double max_velocity;
+  std::pair<int, int> velocity_axis;
+  std::pair<bool, bool> invert_pair;
 };
-}
-
+}  // namespace joystick_driver
 
 #endif

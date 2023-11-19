@@ -1,4 +1,9 @@
 #include "joystick_driver.hpp"
+#include "preprocessing.hpp"
+
+#include <rclcpp/qos.hpp>
+#include <string>
+#include <utility>
 
 namespace joystick_driver
 {
@@ -6,56 +11,42 @@ namespace joystick_driver
 JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 : rclcpp::Node("joystick_driver", options)
 {
-  _cmd_publisher = create_publisher<urc_msgs::msg::VelocityPair>(
-    "~/motors",
-    rclcpp::SystemDefaultsQoS());
+  declare_parameter("max_velocity", 4.0);
+  declare_parameter("delta_velocity", 0.1);
 
-  _joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
-    "~/joy", rclcpp::SystemDefaultsQoS(), [this](const sensor_msgs::msg::Joy msg) {
-      joyCallback(msg);
-    });
+  declare_parameter("driver_joystick_topic", "/driver/joy");
+  declare_parameter("driver_velocity_x_axis", 1);
+  declare_parameter("driver_velocity_z_axis", 4);
+  declare_parameter("driver_left_invert", true);
+  declare_parameter("driver_right_invert", true);
+  declare_parameter("drivetrain_topic", "/rover_drivetrain_controller/cmd_vel");
 
-  updater_ptr = std::make_unique<diagnostic_updater::Updater>(this);
-  updater_ptr->setHardwareID("Joystick");
-  updater_ptr->add("Joystick Diagnostic", this, &JoystickDriver::joystick_diagnostic);
+  joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
+    get_parameter("driver_joystick_topic").as_string(), rclcpp::SystemDefaultsQoS(),
+    [this](const sensor_msgs::msg::Joy msg) {JoyCallback(msg);});
 
-  absoluteMaxVel = declare_parameter<double>("absoluteMaxVel");
-  maxVel = declare_parameter<double>("maxVel");
-  maxVelIncr = declare_parameter<double>("maxVelIncr");
-  leftJoyAxis = declare_parameter<int>("leftJoyAxis");
-  rightJoyAxis = declare_parameter<int>("rightJoyAxis");
-  leftInverted = declare_parameter<bool>("leftInverted");
-  rightInverted = declare_parameter<bool>("rightInverted");
+  drivetrain_cmd_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
+    get_parameter("drivetrain_topic").as_string(), rclcpp::SystemDefaultsQoS());
+  max_velocity = get_parameter("max_velocity").as_double();
+  velocity_axis = std::make_pair(
+    get_parameter("driver_velocity_x_axis").as_int(),
+    get_parameter("driver_velocity_z_axis").as_int());
+  invert_pair =
+    std::make_pair(
+    get_parameter("driver_left_invert").as_bool(),
+    get_parameter("driver_right_invert").as_bool());
 }
 
-void JoystickDriver::joystick_diagnostic(diagnostic_updater::DiagnosticStatusWrapper & stat)
+void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
 {
-  stat.summary(diagnostic_msgs::msg::DiagnosticStatus::OK, "Joystick Online");
-  stat.add("absolute_max_velocity", absoluteMaxVel);
-  stat.add("max_velocity", maxVel);
-  stat.add("max_velocity_increment", maxVelIncr);
+  geometry_msgs::msg::TwistStamped drive_velocity;
+  drive_velocity.twist.linear.x =
+    PreProcessing::preprocess(msg.axes[velocity_axis.first], max_velocity, invert_pair.first);
+  drive_velocity.twist.angular.z =
+    PreProcessing::preprocess(msg.axes[velocity_axis.second], max_velocity, invert_pair.second);
+  drivetrain_cmd_publisher->publish(drive_velocity);
 }
 
-void JoystickDriver::joyCallback(const sensor_msgs::msg::Joy & msg)
-{
-  if (msg.buttons[1]) {
-    maxVel -= maxVelIncr;
-  } else if (msg.buttons[3]) {
-    maxVel += maxVelIncr;
-  }
-
-  maxVel = std::max(std::min(maxVel, absoluteMaxVel), 0.0);
-  set_parameter(rclcpp::Parameter("maxVel", maxVel));
-
-  updater_ptr->force_update();
-
-  auto cmd = urc_msgs::msg::VelocityPair();
-  cmd.left_velocity = msg.axes[leftJoyAxis] * maxVel * (leftInverted ? -1.0 : 1.0);
-  cmd.right_velocity = msg.axes[rightJoyAxis] * maxVel * (rightInverted ? -1.0 : 1.0);
-  cmd.header.stamp = this->get_clock()->now();
-
-  _cmd_publisher->publish(cmd);
-}
-}
+}  // namespace joystick_driver
 
 RCLCPP_COMPONENTS_REGISTER_NODE(joystick_driver::JoystickDriver)
