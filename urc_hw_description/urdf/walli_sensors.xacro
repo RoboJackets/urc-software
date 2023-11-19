@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<robot name="walli_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
+<!-- IMU -->
+  <link name="imu_link">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+  <joint name="imu_joint" type="fixed">
+		<axis xyz="1 0 0"/>
+		<origin xyz="0 0 0.05"/>
+		<parent link="base_link"/>
+		<child link="imu_link"/>
+	</joint>
+	<gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <ros>
+          <namespace>/imu</namespace>
+          <remapping>~/out:=data</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+     <imu>
+     	<angular_velocity>
+     	  <x>
+     	    <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </z>
+        </linear_acceleration>
+      </imu>
+    </sensor>
+  </gazebo>
+
+
+  <gazebo>
+  <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
+    <ros>
+      <namespace>/sensor</namespace>
+    </ros>
+    <!-- wheels -->
+    <left_joint>left_front_wheel_joint</left_joint>
+    <right_joint>right_front_wheel_joint</right_joint>
+    <!-- kinematics -->
+    <wheel_separation>0.4</wheel_separation>
+    <wheel_diameter>0.2</wheel_diameter>
+    <!-- limits -->
+    <max_wheel_torque>20</max_wheel_torque>
+    <max_wheel_acceleration>1.0</max_wheel_acceleration>
+    <!-- output -->
+    <publish_odom>true</publish_odom>
+    <publish_odom_tf>false</publish_odom_tf>
+    <publish_wheel_tf>true</publish_wheel_tf>
+    <odometry_frame>odom</odometry_frame>
+    <robot_base_frame>base_link</robot_base_frame>
+  </plugin>
+</gazebo>
+
+  <!-- GPS -->
+  <link name="gps">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1"/>
+  </link>
+   <joint name="gps_joint" type="fixed">
+		<axis xyz="1 0 0"/>
+		<origin xyz="0 0 0.05"/>
+		<parent link="base_link"/>
+		<child link="gps"/>
+	</joint>
+  <gazebo reference="gps">
+    <sensor name="gps" type="gps">
+      <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
+          <ros>
+            <namespace>/gps</namespace>
+            <remapping>~/out:=data</remapping>
+          </ros>
+          <frame_name>gps</frame_name>
+        </plugin>
+        <always_on>true</always_on>
+        <updateRate>30</updateRate>
+    </sensor>
+  </gazebo>
+
+   <!-- LIDAR -->
+  <link name="lidar_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.125"/>
+      <inertia ixx="0.001"  ixy="0"  ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+    </inertial>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.0508" length="0.055"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.0508" length="0.055"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0"/>
+  </joint>
+  <!-- <xacro:VLP-16 parent="lidar_link" name="lidar" topic="/scan" hz="${lidar_hz}" samples="${lidar_samples}" gpu="false">
+    <origin xyz="${lidar_x} 0.0 ${lidar_z}" rpy="0 ${lidar_pitch} 0" />
+  </xacro:VLP-16> -->
+  <gazebo reference="lidar_link">
+  <sensor name="lidar" type="ray">
+    <always_on>true</always_on>
+    <visualize>true</visualize>
+    <update_rate>5</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>360</samples>
+          <resolution>1.000000</resolution>
+          <min_angle>0.000000</min_angle>
+          <max_angle>6.280000</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.12</min>
+        <max>3.5</max>
+        <resolution>0.015000</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+      <ros>
+        <remapping>~/out:=scan</remapping>
+      </ros>
+      <output_type>sensor_msgs/LaserScan</output_type>
+      <frame_name>lidar_link</frame_name>
+    </plugin>
+  </sensor>
+</gazebo>
+
+  <!-- May want to change this to a depth camera -->
+  <xacro:macro name="camera" params="orientation origin_x origin_y origin_z yaw">
+    <link name="cam/${orientation}">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </collision>
+      <xacro:box_inertia m="0.01" w="0.01" d="0.01" h="0.01"/>
+    </link>
+    <joint name="${orientation}_cam_joint" type="fixed">
+  	  <axis xyz="1 0 0"/>
+      <!-- Camera Orientation-->
+	    <origin xyz="${origin_x} ${origin_y} ${origin_z}" rpy = "0 0 ${yaw}"/>
+	    <parent link="base_link"/>
+	    <child link="cam/${orientation}"/>
+    </joint>
+    <gazebo reference="cam/${orientation}">
+      <sensor name="${orientation}_sensor" type="camera">
+        <plugin name="${orientation}_sensor" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>/image</namespace>
+            <remapping>~/image_raw:=${orientation}_img</remapping>
+            <remapping>~/camera_info:=${orientation}_camera_info</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+          <camera_name>${orientation}_camera</camera_name>
+          <frame_name>${orientation}_tf</frame_name>
+          <hack_baseline>0.07</hack_baseline>
+        </plugin>
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <camera name="cam/${orientation}">
+          <horizontal_fov>1.3962634</horizontal_fov>
+          <image>
+            <width>800</width>
+            <height>800</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+  <xacro:camera orientation="center" origin_x="0.1" origin_y="0"    origin_z="0" yaw="-0.14"/>
+  <xacro:camera orientation="left"   origin_x="0"    origin_y="0.1"  origin_z="0"    yaw="1.5"/>
+  <xacro:camera orientation="right"  origin_x="0"    origin_y="-0.1" origin_z="0"    yaw="-1.5"/>
+
+
+<!-- Depth Camera (addition for Nav2) -->
+<link name="camera_link">
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.015 0.130 0.022"/>
+    </geometry>
+  </visual>
+
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="0.015 0.130 0.022"/>
+    </geometry>
+  </collision>
+
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <mass value="0.035"/>
+    <inertia ixx="0.001"  ixy="0"  ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+  </inertial>
+</link>
+
+<joint name="camera_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="camera_link"/>
+  <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
+</joint>
+
+<link name="camera_depth_frame"/>
+
+<joint name="camera_depth_joint" type="fixed">
+  <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+  <parent link="camera_link"/>
+  <child link="camera_depth_frame"/>
+</joint>
+
+<gazebo reference="camera_link">
+  <sensor name="depth_camera" type="depth">
+    <visualize>true</visualize>
+    <update_rate>30.0</update_rate>
+    <camera name="camera">
+      <horizontal_fov>1.047198</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.05</near>
+        <far>3</far>
+      </clip>
+    </camera>
+    <plugin name="depth_camera_controller" filename="libgazebo_ros_camera.so">
+      <baseline>0.2</baseline>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>0.0</updateRate>
+      <frame_name>camera_depth_frame</frame_name>
+      <pointCloudCutoff>0.5</pointCloudCutoff>
+      <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+      <distortionK1>0</distortionK1>
+      <distortionK2>0</distortionK2>
+      <distortionK3>0</distortionK3>
+      <distortionT1>0</distortionT1>
+      <distortionT2>0</distortionT2>
+      <CxPrime>0</CxPrime>
+      <Cx>0</Cx>
+      <Cy>0</Cy>
+      <focalLength>0</focalLength>
+      <hackBaseline>0</hackBaseline>
+    </plugin>
+  </sensor>
+</gazebo>
+  <gazebo>
+    <sensor name="imu" type="imu">
+      <always_on>true</always_on>
+      <update_rate>30</update_rate>
+      <plugin name="imu" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <namespace>/imu</namespace>
+          <argument>~/out:=data</argument>
+        </ros>
+        <frame_name>imu</frame_name>
+      </plugin>
+    </sensor>            
+    <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <update_rate>30.0</update_rate>
+      <ros>
+        <namespace>/ground_truth</namespace>
+        <remapping>odom:=state_raw</remapping>
+      </ros>
+      <body_name>base_link</body_name>
+      <frame_name>world</frame_name>
+
+      <xyz_offset>0 0 0</xyz_offset>
+      <rpy_offset>0.0 0.0 0.0</rpy_offset>
+      <gaussian_noise>0.00</gaussian_noise>
+    </plugin>
+  </gazebo>
+</robot>
