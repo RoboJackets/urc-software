@@ -15,11 +15,11 @@ namespace joystick_driver
 class JoystickDriver : public rclcpp::Node
 {
 public:
-  explicit JoystickDriver(const rclcpp::NodeOptions& options);
+  explicit JoystickDriver(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subscriber;
-  void JoyCallback(const sensor_msgs::msg::Joy& msg);
+  void JoyCallback(const sensor_msgs::msg::Joy & msg);
 
   // drivetrain
   std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> drivetrain_cmd_publisher;
