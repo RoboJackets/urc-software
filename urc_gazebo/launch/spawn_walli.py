@@ -12,7 +12,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     urdf_path = 'urdf/walli.xacro'
-    xacro_file = os.path.join(get_package_share_directory('urc_gazebo'), urdf_path)
+    xacro_file = os.path.join(get_package_share_directory('urc_hw_description'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
