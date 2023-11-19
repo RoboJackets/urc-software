@@ -19,8 +19,10 @@ def generate_launch_description():
         executable='urc_platform_JoystickDriver',
         output='screen',
         parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
-                                     'joystick_config.yaml'])
+            PathJoinSubstitution(
+                [FindPackageShare('urc_platform'),
+                 'config'
+                 'joystick_config.yaml'])
         ],
         remappings=[
             ("/joystick_driver/joy", "/driver/joy"),
