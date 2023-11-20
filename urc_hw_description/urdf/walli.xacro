@@ -2,9 +2,10 @@
 <robot name="walli" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!-- These includes do not work if we use the file://$(find urc_hw_description) format -->
-  <!-- <xacro:include filename="$(find urc_hw_description)/urdf/walli_prop.xacro"/>
+  <xacro:include filename="$(find urc_hw_description)/urdf/walli_prop.xacro"/>
   <xacro:include filename="$(find urc_hw_description)/urdf/walli_inertials.xacro"/>
-  <xacro:include filename="$(find urc_hw_description)/urdf/walli_sensors.xacro"/> -->
+  <xacro:include filename="$(find urc_hw_description)/urdf/walli_sensors.xacro"/>
+  <xacro:include filename="$(find urc_hw_description)/urdf/ros2_control.xacro"/>
 
    <link name="base_link">
       <inertial>
