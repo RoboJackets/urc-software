@@ -1,6 +1,6 @@
-<!-- Gazebo Configuration -->
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Gazebo Configuration -->
     <ros2_control name="GazeboSystem" type="system">
         <hardware>
             <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
@@ -232,8 +232,8 @@
 
     <gazebo>
         <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-            <parameters>$(find urc_gazebo)/config/my_controllers.yaml</parameters>
-            <!-- Below is the one needed for the arm -->
+            <parameters>$(find urc_hw_description)/config/gazebo_controllers.yaml</parameters>
+            <!-- Below is the one needed for the arm (maybe) -->
             <!-- <parameters>file://$(find urc_gazebo)/urdf/config/RoboticArm_params.yaml</parameters> -->
         </plugin>
     </gazebo>
