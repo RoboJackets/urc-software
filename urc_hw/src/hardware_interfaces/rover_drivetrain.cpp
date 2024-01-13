@@ -29,9 +29,11 @@ RoverDrivetrain::RoverDrivetrain()
   , velocity_rps_breakdown(6, 0) {}
 RoverDrivetrain::~RoverDrivetrain() = default;
 
-hardware_interface::CallbackReturn RoverDrivetrain::on_init(const hardware_interface::HardwareInfo & info)
+hardware_interface::CallbackReturn RoverDrivetrain::on_init(
+  const hardware_interface::HardwareInfo & info)
 {
-  if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
+  if (hardware_interface::SystemInterface::on_init(info) != 
+    hardware_interface::CallbackReturn::SUCCESS)
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
