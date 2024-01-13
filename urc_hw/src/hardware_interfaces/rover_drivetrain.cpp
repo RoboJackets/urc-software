@@ -29,27 +29,26 @@ RoverDrivetrain::RoverDrivetrain()
   , velocity_rps_breakdown(6, 0) {}
 RoverDrivetrain::~RoverDrivetrain() = default;
 
-hardware_interface::CallbackReturn RoverDrivetrain::on_init(
-  const hardware_interface::HardwareInfo & info)
+hardware_interface::CallbackReturn RoverDrivetrain::on_init(const hardware_interface::HardwareInfo & info)
 {
-  if (hardware_interface::SystemInterface::on_init(info) !=
-    hardware_interface::CallbackReturn::SUCCESS)
+  if (hardware_interface::SystemInterface::on_init(info) != hardware_interface::CallbackReturn::SUCCESS)
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end()) {
+  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end()) 
+  {
     RCLCPP_ERROR(
       rclcpp::get_logger(hardware_interface_name),
       "Error during initialization: 'udp_address' configuration not "
       "found. Expect to enter the udp server address.");
     return hardware_interface::CallbackReturn::ERROR;
   }
-  if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end()) {
+  if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end()) 
+  {
     RCLCPP_ERROR(
       rclcpp::get_logger(hardware_interface_name),
-      "Error during initialization: 'udp_port' configuration not "
-      "found. Expect to enter the port number.");
+      "Error during initialization: 'udp_port' configuration not found. Expect to enter the port number.");
     return hardware_interface::CallbackReturn::ERROR;
   }
 
@@ -104,16 +103,12 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_deactivate(const rclcpp_l
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type RoverDrivetrain::read(
-  const rclcpp::Time &,
-  const rclcpp::Duration &)
+hardware_interface::return_type RoverDrivetrain::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type RoverDrivetrain::write(
-  const rclcpp::Time & time,
-  const rclcpp::Duration & duration)
+hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time & time, const rclcpp::Duration & duration)
 {
   if (duration.seconds() < 0.001) {
     return hardware_interface::return_type::OK;
@@ -130,7 +125,8 @@ hardware_interface::return_type RoverDrivetrain::write(
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;
 
-  if (!status) {
+  if (!status) 
+  {
     return hardware_interface::return_type::ERROR;
   }
   udp_->Send((char *)buffer, sizeof(buffer));
