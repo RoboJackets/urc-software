@@ -48,7 +48,8 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
   }
   if (info_.hardware_parameters.find("udp_port") == info_.hardware_parameters.end()) {
     RCLCPP_ERROR(
-      rclcpp::get_logger(hardware_interface_name),
+      rclcpp::get_logger(
+        hardware_interface_name),
       "Error during initialization: 'udp_port' configuration not found. Expect to enter the port number.");
     return hardware_interface::CallbackReturn::ERROR;
   }
@@ -105,7 +106,7 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_deactivate(const rclcpp_l
 }
 
 hardware_interface::return_type RoverDrivetrain::read(
-  const rclcpp::Time &, 
+  const rclcpp::Time &,
   const rclcpp::Duration &)
 {
   return hardware_interface::return_type::OK;
