@@ -8,6 +8,10 @@ This is the central bring-up package for the whole ros2_control system used in U
 - **urc_control**: contains a node to start the control manager, initialize all the hardware interfaces, and finally start the publishers & subscribers for receiving and sending control signals.
 
 ## Usage
+Make sure you have installed the relevant packages:
+```
+sudo apt install ros-humble-ros2-control ros-humble-ros2-controllers ros-humble-controller-manager
+```
 
 Simply type in command line:
 
