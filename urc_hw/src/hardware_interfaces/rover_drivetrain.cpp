@@ -38,8 +38,7 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
     return hardware_interface::CallbackReturn::ERROR;
   }
 
-  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end()) 
-  {
+  if (info_.hardware_parameters.find("udp_address") == info_.hardware_parameters.end()) {
     RCLCPP_ERROR(
       rclcpp::get_logger(hardware_interface_name),
       "Error during initialization: 'udp_address' configuration not "
@@ -127,8 +126,7 @@ hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time & time
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;
 
-  if (!status) 
-  {
+  if (!status) {
     return hardware_interface::return_type::ERROR;
   }
   udp_->Send((char *)buffer, sizeof(buffer));
