@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
@@ -10,13 +10,22 @@ from launch_ros.actions import Node
 from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
+import yaml
 from xacro import process_file
 
 
 def generate_launch_description():
+
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+
+    hardware_config_file_dir = os.path.join(
+        pkg_urc_bringup, 'config', 'hardware_config.yaml')
+    with open(hardware_config_file_dir) as f:
+        hardware_config = yaml.safe_load(f)
+    use_simulation = hardware_config['hardware_config']['use_simulation']
+
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup,
         'config', 'controller_config.yaml'
@@ -41,6 +50,12 @@ def generate_launch_description():
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         ),
         # launch_arguments={"world": world_path}.items()
+    )
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[controller_config_file_dir],
+        output="both",
     )
     enable_color = SetEnvironmentVariable(
         name="RCUTILS_COLORIZED_OUTPUT",
@@ -116,22 +131,43 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription([
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=spawn_robot,
-                on_exit=[
-                    load_joint_state_broadcaster,
-                    load_drivetrain_controller,
-                    #  load_rover_drivetrain_controller,
-                    # robot_localization_node,
-                    aruco_detector,
-                    aruco_location,
-                ],
-            )
-        ),
-        enable_color,
-        gazebo,
-        load_robot_state_publisher,
-        spawn_robot,
-    ])
+    joystick_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                FindPackageShare("urc_platform"),
+                "/launch/joystick.launch.py"
+            ]
+        )
+    )
+
+    if use_simulation:
+        return LaunchDescription([
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=spawn_robot,
+                    on_exit=[
+                        load_joint_state_broadcaster,
+                        load_drivetrain_controller,
+                        # robot_localization_node,
+                        aruco_detector,
+                        aruco_location,
+                        joystick_launch
+                    ],
+                )
+            ),
+            enable_color,
+            gazebo,
+            load_robot_state_publisher,
+            spawn_robot,
+        ])
+    else:
+        return LaunchDescription([
+            load_robot_state_publisher,
+            control_node,
+            load_joint_state_broadcaster,
+            load_drivetrain_controller,
+            # robot_localization_node,
+            aruco_detector,
+            aruco_location,
+            joystick_launch
+        ])

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="drivebase" params="wheel_radius wheel_thickness wheel_friction ">
+    <xacro:macro name="drivebase" params="wheel_radius wheel_thickness wheel_friction approximate">
         <link name="base_link">
             <inertial>
                 <origin xyz="-0.22771 0.0020794 0.13424" rpy="0 0 0" />
@@ -69,9 +69,13 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
+                    <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                        <mesh
+                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                    </xacro:if>
                 </geometry>
             </collision>
             <surface>
@@ -116,7 +120,7 @@
             <parent link="rightrocker" />
             <child link="rightbogie" />
             <axis xyz="0 0 0" />
-            <dynamics damping="60" friction="4" />
+            <dynamics damping="0.02" friction="0" />
         </joint>
         <link name="right_front_wheel">
             <inertial>
@@ -135,9 +139,13 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_front_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
+                    <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                        <mesh
+                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                    </xacro:if>
                 </geometry>
             </collision>
             <surface>

@@ -18,7 +18,7 @@ xacro.process_doc(urdf_doc)
 robot_description = urdf_doc.toxml()
 
 robot_controller_config = os.path.join(get_package_share_directory(
-    'urc_hw_description'), 'config', 'urc_config.yaml')
+    'urc_bringup'), 'config', 'controller_config.yaml')
 control_node = Node(
     package="controller_manager",
     executable="ros2_control_node",
