@@ -14,6 +14,9 @@ controller_manager:
     bms_broadcaster:
       type: urc_controllers/BMSBroadcaster
 
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
 imu_broadcaster:
   ros__parameters:
     imu_name: imu_sensor
@@ -29,8 +32,10 @@ status_light_controller:
 
 rover_drivetrain_controller:
   ros__parameters:
-    left_wheel_names: ["left_wheel"]
-    right_wheel_names: ["right_wheel"]
+    left_wheel_names:
+      ["left_front_wheel", "left_center_wheel", "left_rear_wheel"]
+    right_wheel_names:
+      ["right_front_wheel", "right_center_wheel", "right_rear_wheel"]
 
     pose_covariance_diagonal:
       [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]

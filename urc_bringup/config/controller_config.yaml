@@ -1,12 +1,25 @@
 controller_manager:
   ros__parameters:
-    update_rate: 60
+    update_rate: 200
 
     imu_broadcaster:
       type: urc_controllers/IMUBroadcaster
 
     status_light_controller:
       type: urc_controllers/StatusLightController
+
+    rover_drivetrain_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    bms_broadcaster:
+      type: urc_controllers/BMSBroadcaster
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+joint_state_broadcaster:
+  ros__parameters:
+    type: joint_state_broadcaster/JointStateBroadcaster
 
 imu_broadcaster:
   ros__parameters:
@@ -23,13 +36,24 @@ status_light_controller:
 
 rover_drivetrain_controller:
   ros__parameters:
-    type: diff_drive_controller/DiffDriveController
-    left_wheel_names: ['left_wheel']
-    right_wheel_names: ['right_wheel']
-    
-    pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-    twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-    
+    left_wheel_names:
+      [
+        "left_front_wheel_joint",
+        "left_center_wheel_joint",
+        "left_rear_wheel_joint",
+      ]
+    right_wheel_names:
+      [
+        "right_front_wheel_joint",
+        "right_center_wheel_joint",
+        "right_rear_wheel_joint",
+      ]
+
+    pose_covariance_diagonal:
+      [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+    twist_covariance_diagonal:
+      [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+
     position_feedback: false
     open_loop: false
 
@@ -41,19 +65,19 @@ rover_drivetrain_controller:
     # Whenever a min_* is unspecified, default to -max_*
     linear:
       x:
-        has_velocity_limits    : true
-        max_velocity           : 4.0  # m/s
-        min_velocity           : -0.5 # m/s
+        has_velocity_limits: true
+        max_velocity: 4.0 # m/s
+        min_velocity: -0.5 # m/s
         has_acceleration_limits: true
-        max_acceleration       : 0.8  # m/s^2
-        min_acceleration       : -0.4 # m/s^2
-        has_jerk_limits        : true
-        max_jerk               : 5.0  # m/s^3
+        max_acceleration: 0.8 # m/s^2
+        min_acceleration: -0.4 # m/s^2
+        has_jerk_limits: true
+        max_jerk: 5.0 # m/s^3
     angular:
       z:
-        has_velocity_limits    : true
-        max_velocity           : 1.7  # rad/s
+        has_velocity_limits: true
+        max_velocity: 1.7 # rad/s
         has_acceleration_limits: true
-        max_acceleration       : 1.5  # rad/s^2
-        has_jerk_limits        : true
-        max_jerk               : 2.5  # rad/s^3
+        max_acceleration: 1.5 # rad/s^2
+        has_jerk_limits: true
+        max_jerk: 2.5 # rad/s^3

@@ -1,21 +1,40 @@
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler, SetEnvironmentVariable
-from launch.event_handlers import OnProcessExit
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
+from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import ExecuteProcess
+from launch.actions import ExecuteProcess, RegisterEventHandler
 from launch_ros.actions import Node
+from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
+from xacro import process_file
 
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    controller_config_file_dir = os.path.join(
+        pkg_urc_bringup,
+        'config', 'controller_config.yaml'
+    )
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
+    'config', 'controller_config.yaml'
+
+    xacro_file = os.path.join(
+        get_package_share_directory('urc_hw_description'),
+        "urdf/walli.xacro"
+    )
+    assert os.path.exists(
+        xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+
+    robot_description_config = process_file(xacro_file)
+    robot_desc = robot_description_config.toxml()
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -23,27 +42,9 @@ def generate_launch_description():
         ),
         launch_arguments={"world": world_path}.items()
     )
-
-    walli = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_gazebo, "launch", "spawn_walli.py")
-        )
-    )
-
-    ground_truth = Node(
-        package='urc_gazebo',
-        executable='urc_gazebo_GroundTruth',
-        output='screen',
-        parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_gazebo'), 'config',
-                                     'ground_truth_params.yaml']),
-                {"use_sim_time": use_sim_time}
-        ],
-        remappings=[
-            ("/ground_truth/odometry/filtered", "/odometry/filtered"),
-            ("/ground_truth/ground_truth", "/ground_truth"),
-            ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw")
-        ]
+    enable_color = SetEnvironmentVariable(
+        name="RCUTILS_COLORIZED_OUTPUT",
+        value="1"
     )
 
     aruco_detector = Node(
@@ -68,39 +69,69 @@ def generate_launch_description():
         ]
     )
 
-    load_drivetrain_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            'swerve_drive_controller'
+    spawn_robot = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.3',
+                   '-topic', '/robot_description']
+    )
+
+    load_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        parameters=[
+            {"use_sim_time": use_sim_time},
+            {"robot_description": robot_desc}
         ],
+        output='screen'
+    )
+
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[
+            os.path.join(
+                pkg_urc_gazebo, 'config/ekf.yaml'),
+            {'use_sim_time': LaunchConfiguration('use_sim_time')}
+        ]
     )
 
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
+            '-p', controller_config_file_dir,
             'joint_state_broadcaster'
         ],
     )
 
-    ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s',
-             'libgazebo_ros_factory.so', world_path],
-        output='screen'
+    load_drivetrain_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            'rover_drivetrain_controller'
+        ],
     )
 
     return LaunchDescription([
-        # RegisterEventHandler(
-        #     event_handler=OnProcessExit(
-        #         target_action=load_joint_state_broadcaster,
-        #         on_exit=[load_drivetrain_controller],
-        #     )
-        # ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_robot,
+                on_exit=[
+                    load_joint_state_broadcaster,
+                    load_drivetrain_controller,
+                    #  load_rover_drivetrain_controller,
+                    # robot_localization_node,
+                    aruco_detector,
+                    aruco_location,
+                ],
+            )
+        ),
+        enable_color,
         gazebo,
-        walli,
-        ground_truth,
-        aruco_detector,
-        aruco_location,
-        # load_joint_state_broadcaster
+        load_robot_state_publisher,
+        spawn_robot
     ])
