@@ -21,7 +21,7 @@ def generate_launch_description():
         pkg_urc_bringup,
         'config', 'controller_config.yaml'
     )
-    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     'config', 'controller_config.yaml'
@@ -40,7 +40,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         ),
-        launch_arguments={"world": world_path}.items()
+        # launch_arguments={"world": world_path}.items()
     )
     enable_color = SetEnvironmentVariable(
         name="RCUTILS_COLORIZED_OUTPUT",
@@ -72,7 +72,7 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.3',
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.4', '-R', '0', '-P', '0', '-Y', '0',
                    '-topic', '/robot_description']
     )
 
@@ -133,5 +133,5 @@ def generate_launch_description():
         enable_color,
         gazebo,
         load_robot_state_publisher,
-        spawn_robot
+        spawn_robot,
     ])
