@@ -17,6 +17,8 @@ find_package(urc_hw REQUIRED)
 find_package(urc_util REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
+find_package(joint_trajectory_controller REQUIRED)
+find_package(control_toolbox REQUIRED)
 
 add_library(
   ${PROJECT_NAME}

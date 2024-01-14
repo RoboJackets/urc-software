@@ -17,5 +17,6 @@
       approximate="true" />
    <xacro:arm />
    <xacro:ros2_control use_simulation="${use_simulation}"
-      config_file_path="$(find urc_bringup)/config/controller_config.yaml" />
+      config_file_path="$(find urc_bringup)/config/controller_config.yaml"
+      arm_initial_positions_file="$(find urc_hw_description)/config/initial_positions.yaml" />
 </robot>
