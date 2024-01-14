@@ -139,13 +139,8 @@
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <xacro:if value="${approximate}">
-                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
-                    </xacro:if>
-                    <xacro:if value="${not approximate}">
-                        <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
-                    </xacro:if>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
                 </geometry>
             </collision>
             <surface>
@@ -191,7 +186,6 @@
                 <geometry>
                     <mesh
                         filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_center_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
                 </geometry>
             </collision>
             <surface>
@@ -257,7 +251,6 @@
                 <geometry>
                     <mesh
                         filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_rear_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
                 </geometry>
             </collision>
             <surface>
@@ -323,7 +316,6 @@
                 <geometry>
                     <mesh
                         filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_front_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
                 </geometry>
             </collision>
             <surface>
@@ -361,7 +353,6 @@
                 <geometry>
                     <mesh
                         filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_center_wheel_collision.STL" />
-                    <!-- <cylinder radius="${wheel_radius}" length="${wheel_thickness}" /> -->
                 </geometry>
             </collision>
             <surface>

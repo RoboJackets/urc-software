@@ -1,2 +1,2 @@
 hardware_config:
-  use_simulation: false
+  use_simulation: true
