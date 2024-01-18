@@ -13,7 +13,7 @@
    <xacro:include filename="$(find urc_hw_description)/urdf/drivebase.xacro" />
    <xacro:include filename="$(find urc_hw_description)/urdf/arm.xacro" />
 
-   <xacro:drivebase wheel_friction="0.012" wheel_radius="0.10" wheel_thickness="0.05"
+   <xacro:drivebase wheel_friction="0.012" wheel_radius="0.05" wheel_thickness="0.025"
       approximate="true" />
    <xacro:arm />
    <xacro:ros2_control use_simulation="${use_simulation}"
