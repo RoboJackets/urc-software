@@ -1,8 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import ExecuteProcess, RegisterEventHandler
@@ -14,7 +12,6 @@ from moveit_configs_utils.launch_utils import (
     add_debuggable_node,
     DeclareBooleanLaunchArg,
 )
-
 
 import os
 import yaml
@@ -32,12 +29,17 @@ def generate_launch_description():
         hardware_config = yaml.safe_load(f)
     use_simulation = hardware_config['hardware_config']['use_simulation']
 
+    srdf_file = os.path.join(
+        get_package_share_directory('urc_hw_description'),
+        "urdf/walli.srdf"
+    )
+    with open(srdf_file, 'r') as f:
+        semantic_content = f.read()
+
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup,
         'config', 'controller_config.yaml'
     )
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     xacro_file = os.path.join(
         get_package_share_directory('urc_hw_description'),
@@ -50,6 +52,8 @@ def generate_launch_description():
 
     moveit_config = MoveItConfigsBuilder(package_name="urc_hw_description", robot_name="walli").robot_description(
         file_path="urdf/walli.xacro"
+    ).robot_description_semantic(
+        file_path="config/walli.srdf"
     ).trajectory_execution(
         file_path="config/moveit_controllers.yaml"
     ).joint_limits(
@@ -58,10 +62,6 @@ def generate_launch_description():
         file_path=xacro_file
     ).to_moveit_configs()
 
-    move_group_capabilities = {
-        "capabilities": "move_group/ExecuteTaskSolutionCapability"
-    }
-
     moveit_config_str = moveit_config.to_dict()
 
     run_move_group_node = Node(
@@ -69,11 +69,13 @@ def generate_launch_description():
         executable="move_group",
         output="screen",
         parameters=[
-            move_group_capabilities,
-            moveit_config_str
+            moveit_config_str,
+            {
+                'robot_description_semantic': semantic_content,
+            }
         ]
     )
 
-    return LaunchConfiguration([
+    return LaunchDescription([
         run_move_group_node
     ])

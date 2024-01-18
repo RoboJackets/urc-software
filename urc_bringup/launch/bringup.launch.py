@@ -6,7 +6,6 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import ExecuteProcess, RegisterEventHandler
-from launch_ros.actions import Node
 from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 from moveit_configs_utils import MoveItConfigsBuilder
@@ -43,6 +42,7 @@ def generate_launch_description():
         get_package_share_directory('urc_hw_description'),
         "urdf/walli.xacro"
     )
+
     assert os.path.exists(
         xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(xacro_file)
@@ -99,8 +99,10 @@ def generate_launch_description():
         executable='robot_state_publisher',
         name='robot_state_publisher',
         parameters=[
-            {"use_sim_time": use_sim_time},
-            {"robot_description": robot_desc}
+            {
+                "use_sim_time": use_sim_time,
+                "robot_description": robot_desc
+            },
         ],
         output='screen'
     )
@@ -152,6 +154,15 @@ def generate_launch_description():
         ],
     )
 
+    load_arm_movegroups = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                FindPackageShare("urc_bringup"),
+                "/launch/_bringup.arm.launch.py"
+            ]
+        )
+    )
+
     joystick_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
@@ -171,6 +182,7 @@ def generate_launch_description():
                         load_drivetrain_controller,
                         load_arm_controller,
                         load_gripper_controller,
+                        load_arm_movegroups,
                         # robot_localization_node,
                         aruco_detector,
                         aruco_location,
