@@ -10,7 +10,7 @@
         value="${config_data['hardware_config']['use_simplified_model']}" />
 
     <xacro:if value="${use_simplified_model}">
-        <xacro:include filename="$(find urc_hw_description)/urdf/diff_drive.xacro" />
+        <xacro:include filename="$(find urc_hw_description)/urdf/six_wheel_simplified.xacro" />
     </xacro:if>
 
     <xacro:if value="${not use_simplified_model}">

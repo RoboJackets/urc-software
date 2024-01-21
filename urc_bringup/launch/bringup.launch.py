@@ -27,7 +27,7 @@ def generate_launch_description():
     use_simulation = hardware_config['hardware_config']['use_simulation']
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, 'config', 'ros2_control_simple.yaml'
+        pkg_urc_bringup, 'config', 'ros2_control_walli.yaml'
     )
 
     default_rviz_config_path = os.path.join(
@@ -179,6 +179,7 @@ def generate_launch_description():
             robot_state_publisher_node,
             joint_state_publisher_node,
             joint_state_publisher_gui_node,
+            load_drivetrain_controller,
             spawn_robot,
             rviz_node,
             navigation_nodes
