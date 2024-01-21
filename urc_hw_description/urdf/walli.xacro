@@ -2,7 +2,7 @@
 <robot name="walli" xmlns:xacro="http://ros.org/wiki/xacro">
    <xacro:property name="config_file"
       value="$(find urc_bringup)/config/hardware_config.yaml" />
-   <xacro:property name="config_data" value="${load_yaml(config_file)}"></xacro:property>
+   <xacro:property name="config_data" value="${xacro.load_yaml(config_file)}"></xacro:property>
    <xacro:property name="use_simulation" value="${config_data['hardware_config']['use_simulation']}" />
 
    <xacro:include filename="$(find urc_hw_description)/urdf/walli_prop.xacro" />
