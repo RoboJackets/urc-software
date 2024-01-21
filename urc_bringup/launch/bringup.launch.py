@@ -1,12 +1,11 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration, Command
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import ExecuteProcess, RegisterEventHandler
-from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
 import os
 import yaml
@@ -16,15 +15,14 @@ import launch
 
 def generate_launch_description():
 
-    pkg_gazebo_ros = FindPackageShare("gazebo_ros").find("gazebo_ros")
-    pkg_urc_gazebo = FindPackageShare("urc_gazebo").find("urc_gazebo")
-    pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
-    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
+    pkg_urc_bringup = FindPackageShare("urc_bringup").find
+    ("urc_bringup")
+    pkg_urc_navigation = FindPackageShare("urc_navigation").find
+    ("urc_navigation")
 
     world_path = os.path.join(pkg_urc_bringup, 'world/world.sdf')
-    default_model_path= os.path.join(get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
-
-
+    default_model_path = os.path.join
+    (get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
 
     hardware_config_file_dir = os.path.join(
         pkg_urc_bringup, 'config', 'hardware_config.yaml')
@@ -33,13 +31,12 @@ def generate_launch_description():
     use_simulation = hardware_config['hardware_config']['use_simulation']
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup,
-        'config', 'ros2_control_simple.yaml'
+        pkg_urc_bringup, 'config', 'ros2_control_simple.yaml'
     )
 
-    pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_bringup').find('urc_bringup')
-    default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
-
+    default_rviz_config_path = os.path.join(
+        pkg_urc_bringup, 'rviz/urdf_config.rviz'
+    )
 
     # gazebo = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
@@ -47,8 +44,6 @@ def generate_launch_description():
     #     ),
     #     launch_arguments={"world": world_path}.items()
     # )
-
-
 
     navigation_nodes = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -71,8 +66,9 @@ def generate_launch_description():
         executable='urc_perception_ArucoDetector',
         output='screen',
         parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_perception'), 'config',
-                                     'aruco_detector_params.yaml'])
+                PathJoinSubstitution([
+                    FindPackageShare('urc_perception'),
+                    'config', 'aruco_detector_params.yaml'])
         ],
         remappings=[
             ("/aruco_detector/aruco_detection", "/aruco_detection")
@@ -89,8 +85,9 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli', 
-                   '-x', '0', '-y', '0', '-z', '0.4', '-R', '0', '-P', '0', '-Y', '0',
+        arguments=['-entity', 'walli',
+                   '-x', '0', '-y', '0', '-z', '0.4',
+                   '-R', '0', '-P', '0', '-Y', '0',
                    '-topic', '/robot_description'],
         output='screen'
     )
@@ -100,8 +97,8 @@ def generate_launch_description():
         name='robot_state_publisher',
         parameters=[
             # {"use_sim_time": LaunchConfiguration('use_sim_time')},
-            {"robot_description": Command(['xacro ', LaunchConfiguration('model')])}
-        ],
+            {"robot_description": Command(
+                ['xacro ', LaunchConfiguration('model')])}],
         output='screen'
     )
     joint_state_publisher_node = launch_ros.actions.Node(
@@ -153,15 +150,33 @@ def generate_launch_description():
     if use_simulation:
         print("USING SIMULATION MODE")
         return LaunchDescription([
-            launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
-                                description='Absolute path to rviz config file'),
-            launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
-                                description='Absolute path to robot urdf file'),
-            launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
-                                description='Flag to enable use_sim_time'),
-            launch.actions.DeclareLaunchArgument(name='gui', default_value='True',
-                                description='Flag to enable joint_state_publisher_gui'),
-            launch.actions.ExecuteProcess(cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so', world_path], output='screen'),
+            DeclareLaunchArgument(
+                name='rvizconfig',
+                default_value=default_rviz_config_path,
+                description='Absolute path to rviz config file'
+            ),
+            DeclareLaunchArgument(
+                name='model',
+                default_value=default_model_path,
+                description='Absolute path to robot urdf file'
+            ),
+            DeclareLaunchArgument(
+                name='use_sim_time',
+                default_value='True',
+                description='Flag to enable use_sim_time'
+            ),
+            DeclareLaunchArgument(
+                name='gui',
+                default_value='True',
+                description='Flag to enable joint_state_publisher_gui'
+            ),
+            ExecuteProcess(cmd=[
+                'gazebo', '--verbose', '-s',
+                'libgazebo_ros_init.so', '-s',
+                'libgazebo_ros_factory.so', world_path
+                ],
+                output='screen'
+            ),
 
             enable_color,
             # gazebo,

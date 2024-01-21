@@ -1,5 +1,4 @@
 from launch import LaunchDescription
-from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration
@@ -7,8 +6,8 @@ import os
 
 
 def generate_launch_description():
-    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
-
+    pkg_urc_navigation = FindPackageShare("urc_navigation").find
+    ("urc_navigation")
 
     robot_localization_node = Node(
         package='robot_localization',
@@ -20,7 +19,6 @@ def generate_launch_description():
             {'use_sim_time': LaunchConfiguration('use_sim_time')}
         ]
     )
-
 
     return LaunchDescription([
         robot_localization_node
