@@ -12,15 +12,17 @@ import os
 import yaml
 import launch_ros
 import launch
-from xacro import process_file
 
 
 def generate_launch_description():
 
-    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-    pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    world_path=os.path.join(pkg_urc_bringup, 'world/world.sdf')
+    pkg_gazebo_ros = FindPackageShare("gazebo_ros").find("gazebo_ros")
+    pkg_urc_gazebo = FindPackageShare("urc_gazebo").find("urc_gazebo")
+    pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
+
+    world_path = os.path.join(pkg_urc_bringup, 'world/world.sdf')
+    default_model_path= os.path.join(get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
+
 
 
     hardware_config_file_dir = os.path.join(
@@ -38,22 +40,12 @@ def generate_launch_description():
 
     default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
 
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-
-    xacro_file = os.path.join(get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
-
-    assert os.path.exists(
-        xacro_file), "urdf path doesnt exist in " + str(xacro_file)
-
-    robot_description_config = process_file(xacro_file)
-    robot_desc = robot_description_config.toxml()
 
     # gazebo = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
     #         os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
     #     ),
-    #     # launch_arguments={"world": world_path}.items()
+    #     launch_arguments={"world": world_path}.items()
     # )
 
     control_node = Node(
@@ -66,7 +58,6 @@ def generate_launch_description():
         name="RCUTILS_COLORIZED_OUTPUT",
         value="1"
     )
-
     aruco_detector = Node(
         package='urc_perception',
         executable='urc_perception_ArucoDetector',
@@ -79,7 +70,6 @@ def generate_launch_description():
             ("/aruco_detector/aruco_detection", "/aruco_detection")
         ]
     )
-
     aruco_location = Node(
         package='urc_perception',
         executable='urc_perception_ArucoLocation',
@@ -88,7 +78,6 @@ def generate_launch_description():
                 ("/aruco_location/aruco_location", "/aruco_location")
         ]
     )
-
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -97,7 +86,6 @@ def generate_launch_description():
                    '-topic', '/robot_description'],
         output='screen'
     )
-
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -170,7 +158,7 @@ def generate_launch_description():
         return LaunchDescription([
             launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=default_rviz_config_path,
                                 description='Absolute path to rviz config file'),
-            launch.actions.DeclareLaunchArgument(name='model', default_value=xacro_file,
+            launch.actions.DeclareLaunchArgument(name='model', default_value=default_model_path,
                                 description='Absolute path to robot urdf file'),
             launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
                                 description='Flag to enable use_sim_time'),
