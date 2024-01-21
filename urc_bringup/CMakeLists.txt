@@ -43,6 +43,7 @@ install(
   DIRECTORY
   launch
   config
+  world
   DESTINATION share/${PROJECT_NAME}/
 )
 

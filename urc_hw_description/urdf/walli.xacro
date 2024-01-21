@@ -10,12 +10,12 @@
    <xacro:include filename="$(find urc_hw_description)/urdf/walli_sensors.xacro" />
    <xacro:include filename="$(find urc_hw_description)/urdf/ros2_control.xacro" />
 
-   <xacro:include filename="$(find urc_hw_description)/urdf/drivebase.xacro" />
-   <xacro:include filename="$(find urc_hw_description)/urdf/arm.xacro" />
+   <xacro:include filename="$(find urc_hw_description)/urdf/walli_drivebase.xacro" />
+   <xacro:include filename="$(find urc_hw_description)/urdf/walli_arm.xacro" />
 
    <xacro:drivebase wheel_friction="0.012" wheel_radius="0.05" wheel_thickness="0.025"
       approximate="true" />
    <xacro:arm />
    <xacro:ros2_control use_simulation="${use_simulation}"
-      config_file_path="$(find urc_bringup)/config/controller_config.yaml" />
+      config_file_path="$(find urc_bringup)/config/ros2_control_walli.yaml" />
 </robot>
