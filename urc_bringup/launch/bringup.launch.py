@@ -19,6 +19,7 @@ def generate_launch_description():
     pkg_gazebo_ros = FindPackageShare("gazebo_ros").find("gazebo_ros")
     pkg_urc_gazebo = FindPackageShare("urc_gazebo").find("urc_gazebo")
     pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
+    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
 
     world_path = os.path.join(pkg_urc_bringup, 'world/world.sdf')
     default_model_path= os.path.join(get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
@@ -37,7 +38,6 @@ def generate_launch_description():
     )
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_bringup').find('urc_bringup')
-
     default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf_config.rviz')
 
 
@@ -47,6 +47,14 @@ def generate_launch_description():
     #     ),
     #     launch_arguments={"world": world_path}.items()
     # )
+
+
+
+    navigation_nodes = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_navigation, "launch", "navigation.launch.py")
+        )
+    )
 
     control_node = Node(
         package="controller_manager",
@@ -109,17 +117,6 @@ def generate_launch_description():
         condition=launch.conditions.IfCondition(LaunchConfiguration('gui'))
     )
 
-    robot_localization_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_filter_node',
-        output='screen',
-        parameters=[
-            os.path.join(pkg_urc_gazebo, 'config/ekf.yaml'),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')}
-        ]
-    )
-
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
@@ -171,9 +168,9 @@ def generate_launch_description():
             robot_state_publisher_node,
             joint_state_publisher_node,
             joint_state_publisher_gui_node,
-            robot_localization_node,
             spawn_robot,
-            rviz_node
+            rviz_node,
+            navigation_nodes
         ])
     else:
         return LaunchDescription([
@@ -181,7 +178,6 @@ def generate_launch_description():
             control_node,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            # robot_localization_node,
             aruco_detector,
             aruco_location,
             joystick_launch
