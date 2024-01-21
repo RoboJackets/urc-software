@@ -6,8 +6,7 @@ import os
 
 
 def generate_launch_description():
-    pkg_urc_navigation = FindPackageShare("urc_navigation").find
-    ("urc_navigation")
+    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
 
     robot_localization_node = Node(
         package='robot_localization',

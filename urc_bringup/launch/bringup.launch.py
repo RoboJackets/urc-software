@@ -15,17 +15,13 @@ import launch
 
 def generate_launch_description():
 
-    pkg_urc_bringup = FindPackageShare("urc_bringup").find
-    ("urc_bringup")
-    pkg_urc_navigation = FindPackageShare("urc_navigation").find
-    ("urc_navigation")
+    pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
+    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
 
     world_path = os.path.join(pkg_urc_bringup, 'world/world.sdf')
-    default_model_path = os.path.join
-    (get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
+    default_model_path = os.path.join(get_package_share_directory('urc_hw_description'), "urdf/robot.xacro")
 
-    hardware_config_file_dir = os.path.join(
-        pkg_urc_bringup, 'config', 'hardware_config.yaml')
+    hardware_config_file_dir = os.path.join(pkg_urc_bringup, 'config', 'hardware_config.yaml')
     with open(hardware_config_file_dir) as f:
         hardware_config = yaml.safe_load(f)
     use_simulation = hardware_config['hardware_config']['use_simulation']
