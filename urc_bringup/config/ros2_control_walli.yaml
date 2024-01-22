@@ -57,9 +57,9 @@ rover_drivetrain_controller:
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-    wheel_seperation: 0.4
+    wheel_seperation: 0.45
     wheels_per_side: 3
-    wheel_radius: 0.10
+    wheel_radius: 0.08
 
     use_stamped_vel: false
 

@@ -7,7 +7,7 @@
     <xacro:property name="base_height" value="0.18" />
     <xacro:property name="base_mass" value="1.0" />
 
-    <xacro:property name="wheel_radius" value="0.10" />
+    <xacro:property name="wheel_radius" value="0.08" />
     <xacro:property name="wheel_thickness" value="0.04" />
     <xacro:property name="wheel_mass" value="0.05" />
     <xacro:property name="wheel_gap_y" value="0.025" />
@@ -88,8 +88,8 @@
             <geometry>
                 <box size="${base_length} ${base_width} ${base_height}" />
             </geometry>
-            <material name="Cyan">
-                <color rgba="0 1.0 1.0 1.0" />
+            <material name="Orange">
+                <color rgba="1.0 0.3 0.1 1.0" />
             </material>
         </visual>
 
@@ -101,6 +101,10 @@
 
         <xacro:box_inertia m="${base_mass}" w="${base_width}" d="${base_length}" h="${base_height}" />
     </link>
+
+    <gazebo reference="base_link">
+        <material>Gazebo/Orange</material>
+    </gazebo>
 
     <!-- Robot Footprint -->
     <link name="base_footprint">
@@ -120,7 +124,7 @@
             <origin
                 xyz="${x_mult*wheel_offset_x} ${-y_reflect*(base_width/2+wheel_gap_y)} ${-wheel_offset_z}"
                 rpy="${y_reflect*pi/2} 0 0" />
-            <axis xyz="0 0 ${y_reflect}" />
+            <axis xyz="0 0 ${-y_reflect}" />
         </joint>
 
         <link name="${prefix}_link">
