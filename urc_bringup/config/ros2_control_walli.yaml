@@ -1,6 +1,7 @@
 controller_manager:
   ros__parameters:
     update_rate: 200
+    use_sim_time: true
 
     imu_broadcaster:
       type: urc_controllers/IMUBroadcaster
@@ -37,6 +38,7 @@ status_light_controller:
   ros__parameters:
     status_light_name: status_light
 
+# For more information on each of these parameters, see https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
 rover_drivetrain_controller:
   ros__parameters:
     left_wheel_names:
@@ -52,35 +54,25 @@ rover_drivetrain_controller:
         "right_rear_wheel_joint",
       ]
 
-    pose_covariance_diagonal:
-      [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
-    twist_covariance_diagonal:
-      [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-    position_feedback: false
-    open_loop: false
+    wheel_seperation: 0.45
+    wheels_per_side: 3
+    wheel_radius: 0.08
 
-    wheel_seperation: 0.5
+    use_stamped_vel: false
 
-    wheel_radius: 0.20
+    open_loop: true
+    enable_odom_tf: true
+
     cmd_vel_timeout: 0.5
-    # Velocity and acceleration limits
-    # Whenever a min_* is unspecified, default to -max_*
-    linear:
-      x:
-        has_velocity_limits: true
-        max_velocity: 4.0 # m/s
-        min_velocity: -0.5 # m/s
-        has_acceleration_limits: true
-        max_acceleration: 0.8 # m/s^2
-        min_acceleration: -0.4 # m/s^2
-        has_jerk_limits: true
-        max_jerk: 5.0 # m/s^3
-    angular:
-      z:
-        has_velocity_limits: true
-        max_velocity: 1.7 # rad/s
-        has_acceleration_limits: true
-        max_acceleration: 1.5 # rad/s^2
-        has_jerk_limits: true
-        max_jerk: 2.5 # rad/s^3
+
+    linear.x.has_velocity_limits: true
+    linear.x.has_acceleration_limits: true
+    linear.x.has_jerk_limits: false
+    linear.x.max_velocity: 1.0
+    linear.x.min_velocity: -1.0
+    linear.x.max_acceleration: 1.0
+    linear.x.max_jerk: 0.0
+    linear.x.min_jerk: 0.0
