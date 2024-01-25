@@ -14,8 +14,8 @@ def generate_launch_description():
         name='ekf_filter_node_local',
         output='screen',
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml'),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')}
+            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
+            # {'use_sim_time': LaunchConfiguration('use_sim_time')}
         ],
         remappings=[('odometry/filtered', 'odometry/local')]           
 
@@ -27,8 +27,7 @@ def generate_launch_description():
         name='ekf_filter_node_global',
         output='screen',
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml'),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')}
+            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
         ],
         remappings=[
             ('odometry/filtered', 'odometry/global')]           
@@ -41,10 +40,9 @@ def generate_launch_description():
         name="navsat_transform",
         output="screen",
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml'),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')}
+            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
         ],
-        remappings=[('imu', 'imu/data'),
+        remappings=[('/imu', 'imu/data'),
             ('gps/fix', 'gps/data'), 
             ('gps/filtered', 'gps/filtered'),
             ('odometry/gps', 'odometry/gps'),
