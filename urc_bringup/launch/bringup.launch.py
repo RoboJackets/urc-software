@@ -1,3 +1,4 @@
+import yaml
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, TimerAction
 from launch_ros.actions import Node
@@ -5,6 +6,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from launch.actions import ExecuteProcess, RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
@@ -18,6 +20,17 @@ from moveit_configs_utils.launch_utils import (
 import os
 import yaml
 from xacro import process_file
+
+
+def load_yaml(package_name, file_path):
+    package_path = get_package_share_directory(package_name)
+    absolute_file_path = os.path.join(package_path, file_path)
+
+    try:
+        with open(absolute_file_path, "r") as file:
+            return yaml.safe_load(file)
+    except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
+        return None
 
 
 def generate_launch_description():
@@ -42,7 +55,6 @@ def generate_launch_description():
         get_package_share_directory('urc_hw_description'),
         "urdf/walli.xacro"
     )
-
     assert os.path.exists(
         xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(xacro_file)
@@ -90,8 +102,10 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.4', '-R', '0', '-P', '0', '-Y', '0',
-                   '-topic', '/robot_description']
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0',
+                   '-z', '0.4', '-R', '0', '-P', '0', '-Y', '0',
+                   '-topic', 'robot_description'
+                   ],
     )
 
     load_robot_state_publisher = Node(
@@ -126,6 +140,9 @@ def generate_launch_description():
             '-p', controller_config_file_dir,
             'joint_state_broadcaster'
         ],
+        remappings=[
+            ("/joint_states", "/robot/joint_states")
+        ]
     )
 
     load_arm_controller = Node(
@@ -146,12 +163,31 @@ def generate_launch_description():
         ],
     )
 
-    load_drivetrain_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            'rover_drivetrain_controller'
-        ],
+    moveit_config = MoveItConfigsBuilder(package_name="urc_hw_description", robot_name="walli").robot_description(
+        file_path="urdf/walli.xacro"
+    ).robot_description_semantic(
+        file_path="config/walli.srdf"
+    ).trajectory_execution(
+        file_path="config/moveit_controllers.yaml"
+    ).joint_limits(
+        file_path="config/joint_limits.yaml"
+    ).robot_description(
+        file_path=xacro_file
+    ).pilz_cartesian_limits(
+        file_path="config/pilz_cartesian_limits.yaml"
+    ).to_moveit_configs()
+    servo_yaml = load_yaml(
+        "urc_bringup", "config/servo_config.yaml")
+    servo_params = {"moveit_servo": servo_yaml}
+    load_servo_node = Node(
+        package="urc_manipulation",
+        executable="arm_servo",
+        parameters=[
+            servo_params,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics
+        ]
     )
 
     load_arm_movegroups = IncludeLaunchDescription(
@@ -161,6 +197,14 @@ def generate_launch_description():
                 "/launch/_bringup.arm.launch.py"
             ]
         )
+    )
+
+    load_drivetrain_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            'rover_drivetrain_controller'
+        ],
     )
 
     joystick_launch = IncludeLaunchDescription(
@@ -178,17 +222,25 @@ def generate_launch_description():
                 event_handler=OnProcessExit(
                     target_action=spawn_robot,
                     on_exit=[
+                        load_arm_movegroups,
                         load_joint_state_broadcaster,
-                        load_drivetrain_controller,
                         load_arm_controller,
                         load_gripper_controller,
-                        load_arm_movegroups,
+                        load_drivetrain_controller,
+                        load_servo_node,
                         # robot_localization_node,
                         aruco_detector,
                         aruco_location,
                         joystick_launch
                     ],
                 )
+            ),
+            IncludeLaunchDescription(
+                XMLLaunchDescriptionSource(
+                    [FindPackageShare("foxglove_bridge"),
+                     '/launch', '/foxglove_bridge_launch.xml']
+                ),
+                launch_arguments={'port': '8765'}.items(),
             ),
             enable_color,
             gazebo,
@@ -201,7 +253,6 @@ def generate_launch_description():
             control_node,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            load_arm_controller,
             load_gripper_controller,
             # robot_localization_node,
             aruco_detector,

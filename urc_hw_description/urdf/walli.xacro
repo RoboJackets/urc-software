@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <robot name="walli" xmlns:xacro="http://ros.org/wiki/xacro">
    <xacro:property name="config_file"
       value="$(find urc_bringup)/config/hardware_config.yaml" />
@@ -14,7 +14,7 @@
    <xacro:include filename="$(find urc_hw_description)/urdf/arm.xacro" />
 
    <xacro:drivebase wheel_friction="0.012" wheel_radius="0.10" wheel_thickness="0.05"
-      approximate="true" />
+      approximate="false" />
    <xacro:arm />
    <xacro:ros2_control use_simulation="${use_simulation}"
       config_file_path="$(find urc_bringup)/config/controller_config.yaml"

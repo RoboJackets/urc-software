@@ -61,7 +61,7 @@ rover_drivetrain_controller:
       [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
 
     position_feedback: false
-    open_loop: false
+    open_loop: true
 
     wheel_seperation: 0.5
 
@@ -104,4 +104,4 @@ arm_controller:
 
 gripper_controller:
   ros__parameters:
-    joint: rightgripperjoint
+    joint: leftgripperjoint

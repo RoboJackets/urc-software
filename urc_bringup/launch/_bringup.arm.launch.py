@@ -60,18 +60,21 @@ def generate_launch_description():
         file_path="config/joint_limits.yaml"
     ).robot_description(
         file_path=xacro_file
+    ).pilz_cartesian_limits(
+        file_path="config/pilz_cartesian_limits.yaml"
+    ).planning_pipelines(
+        pipelines=["ompl"]
     ).to_moveit_configs()
-
-    moveit_config_str = moveit_config.to_dict()
 
     run_move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
         output="screen",
         parameters=[
-            moveit_config_str,
+            moveit_config.to_dict(),
             {
-                'robot_description_semantic': semantic_content,
+                "publish_robot_description_semantic": True,
+                "publish_planning_scene": True
             }
         ]
     )
