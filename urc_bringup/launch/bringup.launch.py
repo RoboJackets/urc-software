@@ -135,7 +135,7 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             rviz_node,
-            # launch_navigation
+            launch_navigation
         ])
     else:
         return LaunchDescription([
