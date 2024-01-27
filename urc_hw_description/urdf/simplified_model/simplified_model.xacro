@@ -92,24 +92,19 @@
                 <color rgba="1.0 0.3 0.1 1.0" />
             </material>
         </visual>
-
         <collision>
             <geometry>
                 <box size="${base_length} ${base_width} ${base_height}" />
             </geometry>
         </collision>
-
         <xacro:box_inertia m="${base_mass}" w="${base_width}" d="${base_length}" h="${base_height}" />
     </link>
-
     <gazebo reference="base_link">
         <material>Gazebo/Orange</material>
     </gazebo>
 
     <!-- Robot Footprint -->
-    <link name="base_footprint">
-    </link>
-
+    <link name="base_footprint"></link>
     <joint name="base_joint" type="fixed">
         <parent link="base_link" />
         <child link="base_footprint" />
@@ -150,7 +145,6 @@
     <xacro:wheel prefix="left_front_wheel" x_mult="-2" y_reflect="1" />
     <xacro:wheel prefix="left_center_wheel" x_mult="0" y_reflect="1" />
     <xacro:wheel prefix="left_rear_wheel" x_mult="2" y_reflect="1" />
-
     <xacro:wheel prefix="right_front_wheel" x_mult="-2" y_reflect="-1" />
     <xacro:wheel prefix="right_center_wheel" x_mult="0" y_reflect="-1" />
     <xacro:wheel prefix="right_rear_wheel" x_mult="2" y_reflect="-1" />
