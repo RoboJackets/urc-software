@@ -12,7 +12,7 @@ def generate_launch_description():
     # pkg_hw_description = get_package_share_directory('urc_hw_description')
     # nav2_bringup = os.path.join(get_package_share_directory('nav2_bringup'))
     # slam_toolbox = os.path.join(get_package_share_directory('slam_toolbox'))
-    
+
     # Process the URDF xacro file
     # xacro_file = os.path.join(pkg_hw_description,
     #                           'urdf/simplified_model/',
