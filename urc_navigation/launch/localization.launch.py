@@ -17,7 +17,7 @@ def generate_launch_description():
             os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
             # {'use_sim_time': LaunchConfiguration('use_sim_time')}
         ],
-        remappings=[('odometry/filtered', 'odometry/local')]          
+        remappings=[('odometry/filtered', 'odometry/local')]
     )
 
     ekf_global = Node(
