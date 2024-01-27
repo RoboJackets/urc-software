@@ -58,6 +58,7 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 - [XBox Controller Setup](documents/installation/controller_setup.md)
 - [Depth Camera Setup](documents/installation/camera_setup.md)
 - [ROS2 Control Gazebo Setup](documents/installation/ros2_control.md)
+- [Radio Communication Between Rover and Ground Station](documents/installation/radio_setup.md)
 
 
 ## Helpful Resources
