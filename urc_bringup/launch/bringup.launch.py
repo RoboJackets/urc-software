@@ -1,6 +1,9 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command, FindExecutable, PathJoinSubstitution
+from launch.actions import IncludeLaunchDescription
+from launch.actions import SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, Command, FindExecutable
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -10,11 +13,13 @@ import yaml
 
 def generate_launch_description():
 
-    pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
-    pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
-    pkg_urc_hw_description = FindPackageShare("urc_hw_description").find("urc_hw_description")
+    pkg_urc_bringup = FindPackageShare(
+        "urc_bringup").find("urc_bringup")
+    pkg_urc_navigation = FindPackageShare(
+        "urc_navigation").find("urc_navigation")
+    pkg_urc_hw_description = FindPackageShare(
+        "urc_hw_description").find("urc_hw_description")
     world_path = os.path.join(pkg_urc_hw_description, "world/world.sdf")
-
 
     robot_description_content = Command(
         [
@@ -26,7 +31,8 @@ def generate_launch_description():
         ]
     )
 
-    hardware_config_filepath = os.path.join(pkg_urc_bringup, 'config', 'hardware_config.yaml')
+    hardware_config_filepath = os.path.join(
+        pkg_urc_bringup, 'config', 'hardware_config.yaml')
     with open(hardware_config_filepath) as f:
         hardware_config = yaml.safe_load(f)
 
@@ -42,11 +48,11 @@ def generate_launch_description():
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"])]
+            [PathJoinSubstitution([FindPackageShare(
+                "gazebo_ros"), "launch", "gazebo.launch.py"])]
         ),
         launch_arguments={"verbose": "false", "world": world_path}.items()
     )
-
 
     launch_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
