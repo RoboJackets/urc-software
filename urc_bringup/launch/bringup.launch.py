@@ -12,6 +12,9 @@ def generate_launch_description():
 
     pkg_urc_bringup = FindPackageShare("urc_bringup").find("urc_bringup")
     pkg_urc_navigation = FindPackageShare("urc_navigation").find("urc_navigation")
+    pkg_urc_hw_description = FindPackageShare("urc_hw_description").find("urc_hw_description")
+    world_path = os.path.join(pkg_urc_hw_description, "world/world.sdf")
+
 
     robot_description_content = Command(
         [
@@ -41,7 +44,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"])]
         ),
-        launch_arguments={"verbose": "false"}.items(),
+        launch_arguments={"verbose": "false", "world": world_path}.items()
     )
 
 
@@ -110,8 +113,6 @@ def generate_launch_description():
     )
 
     if use_simulation:
-        print("Using simulation...")
-        
         return LaunchDescription([
             DeclareLaunchArgument(
                 name='rvizconfig',
