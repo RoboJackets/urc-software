@@ -13,12 +13,17 @@ import yaml
 
 def generate_launch_description():
 
+    # Package Imports
     pkg_urc_bringup = FindPackageShare(
         "urc_bringup").find("urc_bringup")
     pkg_urc_navigation = FindPackageShare(
         "urc_navigation").find("urc_navigation")
     pkg_urc_hw_description = FindPackageShare(
         "urc_hw_description").find("urc_hw_description")
+    pkg_urc_platform = FindPackageShare(
+        "urc_platform").find("urc_platform")
+
+    # Configurations
     world_path = os.path.join(pkg_urc_hw_description, "world/world.sdf")
 
     robot_description_content = Command(
@@ -46,6 +51,12 @@ def generate_launch_description():
         pkg_urc_bringup, 'rviz', 'urdf_config.rviz'
     )
 
+    enable_color = SetEnvironmentVariable(
+        name="RCUTILS_COLORIZED_OUTPUT",
+        value="1"
+    )
+
+    # Other Launch Scripts Pulled In
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare(
@@ -60,16 +71,18 @@ def generate_launch_description():
         )
     )
 
+    launch_joystick = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_platform, "launch", "joystick.launch.py")
+        )
+    )
+
+    # Nodes
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[robot_controllers_config],
         output="both",
-    )
-
-    enable_color = SetEnvironmentVariable(
-        name="RCUTILS_COLORIZED_OUTPUT",
-        value="1"
     )
 
     spawn_robot = Node(
@@ -118,6 +131,7 @@ def generate_launch_description():
         )
     )
 
+    # Final Launch Description With or Without Simulation Mode
     if use_simulation:
         return LaunchDescription([
             DeclareLaunchArgument(
@@ -142,7 +156,8 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             rviz_node,
-            launch_navigation
+            launch_navigation,
+            launch_joystick
         ])
     else:
         return LaunchDescription([
