@@ -43,7 +43,6 @@ install(
   DIRECTORY
   launch
   config
-  world
   rviz
   DESTINATION share/${PROJECT_NAME}/
 )
