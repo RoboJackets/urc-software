@@ -12,13 +12,13 @@ from launch_ros.substitutions import FindPackageShare
 
 # Get the robot description
 urdf_path = os.path.join(get_package_share_directory(
-    'urc_hw_description'), 'urdf', 'wallii.urdf')
+    'urc_hw_description'), 'urdf', 'walli.xacro')
 urdf_doc = xacro.parse(open(urdf_path, 'r'))
 xacro.process_doc(urdf_doc)
 robot_description = urdf_doc.toxml()
 
 robot_controller_config = os.path.join(get_package_share_directory(
-    'urc_hw_description'), 'config', 'urc_hw_config.yaml')
+    'urc_bringup'), 'config', 'ros2_control_walli.yaml')
 control_node = Node(
     package="controller_manager",
     executable="ros2_control_node",

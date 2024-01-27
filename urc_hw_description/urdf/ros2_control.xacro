@@ -1,243 +1,250 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <!-- Gazebo Configuration -->
-    <ros2_control name="GazeboSystem" type="system">
+  <xacro:macro name="ros2_control" params="use_simulation config_file_path">
+    <xacro:if value="${use_simulation}">
+      <ros2_control name="GazeboSystem" type="system">
         <hardware>
-            <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
-            <!--Use for functionality in Gazebo, also needed for drivetrain-->
-            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-            <!--Use for functionality in RViz-->
-            <!-- <plugin>mock_components/GenericSystem</plugin> -->
-            <!-- <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin> -->
+          <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
+          <!--Use
+          for functionality in Gazebo, also needed for drivetrain-->
+          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+          <!--Use
+          for functionality in RViz-->
+          <!-- <plugin>mock_components/GenericSystem</plugin> -->
+          <!-- <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin> -->
         </hardware>
         <joint name="left_front_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
         <joint name="right_front_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
         <joint name="left_center_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
         <joint name="right_center_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
         <joint name="left_rear_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
         <joint name="right_rear_wheel_joint">
-            <command_interface name="velocity">
-                <param name="min">-0.05</param>
-                <param name="max">0.05</param>
-            </command_interface>
-            <state_interface name="velocity"/>
-            <state_interface name="position"/>
+          <command_interface name="velocity">
+            <param name="min">-0.05</param>
+            <param name="max">0.05</param>
+          </command_interface>
+          <state_interface name="velocity" />
+          <state_interface name="position" />
         </joint>
 
-      <joint name ="shoulderjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      
-      <joint name ="bicepjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
+        <joint name="shoulderjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
-      <joint name ="elbowjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-	    <joint name ="forearmjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
+        <joint name="bicepjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
-      <joint name ="wristjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
+        <joint name="elbowjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
+        <joint name="forearmjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
-      <joint name ="clawjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      
-      <joint name ="leftgripperjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-      
-      <joint name ="rightgripperjoint">
-        <command_interface name="position" />
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-        <state_interface name="velocity"/>
-        <state_interface name="effort"/>
-      </joint>
-    </ros2_control>
+        <joint name="wristjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
+        <joint name="clawjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
+        <joint name="leftgripperjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
 
-    <!-- New ROS2 Control Work-->
-    <ros2_control name="walli_others" type="system">
+        <joint name="rightgripperjoint">
+          <command_interface name="position" />
+          <state_interface name="position">
+            <param name="initial_value">0.0</param>
+          </state_interface>
+          <state_interface name="velocity" />
+          <state_interface name="effort" />
+        </joint>
+      </ros2_control>
+    </xacro:if>
+
+    <xacro:if value="${use_simulation}">
+      <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+          <parameters>${config_file_path}</parameters>
+        </plugin>
+      </gazebo>
+    </xacro:if>
+
+    <xacro:if value="${not use_simulation}">
+      <ros2_control name="walli_others" type="system">
         <hardware>
-            <plugin>urc_hw/StatusLight</plugin>
-            <param name="serial_port">/dev/ttyACM0</param>
-            <param name="udp_address">143.215.63.147</param>
-            <param name="udp_port">5000</param>
+          <plugin>urc_hw/StatusLight</plugin>
+          <param name="serial_port">/dev/ttyACM0</param>
+          <param name="udp_address">143.215.63.147</param>
+          <param name="udp_port">5000</param>
         </hardware>
 
         <gpio name="status_light">
-            <command_interface name="color" />
-            <command_interface name="display" />
+          <command_interface name="color" />
+          <command_interface name="display" />
         </gpio>
-    </ros2_control>
-    <ros2_control name="rover_drivetrain" type="system">
-          <hardware>
-              <plugin>urc_hw/RoverDrivetrain</plugin>
-              <param name="udp_address">127.0.0.1</param>
-              <param name="udp_port">5000</param>
-          </hardware>
-          <joint name="left_wheel">
-              <command_interface name="velocity" />
-              <state_interface name="velocity" />
-              <state_interface name="velocity.front" />
-              <state_interface name="velocity.mid" />
-              <state_interface name="velocity.back" />
-          </joint>
-          <joint name="right_wheel">
-              <command_interface name="velocity" />
-              <state_interface name="velocity" />
-              <state_interface name="velocity.front" />
-              <state_interface name="velocity.mid" />
-              <state_interface name="velocity.back" />
-          </joint>
+      </ros2_control>
+      <ros2_control name="rover_drivetrain" type="system">
+        <hardware>
+          <plugin>urc_hw/RoverDrivetrain</plugin>
+          <param name="udp_address">127.0.0.1</param>
+          <param name="udp_port">5000</param>
+        </hardware>
+        <joint name="left_wheel_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+          <state_interface name="velocity.front" />
+          <state_interface name="velocity.mid" />
+          <state_interface name="velocity.back" />
+        </joint>
+        <joint name="right_wheel_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+          <state_interface name="velocity.front" />
+          <state_interface name="velocity.mid" />
+          <state_interface name="velocity.back" />
+        </joint>
       </ros2_control>
       <ros2_control name="status_light" type="system">
-          <hardware>
-              <plugin>urc_hw/StatusLight</plugin>
-              <param name="serial_port">/dev/ttyACM0</param>
-              <param name="udp_address">143.215.63.147</param>
-              <param name="udp_port">5000</param>
-          </hardware>
-          <gpio name="status_light">
-              <command_interface name="color" />
-              <command_interface name="display" />
-          </gpio>
+        <hardware>
+          <plugin>urc_hw/StatusLight</plugin>
+          <param name="serial_port">/dev/ttyACM0</param>
+          <param name="udp_address">143.215.63.147</param>
+          <param name="udp_port">5000</param>
+        </hardware>
+        <gpio name="status_light">
+          <command_interface name="color" />
+          <command_interface name="display" />
+        </gpio>
       </ros2_control>
       <ros2_control name="battery_management" type="sensor">
-          <hardware>
-              <plugin>urc_hw/BatteryManagement</plugin>
-              <param name="udp_address">127.0.0.1</param>
-              <param name="udp_port">5000</param>
-              <param name="udp_self_address">127.0.0.1</param>
-              <param name="udp_self_port">7000</param>
-          </hardware>
-          <sensor name="battery_management">
-              <state_interface name="main_voltage" />
-              <state_interface name="charge_percentage" />
-              <state_interface name="discharge_current" />
-              <state_interface name="temperature" />
-              <state_interface name="cell1_voltage" />
-              <state_interface name="cell2_voltage" />
-              <state_interface name="cell3_voltage" />
-              <state_interface name="cell4_voltage" />
-              <state_interface name="cell5_voltage" />
-              <state_interface name="cell6_voltage" />
-              <state_interface name="cell7_voltage" />
-              <state_interface name="cell8_voltage" />
-          </sensor>
+        <hardware>
+          <plugin>urc_hw/BatteryManagement</plugin>
+          <param name="udp_address">127.0.0.1</param>
+          <param name="udp_port">5000</param>
+          <param name="udp_self_address">127.0.0.1</param>
+          <param name="udp_self_port">7000</param>
+        </hardware>
+        <sensor name="battery_management">
+          <state_interface name="main_voltage" />
+          <state_interface name="charge_percentage" />
+          <state_interface name="discharge_current" />
+          <state_interface name="temperature" />
+          <state_interface name="cell1_voltage" />
+          <state_interface name="cell2_voltage" />
+          <state_interface name="cell3_voltage" />
+          <state_interface name="cell4_voltage" />
+          <state_interface name="cell5_voltage" />
+          <state_interface name="cell6_voltage" />
+          <state_interface name="cell7_voltage" />
+          <state_interface name="cell8_voltage" />
+        </sensor>
       </ros2_control>
       <ros2_control name="imu" type="sensor">
-          <hardware>
-              <plugin>urc_hw/IMU</plugin>
-              <param name="udp_address">127.0.0.1</param>
-              <param name="udp_port">5000</param>
-              <param name="udp_self_address">127.0.0.1</param>
-              <param name="udp_self_port">7000</param>
-          </hardware>
-          <sensor name="imu_sensor">
-              <state_interface name="orientation.x" />
-              <state_interface name="orientation.y" />
-              <state_interface name="orientation.z" />
-              <state_interface name="orientation.w" />
-              <state_interface name="linear_acceleration.x" />
-              <state_interface name="linear_acceleration.y" />
-              <state_interface name="linear_acceleration.z" />
-              <state_interface name="angular_velocity.x" />
-              <state_interface name="angular_velocity.y" />
-              <state_interface name="angular_velocity.z" />
-          </sensor>
+        <hardware>
+          <plugin>urc_hw/IMU</plugin>
+          <param name="udp_address">127.0.0.1</param>
+          <param name="udp_port">5000</param>
+          <param name="udp_self_address">127.0.0.1</param>
+          <param name="udp_self_port">7000</param>
+        </hardware>
+        <sensor name="imu_sensor">
+          <state_interface name="orientation.x" />
+          <state_interface name="orientation.y" />
+          <state_interface name="orientation.z" />
+          <state_interface name="orientation.w" />
+          <state_interface name="linear_acceleration.x" />
+          <state_interface name="linear_acceleration.y" />
+          <state_interface name="linear_acceleration.z" />
+          <state_interface name="angular_velocity.x" />
+          <state_interface name="angular_velocity.y" />
+          <state_interface name="angular_velocity.z" />
+        </sensor>
       </ros2_control>
+    </xacro:if>
+  </xacro:macro>
 
-    <gazebo>
-        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-            <parameters>$(find urc_hw_description)/config/gazebo_controllers.yaml</parameters>
-            <!-- Below is the one needed for the arm (maybe) -->
-            <!-- <parameters>file://$(find urc_gazebo)/urdf/config/RoboticArm_params.yaml</parameters> -->
-        </plugin>
-    </gazebo>
-    
+  <!-- Gazebo Configuration -->
+
+
 </robot>
 
 
@@ -245,5 +252,3 @@
 
 
     
-
-

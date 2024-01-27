@@ -27,7 +27,7 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
 - **urc_gazebo**
   _Helper nodes used for simulation purposes_
 - **urc_hw**
-  _ros2-control hardware interaface_
+  _ros2-control hardware interface_
 - **urc_hw_description**
   _URDF description for the rover_
 - **urc_manipulation**
@@ -51,8 +51,8 @@ Welcome to the RoboJackets/RoboNav software repo for the University Rover Challe
 **Essential** <br />
 You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
 
-- [NoVNC Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Strongly recommended!**
-- [Dual-booted or Native Linux installation](documents/installation/ubuntu_installation.md) _Ask a returning member!_
+- [Ubuntu 22.04: Native Installation or WSL (Windows/Linux)](documents/installation/ubuntu_installation.md) **Strongly recommended!**
+- [NoVNC Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Less viable, use for Apple Silicon**
 
 **Specific Features**
 - [XBox Controller Setup](documents/installation/controller_setup.md)
