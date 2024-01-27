@@ -12,3 +12,4 @@ Connect the antenna to the Ubiquiti bullet. Plug in the PoE injector, and connec
  3. Follow the steps for Native OS on your VM.
 
 # Overview of Radio Network
+![network diagram](../pictures/network.png)
