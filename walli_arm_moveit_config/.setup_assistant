@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: urc_hw_description
+    relative_path: urdf/walli.xacro
+  srdf:
+    relative_path: config/walli.srdf
+  package_settings:
+    author_name: FUCK MOVEIT
+    author_email: fuckmoveit@fuck.com
+    generated_timestamp: 1706375567
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

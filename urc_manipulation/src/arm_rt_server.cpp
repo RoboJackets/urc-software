@@ -144,7 +144,7 @@ ArmRTServer::ArmRTServer(const rclcpp::NodeOptions& options)
 
   // Create Servo
   servo_ = std::make_unique<moveit_servo::Servo>(node_, servo_parameters, planning_scene_monitor_);
-  servo_->setPaused(true);
+  servo_->setPaused(false);
   RCLCPP_INFO(get_logger(), "Servo node has started.");
   pose_tracking_ = std::make_unique<moveit_servo::PoseTracking>(node_, servo_parameters, planning_scene_monitor_);
   pose_tracking_->stopMotion();

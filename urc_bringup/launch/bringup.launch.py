@@ -64,6 +64,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         ),
+        launch_arguments={"use_sim_time": "true"}.items()
         # launch_arguments={"world": world_path}.items()
     )
     control_node = Node(
@@ -183,7 +184,8 @@ def generate_launch_description():
             servo_params,
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
-            moveit_config.robot_description_kinematics
+            moveit_config.robot_description_kinematics,
+            {"use_sim_time": True}
         ]
     )
 
@@ -219,10 +221,10 @@ def generate_launch_description():
                 event_handler=OnProcessExit(
                     target_action=spawn_robot,
                     on_exit=[
-                        load_arm_movegroups,
-                        load_joint_state_broadcaster,
-                        load_arm_controller,
-                        load_gripper_controller,
+                        # load_arm_movegroups,
+                        # load_joint_state_broadcaster,
+                        # load_arm_controller,
+                        # load_gripper_controller,
                         load_drivetrain_controller,
                         # load_servo_node,
                         # robot_localization_node,

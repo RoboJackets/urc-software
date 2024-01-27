@@ -26,6 +26,7 @@
   <depend>std_msgs</depend>
   <depend>tf2_eigen</depend>
   <depend>trajectory_msgs</depend>
+  <depend>pinocchio</depend>
 
   <exec_depend>moveit_ros</exec_depend>
   <exec_depend>gripper_controllers</exec_depend>
@@ -36,8 +37,8 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>moveit_configs_utils</exec_depend>
   <exec_depend>launch_param_builder</exec_depend>
-  
-  
+
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>urc_arm_moveit_config</test_depend>
