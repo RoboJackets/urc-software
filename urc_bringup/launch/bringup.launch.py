@@ -70,7 +70,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controller_config_file_dir],
-        output="both",
+        output="both"
     )
     enable_color = SetEnvironmentVariable(
         name="RCUTILS_COLORIZED_OUTPUT",
@@ -139,9 +139,6 @@ def generate_launch_description():
         arguments=[
             '-p', controller_config_file_dir,
             'joint_state_broadcaster'
-        ],
-        remappings=[
-            ("/joint_states", "/robot/joint_states")
         ]
     )
 
@@ -227,7 +224,7 @@ def generate_launch_description():
                         load_arm_controller,
                         load_gripper_controller,
                         load_drivetrain_controller,
-                        load_servo_node,
+                        # load_servo_node,
                         # robot_localization_node,
                         aruco_detector,
                         aruco_location,

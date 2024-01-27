@@ -104,4 +104,4 @@ arm_controller:
 
 gripper_controller:
   ros__parameters:
-    joint: leftgripperjoint
+    joint: rightgripperjoint

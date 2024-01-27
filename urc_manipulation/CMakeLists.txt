@@ -22,6 +22,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joy_to_servo_pub.cpp
+  src/arm_rt_server.cpp
 )
 
 set(dependencies
@@ -44,6 +45,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joy_to_servo_pub::JoyToServoPub"
   EXECUTABLE ${PROJECT_NAME}_JoyToServoPub
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_manipulation::ArmRTServer"
+  EXECUTABLE ${PROJECT_NAME}_ArmRT
 )
 
 add_executable(arm_servo src/servo_node.cpp)

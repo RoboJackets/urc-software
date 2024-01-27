@@ -31,7 +31,6 @@ are defined
         <joint name="clawjoint" />
     </group>
     <group name="gripper">
-        <joint name="leftgripperjoint" />
         <joint name="rightgripperjoint" />
     </group>
     <!--GROUP
