@@ -11,7 +11,7 @@ WaypointStateMachine::WaypointStateMachine(const rclcpp::NodeOptions & options)
   this->waypointLatitude = -1;
   this->waypointLongitude = -1;
   current_state_publisher = create_publisher<urc_msgs::msg::NavigationStatus>(
-    "~/current_navigation_state",
+    " /current_navigation_state",
     rclcpp::SystemDefaultsQoS()
   );
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
