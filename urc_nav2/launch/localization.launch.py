@@ -5,8 +5,8 @@ import os
 
 
 def generate_launch_description():
-    pkg_urc_navigation = FindPackageShare(
-        "urc_navigation").find("urc_navigation")
+    pkg_urc_nav2 = FindPackageShare(
+        "urc_nav2").find("urc_nav2")
 
     ekf_local = Node(
         package='robot_localization',
@@ -14,7 +14,7 @@ def generate_launch_description():
         name='ekf_filter_node_local',
         output='screen',
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
+            os.path.join(pkg_urc_nav2, 'config/ekf.yaml')
             # {'use_sim_time': LaunchConfiguration('use_sim_time')}
         ],
         remappings=[('odometry/filtered', 'odometry/local')]
@@ -26,7 +26,7 @@ def generate_launch_description():
         name='ekf_filter_node_global',
         output='screen',
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
+            os.path.join(pkg_urc_nav2, 'config/ekf.yaml')
         ],
         remappings=[
             ('odometry/filtered', 'odometry/global')]
@@ -38,7 +38,7 @@ def generate_launch_description():
         name="navsat_transform",
         output="screen",
         parameters=[
-            os.path.join(pkg_urc_navigation, 'config/ekf.yaml')
+            os.path.join(pkg_urc_nav2, 'config/ekf.yaml')
         ],
         remappings=[('/imu', 'imu/data'),
                     ('gps/fix', 'gps/data'),

@@ -17,6 +17,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ArucoDetection.msg"
   "msg/ArucoLocation.msg"
   "msg/BatteryInfo.msg"
+  "msg/Waypoint.msg"
+  "msg/NavigationStatus.msg"
 
   DEPENDENCIES
   std_msgs

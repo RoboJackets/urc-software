@@ -16,8 +16,8 @@ def generate_launch_description():
     # Package Imports
     pkg_urc_bringup = FindPackageShare(
         "urc_bringup").find("urc_bringup")
-    pkg_urc_navigation = FindPackageShare(
-        "urc_navigation").find("urc_navigation")
+    pkg_urc_nav2 = FindPackageShare(
+        "urc_nav2").find("urc_nav2")
     pkg_urc_hw_description = FindPackageShare(
         "urc_hw_description").find("urc_hw_description")
     pkg_urc_platform = FindPackageShare(
@@ -67,7 +67,7 @@ def generate_launch_description():
 
     launch_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_navigation, "launch", "navigation.launch.py")
+            os.path.join(pkg_urc_nav2, "launch", "navigation.launch.py")
         )
     )
 
