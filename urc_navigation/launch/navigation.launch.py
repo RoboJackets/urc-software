@@ -5,8 +5,8 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     waypoint_state_machine_node = Node(
-            package='urc_aruco',
-            executable='urc_navigation_NavigationStateMachine',
+            package='urc_navigation',
+            executable='urc_navigation_WaypointStateMachine',
             output='screen'
         )
 
