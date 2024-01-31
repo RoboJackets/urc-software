@@ -36,7 +36,7 @@ private:
     const sensor_msgs::msg::NavSatFix & msg
   );
   void DetermineState();
-    
+
 };
 }
 

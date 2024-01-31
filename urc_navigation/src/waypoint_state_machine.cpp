@@ -24,34 +24,35 @@ WaypointStateMachine::WaypointStateMachine(const rclcpp::NodeOptions & options)
 
 void WaypointStateMachine::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
 {
-      this->waypointLatitude = msg.latitude;
-      this->waypointLongitude = msg.longitude;
+  this->waypointLatitude = msg.latitude;
+  this->waypointLongitude = msg.longitude;
 }
 
 void WaypointStateMachine::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
 {
-      this->actualLatitude = msg.latitude;
-      this->actualLongitude = msg.longitude;
+  this->actualLatitude = msg.latitude;
+  this->actualLongitude = msg.longitude;
 }
 
-void WaypointStateMachine::DetermineState() {
-      urc_msgs::msg::NavigationStatus state_message;
-      if (actualLatitude == -1) {
-        state_message.message = "NoGPS";
-      } else if (actualLatitude == -1) {
-        state_message.message = "NoGPS";
-      }
+void WaypointStateMachine::DetermineState()
+{
+  urc_msgs::msg::NavigationStatus state_message;
+  if (actualLatitude == -1) {
+    state_message.message = "NoGPS";
+  } else if (actualLatitude == -1) {
+    state_message.message = "NoGPS";
+  }
 
-      double deltaX = abs(actualLatitude - waypointLatitude);
-      double deltaY = abs(actualLongitude - waypointLongitude);
-      double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-      if (distance < maxDelta) {
-        state_message.message = "Goal";
-      } else {
-        state_message.message = "Navigating";
-      }
+  double deltaX = abs(actualLatitude - waypointLatitude);
+  double deltaY = abs(actualLongitude - waypointLongitude);
+  double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
+  if (distance < maxDelta) {
+    state_message.message = "Goal";
+  } else {
+    state_message.message = "Navigating";
+  }
 
-      current_state_publisher->publish(state_message);
+  current_state_publisher->publish(state_message);
 }
 
 }
