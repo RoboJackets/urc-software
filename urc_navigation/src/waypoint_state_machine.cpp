@@ -11,7 +11,7 @@ WaypointStateMachine::WaypointStateMachine(const rclcpp::NodeOptions & options)
   this->waypointLatitude = -1;
   this->waypointLongitude = -1;
   current_state_publisher = create_publisher<urc_msgs::msg::NavigationStatus>(
-    " /current_navigation_state",
+    "/current_navigation_state",
     rclcpp::SystemDefaultsQoS()
   );
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
@@ -26,20 +26,20 @@ void WaypointStateMachine::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
 {
   this->waypointLatitude = msg.latitude;
   this->waypointLongitude = msg.longitude;
+  DetermineState();
 }
 
 void WaypointStateMachine::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
 {
   this->actualLatitude = msg.latitude;
   this->actualLongitude = msg.longitude;
+  DetermineState();
 }
 
 void WaypointStateMachine::DetermineState()
 {
   urc_msgs::msg::NavigationStatus state_message;
-  if (actualLatitude == -1) {
-    state_message.message = "NoGPS";
-  } else if (actualLatitude == -1) {
+  if (actualLatitude == -1 || waypointLatitude == -1) {
     state_message.message = "NoGPS";
   }
 

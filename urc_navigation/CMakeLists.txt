@@ -47,7 +47,7 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "waypoint_state_machine_WaypointStateMachine"
+  PLUGIN "waypoint_state_machine::WaypointStateMachine"
   EXECUTABLE ${PROJECT_NAME}_WaypointStateMachine
 )
 

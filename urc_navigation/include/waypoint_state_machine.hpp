@@ -1,5 +1,5 @@
-#ifndef ARUCO_DETECTOR_H
-#define ARUCO_DETECTOR_H
+#ifndef WAYPOINT_STATE_MACHINE_H
+#define WAYPOINT_STATE_MACHINE_H
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
@@ -9,6 +9,7 @@
 #include <urc_msgs/msg/navigation_status.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include <math.h>
+#include <rclcpp/qos.hpp>
 
 namespace waypoint_state_machine
 {
