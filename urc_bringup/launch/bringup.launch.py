@@ -17,7 +17,7 @@ def generate_launch_description():
     pkg_urc_bringup = FindPackageShare(
         "urc_bringup").find("urc_bringup")
     pkg_urc_nav2 = FindPackageShare(
-        "urc_nav2").find("urc_nav2")
+        "urc_navigation").find("urc_navigation")
     pkg_urc_hw_description = FindPackageShare(
         "urc_hw_description").find("urc_hw_description")
     pkg_urc_platform = FindPackageShare(

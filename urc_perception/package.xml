@@ -23,6 +23,8 @@
   <depend>diagnostic_updater</depend>
   <depend>realsense2_camera</depend>
   <depend>librealsense2</depend>
+  <depend>navigation2</depend>
+  <depend>nav2_costmap_2d</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
