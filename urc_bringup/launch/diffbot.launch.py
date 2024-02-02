@@ -90,9 +90,8 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli',
-                   '-x', '0', '-y', '0', '-z', '0.4',
-                   '-topic', '/robot_description'],
+        arguments=['-entity', 'my_bot',
+                   '-topic', 'robot_description'],
         output='screen'
     )
 
@@ -128,26 +127,22 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [
                 FindPackageShare("urc_platform"),
-                "/launch/joystick.launch.py"
+                "/launch/diffbot_joy.launch.py"
             ]
         )
     )
 
+    twist_mux_params = os.path.join(pkg_urc_bringup,'config','twist_mux.yaml')
+    twist_mux = Node(
+            package="twist_mux",
+            executable="twist_mux",
+            parameters=[twist_mux_params, {'use_sim_time': True}],
+            remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
+        )
+
     # Final Launch Description With or Without Simulation Mode
     if use_simulation:
         return LaunchDescription([
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=spawn_robot,
-                    on_exit=[
-                        load_joint_state_broadcaster,
-                        load_drivetrain_controller,
-                        spawn_robot
-                        # launch_navigation,
-                        # launch_joystick
-                    ]
-                )
-            ),
             DeclareLaunchArgument(
                 name='rvizconfig',
                 default_value=default_rviz_config_path,
@@ -164,10 +159,13 @@ def generate_launch_description():
                 description='Flag to enable joint_state_publisher_gui'
             ),
             enable_color,
-            gazebo,
             robot_state_publisher_node,
-            rviz_node,
-            spawn_robot
+            joystick_launch,
+            twist_mux,
+            gazebo,
+            spawn_robot,
+            load_drivetrain_controller,
+            load_joint_state_broadcaster
         ])
         # return LaunchDescription([
         #     DeclareLaunchArgument(
