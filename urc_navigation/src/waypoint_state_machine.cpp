@@ -14,6 +14,10 @@ WaypointStateMachine::WaypointStateMachine(const rclcpp::NodeOptions & options)
     "/current_navigation_state",
     rclcpp::SystemDefaultsQoS()
   );
+  cmd_vel_publisher = create_publisher<geometry_msgs::msg::Twist>(
+    "/rover_drivetrain_controller/cmd_vel_unstamped",
+    rclcpp::SystemDefaultsQoS()
+  );
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
     "/waypoint", rclcpp::SystemDefaultsQoS(),
     [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
@@ -52,6 +56,23 @@ void WaypointStateMachine::DetermineState()
     state_message.message = "Navigating";
   }
 
+  // Publishing of Command Velocities.
+  double errorDThreshold = 0.1;
+  double errorZThreshold = 0.1;
+
+  geometry_msgs::msg::Twist cmd_vel;
+  double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
+  if (errorD >= errorDThreshold) {
+    cmd_vel.linear.x = errorD; // Will probably need to multiply by some constant.
+  }
+
+  double currentAngle = 0; // NEED TO CHANGE THIS
+  double errorZ = currentAngle - atan2(deltaY, deltaX);
+  if (abs(errorZ >= errorZThreshold)) {
+    cmd_vel.angular.z = errorZ; // Will probably need to multiply by some constant.
+  }
+
+  cmd_vel_publisher->publish(cmd_vel);
   current_state_publisher->publish(state_message);
 }
 

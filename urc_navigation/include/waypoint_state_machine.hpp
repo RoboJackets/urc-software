@@ -8,6 +8,7 @@
 #include <urc_msgs/msg/waypoint.hpp>
 #include <urc_msgs/msg/navigation_status.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
+#include <geometry_msgs/msg/twist.hpp>
 #include <math.h>
 #include <rclcpp/qos.hpp>
 
@@ -21,6 +22,7 @@ public:
 
 private:
   rclcpp::Publisher<urc_msgs::msg::NavigationStatus>::SharedPtr current_state_publisher;
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_publisher;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
 
