@@ -14,7 +14,7 @@ KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDe
 KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDevice}=="0011", ATTRS{serial}=="EBD81F4F", SYMLINK+="urc_usb_cam_left"
 KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDevice}=="0011", ATTRS{serial}=="6E5D96EF", SYMLINK+="urc_usb_cam_center"
 
-SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303",ATTRS{bcdDevice}=="0400", SYMLINK+="urc_gps"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="23a3",ATTRS{bcdDevice}=="0400", SYMLINK+="urc_gps"
 
 SUBSYSTEM=="tty", ATTRS{idVendor}=="1f00", ATTRS{idProduct}=="2012",ATTRS{bcdDevice}=="0100", SYMLINK+="urc_motor_board"
 
