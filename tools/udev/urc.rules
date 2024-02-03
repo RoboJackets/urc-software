@@ -1,0 +1,23 @@
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{bcdDevice}=="0100", SYMLINK+="urc_lidar", GROUP="plugdev"
+
+# TOP GOES THROUGH USB HUB
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2476", ATTRS{idProduct}=="1010", GOTO="read_imus"
+GOTO="skip_imus"
+LABEL="read_imus"
+SUBSYSTEM=="tty", ATTRS{product}=="USB3.0 Hub", MODE="0666", SYMLINK+="imu_top"
+ATTRS{product}=="USB3.0 Hub", GOTO="skip_imus"
+SUBSYSTEM=="tty", MODE="0666", SYMLINK+="imu_bottom"
+LABEL="skip_imus"
+# trust us
+
+KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDevice}=="0011", ATTRS{serial}=="F6CB206F", SYMLINK+="urc_usb_cam_right"
+KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDevice}=="0011", ATTRS{serial}=="EBD81F4F", SYMLINK+="urc_usb_cam_left"
+KERNEL=="video?", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", ATTRS{bcdDevice}=="0011", ATTRS{serial}=="6E5D96EF", SYMLINK+="urc_usb_cam_center"
+
+SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303",ATTRS{bcdDevice}=="0400", SYMLINK+="urc_gps"
+
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1f00", ATTRS{idProduct}=="2012",ATTRS{bcdDevice}=="0100", SYMLINK+="urc_motor_board"
+
+KERNEL=="js?", ATTRS{name}=="Logitech Gamepad F710", SYMLINK+="urc_joystick"
+
+SUBSYSTEM=="usb", ATTR{idVendor}=="1d5a", MODE="0666"

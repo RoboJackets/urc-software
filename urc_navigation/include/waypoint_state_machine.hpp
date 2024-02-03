@@ -11,6 +11,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <math.h>
 #include <rclcpp/qos.hpp>
+#include<unistd.h>  
 
 namespace waypoint_state_machine
 {
@@ -31,6 +32,7 @@ private:
   double waypointLongitude;
   double actualLatitude;
   double actualLongitude;
+  rclcpp::Time gpsTimestamp;
 
   void WaypointCallback(
     const urc_msgs::msg::Waypoint & msg
