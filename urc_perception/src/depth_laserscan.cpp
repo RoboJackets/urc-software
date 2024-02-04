@@ -43,3 +43,5 @@ namespace depth_laserscan
         return scan_msg;
     }
 }
+
+RCLCPP_COMPONENTS_REGISTER_NODE(depth_laserscan::DepthLaserScan)

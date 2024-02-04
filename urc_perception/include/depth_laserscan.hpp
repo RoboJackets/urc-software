@@ -3,6 +3,7 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "nav2_costmap_2d/costmap_2d_ros.hpp"
 #include "math.h"
+#include <rclcpp_components/register_node_macro.hpp>
 
 
 namespace depth_laserscan
