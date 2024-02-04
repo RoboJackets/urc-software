@@ -43,8 +43,8 @@ void WaypointStateMachine::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
 
 void WaypointStateMachine::DetermineState()
 {
-  this->gpsTimestamp= this->get_clock()->now();
-  
+  this->gpsTimestamp = this->get_clock()->now();
+
   urc_msgs::msg::NavigationStatus state_message;
   if (actualLatitude == -1 || actualLatitude == -1) {
     state_message.message = "NoGPS";
@@ -80,7 +80,7 @@ void WaypointStateMachine::DetermineState()
     cmd_vel.angular.z = errorZ; // Will probably need to multiply by some constant.
   } else if (errorD >= errorDThreshold) {
     cmd_vel.linear.x = errorD; // Will probably need to multiply by some constant.
-  } 
+  }
 
   cmd_vel_publisher->publish(cmd_vel);
   current_state_publisher->publish(state_message);
