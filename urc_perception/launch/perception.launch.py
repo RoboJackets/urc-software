@@ -25,7 +25,3 @@ def generate_launch_description():
         realsense,
         aruco
     ])
-
-
-
-
