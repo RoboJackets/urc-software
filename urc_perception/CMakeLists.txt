@@ -16,7 +16,6 @@ find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(aruco_ros REQUIRED)
 
 include_directories(
   include
@@ -40,7 +39,6 @@ set(dependencies
   OpenCV
   tf2
   tf2_geometry_msgs
-  aruco_ros
 )
 
 ament_target_dependencies(${PROJECT_NAME}
