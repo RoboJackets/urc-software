@@ -127,14 +127,16 @@ def generate_launch_description():
             executable='urc_perception_DepthLaserScan',
             output='screen',
             parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_perception'), 'config',
-                                     'depth_laserscan_params.yaml'])
+                PathJoinSubstitution(
+                    [FindPackageShare(
+                        'urc_perception'),
+                        'config',
+                        'depth_laserscan_params.yaml']
+                    )
             ],
-            remappings=[
-                
-            ]
+            remappings=[]
         )
-    
+
     return LaunchDescription([
         depth_laserscan_node
     ])
