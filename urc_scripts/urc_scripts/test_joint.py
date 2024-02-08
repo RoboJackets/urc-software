@@ -1,6 +1,8 @@
 import rclpy
+from rclpy.publisher import Publisher
 from rclpy.node import Node
-from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Joy
 import threading
 
 
@@ -9,23 +11,17 @@ import threading
 class TestJoint(Node):
     def __init__(self):
         super().__init__("ff")
-        self.arm_publisher = self.create_publisher(
-            JointTrajectory, "/arm_controller/joint_trajectory", 10
-        )
-        self.pub()
+        self.joy_subscriber = self.create_subscription(
+            Joy, "/joy", self.pub, 10)
+        self.cmd_twist_publisher: Publisher = self.create_publisher(
+            Twist, "/cmd_twist", 10)
 
-    def pub(self):
-        traj = JointTrajectory()
-        pt1 = JointTrajectoryPoint()
-        pt1.positions = [1.0, 1.0, 1.0, 1.0, 1.0]
-        traj.joint_names = ["shoulderjoint", "bicepjoint",
-                            "elbowjoint", "wristjoint", "clawjoint"]
-        traj.points = [
-            pt1
-        ]
-        self.arm_publisher.publish(
-            traj
-        )
+    def pub(self, msg: Joy):
+        t = Twist()
+        t.linear.x = msg.axes[1] * 0.30
+        t.linear.y = msg.axes[0] * 0.30
+        t.linear.z = msg.axes[3] * 0.20
+        self.cmd_twist_publisher.publish(t)
 
 
 def main(args=None):

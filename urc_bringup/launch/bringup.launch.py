@@ -164,7 +164,7 @@ def generate_launch_description():
     moveit_config = MoveItConfigsBuilder(package_name="urc_hw_description", robot_name="walli").robot_description(
         file_path="urdf/walli.xacro"
     ).robot_description_semantic(
-        file_path="config/walli.srdf"
+        file_path="urdf/walli.srdf"
     ).trajectory_execution(
         file_path="config/moveit_controllers.yaml"
     ).joint_limits(
@@ -222,10 +222,10 @@ def generate_launch_description():
                     target_action=spawn_robot,
                     on_exit=[
                         # load_arm_movegroups,
-                        # load_joint_state_broadcaster,
-                        # load_arm_controller,
-                        # load_gripper_controller,
-                        load_drivetrain_controller,
+                        load_joint_state_broadcaster,
+                        load_arm_controller,
+                        load_gripper_controller,
+                        # load_drivetrain_controller,
                         # load_servo_node,
                         # robot_localization_node,
                         aruco_detector,
