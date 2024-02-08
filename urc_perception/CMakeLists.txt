@@ -68,6 +68,12 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_DepthLaserScan
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "costmap_generator::CostmapGenerator"
+  EXECUTABLE ${PROJECT_NAME}_CostmapGenerator
+)
+
 # Install launch files.
 install(
   DIRECTORY

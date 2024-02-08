@@ -137,6 +137,15 @@ def generate_launch_description():
             remappings=[]
         )
 
+    costmap_generator_node = Node(
+            package='urc_perception',
+            executable='urc_perception_CostmapGenerator',
+            output='screen',
+            parameters=[],
+            remappings=[]
+        )
+
     return LaunchDescription([
-        depth_laserscan_node
+        depth_laserscan_node,
+        costmap_generator_node
     ])
