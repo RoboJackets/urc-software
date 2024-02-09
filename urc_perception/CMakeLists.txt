@@ -28,6 +28,7 @@ add_library(${PROJECT_NAME} SHARED
   src/aruco_detector.cpp
   src/aruco_location.cpp
   src/depth_laserscan.cpp
+  src/costmap_generator.cpp
 )
 
 set(dependencies

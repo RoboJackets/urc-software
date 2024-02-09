@@ -2,7 +2,8 @@
 
 namespace depth_laserscan
 {
-    DepthLaserScan::DepthLaserScan(const rclcpp::NodeOptions & options) : rclcpp::Node("depth_laserscan", options)
+    DepthLaserScan::DepthLaserScan(const rclcpp::NodeOptions & options) 
+    : rclcpp::Node("depth_laserscan", options)
     {
         depth_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
             "/depth_camera/depth/image_raw", 10, std::bind(&DepthLaserScan::depthCallback, this, std::placeholders::_1));

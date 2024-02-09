@@ -4,7 +4,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <occupancy_grid.hpp>
 #include <nav2_costmap_2d/costmap_2d_ros.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <nav2_msgs/msg/costmap.hpp>
