@@ -27,6 +27,13 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS()
   );
 
+  metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/pose/metric", rclcpp::SystemDefaultsQoS()
+  );
+  costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/pose/costmap", rclcpp::SystemDefaultsQoS()
+  );
+
   imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
     "/imu", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
