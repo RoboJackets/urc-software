@@ -98,11 +98,11 @@ void Orchestrator::DetermineState()
   this->gpsTimestamp = this->get_clock()->now();
 
   urc_msgs::msg::NavigationStatus state_message;
-  if (actualLatitude == -1 || actualLatitude == -1) {
+  if (actualLatitude == -1 || actualLongitude == -1) {
     state_message.message = "NoGPS";
     current_state_publisher->publish(state_message);
     return;
-  } else if (waypointLatitude == -1 || waypointLatitude == -1) {
+  } else if (waypointLatitude == -1 || waypointLongitude == -1) {
     state_message.message = "NoWaypoint";
     current_state_publisher->publish(state_message);
     return;
