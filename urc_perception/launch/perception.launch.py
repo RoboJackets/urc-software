@@ -53,7 +53,7 @@ def generate_launch_description():
             parameters=[],
             remappings=[]
         )
-    
+
     aruco = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare(
