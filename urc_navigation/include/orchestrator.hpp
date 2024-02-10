@@ -30,7 +30,7 @@ private:
 
   rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr metric_offset_pose_publisher;
   rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr costmap_offset_pose_publisher;
-  
+
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;

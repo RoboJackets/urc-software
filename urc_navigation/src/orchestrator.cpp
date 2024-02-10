@@ -49,19 +49,25 @@ void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
   }
-  PublishMetricPose(this->actualLatitude - this->baseLatitude, this->actualLongitude - this->baseLongitude);
-  PublishCostmapPose(this->actualLatitude - this->baseLatitude, this->actualLongitude - this->baseLongitude);
+  PublishMetricPose(
+    this->actualLatitude - this->baseLatitude,
+    this->actualLongitude - this->baseLongitude);
+  PublishCostmapPose(
+    this->actualLatitude - this->baseLatitude,
+    this->actualLongitude - this->baseLongitude);
   DetermineState();
 }
 
-void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg) {
+void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
+{
   this->current_metric_pose.orientation.x = msg.orientation.x;
   this->current_metric_pose.orientation.y = msg.orientation.y;
   this->current_metric_pose.orientation.z = msg.orientation.z;
   this->current_metric_pose.orientation.w = msg.orientation.w;
 }
 
-void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool & msg) {
+void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool & msg)
+{
   this->baseLatitude = this->actualLatitude;
   this->baseLongitude = this->actualLongitude;
 }
@@ -73,13 +79,15 @@ void Orchestrator::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
   DetermineState();
 }
 
-void Orchestrator::PublishMetricPose(double gpsOffsetX, double gpsOffsetY) {
+void Orchestrator::PublishMetricPose(double gpsOffsetX, double gpsOffsetY)
+{
   this->current_metric_pose.position.x = gpsOffsetX * 111139;
   this->current_metric_pose.position.y = gpsOffsetY * 111139;
   metric_offset_pose_publisher->publish(current_metric_pose);
 }
 
-void Orchestrator::PublishCostmapPose(double gpsOffsetX, double gpsOffsetY) {
+void Orchestrator::PublishCostmapPose(double gpsOffsetX, double gpsOffsetY)
+{
   this->current_costmap_pose.position.x = floor((gpsOffsetX * 111139) * 4 + 50);
   this->current_costmap_pose.position.y = floor((gpsOffsetY * 111139) * 4 + 50);
   costmap_offset_pose_publisher->publish(current_costmap_pose);
@@ -116,8 +124,9 @@ void Orchestrator::DetermineState()
   }
 }
 
-void Orchestrator::PurePursuit(double deltaX, double deltaY) {
-    // Publishing of Command Velocities.
+void Orchestrator::PurePursuit(double deltaX, double deltaY)
+{
+  // Publishing of Command Velocities.
   double errorDThreshold = 0.1;
   double errorZThreshold = 0.1;
 
