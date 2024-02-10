@@ -4,12 +4,12 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    waypoint_state_machine_node = Node(
+    orchestrator = Node(
             package='urc_navigation',
-            executable='urc_navigation_WaypointStateMachine',
+            executable='urc_navigation_Orchestrator',
             output='screen'
         )
 
     return LaunchDescription([
-        waypoint_state_machine_node
+        orchestrator
     ])
