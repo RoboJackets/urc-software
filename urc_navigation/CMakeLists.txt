@@ -23,7 +23,7 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/waypoint_state_machine.cpp
+  src/orchestrator.cpp
 )
 
 set(dependencies
@@ -47,8 +47,8 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "waypoint_state_machine::WaypointStateMachine"
-  EXECUTABLE ${PROJECT_NAME}_WaypointStateMachine
+  PLUGIN "orchestrator::Orchestrator"
+  EXECUTABLE ${PROJECT_NAME}_Orchestrator
 )
 
 # Install launch files.
