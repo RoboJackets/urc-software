@@ -19,6 +19,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BatteryInfo.msg"
   "msg/Waypoint.msg"
   "msg/NavigationStatus.msg"
+  "msg/GridLocation.msg"
 
   DEPENDENCIES
   std_msgs

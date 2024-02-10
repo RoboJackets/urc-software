@@ -5,7 +5,7 @@ namespace path_planning
 PathPlanning::PathPlanning(const rclcpp::NodeOptions & options)
 : rclcpp::Node("path_planning", options)
 {
-  path_publisher = create_publisher<std::vector<urc_msgs::msg::Waypoint>>(
+  path_publisher = create_publisher<std::vector<urc_msgs::msg::GridLocation>>(
     "/path", rclcpp::SystemDefaultsQoS()
   );
 
@@ -15,18 +15,13 @@ PathPlanning::PathPlanning(const rclcpp::NodeOptions & options)
   grid_pose_subscriber = create_subscription<geometry_msgs::msg::Pose>(
     "/pose/costmap", rclcpp::SystemDefaultsQoS(),
     [this](const geometry_msgs::msg::Pose msg) {GridPositionCallback(msg);});
-
-  gps_waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
+  grid_waypoint_subscriber = create_subscription<urc_msgs::msg::GridLocation>(
     "/waypoint", rclcpp::SystemDefaultsQoS(),
-    [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
-  base_pose_subscriber = create_subscription<geometry_msgs::msg::Pose>(
-    "/base_pose", rclcpp::SystemDefaultsQoS(),
-    [this](const geometry_msgs::msg::Pose msg) {BasePoseCallback(msg);});
+    [this](const urc_msgs::msg::GridLocation msg) {WaypointCallback(msg);});
 
   this->currentCostmap.metadata.size_x = 0;
   this->currentPose.position.x = MAXFLOAT;
-  this->basePose.position.x = MAXFLOAT;
-  this->waypoint.latitude = MAXFLOAT;
+  this->waypoint.x = 100;;
 }
 
 void PathPlanning::CostmapCallback(const nav2_msgs::msg::Costmap & msg) {
@@ -37,12 +32,8 @@ void PathPlanning::GridPositionCallback(const geometry_msgs::msg::Pose & msg) {
     this->currentPose = msg;
     AStar();
 }
-void PathPlanning::WaypointCallback(const urc_msgs::msg::Waypoint & msg) {
+void PathPlanning::WaypointCallback(const urc_msgs::msg::GridLocation & msg) {
     this->waypoint = msg;
-    AStar();
-}
-void PathPlanning::BasePoseCallback(const geometry_msgs::msg::Pose & msg) {
-    this->basePose = msg;
     AStar();
 }
 
@@ -53,21 +44,24 @@ void PathPlanning::AStar() {
     } else if (this->currentPose.position.x == MAXFLOAT) {
         RCLCPP_INFO(this->get_logger(), "Current pose data not received");
         return;
-    } else if (this->basePose.position.x == MAXFLOAT) {
-        RCLCPP_INFO(this->get_logger(), "Base pose data not received");
-        return;
-    } else if (this->waypoint.latitude == MAXFLOAT) {
+    } else if (this->waypoint.x == 100) {
         RCLCPP_INFO(this->get_logger(), "Waypoint data not received");
         return;
     } 
     
     // By now, all data must have been received
+    int currentX = (int)currentPose.position.x;
+    int currentY = (int)currentPose.position.y;
+    int goalX = waypoint.x;
+    int goalY = waypoint.y;
+    
+    std::set<urc_msgs::msg::GridLocation> visited_set;
+    std::vector<urc_msgs::msg::GridLocation> waypoint_list;
+    std::priority_queue<urc_msgs::msg::GridLocation> pq;
 
-    double waypointLatitude = this->waypoint.latitude;
-    double waypointLongitude
-
-    std::vector<urc_msgs::msg::Waypoint> waypoint_list;
-    std::priority_queue<urc_msgs::msg::Waypoint> pq;
+    while (!visited_set.empty()) {
+        
+    }
 
 
 
