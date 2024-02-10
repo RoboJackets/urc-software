@@ -22,6 +22,8 @@ def generate_launch_description():
         "urc_hw_description").find("urc_hw_description")
     pkg_urc_platform = FindPackageShare(
         "urc_platform").find("urc_platform")
+    pkg_nmea_navsat_driver = FindPackageShare(
+        "nmea_navsat_driver").find("nmea_navsat_driver")
 
     # Configurations
     world_path = os.path.join(pkg_urc_hw_description, "world/world.sdf")
@@ -74,6 +76,12 @@ def generate_launch_description():
     launch_joystick = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_urc_platform, "launch", "joystick.launch.py")
+        )
+    )
+
+    launch_gps = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py")
         )
     )
 
@@ -165,5 +173,6 @@ def generate_launch_description():
             control_node,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            joystick_launch
+            joystick_launch,
+            launch_gps
         ])
