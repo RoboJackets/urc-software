@@ -10,12 +10,13 @@ namespace depth_laserscan
 {
 class DepthLaserScan : public rclcpp::Node
 {
-    public:
-        explicit DepthLaserScan(const rclcpp::NodeOptions & options);
-    private:
-        void depthCallback(const sensor_msgs::msg::Image::SharedPtr msg);
-        rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub_;
-        rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub_;
-        sensor_msgs::msg::LaserScan convertDepthToLaserScan(const sensor_msgs::msg::Image::SharedPtr msg);
+public:
+  explicit DepthLaserScan(const rclcpp::NodeOptions & options);
+
+private:
+  void depthCallback(const sensor_msgs::msg::Image::SharedPtr msg);
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub_;
+  rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub_;
+  sensor_msgs::msg::LaserScan convertDepthToLaserScan(const sensor_msgs::msg::Image::SharedPtr msg);
 };
 }
