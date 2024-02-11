@@ -35,7 +35,7 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   );
 
   imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
-    "/imu", rclcpp::SystemDefaultsQoS(),
+    "/imu/data", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
   set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
     "/set_base", rclcpp::SystemDefaultsQoS(),
@@ -44,7 +44,7 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
     "/waypoint", rclcpp::SystemDefaultsQoS(),
     [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
   gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
-    "/gps/data", rclcpp::SystemDefaultsQoS(),
+    "/odometry/gps", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
 }
 
