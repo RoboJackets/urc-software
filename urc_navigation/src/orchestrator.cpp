@@ -43,15 +43,15 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
     "/waypoint", rclcpp::SystemDefaultsQoS(),
     [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
-  gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
+  gps_subscriber = create_subscription<nav_msgs::msg::Odometry>(
     "/odometry/gps", rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
+    [this](const nav_msgs::msg::Odometry msg) {GPSCallback(msg);});
 }
 
-void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
+void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
 {
-  this->actualLatitude = msg.latitude;
-  this->actualLongitude = msg.longitude;
+  this->actualLatitude = msg.pose.pose.position.x;
+  this->actualLongitude = msg.pose.pose.position.y;
   if (this->baseLatitude == -1) {
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
