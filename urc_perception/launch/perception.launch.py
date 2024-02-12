@@ -46,33 +46,43 @@ def generate_launch_description():
             remappings=[]
         )
 
-    costmap_generator_node = Node(
+    # costmap_generator_node = Node(
+    #         package='urc_perception',
+    #         executable='urc_perception_CostmapGenerator',
+    #         output='screen',
+    #         parameters=[],
+    #         remappings=[]
+    #     )
+
+    pointcloud_costmap_node = Node(
             package='urc_perception',
-            executable='urc_perception_CostmapGenerator',
+            executable='urc_perception_PointCloudCostmap',
             output='screen',
             parameters=[],
             remappings=[]
         )
 
-    aruco = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare(
-                "aruco_ros"), "launch", "marker_publisher.launch.py"])]
-        ),
-    )
+    # aruco = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [PathJoinSubstitution([FindPackageShare(
+    #             "aruco_ros"), "launch", "marker_publisher.launch.py"])]
+    #     ),
+    # )
 
     realsense = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare(
                 "realsense2_camera"), "launch", "rs_launch.py"])]
         ),
+        launch_arguments=[("align_depth", "true"), ("pointcloud.enable", "true")],
     )
 
     return LaunchDescription([
         aruco_detector_node,
         aruco_location_node,
         depth_laserscan_node,
-        costmap_generator_node,
+        pointcloud_costmap_node,
+        # costmap_generator_node,
         realsense,
-        aruco
+        # aruco
     ])
