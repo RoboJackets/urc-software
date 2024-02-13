@@ -76,6 +76,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+pluginlib_export_plugin_description_file(nav2_core global_planner_plugin.xml)
+
+
 ament_export_include_directories(msg)
 
 ament_export_include_directories(include)
@@ -84,3 +87,4 @@ ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
 
 ament_package()
+
