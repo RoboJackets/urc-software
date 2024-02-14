@@ -12,12 +12,14 @@ find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(pinocchio REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3)
+find_package(pinocchio REQUIRED)
 find_package(realtime_tools REQUIRED)
+
 
 include_directories(
   include
@@ -32,16 +34,18 @@ set(dependencies
   rclcpp
   rclcpp_components
   std_msgs
+  std_srvs
   geometry_msgs
   sensor_msgs
   realtime_tools
-  Eigen3
   pinocchio
+  Eigen3
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
+# target_link_libraries(${PROJECT_NAME} pinocchio)
 
 # Node Registration
 rclcpp_components_register_node(
@@ -81,11 +85,6 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(msg)
-
-ament_export_include_directories(include)
-
 ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${dependencies})
 
 ament_package()

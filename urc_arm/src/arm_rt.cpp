@@ -24,6 +24,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <iterator>
 #include <memory>
+#include <mutex>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/node.hpp>
@@ -35,6 +36,8 @@
 #include <std_msgs/msg/detail/float64_multi_array__struct.hpp>
 #include <std_msgs/msg/detail/string__struct.hpp>
 #include <realtime_tools/thread_priority.hpp>
+#include <std_srvs/srv/detail/trigger__struct.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <string>
 #include <thread>
 #include <utility>
@@ -46,6 +49,7 @@ using namespace pinocchio;
 ArmRT::ArmRT(const rclcpp::NodeOptions& options) : rclcpp::Node("arm_rt_pinocchio", options), is_model_loaded_(false)
 {
   logger_ = std::make_unique<rclcpp::Logger>(get_logger());
+  logger_->set_level(rclcpp::Logger::Level::Debug);
   RCLCPP_INFO(*logger_, "Waiting for /robot_description topic...");
   robot_description_subscription_ = create_subscription<std_msgs::msg::String>(
       "/robot_description", rclcpp::QoS(1).transient_local(),
@@ -109,6 +113,31 @@ void ArmRT::initialize()
   vel_command_publisher_->msg_ = std_msgs::msg::Float64MultiArray();
   vel_command_publisher_->msg_.data = { 0.0, 0.0, 0.0, 0.0, 0.0 };
 
+  start_servo_service_ = create_service<std_srvs::srv::Trigger>(
+      "~/start_servo",
+      [this](const std_srvs::srv::Trigger::Request::SharedPtr, std_srvs::srv::Trigger::Response::SharedPtr response) {
+        // one time initialization: set the current control target to the pose
+        if (!is_initialized_)
+        {
+          pinocchio::forwardKinematics(*model_, *data_, q_);
+          T_f_ = T_c_;
+          T_c_ = data_->oMi[target_joint_id_];
+          RCLCPP_DEBUG(*logger_, "Servo Inited!");
+          is_initialized_ = true;
+        }
+        response->success = true;
+      });
+  stop_servo_service_ = create_service<std_srvs::srv::Trigger>(
+      "~/stop_servo",
+      [this](const std_srvs::srv::Trigger::Request::SharedPtr, std_srvs::srv::Trigger::Response::SharedPtr response) {
+        if (is_initialized_)
+        {
+          is_initialized_ = false;
+          RCLCPP_DEBUG(*logger_, "Servo Stopped!");
+        }
+        response->success = true;
+      });
+
   // starting main thread
   is_running_ = true;
   is_initialized_ = false;
@@ -118,7 +147,7 @@ void ArmRT::initialize()
     {
       if (is_model_loaded_)
         update_kinematics();
-      if (is_model_loaded_ && is_initialized_ && is_valid_)
+      if (is_model_loaded_ && is_initialized_)
         update_command();
     }
   }).detach();
@@ -126,7 +155,7 @@ void ArmRT::initialize()
 
 void ArmRT::load_model(const std::string& decsription)
 {
-  RCLCPP_INFO(*logger_, "Description discovered!");
+  RCLCPP_DEBUG(*logger_, "Description discovered!");
 
   Model full_model;
   pinocchio::urdf::buildModelFromXML(decsription, full_model);
@@ -145,7 +174,7 @@ void ArmRT::load_model(const std::string& decsription)
   Data data(*model_);
   data_ = std::make_shared<Data>(data);
 
-  RCLCPP_INFO(*logger_, "Robot %s is loaded!", model_->name.c_str());
+  RCLCPP_DEBUG(*logger_, "Robot %s is loaded!", model_->name.c_str());
   RCLCPP_INFO_STREAM(*logger_, "Model status: models has nq = " << model_->nq << "; nv = " << model_->nv);
   for (JointIndex joint_id = 1; joint_id < model_->joints.size(); ++joint_id)
     RCLCPP_INFO_STREAM(*logger_, "\t- " << model_->names[joint_id]);
@@ -157,9 +186,10 @@ void ArmRT::load_model(const std::string& decsription)
 
 void ArmRT::update_kinematics()
 {
+  std::unique_lock lock(pin_data_lock_);
   const auto* joint_state = joint_state_buffer_.readFromRT();
   bool valid = true;
-  // TODO: investigate if access can be done without searching over the names
+
   for (unsigned long i = 0; i < joint_state->name.size(); ++i)
   {
     if (joint_mapping_.find(joint_state->name[i]) == joint_mapping_.end())
@@ -168,15 +198,8 @@ void ArmRT::update_kinematics()
     qd_(joint_mapping_[joint_state->name[i]], 0) = joint_state->velocity[i];
     valid = valid && joint_state->position[i] != 0;
   }
-  is_valid_ = valid;
   pinocchio::forwardKinematics(*model_, *data_, q_);
-  T_c_ = data_->oMi[4];
-  // one time initialization: set the current control target to the pose
-  if (!is_initialized_ && is_valid_)
-  {
-    T_f_ = T_c_;
-    is_initialized_ = true;
-  }
+  T_c_ = data_->oMi[target_joint_id_];
 }
 
 int search_joint_pos(std::vector<std::string>& joint_list, std::string joint_name)
@@ -204,8 +227,7 @@ Eigen::Matrix3d rpy_to_rot_mat(double roll, double pitch, double yaw)
 
 void ArmRT::update_command()
 {
-  if (!is_valid_)
-    return;
+  std::unique_lock lock(pin_data_lock_);
   geometry_msgs::msg::Twist* vel_target = twist_buffer_.readFromRT();
 
   pinocchio::SE3 delta;
@@ -232,7 +254,7 @@ void ArmRT::update_command()
     is_stationary_ = false;
   }
 
-  pinocchio::computeJointJacobian(*model_, *data_, q_, 4, J);
+  pinocchio::computeJointJacobian(*model_, *data_, q_, target_joint_id_, J);
   pinocchio::Data::Matrix6 Jlog;
   pinocchio::Jlog6(iMd.inverse(), Jlog);
   J = -Jlog * J;
@@ -242,13 +264,20 @@ void ArmRT::update_command()
 
   qd_target_.noalias() = -J.transpose() * JJt.ldlt().solve(V_target);
   qd_target_ *= calc_joint_limit_scaling_factor(qd_target_);
-  RCLCPP_INFO(*logger_, "Factor %.5f\n", calc_singularity_scaling_factor().first);
+
   auto sing_result = calc_singularity_scaling_factor();
+  qd_target_ *= sing_result.first;
+  update_status(sing_result.second);
 
   if (vel_command_publisher_->trylock())
   {
     for (unsigned long i = 0; i < 5; ++i)
     {
+      if (qd_target_(i, 0) != qd_target_(i, 0))
+      {
+        RCLCPP_WARN(*logger_, "NaN Commands!");
+        return;
+      }
       vel_command_publisher_->msg_.data[i] = qd_target_(i, 0);
     }
 
@@ -278,11 +307,11 @@ std::pair<double, ServoStatus> ArmRT::calc_singularity_scaling_factor()
   ServoStatus status;
 
   // calculate current svd and condition numbers
-  pinocchio::computeJointJacobian(*model_, *data_, q_curr, 4, J_curr);
+  pinocchio::computeJointJacobian(*model_, *data_, q_curr, target_joint_id_, J_curr);
 
   SVD_curr.compute(J_curr, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  const double c_curr = SVD_curr.singularValues()(0) / SVD_curr.singularValues()(dims - 1);
+  const double c_curr = std::abs(SVD_curr.singularValues()(0) / SVD_curr.singularValues()(dims - 1));
   Eigen::VectorXd v_sing = SVD_curr.matrixU().col(dims - 1);
   pinocchio::Data::Matrix6 JJt;
   JJt.noalias() = J * J.transpose();
@@ -290,9 +319,9 @@ std::pair<double, ServoStatus> ArmRT::calc_singularity_scaling_factor()
 
   const Eigen::Matrix<double, 6, 1> delta_x = v_sing * singularity_config_.singularity_step_scale;
   WalliArmState q_next = q_curr - J.transpose() * JJt.ldlt().solve(delta_x);
-  pinocchio::computeJointJacobian(*model_, *data_, q_next, 4, J_next);
+  pinocchio::computeJointJacobian(*model_, *data_, q_next, target_joint_id_, J_next);
   SVD_next.compute(J_next, Eigen::ComputeThinU | Eigen::ComputeThinV);
-  const double c_next = SVD_next.singularValues()(0) / SVD_next.singularValues()(dims - 1);
+  const double c_next = std::abs(SVD_next.singularValues()(0) / SVD_next.singularValues()(dims - 1));
 
   // if current number is decresing, the direction of vector should be flipped
   const bool moving_towards_singularity = c_next <= c_curr;
@@ -301,26 +330,21 @@ std::pair<double, ServoStatus> ArmRT::calc_singularity_scaling_factor()
     v_sing *= -1;
   }
 
-  double upper_threshold;
-  if (moving_towards_singularity)
-  {
-    upper_threshold = singularity_config_.hardstop_threshold;
-  }
-  else
-  {
-    const double threshold_size = (singularity_config_.hardstop_threshold - singularity_config_.lower_threshold);
-    upper_threshold = singularity_config_.lower_threshold + (threshold_size * singularity_config_.leaving_multiplier);
-  }
-
   double velocity_scale = 1.0;
   const bool is_above_lower_limit = c_curr > singularity_config_.lower_threshold;
   const bool is_below_hard_stop_limit = c_curr < singularity_config_.hardstop_threshold;
-  RCLCPP_INFO_STREAM(*logger_,
-                     "Lower " << is_above_lower_limit << " Upper " << is_below_hard_stop_limit << " curr " << c_curr);
+
   if (is_above_lower_limit && is_below_hard_stop_limit)
   {
-    velocity_scale -=
-        (c_curr - singularity_config_.lower_threshold) / (upper_threshold - singularity_config_.lower_threshold);
+    velocity_scale -= (c_curr - singularity_config_.lower_threshold) /
+                      (singularity_config_.hardstop_threshold - singularity_config_.lower_threshold);
+    velocity_scale *= 0.8;
+
+    if (!moving_towards_singularity)
+    {
+      velocity_scale *= singularity_config_.leaving_multiplier;
+    }
+    velocity_scale *= singularity_config_.leaving_multiplier;
 
     status = moving_towards_singularity ? ServoStatus::DECELERATING_FOR_APPROACHING_SINGULARITY :
                                           ServoStatus::DECELERATING_FOR_LEAVING_SINGULARITY;
@@ -329,7 +353,7 @@ std::pair<double, ServoStatus> ArmRT::calc_singularity_scaling_factor()
   else if (!is_below_hard_stop_limit)
   {
     status = ServoStatus::HALTING_IN_SINGULARITY;
-    velocity_scale = 0.0;
+    velocity_scale = 0.01;
   }
   else
   {
@@ -337,6 +361,29 @@ std::pair<double, ServoStatus> ArmRT::calc_singularity_scaling_factor()
   }
 
   return { velocity_scale, status };
+}
+
+void ArmRT::update_status(ServoStatus status)
+{
+  if (status_ != status)
+  {
+    RCLCPP_INFO(*logger_, "Transitioning from status %d to %d.", status_, status);
+    status_ = status;
+
+    switch (status)
+    {
+      case HALTING_IN_SINGULARITY:
+        RCLCPP_WARN(*logger_, "Arm is in singularity! Locked the arm's movement for safety considerations.");
+        break;
+      case NORMAL:
+        RCLCPP_INFO(*logger_, "Back to dexterous workspace!");
+        break;
+      case DECELERATING_FOR_APPROACHING_SINGULARITY:
+      case DECELERATING_FOR_LEAVING_SINGULARITY:
+        RCLCPP_WARN(*logger_, "Entering deceleration for approaching / leaving singularity.");
+        break;
+    }
+  }
 }
 
 }  // namespace urc_arm

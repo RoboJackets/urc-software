@@ -2,8 +2,13 @@
 #define URC_ARM_ARM_RT_HPP__
 
 #include "pinocchio/multibody/fwd.hpp"
+#include <array>
+#include <atomic>
 #include <geometry_msgs/msg/detail/twist__struct.hpp>
 #include <geometry_msgs/msg/pose.hpp>
+#include <map>
+#include <mutex>
+#include <rclcpp/service.hpp>
 #include <realtime_tools/realtime_publisher.h>
 #include <sensor_msgs/msg/detail/joint_state__struct.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -16,6 +21,7 @@
 #include <std_msgs/msg/detail/float64_multi_array__struct.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <realtime_tools/realtime_buffer.h>
 #include <string>
@@ -89,10 +95,14 @@ private:
   realtime_tools::RealtimeBuffer<geometry_msgs::msg::Twist> twist_buffer_;
   realtime_tools::RealtimePublisherSharedPtr<std_msgs::msg::Float64MultiArray> vel_command_publisher_;
 
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr start_servo_service_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_servo_service_;
+
   std::shared_ptr<Model> model_;
   std::shared_ptr<Data> data_;
 
   ServoStatus status_ = NORMAL;
+  int target_joint_id_ = 5;
   WalliArmState q_;
   WalliArmState qd_;
   WalliArmState qd_target_;
@@ -102,18 +112,18 @@ private:
   Vector6d V_target;
 
   std::unique_ptr<rclcpp::Logger> logger_;
-  bool is_model_loaded_ = false;
-  bool is_initialized_ = false;
-  bool is_running_ = false;
-  bool is_stationary_ = false;
-  bool is_valid_ = false;
+  std::atomic_bool is_model_loaded_ = false;
+  std::atomic_bool is_initialized_ = false;
+  std::atomic_bool is_running_ = false;
+  std::atomic_bool is_stationary_ = false;
+  std::mutex pin_data_lock_;
 
   // parameters
   std::string vel_command_topic_;
   std::vector<std::string> active_joints_;
   std::vector<std::string> locking_joints_;
   std::vector<double> joint_velocity_limits_ = { 2, 2, 2, 2, 2 };
-  SingularityConfig singularity_config_{ 20.0, 100.0, 0.50, 0.01 };
+  SingularityConfig singularity_config_{ 35.0, 200.0, 1.0, 0.001 };
   std::unordered_map<std::string, int> joint_mapping_;
 };
 

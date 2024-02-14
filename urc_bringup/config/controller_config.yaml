@@ -20,7 +20,10 @@ controller_manager:
     arm_controller:
       type: velocity_controllers/JointGroupVelocityController
 
-    gripper_controller:
+    gripper_controller_left:
+      type: position_controllers/GripperActionController
+
+    gripper_controller_right:
       type: position_controllers/GripperActionController
 
 joint_state_broadcaster:
@@ -42,18 +45,8 @@ status_light_controller:
 
 rover_drivetrain_controller:
   ros__parameters:
-    left_wheel_names:
-      [
-        "left_front_wheel_joint",
-        "left_center_wheel_joint",
-        "left_rear_wheel_joint",
-      ]
-    right_wheel_names:
-      [
-        "right_front_wheel_joint",
-        "right_center_wheel_joint",
-        "right_rear_wheel_joint",
-      ]
+    left_wheel_names: ["left_wheel"]
+    right_wheel_names: ["right_wheel"]
 
     pose_covariance_diagonal:
       [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
@@ -97,6 +90,22 @@ arm_controller:
       - wristjoint
       - clawjoint
 
-gripper_controller:
+gripper_controller_left:
   ros__parameters:
+    action_monitor_rate: 20.0
+    allow_stalling: false
+    goal_tolerance: 0.01
+    max_effort: 0.50
+    stall_timeout: 1.0
+    stall_velocity_threshold: 0.001
+    joint: leftgripperjoint
+
+gripper_controller_right:
+  ros__parameters:
+    action_monitor_rate: 20.0
+    allow_stalling: false
+    goal_tolerance: 0.01
+    max_effort: 0.50
+    stall_timeout: 1.0
+    stall_velocity_threshold: 0.001
     joint: rightgripperjoint

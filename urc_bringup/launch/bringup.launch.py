@@ -70,7 +70,8 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir],
+        parameters=[controller_config_file_dir,
+                    {"robot_description": robot_desc}],
         output="both"
     )
     enable_color = SetEnvironmentVariable(
@@ -152,12 +153,21 @@ def generate_launch_description():
         ],
     )
 
-    load_gripper_controller = Node(
+    load_gripper_controller_left = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
             '-p', controller_config_file_dir,
-            'gripper_controller'
+            'gripper_controller_left'
+        ],
+    )
+
+    load_gripper_controller_right = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            '-p', controller_config_file_dir,
+            'gripper_controller_right'
         ],
     )
 
@@ -224,7 +234,8 @@ def generate_launch_description():
                         # load_arm_movegroups,
                         load_joint_state_broadcaster,
                         load_arm_controller,
-                        load_gripper_controller,
+                        load_gripper_controller_left,
+                        load_gripper_controller_right,
                         # load_drivetrain_controller,
                         # load_servo_node,
                         # robot_localization_node,
@@ -252,7 +263,8 @@ def generate_launch_description():
             control_node,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            load_gripper_controller,
+            # load_gripper_controller_left,
+            # load_gripper_controller_right,
             # robot_localization_node,
             aruco_detector,
             aruco_location,
