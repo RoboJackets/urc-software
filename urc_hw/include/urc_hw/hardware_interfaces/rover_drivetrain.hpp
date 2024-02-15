@@ -28,32 +28,25 @@ public:
   RoverDrivetrain();
   ~RoverDrivetrain();
 
-  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & hardware_info)
-  override;
-  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &) override;
+  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& hardware_info) override;
+  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State&) override;
   std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::return_type read(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
-  hardware_interface::return_type write(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override;
+  hardware_interface::return_type write(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
 private:
   // basic info
   const std::string hardware_interface_name;
   double publish_encoder_ticks_frequency_;
-  const int ENCODER_CPR = 6144;
-  const float WHEEL_RADIUS = 0.170;
-  const float VEL_TO_COUNTS_FACTOR = ENCODER_CPR / (2 * M_PI * WHEEL_RADIUS);
-  const int QPPR = 15562;
-  const float MAX_SPEED = QPPR / VEL_TO_COUNTS_FACTOR;
-  const float MIN_SPEED = -1 * MAX_SPEED;
+  static constexpr int ENCODER_CPR = 6144;
+  static constexpr float WHEEL_RADIUS = 0.170;
+  static constexpr float VEL_TO_COUNTS_FACTOR = ENCODER_CPR / (2 * M_PI * WHEEL_RADIUS);
+  static constexpr int QPPR = 15562;
+  static constexpr float MAX_SPEED = QPPR / VEL_TO_COUNTS_FACTOR;
+  static constexpr float MIN_SPEED = -1 * MAX_SPEED;
 
   // // commands
   // std::vector<double> wheel_velocity_cmd_;

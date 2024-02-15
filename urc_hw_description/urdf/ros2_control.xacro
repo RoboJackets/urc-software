@@ -17,6 +17,7 @@
           <!-- <plugin>mock_components/GenericSystem</plugin> -->
           <!-- <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin> -->
         </hardware>
+
         <joint name="left_front_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -134,7 +135,6 @@
           </state_interface>
           <state_interface name="velocity" />
         </joint>
-
       </ros2_control>
     </xacro:if>
 
@@ -163,8 +163,8 @@
       <ros2_control name="rover_drivetrain" type="system">
         <hardware>
           <plugin>urc_hw/RoverDrivetrain</plugin>
-          <param name="udp_address">127.0.0.1</param>
-          <param name="udp_port">5000</param>
+          <param name="udp_address">192.168.1.100</param>
+          <param name="udp_port">8443</param>
         </hardware>
         <joint name="left_wheel">
           <command_interface name="velocity" />

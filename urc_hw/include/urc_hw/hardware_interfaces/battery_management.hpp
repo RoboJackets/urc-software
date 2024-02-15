@@ -1,5 +1,5 @@
-#ifndef URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
-#define URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
+#ifndef HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__
+#define HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__
 
 #include "memory"
 #include "vector"
@@ -24,18 +24,12 @@ public:
   BatteryManagement();
   ~BatteryManagement();
 
-  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & hardware_info)
-  override;
+  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo& hardware_info) override;
   std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::return_type read(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
+  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) override;
+  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) override;
+  hardware_interface::return_type read(const rclcpp::Time& time, const rclcpp::Duration& period) override;
 
 private:
   // basic info
@@ -51,16 +45,15 @@ private:
 
   // nanopb
   uint8_t buffer[128];
-  void decode(const char * buf, ssize_t size);
+  void decode(const char* buf, ssize_t size);
   BatteryMessage current_message;
   std::mutex guard;
 
   // mapping
-  const std::set<std::string> INTERFACE_NAMES{"main_voltage", "charge_percentage",
-    "discharge_current",
-    "temperature"};
+  const std::set<std::string> INTERFACE_NAMES{ "main_voltage", "charge_percentage", "discharge_current",
+                                               "temperature" };
 };
 
 }  // namespace urc_hardware::hardware_interfaces
 
-#endif  // URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
+#endif /* HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__ */

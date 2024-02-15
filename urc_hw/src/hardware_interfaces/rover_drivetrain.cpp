@@ -106,6 +106,8 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_deactivate(const rclcpp_l
 
 hardware_interface::return_type RoverDrivetrain::read(const rclcpp::Time&, const rclcpp::Duration&)
 {
+  RCLCPP_INFO(rclcpp::get_logger("test"), "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
+
   return hardware_interface::return_type::OK;
 }
 
@@ -115,16 +117,15 @@ hardware_interface::return_type RoverDrivetrain::write(const rclcpp::Time& time,
   {
     return hardware_interface::return_type::OK;
   }
+
   DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = velocity_rps_commands[0] * 1000;
+  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR;
   message.has_leftSpeed = true;
-  message.rightSpeed = velocity_rps_commands[1] * 1000;
+  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR;
   message.has_rightSpeed = true;
   message.timestamp = time.nanoseconds();
-
-  RCLCPP_INFO(rclcpp::get_logger("test"), "%d %d", message.leftSpeed, message.rightSpeed);
 
   bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
   message_length = stream.bytes_written;

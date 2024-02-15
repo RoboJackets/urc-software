@@ -28,13 +28,6 @@
 
 
     <xacro:macro name="drivebase" params="wheel_radius wheel_thickness wheel_friction approximate">
-        <link name="world" />
-        <joint name="fixed" type="fixed">
-            <parent link="world" />
-            <child link="base_link" />
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-        </joint>
-
         <link name="base_link">
             <inertial>
                 <origin xyz="-0.22771 0.0020794 0.13424" rpy="0 0 0" />

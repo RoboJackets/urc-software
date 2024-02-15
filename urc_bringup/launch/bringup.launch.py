@@ -236,7 +236,7 @@ def generate_launch_description():
                         load_arm_controller,
                         load_gripper_controller_left,
                         load_gripper_controller_right,
-                        # load_drivetrain_controller,
+                        load_drivetrain_controller,
                         # load_servo_node,
                         # robot_localization_node,
                         aruco_detector,
@@ -259,6 +259,13 @@ def generate_launch_description():
         ])
     else:
         return LaunchDescription([
+            IncludeLaunchDescription(
+                XMLLaunchDescriptionSource(
+                    [FindPackageShare("foxglove_bridge"),
+                     '/launch', '/foxglove_bridge_launch.xml']
+                ),
+                launch_arguments={'port': '8765'}.items(),
+            ),
             load_robot_state_publisher,
             control_node,
             load_joint_state_broadcaster,
