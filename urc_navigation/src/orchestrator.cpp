@@ -13,6 +13,8 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   this->baseLongitude = -1;
   this->waypointLatitude = -1;
   this->waypointLongitude = -1;
+  this->initialYaw = -1;
+  this->currentYaw = -1;
   this->gpsTimestamp = this->get_clock()->now();
   current_metric_pose.position.x = -1;
   current_metric_pose.position.y = -1;
@@ -78,6 +80,15 @@ void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
   this->current_metric_pose.orientation.y = msg.orientation.y;
   this->current_metric_pose.orientation.z = msg.orientation.z;
   this->current_metric_pose.orientation.w = msg.orientation.w;
+  double x = msg.orientation.x;
+  double y = msg.orientation.y;
+  double z = msg.orientation.z;
+  double w = msg.orientation.w;
+  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(2, x) + pow(2, y)));
+  if (this->initialYaw == -1) {
+    this->initialYaw = yaw;
+  }
+  this->currentYaw = yaw;
 }
 
 void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool & msg)
@@ -147,7 +158,7 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
 
   geometry_msgs::msg::TwistStamped cmd_vel;
   double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-  double currentAngle = 0; // NEED TO CHANGE THIS
+  double currentAngle = currentYaw - initialYaw;
   double errorZ = currentAngle - atan2(deltaY, deltaX);
 
   if (abs(errorZ >= errorZThreshold)) {

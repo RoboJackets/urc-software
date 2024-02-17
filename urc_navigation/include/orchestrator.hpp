@@ -44,6 +44,8 @@ private:
   double baseLongitude;
   double waypointLatitude;
   double waypointLongitude;
+  double initialYaw;
+  double currentYaw;
   rclcpp::Time gpsTimestamp;
   geometry_msgs::msg::Pose current_metric_pose;
   geometry_msgs::msg::Pose current_costmap_pose;
