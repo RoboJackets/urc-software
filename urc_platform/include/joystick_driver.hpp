@@ -22,7 +22,7 @@ private:
   void JoyCallback(const sensor_msgs::msg::Joy & msg);
 
   // drivetrain
-  std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::Twist>> drivetrain_cmd_publisher;
+  std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> drivetrain_cmd_publisher;
   double max_velocity;
   std::pair<int, int> velocity_axis;
   std::pair<bool, bool> invert_pair;

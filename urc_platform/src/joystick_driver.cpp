@@ -25,7 +25,7 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     get_parameter("driver_joystick_topic").as_string(), rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Joy msg) {JoyCallback(msg);});
 
-  drivetrain_cmd_publisher = create_publisher<geometry_msgs::msg::Twist>(
+  drivetrain_cmd_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
     get_parameter("drivetrain_topic").as_string(), rclcpp::SystemDefaultsQoS());
   max_velocity = get_parameter("max_velocity").as_double();
   velocity_axis = std::make_pair(
@@ -39,10 +39,10 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 
 void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
 {
-  geometry_msgs::msg::Twist drive_velocity;
-  drive_velocity.linear.x =
+  geometry_msgs::msg::TwistStamped drive_velocity;
+  drive_velocity.twist.linear.x =
     PreProcessing::preprocess(msg.axes[velocity_axis.first], max_velocity, invert_pair.first);
-  drive_velocity.angular.z =
+  drive_velocity.twist.angular.z =
     PreProcessing::preprocess(msg.axes[velocity_axis.second], max_velocity, invert_pair.second);
   drivetrain_cmd_publisher->publish(drive_velocity);
 }
