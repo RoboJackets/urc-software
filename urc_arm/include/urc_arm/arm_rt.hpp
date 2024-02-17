@@ -55,7 +55,7 @@ enum ServoStatus
 class ArmRT : public rclcpp::Node
 {
 public:
-  ArmRT(const rclcpp::NodeOptions& options);
+  ArmRT(const rclcpp::NodeOptions & options);
   ~ArmRT();
 
 private:
@@ -65,7 +65,7 @@ private:
    * some of the joints can be locked via parameters during the initialization process.
    * @param description urdf file in string.
    */
-  void load_model(const std::string& description);
+  void load_model(const std::string & description);
   /**
    * @brief Calling all the method for initializing the arm rt controller.
    * Calling initializing function so that the whole thing can be ready. This may include updating pose targets,
@@ -79,10 +79,10 @@ private:
    */
   void update_kinematics();
   void update_command();
-  void update_scaling_factor(WalliArmState& joint_commands_);
+  void update_scaling_factor(WalliArmState & joint_commands_);
   void update_status(ServoStatus status);
 
-  double calc_joint_limit_scaling_factor(WalliArmState& joint_commands_);
+  double calc_joint_limit_scaling_factor(WalliArmState & joint_commands_);
   std::pair<double, ServoStatus> calc_singularity_scaling_factor();
 
   // subscriber and publishers
@@ -93,7 +93,8 @@ private:
   realtime_tools::RealtimeBuffer<sensor_msgs::msg::JointState> joint_state_buffer_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subscription_;
   realtime_tools::RealtimeBuffer<geometry_msgs::msg::Twist> twist_buffer_;
-  realtime_tools::RealtimePublisherSharedPtr<std_msgs::msg::Float64MultiArray> vel_command_publisher_;
+  realtime_tools::RealtimePublisherSharedPtr<std_msgs::msg::Float64MultiArray>
+  vel_command_publisher_;
 
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr start_servo_service_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_servo_service_;
@@ -122,8 +123,8 @@ private:
   std::string vel_command_topic_;
   std::vector<std::string> active_joints_;
   std::vector<std::string> locking_joints_;
-  std::vector<double> joint_velocity_limits_ = { 2, 2, 2, 2, 2 };
-  SingularityConfig singularity_config_{ 35.0, 200.0, 1.0, 0.001 };
+  std::vector<double> joint_velocity_limits_ = {2, 2, 2, 2, 2};
+  SingularityConfig singularity_config_{35.0, 200.0, 1.0, 0.001};
   std::unordered_map<std::string, int> joint_mapping_;
 };
 

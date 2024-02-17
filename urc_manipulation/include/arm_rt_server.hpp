@@ -52,7 +52,7 @@ enum ControlMode
 class ArmRTServer : public rclcpp::Node
 {
 public:
-  ArmRTServer(const rclcpp::NodeOptions& options);
+  ArmRTServer(const rclcpp::NodeOptions & options);
 
 private:
   ControlMode mode = ControlMode::TWIST;
@@ -80,32 +80,37 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr current_pose_publisher_;
 
   /** \brief Start the servo loop. Must be called once to begin Servoing. */
-  void startServo(const std::shared_ptr<std_srvs::srv::Trigger::Request>& request,
-                  const std::shared_ptr<std_srvs::srv::Trigger::Response>& response);
+  void startServo(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> & request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> & response);
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr start_servo_service_;
 
   /** \brief Stop the servo loop. This involves more overhead than pauseCB, e.g. it clears the planning scene monitor.
    * We recommend using pauseCB/unpauseCB if you will resume the Servo loop soon.
    */
-  void stopServo(const std::shared_ptr<std_srvs::srv::Trigger::Request>& request,
-                 const std::shared_ptr<std_srvs::srv::Trigger::Response>& response);
+  void stopServo(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> & request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> & response);
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_servo_service_;
 
   /** \brief Pause the servo loop but continue monitoring joint state so we can resume easily. */
-  void pauseServo(const std::shared_ptr<std_srvs::srv::Trigger::Request>& request,
-                  const std::shared_ptr<std_srvs::srv::Trigger::Response>& response);
+  void pauseServo(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> & request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> & response);
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr pause_servo_service_;
 
   /** \brief Resume the servo loop after pauseCB has been called. */
-  void unpauseServo(const std::shared_ptr<std_srvs::srv::Trigger::Request>& request,
-                    const std::shared_ptr<std_srvs::srv::Trigger::Response>& response);
+  void unpauseServo(
+    const std::shared_ptr<std_srvs::srv::Trigger::Request> & request,
+    const std::shared_ptr<std_srvs::srv::Trigger::Response> & response);
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr unpause_servo_service_;
 
   /** \brief Switch servoing control mode. Only being effective during idle state.
    * True for twist, false for pose tracking.
    */
-  void switchMode(const std::shared_ptr<std_srvs::srv::SetBool::Request>& request,
-                  const std::shared_ptr<std_srvs::srv::SetBool::Response>& response);
+  void switchMode(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> & request,
+    const std::shared_ptr<std_srvs::srv::SetBool::Response> & response);
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr swtich_mode_service;
 
   void moveToPoseUpdate();

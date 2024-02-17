@@ -11,9 +11,6 @@ from std_srvs.srv import Trigger
 from control_msgs.action import GripperCommand
 
 
-import threading
-
-
 def rpy_to_quaternion(roll, pitch, yaw):
     """
     Convert Roll-Pitch-Yaw (RPY) angles to quaternion.
