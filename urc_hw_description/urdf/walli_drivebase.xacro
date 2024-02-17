@@ -1,0 +1,479 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+    <!-- Approximated Wheel -->
+    <!-- <xacro:macro name="approximate_wheel" params="prefix x_reflect y_reflect">
+        <link name="${prefix}_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+            </geometry>
+            <material name="Gray">
+            <color rgba="0.5 0.5 0.5 1.0"/>
+            </material>
+        </visual>
+        </link>
+
+        <joint name="${prefix}_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="${prefix}_link"/>
+        <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        </joint>
+    </xacro:macro> -->
+
+
+
+
+    <xacro:macro name="drivebase" params="wheel_radius wheel_thickness wheel_friction approximate">
+        <link name="base_link">
+            <inertial>
+                <origin xyz="-0.22771 0.0020794 1" rpy="0 0 0" />
+                <mass value="2.485" />
+                <inertia ixx="0.017201" ixy="-2.0986E-11" ixz="5.8899E-06" iyy="0.0028906"
+                    iyz="5.0336E-07"
+                    izz="0.019124" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/base_link.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/base_link_collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <link name="rightrocker">
+            <inertial>
+                <origin xyz="0.062687 0.034616 -0.016048" rpy="0 0 0" />
+                <mass value="0.57523" />
+                <inertia ixx="0.00040232" ixy="-8.4972E-11" ixz="-0.00023706" iyy="0.00095582"
+                    iyz="-4.2951E-08" izz="0.00061776" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightrocker.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightrocker_collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="rightrockerjoint" type="fixed">
+            <origin xyz="-0.194 -0.33715 0.080295" rpy="0 0 0" />
+            <parent link="base_link" />
+            <child link="rightrocker" />
+            <axis xyz="0 0 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+
+        <!-- Wheel 1 -->
+        <link name="right_rear_wheel">
+            <inertial>
+                <origin xyz="0.0010497 0.10248 0.00012788" rpy="0 0 0" />
+                <mass value="0.65429" />
+                <inertia ixx="0.00040499" ixy="-2.9713E-08" ixz="-2.8347E-07" iyy="0.00055081"
+                    iyz="2.6154E-08" izz="0.00040532" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_rear_wheel.STL" /> -->
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                    <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                        <mesh
+                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="right_rear_wheel_joint" type="continuous">
+            <origin xyz="-0.36316 -0.17103 -0.19158" rpy="0 0 0" />
+            <parent link="rightrocker" />
+            <child link="right_rear_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+        <link name="rightbogie">
+            <inertial>
+                <origin xyz="-6.8787E-09 0.032385 -0.015429" rpy="0 0 0" />
+                <mass value="0.66758" />
+                <inertia ixx="0.00019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.00044836"
+                    iyz="2.6509E-13" izz="0.0003846" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightbogie.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightbogie_collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="rightbogiejoint" type="fixed">
+            <origin xyz="0.24177 -0.00254 -0.074203" rpy="0 0 0" />
+            <parent link="rightrocker" />
+            <child link="rightbogie" />
+            <axis xyz="0 0 0" />
+            <dynamics damping="0.02" friction="0" />
+        </joint>
+        <!-- Wheel 2 -->
+        <link name="right_front_wheel">
+            <inertial>
+                <origin xyz="-0.00066285 0.10248 0.00082496" rpy="0 0 0" />
+                <mass value="0.65429" />
+                <inertia ixx="0.000405" ixy="-2.1882E-08" ixz="2.5112E-07" iyy="0.00055081"
+                    iyz="-4.9845E-08" izz="0.00040531" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_front_wheel.STL" /> -->
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="${pi/2} 0 0" rpy="0 0 0" />
+                <geometry>
+                <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="right_front_wheel_joint" type="continuous">
+            <origin xyz="0.20139 -0.16849 -0.11671" rpy="0 0 0" />
+            <parent link="rightbogie" />
+            <child link="right_front_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+
+        <!-- Wheel 3 -->
+        <link name="right_center_wheel">
+            <inertial>
+                <origin xyz="0.0010444 0.10248 0.00016665" rpy="0 0 0" />
+                <mass value="0.65429" />
+                <inertia ixx="0.00040501" ixy="-3.1023E-08" ixz="-2.9568E-07" iyy="0.00055081"
+                    iyz="2.5206E-08" izz="0.0004053" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_center_wheel.STL" /> -->
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_center_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="right_center_wheel_joint" type="continuous">
+            <origin xyz="-0.20177 -0.16849 -0.11606" rpy="0 0 0" />
+            <parent link="rightbogie" />
+            <child link="right_center_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+        <link name="leftrocker">
+            <inertial>
+                <origin xyz="0.065435 -0.034981 -0.01685" rpy="0 0 0" />
+                <mass value="0.58415" />
+                <inertia ixx="0.0004044" ixy="-5.259E-11" ixz="-0.00023722" iyy="0.00095925"
+                    iyz="-4.2951E-08" izz="0.00061912" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftrocker.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftrocker_collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="leftrockerjoint" type="fixed">
+            <origin xyz="-0.19241 0.33715 0.080257" rpy="0 0 0" />
+            <parent link="base_link" />
+            <child link="leftrocker" />
+            <axis xyz="0 0 0" />
+            <dynamics damping="60" friction="4" />
+        </joint>
+
+        <!-- Wheel 4 -->
+        <link name="left_rear_wheel">
+            <inertial>
+                <origin xyz="0.00069452 -0.10248 0.00079886" rpy="0 0 0" />
+                <mass value="0.65433" />
+                <inertia ixx="0.00040509" ixy="-4.8144E-09" ixz="-2.5925E-07" iyy="0.00055097"
+                    iyz="4.0749E-08" izz="0.00040552" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_rear_wheel.STL" /> -->
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_rear_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="left_rear_wheel_joint" type="continuous">
+            <origin xyz="-0.36266 0.17103 -0.19248" rpy="0 0 0" />
+            <parent link="leftrocker" />
+            <child link="left_rear_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+        <link name="leftbogie">
+            <inertial>
+                <origin xyz="-6.8787E-09 -0.032385 -0.015429" rpy="0 0 0" />
+                <mass value="0.66758" />
+                <inertia ixx="0.00019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.00044836"
+                    iyz="2.6509E-13" izz="0.0003846" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftbogie.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftbogie_collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="leftbogiejoint" type="fixed">
+            <origin xyz="0.24182 0.00254 -0.073984" rpy="0 0 0" />
+            <parent link="leftrocker" />
+            <child link="leftbogie" />
+            <axis xyz="0 0 0" />
+            <dynamics damping="60" friction="4" />
+        </joint>
+
+        <!-- Wheel 5 -->
+        <link name="left_front_wheel">
+            <inertial>
+                <origin xyz="-0.001042 -0.10248 0.00016516" rpy="0 0 0" />
+                <mass value="0.65433" />
+                <inertia ixx="0.00040512" ixy="-1.5424E-08" ixz="2.7516E-07" iyy="0.00055097"
+                    iyz="-3.4895E-08" izz="0.00040549" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_front_wheel.STL" /> -->
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_front_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="left_front_wheel_joint" type="continuous">
+            <origin xyz="0.20177 0.16849 -0.11606" rpy="0 0 0" />
+            <parent link="leftbogie" />
+            <child link="left_front_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+
+        <!-- Wheel 6 -->
+        <link name="left_center_wheel">
+            <inertial>
+                <origin xyz="0.00066514 -0.10248 0.00082348" rpy="0 0 0" />
+                <mass value="0.65433" />
+                <inertia ixx="0.00040511" ixy="-6.2827E-09" ixz="-2.7164E-07" iyy="0.00055097"
+                    iyz="4.0155E-08" izz="0.0004055" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    <!-- <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_center_wheel.STL" /> -->
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+                <geometry>
+                <xacro:if value="${approximate}">
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </xacro:if>
+                    <xacro:if value="${not approximate}">
+                    <mesh
+                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_center_wheel_collision.STL" />
+                    </xacro:if>
+                </geometry>
+            </collision>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>${wheel_friction}</mu>
+                        <mu2>${wheel_friction}</mu2>
+                    </ode>
+                </friction>
+            </surface>
+        </link>
+        <joint name="left_center_wheel_joint" type="continuous">
+            <origin xyz="-0.20139 0.16849 -0.11671" rpy="0 0 0" />
+            <parent link="leftbogie" />
+            <child link="left_center_wheel" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.01" friction="0.01" />
+        </joint>
+
+        <gazebo reference="base_link">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="rightrocker">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="right_rear_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="rightbogie">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="right_front_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="right_center_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="leftrocker">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="left_rear_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="leftbogie">
+            <material>Gazebo/Grey</material>
+        </gazebo>
+        <gazebo reference="left_front_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+        <gazebo reference="left_center_wheel">
+            <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

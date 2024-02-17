@@ -16,6 +16,7 @@ def generate_launch_description():
                     'heartbeat_publisher.yaml'])
             ]
         )
+
     return LaunchDescription([
         heartbeat_publisher_node
     ])
