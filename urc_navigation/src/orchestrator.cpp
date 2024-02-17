@@ -58,8 +58,9 @@ void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
   }
-  if (this->actualLatitude != -1 && this->actualLongitude != -1 
-    && this->waypointLatitude != -1 && this->waypointLongitude != -1) {
+  if (this->actualLatitude != -1 && this->actualLongitude != -1 &&
+    this->waypointLatitude != -1 && this->waypointLongitude != -1)
+  {
     RCLCPP_INFO(this->get_logger(), "Publishing Poses");
     PublishMetricPose(
       this->actualLatitude - this->baseLatitude,
@@ -67,7 +68,7 @@ void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
     PublishCostmapPose(
       this->actualLatitude - this->baseLatitude,
       this->actualLongitude - this->baseLongitude);
-    }
+  }
   DetermineState();
 }
 
