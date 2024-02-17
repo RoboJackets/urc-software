@@ -28,6 +28,8 @@ def load_yaml(package_name, file_path):
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    pkg_nmea_navsat_driver = FindPackageShare(
+        "nmea_navsat_driver").find("nmea_navsat_driver")
 
     hardware_config_file_dir = os.path.join(
         pkg_urc_bringup, 'config', 'hardware_config.yaml')
@@ -168,6 +170,12 @@ def generate_launch_description():
         )
     )
 
+    launch_gps = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py")
+        )
+    )
+
     if use_simulation:
         return LaunchDescription([
             RegisterEventHandler(
@@ -214,5 +222,6 @@ def generate_launch_description():
             load_gripper_controller_right,
             aruco_detector,
             aruco_location,
-            joystick_launch
+            joystick_launch,
+            launch_gps
         ])
