@@ -8,7 +8,7 @@
 #include <urc_msgs/msg/waypoint.hpp>
 #include <urc_msgs/msg/navigation_status.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
-#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -26,7 +26,7 @@ public:
 
 private:
   rclcpp::Publisher<urc_msgs::msg::NavigationStatus>::SharedPtr current_state_publisher;
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_publisher;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_publisher;
 
   rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr metric_offset_pose_publisher;
   rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr costmap_offset_pose_publisher;
@@ -44,6 +44,8 @@ private:
   double baseLongitude;
   double waypointLatitude;
   double waypointLongitude;
+  double initialYaw;
+  double currentYaw;
   rclcpp::Time gpsTimestamp;
   geometry_msgs::msg::Pose current_metric_pose;
   geometry_msgs::msg::Pose current_costmap_pose;
