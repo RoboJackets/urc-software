@@ -1,12 +1,13 @@
 syntax = "proto2";
 
+// Reports the encoder ticks for each arm joint
 message ArmEncodersMessage {
-    optional int32 shoulderSpeed        = 1;
-    optional int32 bicepSpeed           = 2;
-    optional int32 elbowSpeed           = 3;
-    optional int32 wristSpeed           = 4;
-    optional int32 clawSpeed            = 5;
-    required int32 timestamp            = 6;
+    required int32 shoulderLiftTicks    = 1;
+    required int32 shouldSwivelTicks    = 2;
+    required int32 elbowLiftTicks       = 3;
+    required int32 elbowSwivelTicks     = 4;
+    required int32 wristLiftTicks       = 5;
+    required int32 wristSwivelTicks     = 6;
 }
 
 message DriveEncodersMessage {  

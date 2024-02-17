@@ -11,13 +11,13 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    urdf_path = 'urdf/robot.xacro'
+    urdf_path = 'urdf/walli.xacro'
     xacro_file = os.path.join(get_package_share_directory('urc_hw_description'), urdf_path)
     assert os.path.exists(xacro_file), "urdf path doesnt exist in "+str(xacro_file)
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package='urc_gazebo').find('urc_gazebo')
-    default_model_path = os.path.join(pkg_share, 'urdf/robot.xacro')
+    default_model_path = os.path.join(pkg_share, 'urdf/walli.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'config/rviz_config.rviz')
 
     robot_description_config = process_file(xacro_file)
