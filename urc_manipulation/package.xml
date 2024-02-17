@@ -27,6 +27,7 @@
   <depend>tf2_eigen</depend>
   <depend>trajectory_msgs</depend>
   <depend>pinocchio</depend>
+  <depend>moveit_servo</depend>
 
   <exec_depend>moveit_ros</exec_depend>
   <exec_depend>gripper_controllers</exec_depend>
