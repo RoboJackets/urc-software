@@ -1,100 +1,56 @@
-#include "path_planning.hpp"
+#include "astar.hpp"
 
-namespace path_planning
-{
-  PathPlanning::PathPlanning(const rclcpp::NodeOptions &options)
-      : rclcpp::Node("path_planning", options)
-  {
-    path_publisher = create_publisher<std::vector<urc_msgs::msg::GridLocation>>(
-        "/path", rclcpp::SystemDefaultsQoS());
 
-    costmap_subscriber = create_subscription<nav2_msgs::msg::Costmap>(
-        "/costmap", rclcpp::SystemDefaultsQoS(),
-        [this](const nav2_msgs::msg::Costmap msg)
-        { CostmapCallback(msg); });
-    grid_pose_subscriber = create_subscription<geometry_msgs::msg::Pose>(
-        "/pose/costmap", rclcpp::SystemDefaultsQoS(),
-        [this](const geometry_msgs::msg::Pose msg)
-        { GridPositionCallback(msg); });
-    grid_waypoint_subscriber = create_subscription<urc_msgs::msg::GridLocation>(
-        "/waypoint", rclcpp::SystemDefaultsQoS(),
-        [this](const urc_msgs::msg::GridLocation msg)
-        { WaypointCallback(msg); });
+namespace astar {
 
-    this->currentCostmap.metadata.size_x = 0;
-    this->currentPose.position.x = MAXFLOAT;
-    this->waypoint.x = 100;
-    ;
+  AStar::AStar(const nav2_msgs::msg::Costmap &costmap,
+               const geometry_msgs::msg::Pose &pose,
+               const urc_msgs::msg::GridLocation &destination,
+               int gridSize) {
+
+    this->currentCostmap = costmap;
+    this->currentLocation = this->getGridBlockByPose(pose);
+    this->destination = this->gridLocationToGridBlock(destination);
+    this->gridSize = gridSize;
   }
 
-  void PathPlanning::CostmapCallback(const nav2_msgs::msg::Costmap &msg)
-  {
-    this->currentCostmap = msg;
-    AStar();
-  }
-  void PathPlanning::GridPositionCallback(const geometry_msgs::msg::Pose &msg)
-  {
-    this->currentPose = msg;
-    AStar();
-  }
-  void PathPlanning::WaypointCallback(const urc_msgs::msg::GridLocation &msg)
-  {
-    this->waypoint = msg;
-    AStar();
+  AStar::GridBlock AStar::gridLocationToGridBlock(const urc_msgs::msg::GridLocation &gridLocation) {
+    AStar::GridBlock gridBlock;
+    gridBlock.location = gridLocation;
+    return gridBlock;
   }
 
-  void PathPlanning::AStar()
-  {
-    if (this->currentCostmap.metadata.size_x == 0)
-    {
-      RCLCPP_INFO(this->get_logger(), "Costmap data not received");
-      return;
-    }
-    else if (this->currentPose.position.x == MAXFLOAT)
-    {
-      RCLCPP_INFO(this->get_logger(), "Current pose data not received");
-      return;
-    }
-    else if (this->waypoint.x == 100)
-    {
-      RCLCPP_INFO(this->get_logger(), "Waypoint data not received");
-      return;
-    }
+  AStar::GridBlock AStar::getGridBlockByPose(const geometry_msgs::msg::Pose &pose) {
+    AStar::GridBlock gridBlock;
+    gridBlock.location.x = (int)pose.position.x / this->gridSize;
+    gridBlock.location.y = (int)pose.position.y / this->gridSize;
+    gridBlock.pose = pose;
+    return gridBlock;
+  }
 
-    // Data Structures
-    int currentX = (int)currentPose.position.x;
-    int currentY = (int)currentPose.position.y;
-    int goalX = waypoint.x;
-    int goalY = waypoint.y;
+  void AStar::calculate() {
 
-    std::set<path_planning::PathPlanning::GridBlock> visited_set;
-    std::vector<path_planning::PathPlanning::GridBlock> waypoint_list;
-    std::priority_queue<path_planning::PathPlanning::GridBlock> open_set; // Min-heap
+    std::set<AStar::GridBlock> visited_set;
+    std::vector<AStar::GridBlock> waypoint_list;
+    std::priority_queue<AStar::GridBlock> open_set;
 
-    // Start Node
-    GridBlock start_node;
-    start_node.location.x = currentX;
-    start_node.location.y = currentY;
+    AStar::GridBlock start_node = this->currentLocation;
     start_node.g_cost = 0.0;
-    start_node.h_cost = heuristic(currentX, currentY, goalX, goalY);
+    start_node.h_cost = heuristic(start_node, this->destination);
     start_node.f_cost = start_node.g_cost + start_node.h_cost;
     start_node.parent = nullptr;
     open_set.push(start_node);
 
     // A-star Main Loop
-    while (!open_set.empty())
-    {
+    while (!open_set.empty()) {
     }
   }
 
-  double PathPlanning::heuristic(int x1, int y1, int x2, int y2)
-  {
-    return std::abs(x1 - x2) + std::abs(y1 - y2);
+  double AStar::heuristic(GridBlock &node, GridBlock &goal) {
+    return std::abs(node.location.x - goal.location.x) + std::abs(node.location.y - goal.location.y);
   }
 
-  double PathPlanning::cost(const PathPlanning::GridBlock &from,
-                            const PathPlanning::GridBlock &to)
-  {
+  double AStar::cost(const AStar::GridBlock &from, const AStar::GridBlock &to) {
 
     int costmap_index = to.location.y * currentCostmap.metadata.size_x + to.location.x;
     double cell_cost = currentCostmap.data[costmap_index];
@@ -103,32 +59,26 @@ namespace path_planning
     return cell_cost * distance;
   }
 
-  std::vector<urc_msgs::msg::GridLocation> PathPlanning::get_neighbors(
-      const PathPlanning::GridBlock &node,
-      const nav2_msgs::msg::Costmap &costmap)
-  {
-    std::vector<urc_msgs::msg::GridLocation> neighbors;
-    for (int i = -1; i <= 1; i++)
-    {
-      for (int j = -1; j <= 1; j++)
-      {
-        if (i == 0 && j == 0)
-        {
+  std::vector<AStar::GridBlock> AStar::get_neighbors(
+    const AStar::GridBlock &node, 
+    const nav2_msgs::msg::Costmap &costmap) {
+
+    std::vector<AStar::GridBlock> neighbors;
+
+    for (int i = -1; i <= 1; i++) {
+      for (int j = -1; j <= 1; j++) {
+        if (i == 0 && j == 0) {
           continue;
         }
         int x = node.location.x + i;
         int y = node.location.y + j;
-        if (x >= 0 && x < costmap.metadata.size_x && y >= 0 && y < costmap.metadata.size_y)
-        {
-          urc_msgs::msg::GridLocation neighbor;
-          neighbor.x = x;
-          neighbor.y = y;
+        if (x >= 0 && x < costmap.metadata.size_x && y >= 0 && y < costmap.metadata.size_y) {
+          AStar::GridBlock neighbor;
+          neighbor.location.x = x;
+          neighbor.location.y = y;
           neighbors.push_back(neighbor);
         }
       }
     }
-    return neighbors;
   }
 }
-
-RCLCPP_COMPONENTS_REGISTER_NODE(path_planning::PathPlanning)
