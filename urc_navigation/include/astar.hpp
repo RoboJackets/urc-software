@@ -41,7 +41,7 @@ namespace astar
       }
     };
 
-    typedef std::priority_queue<GridBlock, std::vector<GridBlock>, GridBlockComparator> open_set;
+    typedef std::priority_queue<GridBlock, std::vector<GridBlock>, GridBlockComparator> GridBlockQueue;
 
     nav2_msgs::msg::Costmap currentCostmap;
     GridBlock currentLocation;

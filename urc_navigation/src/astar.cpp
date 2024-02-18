@@ -29,13 +29,14 @@ namespace astar
 
     std::set<AStar::GridBlock> visited_set;
     std::vector<AStar::GridBlock> waypoint_list;
+    GridBlockQueue open_set;
 
     AStar::GridBlock start_node = this->currentLocation;
     start_node.g_cost = 0.0;
     start_node.h_cost = heuristic(start_node, this->destination);
     start_node.f_cost = start_node.g_cost + start_node.h_cost;
     start_node.parent = nullptr;
-    this->open_set.push(start_node);
+    open_set.push(start_node);
 
     while (!open_set.empty())
     {
