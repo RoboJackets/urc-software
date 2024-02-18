@@ -18,8 +18,8 @@ namespace astar
 
   public:
     explicit AStar(const nav2_msgs::msg::Costmap &costmap,
-                   const geometry_msgs::msg::Pose &pose,
-                   const urc_msgs::msg::GridLocation &destination,
+                   const geometry_msgs::msg::Pose &initialPose,
+                   const geometry_msgs::msg::Pose &destinationPose,
                    int gridSize);
 
   private:
