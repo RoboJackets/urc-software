@@ -48,23 +48,47 @@ void PathPlanning::AStar() {
         RCLCPP_INFO(this->get_logger(), "Waypoint data not received");
         return;
     } 
-    
-    // By now, all data must have been received
+
+    // Data Structures
     int currentX = (int)currentPose.position.x;
     int currentY = (int)currentPose.position.y;
     int goalX = waypoint.x;
     int goalY = waypoint.y;
-    
-    std::set<urc_msgs::msg::GridLocation> visited_set;
-    std::vector<urc_msgs::msg::GridLocation> waypoint_list;
-    std::priority_queue<urc_msgs::msg::GridLocation> pq;
 
-    while (!visited_set.empty()) {
-        
+    std::set<path_planning::PathPlanning::GridBlock> visited_set;
+    std::vector<path_planning::PathPlanning::GridBlock> waypoint_list;
+    std::priority_queue<path_planning::PathPlanning::GridBlock> open_set; // Min-heap
+
+
+    // Start Node
+    GridBlock start_node;
+    start_node.location.x = currentX;
+    start_node.location.y = currentY;
+    start_node.g_cost = 0.0;
+    start_node.h_cost = heuristic(currentX, currentY, goalX, goalY); 
+    start_node.f_cost = start_node.g_cost + start_node.h_cost;
+    start_node.parent = nullptr;
+    open_set.push(start_node);
+
+    // A-star Main Loop
+    while (!open_set.empty()) {
+         
     }
 
+}
 
+double PathPlanning::heuristic(int x1, int y1, int x2, int y2) {
+    return std::abs(x1 - x2) + std::abs(y1 - y2);
+}
 
+double PathPlanning::cost(const PathPlanning::GridBlock & from, 
+                          const PathPlanning::GridBlock & to) {
+
+    int costmap_index = to.location.y * currentCostmap.metadata.size_x + to.location.x;
+    double cell_cost = currentCostmap.data[costmap_index];
+
+    double distance = std::sqrt(std::pow(to.location.x - from.location.x, 2) + std::pow(to.location.y - from.location.y, 2));
+    return cell_cost * distance; 
 }
 }
 

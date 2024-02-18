@@ -41,10 +41,25 @@ private:
   void WaypointCallback(
     const urc_msgs::msg::GridLocation & msg
   );
+
+  struct GridBlock {
+    urc_msgs::msg::GridLocation location;
+    double g_cost; // Cost from start to this node
+    double h_cost; // Heuristic estimate to goal
+    double f_cost; // g_cost + h_cost
+    GridBlock* parent; // For backtracking the path
+  };
   
   void AStar();
 
-};
+  double PathPlanning::heuristic(int x1, int y1, int x2, int y2);
+  double PathPlanning::cost(const PathPlanning::GridBlock & from, 
+                          const PathPlanning::GridBlock & to);
+  std::vector<urc_msgs::msg::GridLocation> PathPlanning::get_neighbors(
+                         const PathPlanning::GridBlock & node,
+                         const nav2_msgs::msg::Costmap & costmap);
+  void PathPlanning::reconstruct_path(const Node & goal_node, 
+                          std::vector<urc_msgs::msg::GridLocation> & path); 
 }
 
 #endif
