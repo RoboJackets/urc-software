@@ -33,6 +33,16 @@ namespace astar
       GridBlock *parent;                    // For backtracking the path
     };
 
+    struct GridBlockComparator
+    {
+      bool operator()(const GridBlock &a, const GridBlock &b) const
+      {
+        return a.f_cost > b.f_cost;
+      }
+    };
+
+    typedef std::priority_queue<GridBlock, std::vector<GridBlock>, GridBlockComparator> open_set;
+
     nav2_msgs::msg::Costmap currentCostmap;
     GridBlock currentLocation;
     GridBlock destination;
