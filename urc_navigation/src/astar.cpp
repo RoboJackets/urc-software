@@ -40,7 +40,35 @@ namespace astar
 
     while (!open_set.empty())
     {
-      // implement this
+      AStar::GridBlock current_node = open_set.top();
+      open_set.pop();
+
+      if (current_node.location.x == this->destination.location.x && current_node.location.y == this->destination.location.y)
+      {
+        reconstruct_path(current_node, waypoint_list);
+        break;
+      }
+
+      visited_set.insert(current_node);
+
+      std::vector<AStar::GridBlock> neighbors = get_neighbors(current_node, this->currentCostmap);
+      for (auto &neighbor : neighbors)
+      {
+        if (visited_set.find(neighbor) != visited_set.end())
+        {
+          continue;
+        }
+
+        double tentative_g_cost = current_node.g_cost + cost(current_node, neighbor);
+        if (tentative_g_cost < neighbor.g_cost)
+        {
+          neighbor.parent = &current_node;
+          neighbor.g_cost = tentative_g_cost;
+          neighbor.h_cost = heuristic(neighbor, this->destination);
+          neighbor.f_cost = neighbor.g_cost + neighbor.h_cost;
+          open_set.push(neighbor);
+        }
+      }
     }
   }
 
@@ -89,6 +117,11 @@ namespace astar
 
   void AStar::reconstruct_path(const AStar::GridBlock &goal_node, std::vector<AStar::GridBlock> &path)
   {
-    // implement this
+    AStar::GridBlock current_node = goal_node;
+    while (current_node.parent != nullptr)
+    {
+      path.push_back(current_node);
+      current_node = *current_node.parent;
+    }
   }
 }
