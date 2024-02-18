@@ -119,3 +119,13 @@ gripper_controller_right:
     stall_timeout: 1.0
     stall_velocity_threshold: 0.001
     joint: rightgripperjoint
+
+joy_drive:
+  ros__parameters:
+    max_linear_velocity_ms: 3.0
+    max_angular_velocity_radians: 5.0
+    joy_command_topic: /joy
+    cmd_vel_topic: /cmd_vel
+    target_axes: [1, 3]
+    invert_linear_velocity: false
+    invert_angular_velocity: false

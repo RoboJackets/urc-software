@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'test_joint = urc_scripts.test_joint:main',
+            'joy_drive = urc_scripts.joy_drive:main'
         ],
     },
 )
