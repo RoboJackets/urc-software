@@ -5,9 +5,9 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <costmap_2d/costmap_2d_ros.hpp>
+#include <nav2_costmap_2d/costmap_2d.hpp>
 #include <bits/stdc++.h>
-#include <nav2_msgs/msg/occupancy_grid.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -20,11 +20,12 @@ class PointCloudCostmap : public rclcpp::Node
         explicit PointCloudCostmap(const rclcpp::NodeOptions & options);
     private:
         void PointCloudCallback(const sensor_msgs::msg::PointCloud2 & msg);
+        nav_msgs::msg::OccupancyGrid convertCostmapToOccupancyGrid(const nav2_costmap_2d::Costmap2D & costmap);
         rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_subscriber;
-        rclcpp::Publisher<costmap_2d::OccupancyGrid>::SharedPtr costmap_publisher;
+        rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_publisher;
 
-        costmap_2d::Costmap2D* costmap_;
-}
+        nav2_costmap_2d::Costmap2D* costmap_;
+};
 
 
 }

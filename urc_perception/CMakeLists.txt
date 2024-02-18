@@ -17,12 +17,14 @@ find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
+find_package(pcl_msgs REQUIRED)
 find_package(PCL REQUIRED)
 
 include_directories(
   include
   ${nav2_costmap_2d_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${pcl_msgs_INCLUDE_DIRS}
 )
 
 # Library creation
@@ -31,6 +33,7 @@ add_library(${PROJECT_NAME} SHARED
   src/aruco_location.cpp
   src/depth_laserscan.cpp
   src/costmap_generator.cpp
+  src/pointcloud_costmap.cpp
 )
 
 set(dependencies
