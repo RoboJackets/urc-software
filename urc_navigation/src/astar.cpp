@@ -74,7 +74,7 @@ namespace astar
 
   double AStar::heuristic(GridBlock &node, GridBlock &goal)
   {
-    return std::abs(node.location.x - goal.location.x) + std::abs(node.location.y - goal.location.y);
+    return std::sqrt(std::pow(goal.location.x - node.location.x, 2) + std::pow(goal.location.y - node.location.y, 2));
   }
 
   double AStar::cost(const AStar::GridBlock &from, const AStar::GridBlock &to)
