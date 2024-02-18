@@ -9,6 +9,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(OpenCV 4 REQUIRED)
@@ -38,6 +39,7 @@ set(dependencies
   OpenCV
   tf2
   tf2_geometry_msgs
+  nav_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
