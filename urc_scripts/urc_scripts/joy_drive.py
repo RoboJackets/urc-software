@@ -57,7 +57,7 @@ class JoyDrive(Node):
     def update_vel_target(self, msg: Joy):
         self.current_drive_velocity_target.twist.linear.x = msg.axes[
             self.target_axis[0]] * self.max_linear_vel_ms
-        self.current_drive_velocity_target.twist.angular.x = msg.axes[
+        self.current_drive_velocity_target.twist.angular.z = msg.axes[
             self.target_axis[1]] * self.max_angular_vel_rads
         self.current_drive_velocity_target.header.stamp = self.get_clock().now().to_msg()
 

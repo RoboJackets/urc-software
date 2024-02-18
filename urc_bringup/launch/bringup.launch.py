@@ -170,9 +170,17 @@ def generate_launch_description():
         )
     )
 
+    teleop_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [FindPackageShare("urc_bringup"),
+             "/launch/teleop.launch.py"]
+        )
+    )
+
     launch_gps = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py")
+            os.path.join(pkg_nmea_navsat_driver, "launch",
+                         "nmea_serial_driver.launch.py")
         )
     )
 
@@ -189,7 +197,7 @@ def generate_launch_description():
                         load_drivetrain_controller,
                         aruco_detector,
                         aruco_location,
-                        joystick_launch
+                        teleop_launch
                     ],
                 )
             ),
@@ -222,6 +230,6 @@ def generate_launch_description():
             load_gripper_controller_right,
             aruco_detector,
             aruco_location,
-            joystick_launch,
+            teleop_launch,
             launch_gps
         ])
