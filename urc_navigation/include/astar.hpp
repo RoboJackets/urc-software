@@ -39,8 +39,6 @@ namespace astar
 
     int gridSize = 1; // meter
 
-    GridBlock gridLocationToGridBlock(const urc_msgs::msg::GridLocation &gridLocation);
-
     GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
 
     void calculate();

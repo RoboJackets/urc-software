@@ -4,20 +4,14 @@
 namespace astar {
 
   AStar::AStar(const nav2_msgs::msg::Costmap &costmap,
-               const geometry_msgs::msg::Pose &pose,
-               const urc_msgs::msg::GridLocation &destination,
+               const geometry_msgs::msg::Pose &initialPose,
+               const geometry_msgs::msg::Pose &destinationPose,
                int gridSize) {
 
     this->currentCostmap = costmap;
-    this->currentLocation = this->getGridBlockByPose(pose);
-    this->destination = this->gridLocationToGridBlock(destination);
+    this->currentLocation = this->getGridBlockByPose(initialPose);
+    this->destination = this->getGridBlockByPose(destinationPose);
     this->gridSize = gridSize;
-  }
-
-  AStar::GridBlock AStar::gridLocationToGridBlock(const urc_msgs::msg::GridLocation &gridLocation) {
-    AStar::GridBlock gridBlock;
-    gridBlock.location = gridLocation;
-    return gridBlock;
   }
 
   AStar::GridBlock AStar::getGridBlockByPose(const geometry_msgs::msg::Pose &pose) {
@@ -41,8 +35,8 @@ namespace astar {
     start_node.parent = nullptr;
     open_set.push(start_node);
 
-    // A-star Main Loop
     while (!open_set.empty()) {
+      // implement this
     }
   }
 
@@ -80,5 +74,9 @@ namespace astar {
         }
       }
     }
+  }
+
+  void AStar::reconstruct_path(const AStar::GridBlock &goal_node, std::vector<AStar::GridBlock> &path) {
+    // implement this
   }
 }
