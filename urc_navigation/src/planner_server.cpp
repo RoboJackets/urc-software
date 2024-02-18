@@ -1,4 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 
 #include "rclcpp_components/register_node_macro.hpp"
 #include "planner_server.hpp"
@@ -9,12 +10,12 @@ namespace planner_server
     PlannerServer::PlannerServer(const rclcpp::NodeOptions &options) : Node("planner_server", options)
     {
         // Create the service
-        plan_service_ = create_service<urc_navigation::srv::GetPlan>(
+        plan_service_ = create_service<urc_msgs::srv::GeneratePlan>(
             "plan",
             std::bind(&PlannerServer::generatePlan, this, std::placeholders::_1, std::placeholders::_2));
 
         // Create the publisher
-        path_publisher_ = create_publisher<nav_msgs::msg::Path>(
+        plan_publisher_ = create_publisher<nav_msgs::msg::Path>(
             "/path",
             rclcpp::SystemDefaultsQoS());
 
@@ -32,23 +33,19 @@ namespace planner_server
 
     PlannerServer::~PlannerServer() {}
 
-    void PlannerServer::generatePlan()
+    void PlannerServer::generatePlan(const std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request,
+                                     std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response)
     {
-        // Call the A* algorithm
-        auto plan = path_planning::AStar(current_costmap_);
-
-        // Publish the plan
-        publishPlan(plan);
     }
 
     void PlannerServer::publishPlan(const nav_msgs::msg::Path &plan)
     {
         auto msg = std::make_unique<nav_msgs::msg::Path>(plan);
-        if (plan_publisher_->is_activated() && plan_publisher_->get_subscription_count() > 0)
+        if (plan_publisher_->get_subscription_count() > 0)
         {
             plan_publisher_->publish(std::move(msg));
         }
     }
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(urc_navigation::PlannerServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner_server::PlannerServer)

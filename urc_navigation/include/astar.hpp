@@ -1,5 +1,5 @@
-#ifndef PATH_PLANNING_H
-#define PATH_PLANNING_H
+#ifndef PATH_PLANNING_HPP_
+#define PATH_PLANNING_HPP_
 
 #include <bits/stdc++.h>
 #include <urc_msgs/msg/waypoint.hpp>
@@ -10,52 +10,51 @@
 #include <queue>
 #include <set>
 
-namespace astar {
+namespace astar
+{
 
-  class AStar {
+  class AStar
+  {
 
   public:
     explicit AStar(const nav2_msgs::msg::Costmap &costmap,
-               const geometry_msgs::msg::Pose &pose,
-               const urc_msgs::msg::GridLocation &destination,
-               int gridSize);
+                   const geometry_msgs::msg::Pose &pose,
+                   const urc_msgs::msg::GridLocation &destination,
+                   int gridSize);
 
   private:
-
-
-    struct GridBlock {
+    struct GridBlock
+    {
       urc_msgs::msg::GridLocation location; // x, y data
-      geometry_msgs::msg::Pose pose; // optional
-      double g_cost; // Cost from start to this node
-      double h_cost; // Heuristic estimate to goal
-      double f_cost; // g_cost + h_cost
-      GridBlock* parent; // For backtracking the path
+      geometry_msgs::msg::Pose pose;        // optional
+      double g_cost;                        // Cost from start to this node
+      double h_cost;                        // Heuristic estimate to goal
+      double f_cost;                        // g_cost + h_cost
+      GridBlock *parent;                    // For backtracking the path
     };
 
     nav2_msgs::msg::Costmap currentCostmap;
-    AStar::GridBlock currentLocation;
-    AStar::GridBlock destination;
+    GridBlock currentLocation;
+    GridBlock destination;
 
-    int gridSize = 1; //meter
+    int gridSize = 1; // meter
 
-    AStar::GridBlock gridLocationToGridBlock(const urc_msgs::msg::GridLocation &gridLocation);
+    GridBlock gridLocationToGridBlock(const urc_msgs::msg::GridLocation &gridLocation);
 
-    AStar::GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
-    
+    GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
+
     void calculate();
 
-    double AStar::heuristic(GridBlock &node, GridBlock &goal);
+    double heuristic(GridBlock &node, GridBlock &goal);
 
-    double AStar::cost(const AStar::GridBlock & from, 
-                            const AStar::GridBlock & to);
+    double cost(const GridBlock &from, const GridBlock &to);
 
-    std::vector<AStar::GridBlock> AStar::get_neighbors(
-                          const AStar::GridBlock & node,
-                          const nav2_msgs::msg::Costmap & costmap);
+    std::vector<GridBlock> get_neighbors(
+        const GridBlock &node,
+        const nav2_msgs::msg::Costmap &costmap);
 
-    void AStar::reconstruct_path(const AStar::GridBlock & goal_node, 
-                            std::vector<AStar::GridBlock> & path); 
-  }
+    void reconstruct_path(const GridBlock &goal_node, std::vector<GridBlock> &path);
+  };
 }
 
 #endif

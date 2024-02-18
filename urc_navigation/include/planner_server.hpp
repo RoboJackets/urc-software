@@ -6,6 +6,8 @@
 #include <nav2_msgs/msg/costmap.hpp>
 #include <nav_msgs/msg/path.hpp>
 
+#include "urc_msgs/srv/generate_plan.hpp"
+
 namespace planner_server
 {
     class PlannerServer : public rclcpp::Node
@@ -19,7 +21,7 @@ namespace planner_server
         /**
          * @brief Call the A* algorithm to generate the plan
          */
-        void generatePlan();
+        void generatePlan(const std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request, std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response);
 
         /**
          * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
@@ -35,9 +37,9 @@ namespace planner_server
 
         nav2_msgs::msg::Costmap current_costmap_;
         rclcpp::Subscription<nav2_msgs::msg::Costmap>::SharedPtr costmap_subscriber_;
-        rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_publisher_;
-        rclcpp::Service<nav_msgs::srv::GetPlan>::SharedPtr plan_service_;
-    }
+        rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
+        rclcpp::Service<urc_msgs::srv::GeneratePlan>::SharedPtr plan_service_;
+    };
 } // namespace planner_server
 
 #endif // PLANNER_SERVER_HPP_
