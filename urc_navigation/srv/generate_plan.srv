@@ -1,4 +1,7 @@
-int64 a
-int64 b
+# Request definition
+geometry_msgs/PoseStamped goal
+geometry_msgs/PoseStamped start
 ---
-int64 sum
+# Response definition
+nav_msgs/Path path
+uint16 error_code
