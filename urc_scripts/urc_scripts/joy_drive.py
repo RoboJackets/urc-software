@@ -9,6 +9,13 @@ from sensor_msgs.msg import Joy
 
 
 class JoyDrive(Node):
+    """
+    Use joystick to command the drivetrain.
+
+    Args:
+        Node (_type_): node from ros2.
+    """
+
     def __init__(self):
         super().__init__("joy_drive")
 
@@ -22,26 +29,25 @@ class JoyDrive(Node):
         self.declare_parameter("invert_angular_velocity", False)
 
         # get parameters
-        self.max_linear_vel_ms = self.get_parameter(
+        self.max_linear = self.get_parameter(
             "max_linear_velocity_ms").get_parameter_value().double_value
-        self.max_angular_vel_rads = self.get_parameter(
+        self.max_angular = self.get_parameter(
             "max_angular_velocity_radians").get_parameter_value().double_value
         self.joy_command_topic = self.get_parameter(
             "joy_command_topic").get_parameter_value().string_value
         self.cmd_vel_topic = self.get_parameter(
             "cmd_vel_topic").get_parameter_value().string_value
-        self.target_axis = self.get_parameter(
+        self.op_axes = self.get_parameter(
             "target_axes").get_parameter_value().integer_array_value
-        self.invert_linear_vel = self.get_parameter(
+        self.inv_linvel = self.get_parameter(
             "invert_linear_velocity").get_parameter_value().double_value
-        self.invert_angular_vel = self.get_parameter(
+        self.inv_angvel = self.get_parameter(
             "invert_angular_velocity").get_parameter_value().double_value
 
         # register dynamic parameter callbacks
-        self.callback_handle = self.add_on_set_parameters_callback(
-            self.on_param_update)
+        self.add_on_set_parameters_callback(self.on_param_update)
 
-        self.current_drive_velocity_target = TwistStamped()
+        self.curr_twist = TwistStamped()
         self.joy_msg_subscriber: Subscription = self.create_subscription(
             Joy, self.joy_command_topic, self.update_vel_target, 10
         )
@@ -51,52 +57,73 @@ class JoyDrive(Node):
 
         self.get_logger().info("Joy Drive Started.")
         self.get_logger().info(
-            f"Default Settings: [linear velocity {self.max_linear_vel_ms} m/s], [angular velocity {self.max_angular_vel_rads} rad/s]"
+            f"Default Settings: [linear velocity {self.max_linear} m/s],"
+            + f"[angular velocity {self.max_angular} rad/s]"
         )
 
     def update_vel_target(self, msg: Joy):
-        self.current_drive_velocity_target.twist.linear.x = msg.axes[
-            self.target_axis[0]] * self.max_linear_vel_ms
-        self.current_drive_velocity_target.twist.angular.z = msg.axes[
-            self.target_axis[1]] * self.max_angular_vel_rads
-        self.current_drive_velocity_target.header.stamp = self.get_clock().now().to_msg()
+        """Update velocity target for the drivetrain.
 
-        self.cmd_vel_publisher.publish(self.current_drive_velocity_target)
+        Args:
+            msg (Joy): joy message from the controller.
+        """
+        self.curr_twist.twist.linear.x = msg.axes[
+            self.op_axes[0]
+        ] * self.max_linear * (-1 if self.inv_linvel else 1)
+        self.curr_twist.twist.angular.z = msg.axes[
+            self.op_axes[1]
+        ] * self.max_angular * (-1 if self.inv_angvel else 1)
+        self.curr_twist.header.stamp = self.get_clock().now().to_msg()
+
+        self.cmd_vel_publisher.publish(self.curr_twist)
 
     def on_param_update(self, params: list[Parameter]) -> SetParametersResult:
+        """When parameter is updated.
+
+        Args:
+            params (list[Parameter]): list of updated parameters
+
+        Returns:
+            SetParametersResult: result for setting the parameters.
+        """
         result = SetParametersResult()
 
         for param in params:
             if param.name == "max_linear_velocity_ms":
-                self.max_linear_vel_ms = param.get_parameter_value().double_value
+                self.max_linear = param.get_parameter_value().double_value
                 self.get_logger().info(
-                    f"Max linear velocity has been updated to {self.max_linear_vel_ms} m/s."
+                    f"Max linvel updated to {self.max_linear} m/s."
                 )
             if param.name == "max_angular_velocity_radians":
-                self.max_angular_vel_rads = param.get_parameter_value().double_value
+                self.max_angular = param.get_parameter_value().double_value
                 self.get_logger().info(
-                    f"Max angular velocity has been updated to {self.max_angular_vel_rads} rad/s."
+                    f"Max angvel updated to {self.max_angular} rad/s."
                 )
             if param.name == "target_axes":
-                self.target_axis = param.get_parameter_value().integer_array_value
+                self.op_axes = param.get_parameter_value().integer_array_value
                 self.get_logger().info(
-                    f"Axies has be configured to {self.target_axis}."
+                    f"Axies has be configured to {self.op_axes}."
                 )
             if param.name == "invert_linear_vel":
-                self.invert_linear_vel = param.get_parameter_value().bool_value
+                self.inv_linvel = param.get_parameter_value().bool_value
                 self.get_logger().info(
-                    f"Linear velocity inversion: {self.invert_linear_vel}"
+                    f"Linear velocity inversion: {self.inv_linvel}"
                 )
             if param.name == "invert_angular_vel":
-                self.invert_angular_vel = param.get_parameter_value().bool_value
+                self.inv_angvel = param.get_parameter_value().bool_value
                 self.get_logger().info(
-                    f"Angular velocity inversion: {self.invert_angular_vel}"
+                    f"Angular velocity inversion: {self.inv_angvel}"
                 )
         result.successful = True
         return result
 
 
 def main(args=None):
+    """Entry function
+
+    Args:
+        args (_type_, optional): Arguments. Defaults to None.
+    """
     rclpy.init(args=args)
     node = JoyDrive()
     while rclpy.ok():
