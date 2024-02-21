@@ -51,7 +51,7 @@ namespace astar
 
     GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
 
-    void calculate();
+    std::vector<AStar::GridBlock> calculate();
 
     double heuristic(GridBlock &node, GridBlock &goal);
 
