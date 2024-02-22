@@ -28,7 +28,6 @@
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
 
-    <build_type>ament_cmake</build_type>
   <export>
   <build_type>ament_cmake</build_type>
   <nav2_core plugin="${prefix}/global_planner_plugin.xml" />
