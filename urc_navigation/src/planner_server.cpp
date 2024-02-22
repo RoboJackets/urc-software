@@ -22,13 +22,13 @@ namespace planner_server
             rclcpp::SystemDefaultsQoS());
 
         // Setup the costmap
-        costmap_subscriber_ = create_subscription<nav2_msgs::msg::Costmap>(
+        costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
             "/costmap",
             rclcpp::SystemDefaultsQoS(),
             std::bind(&PlannerServer::handleCostmap, this, std::placeholders::_1));
     }
 
-    void PlannerServer::handleCostmap(const nav2_msgs::msg::Costmap::SharedPtr msg)
+    void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
     {
         current_costmap_ = *msg;
     }
@@ -37,7 +37,7 @@ namespace planner_server
 
     void PlannerServer::waitForCostmap()
     {
-        while (rclcpp::ok() && current_costmap_.metadata.size_x == 0)
+        while (rclcpp::ok() && current_costmap_.info.width == 0)
         {
             RCLCPP_INFO(get_logger(), "Waiting for costmap data...");
             rclcpp::sleep_for(std::chrono::milliseconds(250));

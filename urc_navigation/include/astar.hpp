@@ -3,8 +3,9 @@
 
 #include <bits/stdc++.h>
 #include <urc_msgs/msg/waypoint.hpp>
-#include <nav2_msgs/msg/costmap.hpp>
 #include <urc_msgs/msg/grid_location.hpp>
+#include <geometry_msgs/msg/pose.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 #include <math.h>
 #include <unistd.h>
 #include <queue>
@@ -17,7 +18,7 @@ namespace astar
   {
 
   public:
-    explicit AStar(const nav2_msgs::msg::Costmap &costmap,
+    explicit AStar(const nav_msgs::msg::OccupancyGrid &costmap,
                    const geometry_msgs::msg::Pose &initialPose,
                    const geometry_msgs::msg::Pose &destinationPose,
                    int gridSize);
@@ -45,7 +46,7 @@ namespace astar
 
     typedef std::priority_queue<GridBlock, std::vector<GridBlock>, GridBlockComparator> GridBlockQueue;
 
-    nav2_msgs::msg::Costmap currentCostmap;
+    nav_msgs::msg::OccupancyGrid currentCostmap;
     GridBlock currentLocation;
     GridBlock destination;
 
@@ -59,7 +60,7 @@ namespace astar
 
     std::vector<GridBlock> get_neighbors(
         const GridBlock &node,
-        const nav2_msgs::msg::Costmap &costmap);
+        const nav_msgs::msg::OccupancyGrid &costmap);
 
     void reconstruct_path(const GridBlock &goal_node, std::vector<GridBlock> &path);
   };

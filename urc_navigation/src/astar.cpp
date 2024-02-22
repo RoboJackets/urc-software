@@ -3,7 +3,7 @@
 namespace astar
 {
 
-  AStar::AStar(const nav2_msgs::msg::Costmap &costmap,
+  AStar::AStar(const nav_msgs::msg::OccupancyGrid &costmap,
                const geometry_msgs::msg::Pose &initialPose,
                const geometry_msgs::msg::Pose &destinationPose,
                int gridSize)
@@ -80,7 +80,7 @@ namespace astar
   double AStar::cost(const AStar::GridBlock &from, const AStar::GridBlock &to)
   {
 
-    int costmap_index = to.location.y * currentCostmap.metadata.size_x + to.location.x;
+    int costmap_index = to.location.y * currentCostmap.info.width + to.location.x;
     double cell_cost = currentCostmap.data[costmap_index];
 
     double distance = std::sqrt(std::pow(to.location.x - from.location.x, 2) + std::pow(to.location.y - from.location.y, 2));
@@ -89,7 +89,7 @@ namespace astar
 
   std::vector<AStar::GridBlock> AStar::get_neighbors(
       const AStar::GridBlock &node,
-      const nav2_msgs::msg::Costmap &costmap)
+      const nav_msgs::msg::OccupancyGrid &costmap)
   {
 
     std::vector<AStar::GridBlock> neighbors;
@@ -104,7 +104,7 @@ namespace astar
         }
         int x = node.location.x + i;
         int y = node.location.y + j;
-        if (x >= 0 && x < costmap.metadata.size_x && y >= 0 && y < costmap.metadata.size_y)
+        if (x >= 0 && x < costmap.info.width && y >= 0 && y < costmap.info.height)
         {
           AStar::GridBlock neighbor;
           neighbor.location.x = x;
