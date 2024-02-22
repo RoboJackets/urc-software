@@ -31,6 +31,11 @@ namespace astar
       double h_cost;                        // Heuristic estimate to goal
       double f_cost;                        // g_cost + h_cost
       GridBlock *parent;                    // For backtracking the path
+
+      bool operator<(const GridBlock &other) const
+      {
+        return location.x < other.location.x;
+      }
     };
 
     std::vector<AStar::GridBlock> calculate();
