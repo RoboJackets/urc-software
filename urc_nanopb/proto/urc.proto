@@ -77,4 +77,62 @@ message ScienceModuleCommand {
     required int32 rotateTurntable = 1;
 }
 
+//----------------------- NEW PROTOCAL DEFINITIONS -----------------------
+// Principle: All in rover units
+
+// ROS -> Rover
+message DriveCurrentRequest {
+    optional float leftCurrentAmps = 1;
+    optional float rightCurrentAmps = 2;
+}
+
+message StatusLightRequest {
+    optional int32 color = 1;
+    optional bool blink = 2;
+}
+
+message ArmPositionRequest {
+    required int64 shoulderTicks = 1;
+    required int64 bicepTicks = 2;
+    required int64 elbowTicks = 3;
+    required int64 wristTicks = 4;
+    required int64 clawTicks = 5;
+}
+
+message ArmClawRequest {
+    optional int32 clawVelTicksPerSecond = 1;
+}
+
+// Rover -> ROS
+message DriveFeedback {
+    optional int64 leftPosTicks = 1;
+    optional int64 rightPosTicks = 2;
+    optional int64 leftVelTicksPerSecond = 3;
+    optional int64 rightVelTicksPerSecond = 4;
+    optional int64 leftCurrentAmps = 5;
+    optional int64 rightCurrentAmps = 6;
+}
+
+message ArmFeedback {
+    required int64 shoulderPosTicks = 1;
+    required int64 shoulderVelTicksPerSecond = 2;
+    required int64 shoulderCurrentAmps = 3;
+
+    required int64 bicepPosTicks = 4;
+    required int64 bicepVelTicksPerSecond = 5;
+    required int64 bicepCurrentAmps = 6;
+
+    required int64 elbowPosTicks = 7;
+    required int64 elbowVelTicksPerSecond = 8;
+    required int64 elbowCurrentAmps = 9;
+
+    required int64 wristPosTicks = 10;
+    required int64 wristVelTicksPerSecond = 11;
+    required int64 wristCurrentAmps = 12;
+
+    required int64 clawPosTicks = 13;
+    required int64 clawVelTicksPerSecond = 14;
+    required int64 clawCurrentAmps = 15;
+}
+
 
