@@ -30,6 +30,7 @@ namespace planner_server
 
     void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
     {
+        RCLCPP_INFO(get_logger(), "Received Costmap"); 
         current_costmap_ = *msg;
     }
 
@@ -47,7 +48,7 @@ namespace planner_server
     void PlannerServer::generatePlan(const std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request,
                                      std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response)
     {
-        waitForCostmap();
+        // waitForCostmap();
 
         auto start = request->start.pose;
         auto goal = request->goal.pose;

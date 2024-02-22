@@ -29,6 +29,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/orchestrator.cpp
   src/planner_server.cpp
+  src/astar.cpp
 )
 
 set(dependencies
