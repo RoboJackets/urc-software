@@ -22,7 +22,6 @@ namespace astar
                    const geometry_msgs::msg::Pose &destinationPose,
                    int gridSize);
 
-  private:
     struct GridBlock
     {
       urc_msgs::msg::GridLocation location; // x, y data
@@ -33,6 +32,9 @@ namespace astar
       GridBlock *parent;                    // For backtracking the path
     };
 
+    std::vector<AStar::GridBlock> calculate();
+
+  private:
     struct GridBlockComparator
     {
       bool operator()(const GridBlock &a, const GridBlock &b) const
@@ -50,8 +52,6 @@ namespace astar
     int gridSize = 1; // meter
 
     GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
-
-    std::vector<AStar::GridBlock> calculate();
 
     double heuristic(GridBlock &node, GridBlock &goal);
 

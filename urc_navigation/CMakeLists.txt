@@ -60,7 +60,7 @@ rclcpp_components_register_node(
 
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "plannerserver::PlannerServer"
+  PLUGIN "planner_server::PlannerServer"
   EXECUTABLE ${PROJECT_NAME}_PlannerServer
 )
 
@@ -79,6 +79,7 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

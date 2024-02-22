@@ -30,6 +30,11 @@ namespace planner_server
         void publishPlan(const nav_msgs::msg::Path &plan);
 
         /**
+         * @brief Wait for the costmap to be available
+         */
+        void waitForCostmap();
+
+        /**
          * @brief Handle the costmap data
          * @param msg The costmap data
          */

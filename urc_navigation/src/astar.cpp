@@ -24,7 +24,7 @@ namespace astar
     return gridBlock;
   }
 
-  std::vector<AStar::GridBlock> AStar::calculate()
+  void AStar::calculate()
   {
 
     std::set<AStar::GridBlock> visited_set;
@@ -46,7 +46,7 @@ namespace astar
       if (current_node.location.x == this->destination.location.x && current_node.location.y == this->destination.location.y)
       {
         reconstruct_path(current_node, waypoint_list);
-        return waypoint_list;
+        break;
       }
 
       visited_set.insert(current_node);
