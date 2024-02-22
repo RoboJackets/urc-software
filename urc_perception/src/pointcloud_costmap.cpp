@@ -12,11 +12,24 @@ PointCloudCostmap::PointCloudCostmap(const rclcpp::NodeOptions & options)
     costmap_publisher = create_publisher<nav_msgs::msg::OccupancyGrid>(
         "/costmap2", rclcpp::SystemDefaultsQoS());
 
-    costmap_ = new nav2_costmap_2d::Costmap2D(100, 100, 1, 0, 0);
+    costmap_ = new nav2_costmap_2d::Costmap2D(10, 10, 0.5, 0, 0);
+    callback_count_ = 0;
 }
 
 void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 & msg) 
 {
+
+    double xSize = (double) costmap_->getSizeInCellsX();
+    double ySize = (double) costmap_->getSizeInCellsY();
+    double resolution = costmap_->getResolution();
+    double max_distance = sqrt(pow(xSize * resolution, 2) + pow(ySize * resolution, 2));
+
+    callback_count_++;
+
+    if(callback_count_ % reset_frequency_ == 0) {
+        costmap_->resetMap(0, 0, xSize, ySize);
+    }
+    
     pcl::PointCloud<pcl::PointXYZ> cloud;
     pcl::fromROSMsg(msg, cloud);
 
@@ -25,17 +38,14 @@ void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 &
     for (const auto& point: cloud.points) {
         unsigned int mx, my;
         if(costmap_->worldToMap(point.x, point.y, mx, my)) {
-            double max_height = 2.0;
-            double min_height = 0.0;
-
-            unsigned char cost = 0;
+            // create a dynamic costmap
+            double distance = sqrt(pow(point.x , 2) + pow(point.y, 2));
             
-            if(point.z > max_height) {
-                cost = 254;
-            } else if(point.z < min_height) {
+            unsigned char cost;
+            if(distance>max_distance) {
                 cost = 0;
             } else {
-                cost = 254 * (point.z - min_height) / (max_height - min_height);
+                cost = static_cast<unsigned char>(254 * (max_distance - distance) / max_distance);
             }
 
             costmap_->setCost(mx, my, cost);

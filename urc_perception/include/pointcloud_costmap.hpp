@@ -25,6 +25,8 @@ class PointCloudCostmap : public rclcpp::Node
         rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_publisher;
 
         nav2_costmap_2d::Costmap2D* costmap_;
+        int callback_count_;
+        const int reset_frequency_ = 10;
 };
 
 
