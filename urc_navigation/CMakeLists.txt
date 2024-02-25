@@ -17,12 +17,10 @@ find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(nav2_costmap_2d REQUIRED)
 
 
 include_directories(
   include
-  ${nav2_costmap_2d_INCLUDE_DIRS}
 )
 
 # Library creation
@@ -45,7 +43,6 @@ set(dependencies
   tf2
   tf2_geometry_msgs
   nav_msgs
-  nav2_costmap_2d
 )
 
 ament_target_dependencies(${PROJECT_NAME}

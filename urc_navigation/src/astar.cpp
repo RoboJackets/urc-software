@@ -3,58 +3,52 @@
 namespace astar
 {
 
-  AStar::AStar(const nav_msgs::msg::OccupancyGrid &costmap,
-               const geometry_msgs::msg::Pose &initialPose,
-               const geometry_msgs::msg::Pose &destinationPose,
-               int gridSize)
-  {
+  AStar::AStar() {}
 
-    this->currentCostmap = costmap;
-    this->currentLocation = this->getGridBlockByPose(initialPose);
-    this->destination = this->getGridBlockByPose(destinationPose);
-    this->gridSize = gridSize;
+  AStarNode AStar::getAStarNodeByPose(const geometry_msgs::msg::Pose &pose)
+  {
+    AStarNode node;
+    node.x = pose.position.x / costmap_.info.resolution;
+    node.y = pose.position.y / costmap_.info.resolution;
+    node.pose = pose;
+
+    return node;
   }
 
-  AStar::GridBlock AStar::getGridBlockByPose(const geometry_msgs::msg::Pose &pose)
+  void AStar::setMap(const nav_msgs::msg::OccupancyGrid &costmap)
   {
-    AStar::GridBlock gridBlock;
-    gridBlock.location.x = (int)pose.position.x / this->gridSize;
-    gridBlock.location.y = (int)pose.position.y / this->gridSize;
-    gridBlock.pose = pose;
-    return gridBlock;
+    costmap_ = costmap;
   }
 
-  std::vector<AStar::GridBlock> AStar::calculate()
+  std::vector<AStarNode> AStar::createPlan(const geometry_msgs::msg::Pose &start_pose, const geometry_msgs::msg::Pose &goal_pose)
   {
+    start_node_ = getAStarNodeByPose(start_pose);
+    goal_node_ = getAStarNodeByPose(goal_pose);
 
-    std::set<AStar::GridBlock> visited_set;
-    std::vector<AStar::GridBlock> waypoint_list;
-    GridBlockQueue open_set;
+    std::vector<AStarNode> waypoint_list;
+    AStarNodeQueue open_set;
 
-    AStar::GridBlock start_node = this->currentLocation;
+    AStarNode start_node = start_node_;
     start_node.g_cost = 0.0;
-    start_node.h_cost = heuristic(start_node, this->destination);
-    start_node.f_cost = start_node.g_cost + start_node.h_cost;
-    start_node.parent = nullptr;
+    start_node.h_cost = heuristic(start_node, goal_node_);
     open_set.push(start_node);
 
     while (!open_set.empty())
     {
-      AStar::GridBlock current_node = open_set.top();
+      AStarNode current_node = open_set.top();
       open_set.pop();
+      current_node.visited = true;
 
-      if (current_node.location.x == this->destination.location.x && current_node.location.y == this->destination.location.y)
+      if (current_node.x == goal_node_.x && current_node.y == goal_node_.y)
       {
         reconstruct_path(current_node, waypoint_list);
         return waypoint_list;
       }
 
-      visited_set.insert(current_node);
-
-      std::vector<AStar::GridBlock> neighbors = get_neighbors(current_node, this->currentCostmap);
+      std::vector<AStarNode> neighbors = getNeighbors(current_node);
       for (auto &neighbor : neighbors)
       {
-        if (visited_set.find(neighbor) != visited_set.end())
+        if (neighbor.visited)
         {
           continue;
         }
@@ -64,35 +58,33 @@ namespace astar
         {
           neighbor.parent = &current_node;
           neighbor.g_cost = tentative_g_cost;
-          neighbor.h_cost = heuristic(neighbor, this->destination);
-          neighbor.f_cost = neighbor.g_cost + neighbor.h_cost;
+          neighbor.h_cost = heuristic(neighbor, goal_node_);
           open_set.push(neighbor);
         }
       }
     }
+
+    throw std::runtime_error("No path found");
   }
 
-  double AStar::heuristic(GridBlock &node, GridBlock &goal)
+  double AStar::heuristic(AStarNode &node, AStarNode &goal)
   {
-    return std::sqrt(std::pow(goal.location.x - node.location.x, 2) + std::pow(goal.location.y - node.location.y, 2));
+    return std::sqrt(std::pow(goal.x - node.x, 2) + std::pow(goal.y - node.y, 2));
   }
 
-  double AStar::cost(const AStar::GridBlock &from, const AStar::GridBlock &to)
+  double AStar::cost(const AStarNode &from, const AStarNode &to)
   {
+    int costmap_index = to.y * costmap_.info.width + to.x;
+    double cell_cost = costmap_.data[costmap_index];
 
-    int costmap_index = to.location.y * currentCostmap.info.width + to.location.x;
-    double cell_cost = currentCostmap.data[costmap_index];
-
-    double distance = std::sqrt(std::pow(to.location.x - from.location.x, 2) + std::pow(to.location.y - from.location.y, 2));
+    double distance = std::sqrt(std::pow(to.x - from.x, 2) + std::pow(to.y - from.y, 2));
     return cell_cost * distance;
   }
 
-  std::vector<AStar::GridBlock> AStar::get_neighbors(
-      const AStar::GridBlock &node,
-      const nav_msgs::msg::OccupancyGrid &costmap)
+  std::vector<AStarNode> AStar::getNeighbors(const AStarNode &node)
   {
 
-    std::vector<AStar::GridBlock> neighbors;
+    std::vector<AStarNode> neighbors;
 
     for (int i = -1; i <= 1; i++)
     {
@@ -102,22 +94,22 @@ namespace astar
         {
           continue;
         }
-        int x = node.location.x + i;
-        int y = node.location.y + j;
-        if (x >= 0 && x < costmap.info.width && y >= 0 && y < costmap.info.height)
+        double x = node.x + (i * costmap_.info.resolution);
+        double y = node.y + (j * costmap_.info.resolution);
+        if (x >= 0 && x < costmap_.info.width && y >= 0 && y < costmap_.info.height)
         {
-          AStar::GridBlock neighbor;
-          neighbor.location.x = x;
-          neighbor.location.y = y;
+          AStarNode neighbor;
+          neighbor.x = x;
+          neighbor.y = y;
           neighbors.push_back(neighbor);
         }
       }
     }
   }
 
-  void AStar::reconstruct_path(const AStar::GridBlock &goal_node, std::vector<AStar::GridBlock> &path)
+  void AStar::reconstruct_path(const AStarNode &goal_node, std::vector<AStarNode> &path)
   {
-    AStar::GridBlock current_node = goal_node;
+    AStarNode current_node = goal_node;
     while (current_node.parent != nullptr)
     {
       path.push_back(current_node);

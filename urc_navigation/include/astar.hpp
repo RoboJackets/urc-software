@@ -14,60 +14,53 @@
 namespace astar
 {
 
+  struct AStarNode
+  {
+    bool visited = false;
+    double x;
+    double y;
+    geometry_msgs::msg::Pose pose; // optional
+    double g_cost;                 // Cost from start to this node
+    double h_cost;                 // Heuristic estimate to goal
+    AStarNode *parent = nullptr;   // For backtracking the path
+
+    double fCost() const { return g_cost + h_cost; }
+  };
+
+  struct AStarNodeComparator
+  {
+    bool operator()(const AStarNode &a, const AStarNode &b) const
+    {
+      return a.fCost() > b.fCost();
+    }
+  };
+
   class AStar
   {
 
   public:
-    explicit AStar(const nav_msgs::msg::OccupancyGrid &costmap,
-                   const geometry_msgs::msg::Pose &initialPose,
-                   const geometry_msgs::msg::Pose &destinationPose,
-                   int gridSize);
+    explicit AStar();
 
-    struct GridBlock
-    {
-      urc_msgs::msg::GridLocation location; // x, y data
-      geometry_msgs::msg::Pose pose;        // optional
-      double g_cost;                        // Cost from start to this node
-      double h_cost;                        // Heuristic estimate to goal
-      double f_cost;                        // g_cost + h_cost
-      GridBlock *parent;                    // For backtracking the path
+    std::vector<AStarNode> createPlan(const geometry_msgs::msg::Pose &start_pose, const geometry_msgs::msg::Pose &goal_pose);
 
-      bool operator<(const GridBlock &other) const
-      {
-        return location.x < other.location.x;
-      }
-    };
-
-    std::vector<AStar::GridBlock> calculate();
+    void setMap(const nav_msgs::msg::OccupancyGrid &costmap);
 
   private:
-    struct GridBlockComparator
-    {
-      bool operator()(const GridBlock &a, const GridBlock &b) const
-      {
-        return a.f_cost > b.f_cost;
-      }
-    };
+    typedef std::priority_queue<AStarNode, std::vector<AStarNode>, AStarNodeComparator> AStarNodeQueue;
 
-    typedef std::priority_queue<GridBlock, std::vector<GridBlock>, GridBlockComparator> GridBlockQueue;
+    AStarNode getAStarNodeByPose(const geometry_msgs::msg::Pose &pose);
 
-    nav_msgs::msg::OccupancyGrid currentCostmap;
-    GridBlock currentLocation;
-    GridBlock destination;
+    double heuristic(AStarNode &node, AStarNode &goal);
 
-    int gridSize = 1; // meter
+    double cost(const AStarNode &from, const AStarNode &to);
 
-    GridBlock getGridBlockByPose(const geometry_msgs::msg::Pose &pose);
+    std::vector<AStarNode> getNeighbors(const AStarNode &node);
 
-    double heuristic(GridBlock &node, GridBlock &goal);
+    void reconstruct_path(const AStarNode &goal_node, std::vector<AStarNode> &path);
 
-    double cost(const GridBlock &from, const GridBlock &to);
-
-    std::vector<GridBlock> get_neighbors(
-        const GridBlock &node,
-        const nav_msgs::msg::OccupancyGrid &costmap);
-
-    void reconstruct_path(const GridBlock &goal_node, std::vector<GridBlock> &path);
+    nav_msgs::msg::OccupancyGrid costmap_;
+    AStarNode start_node_;
+    AStarNode goal_node_;
   };
 }
 

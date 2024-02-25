@@ -1,7 +1,6 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
-#include "rclcpp_components/register_node_macro.hpp"
 #include "planner_server.hpp"
 #include "astar.hpp"
 
@@ -30,58 +29,52 @@ namespace planner_server
 
     void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
     {
-        RCLCPP_INFO(get_logger(), "Received Costmap"); 
+        RCLCPP_INFO(get_logger(), "Received Costmap!");
         current_costmap_ = *msg;
     }
 
     PlannerServer::~PlannerServer() {}
 
-    void PlannerServer::waitForCostmap()
-    {
-        while (rclcpp::ok() && current_costmap_.info.width == 0)
-        {
-            RCLCPP_INFO(get_logger(), "Waiting for costmap data...");
-            rclcpp::sleep_for(std::chrono::milliseconds(250));
-        }
-    }
-
     void PlannerServer::generatePlan(const std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request,
                                      std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response)
     {
-        // waitForCostmap();
-
-        auto start = request->start.pose;
-        auto goal = request->goal.pose;
-
-        astar::AStar astar(current_costmap_, start, goal, 1);
-        std::vector<astar::AStar::GridBlock> path = astar.calculate();
-
-        std::vector<geometry_msgs::msg::PoseStamped> poses;
-
-        for (auto &block : path)
+        try
         {
-            geometry_msgs::msg::PoseStamped pose;
+            astar::AStar astar;
+            astar.setMap(current_costmap_);
 
-            pose.header.frame_id = "base_link";
-            pose.header.stamp = get_clock()->now();
+            std::vector<astar::AStarNode> path = astar.createPlan(request->start.pose, request->goal.pose);
 
-            pose.pose.position.x = block.location.x;
-            pose.pose.position.y = block.location.y;
+            std::vector<geometry_msgs::msg::PoseStamped> poses;
 
-            // pose.pose.orientation.x = block.pose.orientation.x;
-            // pose.pose.orientation.y = block.pose.orientation.y;
-            // pose.pose.orientation.z = block.pose.orientation.z;
-            // pose.pose.orientation.w = block.pose.orientation.w;
+            for (auto &node : path)
+            {
+                geometry_msgs::msg::PoseStamped pose;
 
-            poses.push_back(pose);
+                pose.header.frame_id = "base_link";
+                pose.header.stamp = get_clock()->now();
+
+                pose.pose.position.x = node.x;
+                pose.pose.position.y = node.y;
+
+                poses.push_back(pose);
+            }
+
+            nav_msgs::msg::Path plan;
+            plan.header.frame_id = "map";
+            plan.header.stamp = get_clock()->now();
+            plan.poses = poses;
+
+            response->path = plan;
+            response->error_code = urc_msgs::srv::GeneratePlan::Response::SUCCESS;
+
+            publishPlan(plan);
         }
-
-        nav_msgs::msg::Path plan;
-        plan.header.frame_id = "map";
-        plan.header.stamp = get_clock()->now();
-        plan.poses = poses;
-
-        publishPlan(plan);
+        catch (const std::exception &e)
+        {
+            RCLCPP_ERROR(get_logger(), "Error generating plan: %s", e.what());
+            response->error_code = urc_msgs::srv::GeneratePlan::Response::FAILURE;
+        }
     }
 
     void PlannerServer::publishPlan(const nav_msgs::msg::Path &plan)
@@ -94,4 +87,5 @@ namespace planner_server
     }
 } // namespace planner_server
 
+#include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(planner_server::PlannerServer)
