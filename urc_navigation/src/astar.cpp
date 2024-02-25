@@ -83,7 +83,6 @@ namespace astar
 
   std::vector<AStarNode> AStar::getNeighbors(const AStarNode &node)
   {
-
     std::vector<AStarNode> neighbors;
 
     for (int i = -1; i <= 1; i++)
@@ -105,6 +104,8 @@ namespace astar
         }
       }
     }
+
+    return neighbors;
   }
 
   void AStar::reconstruct_path(const AStarNode &goal_node, std::vector<AStarNode> &path)
