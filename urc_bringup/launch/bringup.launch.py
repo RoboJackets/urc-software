@@ -174,6 +174,15 @@ def generate_launch_description():
         )
     )
 
+    rosbridge_server_node = Node(
+        package="rosbridge_server",
+        name="rosbridge_server",
+        executable="rosbridge_websocket.py",
+        parameters=[{
+            "port": 9090
+        }]
+    )
+
     if use_simulation:
         return LaunchDescription([
             RegisterEventHandler(
@@ -221,5 +230,6 @@ def generate_launch_description():
             aruco_detector,
             aruco_location,
             teleop_launch,
-            launch_gps
+            launch_gps,
+            rosbridge_server_node
         ])
