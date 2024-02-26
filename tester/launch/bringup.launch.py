@@ -25,7 +25,7 @@ def generate_launch_description():
     
     tester_node = Node(
         package='tester',
-        node_executable='tester',
+        executable='tester',
         name='tester',
         output="screen",
         parameters=[LaunchConfiguration('tester_config')]

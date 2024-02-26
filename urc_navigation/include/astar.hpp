@@ -13,55 +13,99 @@
 
 namespace astar
 {
+enum class NodeStatus : uint8_t
+{
+  None,
+  Open,
+  Visited
+};
 
-  struct AStarNode
+struct Coordinate
+{
+  int x;
+  int y;
+};
+
+struct AStarNode
+{
+  NodeStatus status = NodeStatus::None;
+  double x;
+  double y;
+  double g_cost;
+  double h_cost;
+  AStarNode * parent = nullptr;
+
+  double fCost() const {return g_cost + h_cost;}
+
+  geometry_msgs::msg::Pose getPose() const
   {
-    bool visited = false;
-    double x;
-    double y;
-    geometry_msgs::msg::Pose pose; // optional
-    double g_cost;                 // Cost from start to this node
-    double h_cost;                 // Heuristic estimate to goal
-    AStarNode *parent = nullptr;   // For backtracking the path
+    geometry_msgs::msg::Pose pose;
+    pose.position.x = x;
+    pose.position.y = y;
+    return pose;
+  }
+};
 
-    double fCost() const { return g_cost + h_cost; }
-  };
-
-  struct AStarNodeComparator
+struct AStarNodeComparator
+{
+  bool operator()(const AStarNode * a, const AStarNode * b) const
   {
-    bool operator()(const AStarNode &a, const AStarNode &b) const
-    {
-      return a.fCost() > b.fCost();
-    }
-  };
+    return a->fCost() > b->fCost();
+  }
+};
 
-  class AStar
+class AStar
+{
+
+public:
+  explicit AStar();
+
+  void createPlan(
+    const geometry_msgs::msg::Pose & start_pose,
+    const geometry_msgs::msg::Pose & goal_pose);
+
+  void setMap(const nav_msgs::msg::OccupancyGrid & costmap);
+
+  const std::vector<AStarNode> getPath() const {return path_;}
+
+  /**
+   * @brief Get the index of the map array from the x and y coordinates using the Cantor pairing function.
+   */
+  int getMapIndex(int x, int y) const
   {
+    return ((x + y) * (x + y + 1)) / 2 + y;
+  }
 
-  public:
-    explicit AStar();
+private:
+  AStarNode * getNodeRef(int x, int y)
+  {
+    return &(closed_set_.emplace(getMapIndex(x, y), AStarNode()).first->second);
+  }
 
-    std::vector<AStarNode> createPlan(const geometry_msgs::msg::Pose &start_pose, const geometry_msgs::msg::Pose &goal_pose);
+  typedef std::priority_queue<AStarNode *, std::vector<AStarNode *>,
+      AStarNodeComparator> AStarNodeQueue;
 
-    void setMap(const nav_msgs::msg::OccupancyGrid &costmap);
+  Coordinate getCoordinateByPose(const geometry_msgs::msg::Pose & pose);
 
-  private:
-    typedef std::priority_queue<AStarNode, std::vector<AStarNode>, AStarNodeComparator> AStarNodeQueue;
+  double estimateCostToGoal(const geometry_msgs::msg::Pose & pose);
 
-    AStarNode getAStarNodeByPose(const geometry_msgs::msg::Pose &pose);
+  double cost(const AStarNode * from, const AStarNode * to);
 
-    double heuristic(AStarNode &node, AStarNode &goal);
+  std::vector<AStarNode *> getNeighbors(const AStarNode * node);
 
-    double cost(const AStarNode &from, const AStarNode &to);
+  void reconstructPath(const AStarNode * goal_node);
 
-    std::vector<AStarNode> getNeighbors(const AStarNode &node);
+  void setGoalNode(const geometry_msgs::msg::Pose & goal_pose);
 
-    void reconstruct_path(const AStarNode &goal_node, std::vector<AStarNode> &path);
+  nav_msgs::msg::OccupancyGrid costmap_;
+  geometry_msgs::msg::Pose start_pose_;
+  geometry_msgs::msg::Pose goal_pose_;
+  AStarNode goal_node_;
 
-    nav_msgs::msg::OccupancyGrid costmap_;
-    AStarNode start_node_;
-    AStarNode goal_node_;
-  };
+  std::vector<AStarNode> path_;
+  std::unordered_map<int, AStarNode> closed_set_;
+  const double EPSILON = 1e-6;
+};
 }
 
 #endif

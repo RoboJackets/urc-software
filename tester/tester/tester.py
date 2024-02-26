@@ -11,8 +11,6 @@ class TesterNode(Node):
 
     def __init__(self):
         super().__init__('tester')
-
-
         self.costmap_pub = self.create_publisher(
             OccupancyGrid,
             "/costmap",
@@ -29,8 +27,8 @@ class TesterNode(Node):
 
         time.sleep(3)
 
-        self.get_logger().info("Planner Server Called")
         self.call_planner_client()
+        self.get_logger().info("Planner Server Called")
 
     def call_planner_client(self):
 
@@ -39,21 +37,19 @@ class TesterNode(Node):
         initialPose = PoseStamped()
         initialPose.header.frame_id = "map"
         initialPose.header.stamp = rclpy.time.Time().to_msg()
-        initialPose.pose.position.x = 0.0
-        initialPose.pose.position.y = 0.0
+        initialPose.pose.position.x = 5.0
+        initialPose.pose.position.y = 5.0
 
         goalPose = PoseStamped()
         goalPose.header.frame_id = "map"
         goalPose.header.stamp = rclpy.time.Time().to_msg()
-        goalPose.pose.position.x = 50.0
-        goalPose.pose.position.y = 50.0
+        goalPose.pose.position.x = 10.0
+        goalPose.pose.position.y = 10.0
 
         req.start = initialPose
         req.goal = goalPose
 
         self.future = self.client.call_async(req)
-
-        # rclpy.spin_until_future_complete(self, self.future)
 
 
     def costmap_generate(self):
@@ -63,6 +59,7 @@ class TesterNode(Node):
         costmap = OccupancyGrid()
         costmap.header.frame_id = "map"
         costmap.header.stamp = rclpy.time.Time().to_msg()
+
         costmap.info.resolution = 1.0
         costmap.info.width = 100
         costmap.info.height = 100
@@ -74,8 +71,9 @@ class TesterNode(Node):
         costmap.info.origin.orientation.y = 0.0
         costmap.info.origin.orientation.z = 0.0
         costmap.info.origin.orientation.w = 1.0
-        costmap.data = np.random.randint(0, 1, (100, 100)).flatten().tolist()
-        # costmap.data = np.zeros((100, 100)).flatten().tolist()
+
+        # costmap.data = np.random.randint(0, 1, (100, 100)).flatten().tolist()
+        costmap.data = np.ones((100, 100), dtype=np.int8).flatten().tolist()
 
         self.costmap_pub.publish(costmap)
 
