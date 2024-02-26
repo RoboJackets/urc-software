@@ -37,8 +37,8 @@ class TesterNode(Node):
         initialPose = PoseStamped()
         initialPose.header.frame_id = "map"
         initialPose.header.stamp = rclpy.time.Time().to_msg()
-        initialPose.pose.position.x = 5.0
-        initialPose.pose.position.y = 5.0
+        initialPose.pose.position.x = 0.0
+        initialPose.pose.position.y = 0.0
 
         goalPose = PoseStamped()
         goalPose.header.frame_id = "map"
@@ -72,8 +72,12 @@ class TesterNode(Node):
         costmap.info.origin.orientation.z = 0.0
         costmap.info.origin.orientation.w = 1.0
 
-        # costmap.data = np.random.randint(0, 1, (100, 100)).flatten().tolist()
-        costmap.data = np.ones((100, 100), dtype=np.int8).flatten().tolist()
+        map = np.ones((100, 100), dtype=np.int8)
+        map[4:8, 4:8] *= 10
+        costmap.data = map.flatten().tolist()
+
+
+        costmap.data
 
         self.costmap_pub.publish(costmap)
 
