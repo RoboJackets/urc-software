@@ -80,3 +80,12 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 * [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
 * [Nav2 Documentation](https://navigation.ros.org/)  
 * [ROS2 Control Documentation](https://control.ros.org/master/index.html)  
+
+## Common Issues
+#### NanoPB Not Building 
+Fix (will only build after the last time):
+```
+colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/protoc-gen-nanopb
+colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/nanopb_generator.py
+colcon build --symlink-install
+```

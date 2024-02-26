@@ -21,7 +21,7 @@ def generate_launch_description():
         parameters=[
             PathJoinSubstitution(
                 [FindPackageShare('urc_platform'),
-                 'config/'
+                 'config'
                  'joystick_driver_params.yaml'])
         ],
         remappings=[

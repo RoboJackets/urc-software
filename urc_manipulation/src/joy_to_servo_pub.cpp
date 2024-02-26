@@ -1,4 +1,6 @@
 #include "joy_to_servo_pub.hpp"
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
 
 namespace joy_to_servo_pub
 {
@@ -21,13 +23,10 @@ JoyToServoPub::JoyToServoPub(const rclcpp::NodeOptions & options)
   declare_parameter<std::string>("eef_frame_id", "leftgripper");
   get_parameter<std::string>("eef_frame_id", eef_frame_id);
 
-
   // Setup pub/sub
   joy_sub_ = create_subscription<sensor_msgs::msg::Joy>(
     joy_topic, rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::Joy::ConstSharedPtr & msg) {
-      return joyCB(msg);
-    });
+    [this](const sensor_msgs::msg::Joy::ConstSharedPtr & msg) {return joyCB(msg);});
 
   twist_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
     twist_topic,
@@ -117,7 +116,6 @@ void JoyToServoPub::updateCmdFrame(std::string & frame_name, const std::vector<i
   }
 }
 
-
 void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
 {
   // Create the messages we might publish
@@ -141,6 +139,6 @@ void JoyToServoPub::joyCB(const sensor_msgs::msg::Joy::ConstSharedPtr & msg)
   }
 }
 
-}
+}  // namespace joy_to_servo_pub
 
 RCLCPP_COMPONENTS_REGISTER_NODE(joy_to_servo_pub::JoyToServoPub)

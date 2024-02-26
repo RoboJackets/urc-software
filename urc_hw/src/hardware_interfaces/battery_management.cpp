@@ -22,7 +22,9 @@ namespace urc_hardware::hardware_interfaces
 {
 
 BatteryManagement::BatteryManagement()
-: hardware_interface_name("BatteryManagement") {}
+: hardware_interface_name("BatteryManagement")
+{
+}
 BatteryManagement::~BatteryManagement() = default;
 
 hardware_interface::CallbackReturn BatteryManagement::on_init(

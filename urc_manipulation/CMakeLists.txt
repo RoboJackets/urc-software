@@ -12,6 +12,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(control_msgs REQUIRED)
+find_package(moveit_servo REQUIRED)
 
 
 include_directories(
@@ -21,6 +22,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joy_to_servo_pub.cpp
+  src/arm_rt_server.cpp
 )
 
 set(dependencies
@@ -31,6 +33,7 @@ set(dependencies
   std_srvs
   moveit_msgs
   control_msgs
+  moveit_servo
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -43,6 +46,24 @@ rclcpp_components_register_node(
   PLUGIN "joy_to_servo_pub::JoyToServoPub"
   EXECUTABLE ${PROJECT_NAME}_JoyToServoPub
 )
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_manipulation::ArmRTServer"
+  EXECUTABLE ${PROJECT_NAME}_ArmRT
+)
+
+add_executable(arm_servo src/servo_node.cpp)
+target_include_directories(arm_servo PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(arm_servo PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+ament_target_dependencies(
+  arm_servo
+  ${dependencies}
+)
+install(TARGETS arm_servo
+  DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files.
 install(

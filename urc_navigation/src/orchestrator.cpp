@@ -13,6 +13,8 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   this->baseLongitude = -1;
   this->waypointLatitude = -1;
   this->waypointLongitude = -1;
+  this->initialYaw = -1;
+  this->currentYaw = -1;
   this->gpsTimestamp = this->get_clock()->now();
   current_metric_pose.position.x = -1;
   current_metric_pose.position.y = -1;
@@ -22,8 +24,17 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
     "/current_navigation_state",
     rclcpp::SystemDefaultsQoS()
   );
-  cmd_vel_publisher = create_publisher<geometry_msgs::msg::Twist>(
-    "/rover_drivetrain_controller/cmd_vel_unstamped",
+  cmd_vel_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
+    "/rover_drivetrain_controller/cmd_vel",
+    rclcpp::SystemDefaultsQoS()
+  );
+
+  metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/metric_pose_offset",
+    rclcpp::SystemDefaultsQoS()
+  );
+  costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/costmap_pose",
     rclcpp::SystemDefaultsQoS()
   );
 
@@ -56,12 +67,17 @@ void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
   }
-  PublishMetricPose(
-    this->actualLatitude - this->baseLatitude,
-    this->actualLongitude - this->baseLongitude);
-  PublishCostmapPose(
-    this->actualLatitude - this->baseLatitude,
-    this->actualLongitude - this->baseLongitude);
+  if (this->actualLatitude != -1 && this->actualLongitude != -1 &&
+    this->waypointLatitude != -1 && this->waypointLongitude != -1)
+  {
+    RCLCPP_INFO(this->get_logger(), "Publishing Poses");
+    PublishMetricPose(
+      this->actualLatitude - this->baseLatitude,
+      this->actualLongitude - this->baseLongitude);
+    PublishCostmapPose(
+      this->actualLatitude - this->baseLatitude,
+      this->actualLongitude - this->baseLongitude);
+  }
   DetermineState();
 }
 
@@ -71,6 +87,15 @@ void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
   this->current_metric_pose.orientation.y = msg.orientation.y;
   this->current_metric_pose.orientation.z = msg.orientation.z;
   this->current_metric_pose.orientation.w = msg.orientation.w;
+  double x = msg.orientation.x;
+  double y = msg.orientation.y;
+  double z = msg.orientation.z;
+  double w = msg.orientation.w;
+  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(2, x) + pow(2, y)));
+  if (this->initialYaw == -1) {
+    this->initialYaw = yaw;
+  }
+  this->currentYaw = yaw;
 }
 
 void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool & msg)
@@ -129,6 +154,7 @@ void Orchestrator::DetermineState()
   if (this->purePursuitEnabled) { // IMPORTANT: only for very basic testing
     PurePursuit(deltaX, deltaY);
   }
+  return;
 }
 
 void Orchestrator::PurePursuit(double deltaX, double deltaY)
@@ -137,15 +163,15 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
   double errorDThreshold = 0.1;
   double errorZThreshold = 0.1;
 
-  geometry_msgs::msg::Twist cmd_vel;
+  geometry_msgs::msg::TwistStamped cmd_vel;
   double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-  double currentAngle = 0; // NEED TO CHANGE THIS
+  double currentAngle = currentYaw - initialYaw;
   double errorZ = currentAngle - atan2(deltaY, deltaX);
 
   if (abs(errorZ >= errorZThreshold)) {
-    cmd_vel.angular.z = errorZ; // Will probably need to multiply by some constant.
+    cmd_vel.twist.angular.z = errorZ; // Will probably need to multiply by some constant.
   } else if (errorD >= errorDThreshold) {
-    cmd_vel.linear.x = errorD; // Will probably need to multiply by some constant.
+    cmd_vel.twist.linear.x = errorD; // Will probably need to multiply by some constant.
   }
 
   cmd_vel_publisher->publish(cmd_vel);

@@ -1,178 +1,235 @@
+import os
+from xacro import process_file
+import yaml
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
-from launch.actions import SetEnvironmentVariable
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command, FindExecutable
-from launch.substitutions import PathJoinSubstitution
+from launch.actions import SetEnvironmentVariable, RegisterEventHandler
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.event_handlers import OnProcessExit
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-import os
-import yaml
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+
+
+def load_yaml(package_name, file_path):
+    package_path = get_package_share_directory(package_name)
+    absolute_file_path = os.path.join(package_path, file_path)
+
+    try:
+        with open(absolute_file_path, "r") as file:
+            return yaml.safe_load(file)
+    except EnvironmentError:  # parent of IOError, OSError *and* WindowsError
+        return None
 
 
 def generate_launch_description():
-
-    # Package Imports
-    pkg_urc_bringup = FindPackageShare(
-        "urc_bringup").find("urc_bringup")
-    pkg_urc_nav2 = FindPackageShare(
-        "urc_navigation").find("urc_navigation")
-    pkg_urc_hw_description = FindPackageShare(
-        "urc_hw_description").find("urc_hw_description")
-    pkg_urc_platform = FindPackageShare(
-        "urc_platform").find("urc_platform")
+    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+    pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_nmea_navsat_driver = FindPackageShare(
         "nmea_navsat_driver").find("nmea_navsat_driver")
 
-    # Configurations
-    world_path = os.path.join(pkg_urc_hw_description, "world/world.sdf")
-
-    robot_description_content = Command(
-        [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
-            " ",
-            PathJoinSubstitution(
-                [FindPackageShare("urc_hw_description"), "urdf", "robot.xacro"]
-            ),
-        ]
-    )
-
-    hardware_config_filepath = os.path.join(
+    hardware_config_file_dir = os.path.join(
         pkg_urc_bringup, 'config', 'hardware_config.yaml')
-    with open(hardware_config_filepath) as f:
+    with open(hardware_config_file_dir) as f:
         hardware_config = yaml.safe_load(f)
-
     use_simulation = hardware_config['hardware_config']['use_simulation']
 
-    robot_controllers_config = os.path.join(
-        pkg_urc_bringup, 'config', 'ros2_control_walli.yaml'
+    controller_config_file_dir = os.path.join(
+        pkg_urc_bringup,
+        'config', 'controller_config.yaml'
     )
+    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    default_rviz_config_path = os.path.join(
-        pkg_urc_bringup, 'rviz', 'urdf_config.rviz'
+    xacro_file = os.path.join(
+        get_package_share_directory('urc_hw_description'),
+        "urdf/walli.xacro"
     )
+    assert os.path.exists(
+        xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+    robot_description_config = process_file(xacro_file)
+    robot_desc = robot_description_config.toxml()
 
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
+        ),
+        launch_arguments={"use_sim_time": "true"}.items()
+        # launch_arguments={"world": world_path}.items()
+    )
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[controller_config_file_dir,
+                    {"robot_description": robot_desc}],
+        output="both"
+    )
     enable_color = SetEnvironmentVariable(
         name="RCUTILS_COLORIZED_OUTPUT",
         value="1"
     )
 
-    # Other Launch Scripts Pulled In
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare(
-                "gazebo_ros"), "launch", "gazebo.launch.py"])]
-        ),
-        launch_arguments={"verbose": "false", "world": world_path}.items()
+    aruco_detector = Node(
+        package='urc_perception',
+        executable='urc_perception_ArucoDetector',
+        output='screen',
+        parameters=[
+                PathJoinSubstitution([FindPackageShare('urc_perception'),
+                                      'config',
+                                     'aruco_detector_params.yaml'])
+        ],
+        remappings=[
+            ("/aruco_detector/aruco_detection", "/aruco_detection")
+        ]
     )
 
-    launch_navigation = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_nav2, "launch", "navigation.launch.py")
-        )
-    )
-
-    launch_joystick = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_platform, "launch", "joystick.launch.py")
-        )
-    )
-
-    launch_gps = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py")
-        )
-    )
-
-    # Nodes
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[robot_controllers_config],
-        output="both",
+    aruco_location = Node(
+        package='urc_perception',
+        executable='urc_perception_ArucoLocation',
+        output='screen',
+        remappings=[
+                ("/aruco_location/aruco_location", "/aruco_location")
+        ]
     )
 
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli',
-                   '-x', '0', '-y', '0', '-z', '0.4',
-                   '-topic', '/robot_description'],
-        output='screen'
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0',
+                   '-z', '0.4', '-R', '0', '-P', '0', '-Y', '0',
+                   '-topic', 'robot_description'
+                   ],
     )
 
-    robot_state_publisher_node = Node(
+    load_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
-        parameters=[{"robot_description": robot_description_content}],
+        parameters=[
+            {
+                "use_sim_time": use_sim_time,
+                "robot_description": robot_desc
+            },
+        ],
         output='screen'
-    )
-
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
     )
 
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_state_broadcaster"],
+        arguments=[
+            '-p', controller_config_file_dir,
+            'joint_state_broadcaster'
+        ]
+    )
+
+    load_arm_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            '-p', controller_config_file_dir,
+            'arm_controller'
+        ],
+    )
+
+    load_gripper_controller_left = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            '-p', controller_config_file_dir,
+            'gripper_controller_left'
+        ],
+    )
+
+    load_gripper_controller_right = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            '-p', controller_config_file_dir,
+            'gripper_controller_right'
+        ],
     )
 
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=['rover_drivetrain_controller'],
+        arguments=[
+            'rover_drivetrain_controller'
+        ],
     )
 
-    joystick_launch = IncludeLaunchDescription(
+    teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [
-                FindPackageShare("urc_platform"),
-                "/launch/joystick.launch.py"
-            ]
+            [FindPackageShare("urc_bringup"),
+             "/launch/teleop.launch.py"]
         )
     )
 
-    # Final Launch Description With or Without Simulation Mode
+    launch_gps = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_nmea_navsat_driver, "launch",
+                         "nmea_serial_driver.launch.py")
+        )
+    )
+
+    rosbridge_server_node = Node(
+        package="rosbridge_server",
+        name="rosbridge_server",
+        executable="rosbridge_websocket.py",
+        parameters=[{
+            "port": 9090
+        }]
+    )
+
     if use_simulation:
         return LaunchDescription([
-            DeclareLaunchArgument(
-                name='rvizconfig',
-                default_value=default_rviz_config_path,
-                description='Absolute path to rviz config file'
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=spawn_robot,
+                    on_exit=[
+                        load_joint_state_broadcaster,
+                        load_arm_controller,
+                        load_gripper_controller_left,
+                        load_gripper_controller_right,
+                        load_drivetrain_controller,
+                        aruco_detector,
+                        aruco_location,
+                        teleop_launch
+                    ],
+                )
             ),
-            DeclareLaunchArgument(
-                name='use_sim_time',
-                default_value='True',
-                description='Flag to enable use_sim_time'
-            ),
-            DeclareLaunchArgument(
-                name='gui',
-                default_value='True',
-                description='Flag to enable joint_state_publisher_gui'
+            IncludeLaunchDescription(
+                XMLLaunchDescriptionSource(
+                    [FindPackageShare("foxglove_bridge"),
+                     '/launch', '/foxglove_bridge_launch.xml']
+                ),
+                launch_arguments={'port': '8765'}.items(),
             ),
             enable_color,
             gazebo,
-            robot_state_publisher_node,
+            load_robot_state_publisher,
             spawn_robot,
-            load_joint_state_broadcaster,
-            load_drivetrain_controller,
-            rviz_node,
-            launch_navigation,
-            launch_joystick
         ])
     else:
         return LaunchDescription([
-            robot_state_publisher_node,
+            IncludeLaunchDescription(
+                XMLLaunchDescriptionSource(
+                    [FindPackageShare("foxglove_bridge"),
+                     '/launch', '/foxglove_bridge_launch.xml']
+                ),
+                launch_arguments={'port': '8765'}.items(),
+            ),
+            load_robot_state_publisher,
             control_node,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            joystick_launch,
-            launch_gps
+            load_gripper_controller_left,
+            load_gripper_controller_right,
+            aruco_detector,
+            aruco_location,
+            teleop_launch,
+            launch_gps,
+            rosbridge_server_node
         ])

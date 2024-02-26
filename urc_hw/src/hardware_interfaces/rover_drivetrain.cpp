@@ -11,6 +11,8 @@
 #include <pb_encode.h>
 #include <pb_decode.h>
 #include <rclcpp/clock.hpp>
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
 #include <rclcpp/time.hpp>
 #include <string>
 #include <urc_nanopb/urc.pb.h>
@@ -26,7 +28,9 @@ RoverDrivetrain::RoverDrivetrain()
 : hardware_interface_name("Rover Drivetrain")
   , velocity_rps_commands(2, 0)
   , velocity_rps_states(2, 0)
-  , velocity_rps_breakdown(6, 0) {}
+  , velocity_rps_breakdown(6, 0)
+{
+}
 RoverDrivetrain::~RoverDrivetrain() = default;
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_init(
@@ -108,6 +112,10 @@ hardware_interface::return_type RoverDrivetrain::read(
   const rclcpp::Time &,
   const rclcpp::Duration &)
 {
+  RCLCPP_INFO(
+    rclcpp::get_logger(
+      "test"), "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
+
   return hardware_interface::return_type::OK;
 }
 
@@ -118,12 +126,13 @@ hardware_interface::return_type RoverDrivetrain::write(
   if (duration.seconds() < 0.001) {
     return hardware_interface::return_type::OK;
   }
+
   DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = velocity_rps_commands[0];
+  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR;
   message.has_leftSpeed = true;
-  message.rightSpeed = velocity_rps_commands[1];
+  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR;
   message.has_rightSpeed = true;
   message.timestamp = time.nanoseconds();
 
