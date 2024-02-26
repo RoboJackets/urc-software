@@ -20,10 +20,7 @@ class TesterNode(Node):
         self.client = self.create_client(GeneratePlan, "plan")
 
         self.costmap_generate()
-        # self.create_timer(0.2, self.loop_cb)
         self.get_logger().info("Costmap Publish Initialized")
-
-        # self.create_timer(1.0, self.call_planner_client)
 
         time.sleep(3)
 

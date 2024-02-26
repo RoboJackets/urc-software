@@ -18,27 +18,27 @@ public:
 
 protected:
   /**
-       * @brief Call the A* algorithm to generate the plan
-       */
+   * @brief Call the A* algorithm to generate the plan
+   */
   void generatePlan(
     const std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request,
     std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response);
 
   /**
-       * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
-       * @param plan The plan to be published
-       */
+   * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
+   * @param plan The plan to be published
+   */
   void publishPlan(const nav_msgs::msg::Path & plan);
 
   /**
-       * @brief Wait for the costmap to be available
-       */
+   * @brief Wait for the costmap to be available
+   */
   void waitForCostmap();
 
   /**
-       * @brief Handle the costmap data
-       * @param msg The costmap data
-       */
+   * @brief Handle the costmap data
+   * @param msg The costmap data
+   */
   void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
   nav_msgs::msg::OccupancyGrid current_costmap_;

@@ -88,7 +88,8 @@ double AStar::estimateCostToGoal(const geometry_msgs::msg::Pose & pose)
   return std::sqrt(
     std::pow(
       goal_pose_.position.x - pose.position.x,
-      2) + std::pow(goal_pose_.position.y - pose.position.y, 2));
+      2) +
+    std::pow(goal_pose_.position.y - pose.position.y, 2));
 }
 
 double AStar::cost(const AStarNode * from, const AStarNode * to)
@@ -146,4 +147,4 @@ void AStar::reconstructPath(const AStarNode * goal_node)
 
   std::reverse(path_.begin(), path_.end());
 }
-}
+} // namespace astar
