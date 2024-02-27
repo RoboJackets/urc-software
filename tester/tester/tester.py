@@ -28,7 +28,6 @@ class TesterNode(Node):
         self.get_logger().info("Planner Server Called")
 
     def call_planner_client(self):
-
         req = GeneratePlan.Request()
 
         initialPose = PoseStamped()
@@ -48,7 +47,6 @@ class TesterNode(Node):
 
         self.future = self.client.call_async(req)
 
-
     def costmap_generate(self):
 
         self.get_logger().info("Costmap Publish Looping...")
@@ -60,7 +58,7 @@ class TesterNode(Node):
         costmap.info.resolution = 1.0
         costmap.info.width = 100
         costmap.info.height = 100
-       
+
         costmap.info.origin.position.x = 0.0
         costmap.info.origin.position.y = 0.0
         costmap.info.origin.position.z = 0.0
@@ -73,7 +71,6 @@ class TesterNode(Node):
         map[4:8, 4:8] *= 10
         costmap.data = map.flatten().tolist()
 
-
         costmap.data
 
         self.costmap_pub.publish(costmap)
@@ -85,9 +82,9 @@ def main(args=None):
     controller = TesterNode()
     rclpy.spin(controller)
 
-    
     controller.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == "__main__":
     main()
