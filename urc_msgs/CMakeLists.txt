@@ -10,6 +10,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
@@ -19,10 +20,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BatteryInfo.msg"
   "msg/Waypoint.msg"
   "msg/NavigationStatus.msg"
+  "msg/GridLocation.msg"
+  "srv/GeneratePlan.srv"
 
   DEPENDENCIES
   std_msgs
   geometry_msgs
+  nav_msgs
   builtin_interfaces
 )
 

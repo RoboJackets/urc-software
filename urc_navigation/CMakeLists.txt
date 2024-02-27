@@ -9,6 +9,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(OpenCV 4 REQUIRED)
@@ -17,6 +18,7 @@ find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 
+
 include_directories(
   include
 )
@@ -24,6 +26,8 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/orchestrator.cpp
+  src/planner_server.cpp
+  src/astar.cpp
 )
 
 set(dependencies
@@ -38,6 +42,7 @@ set(dependencies
   OpenCV
   tf2
   tf2_geometry_msgs
+  nav_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -49,6 +54,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "orchestrator::Orchestrator"
   EXECUTABLE ${PROJECT_NAME}_Orchestrator
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "planner_server::PlannerServer"
+  EXECUTABLE ${PROJECT_NAME}_PlannerServer
 )
 
 # Install launch files.
@@ -66,6 +77,7 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

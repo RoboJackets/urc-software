@@ -38,8 +38,15 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS()
   );
 
+  metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/pose/metric", rclcpp::SystemDefaultsQoS()
+  );
+  costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+    "/pose/costmap", rclcpp::SystemDefaultsQoS()
+  );
+
   imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
-    "/imu", rclcpp::SystemDefaultsQoS(),
+    "/imu/data", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
   set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
     "/set_base", rclcpp::SystemDefaultsQoS(),
@@ -47,15 +54,15 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
     "/waypoint", rclcpp::SystemDefaultsQoS(),
     [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
-  gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
-    "/gps/data", rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
+  gps_subscriber = create_subscription<nav_msgs::msg::Odometry>(
+    "/odometry/gps", rclcpp::SystemDefaultsQoS(),
+    [this](const nav_msgs::msg::Odometry msg) {GPSCallback(msg);});
 }
 
-void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
+void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
 {
-  this->actualLatitude = msg.latitude;
-  this->actualLongitude = msg.longitude;
+  this->actualLatitude = msg.pose.pose.position.x;
+  this->actualLongitude = msg.pose.pose.position.y;
   if (this->baseLatitude == -1) {
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;

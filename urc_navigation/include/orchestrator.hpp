@@ -12,6 +12,7 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <nav_msgs/msg/odometry.hpp>
 #include <math.h>
 #include <rclcpp/qos.hpp>
 #include <unistd.h>
@@ -33,7 +34,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
-  rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr gps_subscriber;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
 
   bool purePursuitEnabled;
@@ -60,7 +61,7 @@ private:
     const std_msgs::msg::Bool & msg
   );
   void GPSCallback(
-    const sensor_msgs::msg::NavSatFix & msg
+    const nav_msgs::msg::Odometry & msg
   );
   void WaypointCallback(
     const urc_msgs::msg::Waypoint & msg
