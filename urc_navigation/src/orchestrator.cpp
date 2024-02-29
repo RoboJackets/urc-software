@@ -188,11 +188,15 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
 }
 
 void Orchestrator::PathPlanning() {
-  // Make a request to path plan
   if (this->currentlyPlanning) {
     return;
   }
   this->currentlyPlanning = true;
+  std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request = std::make_shared<urc_msgs::srv::GeneratePlan::Request>();
+  geometry_msgs::msg::Pose goalPose;
+  // goalPose.position.x = 
+  // request->goal = 
+
   nav_msgs::msg::Path path;
   for (int i = 0; i < path.poses.size(); ++i) {
     double currentCostmapX = floor(((this->actualLongitude - this->baseLongitude) * 111139) * 4 + 50);

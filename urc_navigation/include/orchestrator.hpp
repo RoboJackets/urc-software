@@ -8,6 +8,7 @@
 #include <urc_msgs/msg/waypoint.hpp>
 #include <urc_msgs/msg/navigation_status.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
+#include <urc_msgs/srv/generate_plan.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <sensor_msgs/msg/imu.hpp>
