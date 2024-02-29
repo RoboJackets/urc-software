@@ -194,8 +194,47 @@ void Orchestrator::PathPlanning() {
   this->currentlyPlanning = true;
   std::shared_ptr<urc_msgs::srv::GeneratePlan::Request> request = std::make_shared<urc_msgs::srv::GeneratePlan::Request>();
   geometry_msgs::msg::Pose goalPose;
-  // goalPose.position.x = 
-  // request->goal = 
+  goalPose.position.x = floor(((waypointLongitude - baseLongitude) * 111139) * 4 + 50);
+  goalPose.position.y = floor(((waypointLatitude - baseLatitude) * 111139) * 4 + 50);
+  request->goal.pose = goalPose;
+  geometry_msgs::msg::Pose currentPose;
+  currentPose.position.x = floor(((actualLongitude - baseLongitude) * 111139) * 4 + 50);
+  currentPose.position.y = floor(((actualLatitude - baseLatitude) * 111139) * 4 + 50);
+  request->start.pose = currentPose;
+
+
+  rclcpp::Client<urc_msgs::srv::GeneratePlan>::SharedPtr client =
+    this->create_client<urc_msgs::srv::GeneratePlan>("plan");
+
+
+
+    while (!client->wait_for_service(1s)) {
+    if (!rclcpp::ok()) {
+      RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
+      return 0;
+    }
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
+  }
+
+  auto result = client->async_send_request(request);
+  // Wait for the result.
+  if (rclcpp::spin_until_future_complete(node, result) ==
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Sum: %ld", result.get()->sum);
+  } else {
+    RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to call service add_two_ints");
+  }
+
+
+
+
+
+
+
+
+
+
 
   nav_msgs::msg::Path path;
   for (int i = 0; i < path.poses.size(); ++i) {
