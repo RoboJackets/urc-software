@@ -26,7 +26,7 @@ class PointCloudCostmap : public rclcpp::Node
 
         nav2_costmap_2d::Costmap2D* costmap_;
         int callback_count_;
-        const int reset_frequency_ = 10;
+        const int reset_frequency_ = 1;
 };
 
 
