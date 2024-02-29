@@ -16,13 +16,13 @@ CostmapGenerator::CostmapGenerator(const rclcpp::NodeOptions & options)
     "/laserscan", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::LaserScan msg) {LaserScanCallback(msg);});
 
-  costmap_publisher = create_publisher<nav2_msgs::msg::Costmap>(
+  costmap_publisher = create_publisher<nav_msgs::msg::OccupancyGrid>(
     "/costmap", rclcpp::SystemDefaultsQoS());
 
-  costmap.metadata.resolution = 0.25;       // m/cell
-  costmap.metadata.size_x = 100;
-  costmap.metadata.size_y = 100;
-  for (int i = 0; i < costmap.metadata.size_x * costmap.metadata.size_y; ++i) {
+  costmap.info.resolution = 0.25;       // m/cell
+  costmap.info.width = 100;
+  costmap.info.height = 100;
+  for (int i = 0; i < costmap.info.width * costmap.info.height; ++i) {
     costmap.data.push_back(0);
   }
   RCLCPP_INFO(this->get_logger(), "Costmap Capacity: %d", (int)(costmap.data.size()));
@@ -130,43 +130,43 @@ void CostmapGenerator::DepthCallback(const sensor_msgs::msg::Image & msg)
   RCLCPP_INFO(this->get_logger(), "Middle Cost: %f", costMiddle);
   RCLCPP_INFO(this->get_logger(), "Right Cost: %f", costRight);
 
-  if (robotGridY != costmap.metadata.size_y - 1) {       // Direction 0
-    costmap.data[(robotGridY + 1) * costmap.metadata.size_x + (robotGridX + 0)] = std::max(
+  if (robotGridY != costmap.info.height - 1) {       // Direction 0
+    costmap.data[(robotGridY + 1) * costmap.info.width + (robotGridX + 0)] = std::max(
       0,
       data[0]);
   }
-  if (robotGridY != costmap.metadata.size_y - 1 && robotGridX != costmap.metadata.size_x - 1) {        // Direction 1
-    costmap.data[(robotGridY + 1) * costmap.metadata.size_x + (robotGridX + 1)] = std::max(
+  if (robotGridY != costmap.info.height - 1 && robotGridX != costmap.info.width - 1) {        // Direction 1
+    costmap.data[(robotGridY + 1) * costmap.info.width + (robotGridX + 1)] = std::max(
       0,
       data[1]);
   }
-  if (robotGridX != costmap.metadata.size_x - 1) {        // Direction 2
-    costmap.data[(robotGridY + 0) * costmap.metadata.size_x + (robotGridX + 1)] = std::max(
+  if (robotGridX != costmap.info.width - 1) {        // Direction 2
+    costmap.data[(robotGridY + 0) * costmap.info.width + (robotGridX + 1)] = std::max(
       0,
       data[2]);
   }
-  if (robotGridY != 0 && robotGridX != costmap.metadata.size_x - 1) {        // Direction 3
-    costmap.data[(robotGridY - 1) * costmap.metadata.size_x + (robotGridX + 1)] = std::max(
+  if (robotGridY != 0 && robotGridX != costmap.info.width - 1) {        // Direction 3
+    costmap.data[(robotGridY - 1) * costmap.info.width + (robotGridX + 1)] = std::max(
       0,
       data[3]);
   }
   if (robotGridY != 0) {       // Direction 4
-    costmap.data[(robotGridY - 1) * costmap.metadata.size_x + (robotGridX + 0)] = std::max(
+    costmap.data[(robotGridY - 1) * costmap.info.width + (robotGridX + 0)] = std::max(
       0,
       data[4]);
   }
   if (robotGridY != 0 && robotGridX != 0) {       // Direction 5
-    costmap.data[(robotGridY - 1) * costmap.metadata.size_x + (robotGridX - 1)] = std::max(
+    costmap.data[(robotGridY - 1) * costmap.info.width + (robotGridX - 1)] = std::max(
       0,
       data[5]);
   }
   if (robotGridX != 0) {       // Direction 6
-    costmap.data[(robotGridY + 0) * costmap.metadata.size_x + (robotGridX - 1)] = std::max(
+    costmap.data[(robotGridY + 0) * costmap.info.width + (robotGridX - 1)] = std::max(
       0,
       data[6]);
   }
-  if (robotGridY != costmap.metadata.size_y - 1 && robotGridX != 0) {       // Direction 7
-    costmap.data[(robotGridY + 1) * costmap.metadata.size_x + (robotGridX - 1)] = std::max(
+  if (robotGridY != costmap.info.height - 1 && robotGridX != 0) {       // Direction 7
+    costmap.data[(robotGridY + 1) * costmap.info.width + (robotGridX - 1)] = std::max(
       0,
       data[7]);
   }

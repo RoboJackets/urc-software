@@ -6,7 +6,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <nav2_costmap_2d/costmap_2d_ros.hpp>
 #include <sensor_msgs/msg/image.hpp>
-#include <nav2_msgs/msg/costmap.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 #include <math.h>
 #include <stdlib.h>
 
@@ -25,10 +25,10 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr pose_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr laser_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_subscriber;
-  rclcpp::Publisher<nav2_msgs::msg::Costmap>::SharedPtr costmap_publisher;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_publisher;
 
   // Private Variables
-  nav2_msgs::msg::Costmap costmap;
+  nav_msgs::msg::OccupancyGrid costmap;
   int direction = 0;
   int robotGridX;
   int robotGridY;

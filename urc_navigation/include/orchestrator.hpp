@@ -13,6 +13,7 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <nav_msgs/msg/path.hpp>
 #include <math.h>
 #include <rclcpp/qos.hpp>
 #include <unistd.h>
@@ -37,6 +38,7 @@ private:
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr gps_subscriber;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
 
+  bool currentlyPlanning;
   bool purePursuitEnabled;
   double maxDelta;
   double actualLatitude;
@@ -72,7 +74,16 @@ private:
   );
   void DetermineState();
   void PurePursuit(double deltaX, double deltaY);
+  void PathPlanning();
 
+  struct TotalPose{
+    double gpsLatitude;
+    double gpsLongitude;
+    double metricOffsetX;
+    double metricOffsetY;
+    double costmapX;
+    double costmapY;
+  };
 };
 }
 

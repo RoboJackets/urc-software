@@ -4,7 +4,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/path.hpp>
-
+#include <rclcpp_components/register_node_macro.hpp>
 #include "urc_msgs/srv/generate_plan.hpp"
 
 namespace planner_server

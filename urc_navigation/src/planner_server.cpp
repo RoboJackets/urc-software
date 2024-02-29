@@ -87,6 +87,4 @@ void PlannerServer::publishPlan(const nav_msgs::msg::Path & plan)
   }
 }
 } // namespace planner_server
-
-#include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(planner_server::PlannerServer)

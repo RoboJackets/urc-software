@@ -1,11 +1,17 @@
 #include "orchestrator.hpp"
 
+// 3 relevant poses to maintain: Base Station, Rover Position, Waypoint Position
+// 3 relevant frames to maintain: Absolute GPS, Metric Offset, Costmap Location
+// At minimum, the x and y for each position is needed.
+// This means a minimum of 18 numbers to track.
+
 namespace orchestrator
 {
 Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
 : rclcpp::Node("orchestrator", options)
 {
-  this->purePursuitEnabled = 1;
+  this->currentlyPlanning = false;
+  this->purePursuitEnabled = 0; // IMPORTANT! Singular point tracking or path planning.
   this->maxDelta = 1.0;
   this->actualLongitude = -1;
   this->actualLatitude = -1;
@@ -59,13 +65,14 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
     [this](const nav_msgs::msg::Odometry msg) {GPSCallback(msg);});
 }
 
+// Maintain robot pose->position
 void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
 {
-  this->actualLatitude = msg.pose.pose.position.x;
-  this->actualLongitude = msg.pose.pose.position.y;
+  this->actualLongitude = msg.pose.pose.position.x;
+  this->actualLatitude = msg.pose.pose.position.y;
   if (this->baseLatitude == -1) {
-    this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
+    this->baseLatitude = this->actualLatitude;
   }
   if (this->actualLatitude != -1 && this->actualLongitude != -1 &&
     this->waypointLatitude != -1 && this->waypointLongitude != -1)
@@ -81,6 +88,7 @@ void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
   DetermineState();
 }
 
+// Maintain robot pose->orientation
 void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
 {
   this->current_metric_pose.orientation.x = msg.orientation.x;
@@ -100,8 +108,8 @@ void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
 
 void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool & msg)
 {
-  this->baseLatitude = this->actualLatitude;
   this->baseLongitude = this->actualLongitude;
+  this->baseLatitude = this->actualLatitude;
 }
 
 void Orchestrator::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
@@ -118,6 +126,7 @@ void Orchestrator::PublishMetricPose(double gpsOffsetX, double gpsOffsetY)
   metric_offset_pose_publisher->publish(current_metric_pose);
 }
 
+// Transform offset to place on the costmap. (0, 0) is the bottom left corner, and the base station is at (50, 50)
 void Orchestrator::PublishCostmapPose(double gpsOffsetX, double gpsOffsetY)
 {
   this->current_costmap_pose.position.x = floor((gpsOffsetX * 111139) * 4 + 50);
@@ -140,19 +149,21 @@ void Orchestrator::DetermineState()
     return;
   }
 
-  double deltaX = abs(actualLatitude - waypointLatitude);
-  double deltaY = abs(actualLongitude - waypointLongitude);
+  double deltaX = abs(actualLongitude - waypointLongitude);
+  double deltaY = abs(actualLatitude - waypointLatitude);
   double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
   if (distance < maxDelta) {
     state_message.message = "Goal";
-    this->waypointLatitude = -1;
     this->waypointLongitude = -1;
+    this->waypointLatitude = -1;
   } else {
     state_message.message = "Navigating";
   }
   current_state_publisher->publish(state_message);
   if (this->purePursuitEnabled) { // IMPORTANT: only for very basic testing
     PurePursuit(deltaX, deltaY);
+  } else {
+    PathPlanning();
   }
   return;
 }
@@ -173,13 +184,26 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
   } else if (errorD >= errorDThreshold) {
     cmd_vel.twist.linear.x = errorD; // Will probably need to multiply by some constant.
   }
-
   cmd_vel_publisher->publish(cmd_vel);
-  // sleep(15);
-  // RCLCPP_INFO(this->get_logger(), "15 seconds");
-  // if ((this->get_clock()->now() - this->gpsTimestamp).seconds() > 15) {
-  //   RCLCPP_INFO(this->get_logger(), "True");
-  // }
+}
+
+void Orchestrator::PathPlanning() {
+  // Make a request to path plan
+  if (this->currentlyPlanning) {
+    return;
+  }
+  this->currentlyPlanning = true;
+  nav_msgs::msg::Path path;
+  for (int i = 0; i < path.poses.size(); ++i) {
+    double currentCostmapX = floor(((this->actualLongitude - this->baseLongitude) * 111139) * 4 + 50);
+    double currentCostmapY = floor(((this->actualLatitude - this->baseLatitude) * 111139) * 4 + 50);
+    while (abs(currentCostmapX - path.poses[i].pose.position.x) > 1 or abs(currentCostmapY - path.poses[i].pose.position.y) > 1) {
+      PurePursuit(currentCostmapX - path.poses[i].pose.position.x, currentCostmapY - path.poses[i].pose.position.y);
+    }
+  }
+
+
+  this->currentlyPlanning = false;
 }
 
 }
