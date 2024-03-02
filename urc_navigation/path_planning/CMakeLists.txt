@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
-project(urc_navigation)
+project(path_planning)
 
-include(../cmake/default_settings.cmake)
+include(../../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -25,7 +25,6 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/orchestrator.cpp
   src/planner_server.cpp
   src/astar.cpp
 )
@@ -49,13 +48,6 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
-# Node registration
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "orchestrator::Orchestrator"
-  EXECUTABLE ${PROJECT_NAME}_Orchestrator
-)
-
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "planner_server::PlannerServer"
@@ -66,7 +58,6 @@ rclcpp_components_register_node(
 install(
   DIRECTORY
   launch
-  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
