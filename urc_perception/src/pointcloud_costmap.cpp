@@ -21,24 +21,35 @@ void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 &
 
     double xSize = (double) costmap_->getSizeInCellsX();
     double ySize = (double) costmap_->getSizeInCellsY();
-    // double resolution = costmap_->getResolution();
-    // double max_distance = sqrt(pow(xSize * resolution, 2) + pow(ySize * resolution, 2));
+    
 
     callback_count_++;
 
     if(callback_count_ % reset_frequency_ == 0) {
         costmap_->resetMap(0, 0, xSize, ySize);
+        // Reinitialized max_heights to minimum possible heights for every callback
+        max_heights_.resize(costmap_->getSizeInCellsX(), std::vector<double>(costmap_->getSizeInCellsY(), std::numeric_limits<double>::lowest()));
     }
+
+    
     
     pcl::PointCloud<pcl::PointXYZ> cloud;
     pcl::fromROSMsg(msg, cloud);
 
-    for (const auto& point: cloud.points) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
+    *cloudPtr = cloud; // Copy the data into the shared pointer
+
+    // Filter out outlies from the point cloud
+    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+    sor.setInputCloud(cloudPtr); // Use the shared pointer here
+    sor.setMeanK(50); // Number of neighbors to analyze for each point
+    sor.setStddevMulThresh(1.0); // Standard deviation multiplier
+    pcl::PointCloud<pcl::PointXYZ>::Ptr filtered(new pcl::PointCloud<pcl::PointXYZ>);
+    sor.filter(*filtered);
+
+    for (const auto& point: filtered->points) {
         unsigned int mx, my;
         if(costmap_->worldToMap(point.x, point.y, mx, my)) {
-            // create a dynamic costmap
-            // double distance = sqrt(pow(point.x , 2) + pow(point.y, 2));
-
             // TODO: Implement a max and min height for the costmap
             /*
                 For future reference, camera has a 60deg vertical field of view
@@ -47,22 +58,27 @@ void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 &
             */
             
             unsigned char cost;
-            double height = point.z;
-            cost = static_cast<unsigned char>(abs(height) * 100);
+            
 
-            // double max_height = 2;
-            // double min_height = -2;
+            if(point.z > max_heights_[mx][my]) {
+                max_heights_[mx][my] = point.z;
+            }
 
-            // if (height > max_height) {
-            //     cost = 254;
-            // } else if (height < min_height) {
-            //     cost = 0;
-            // }    
-            // else {
-            //     cost = static_cast<unsigned char>(
-            //         height-min_height / (max_height-min_height) * 254
-            //     );
-            // }
+            double height = max_heights_[mx][my];
+
+            double max_height = 1.731;
+            double min_height = 0;
+
+            // Implement a dynamic cost function
+            if (height > max_height) {
+                cost = 254;
+            } else if (height < min_height) {
+                cost = 0;
+            } else {
+                double height_range = max_height - min_height;
+                double normalized_height = (height - min_height) / height_range;
+                cost = static_cast<unsigned char>(normalized_height * 254); // Scale to max cost value
+            }
 
             costmap_->setCost(mx, my, cost);
 
@@ -71,18 +87,18 @@ void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 &
             // int inflation_radius = 1;
             // for (int dx = -inflation_radius; dx <= inflation_radius; dx++) {
             //     for (int dy = -inflation_radius; dy <= inflation_radius; dy++) {
+            //         // Prevent out of bounds
+            //         if (dx < -static_cast<int>(mx) || mx+dx >= xSize || dy < -static_cast<int>(my) || my+dy >= ySize) {
+            //             continue;
+            //         }
+                    
             //         double inflation_distance = sqrt(dx*dx + dy*dy);
             //         double normalized_distance = inflation_distance / inflation_radius;
 
             //         unsigned char inflated_cost = static_cast<unsigned char>(
             //             (1-normalized_distance) * (254 - min_inflation_cost) + min_inflation_cost
             //         );
-
-            //         // Prevent out of bounds
-            //         if (dx < -static_cast<int>(mx) || mx+dx >= xSize || dy < -static_cast<int>(my) || my+dy >= ySize) {
-            //             continue;
-            //         }
-
+                    
             //         unsigned char curr_cost = costmap_->getCost(mx+dx, my+dy);
             //         costmap_->setCost(mx+dx, my+dy, std::max(curr_cost, inflated_cost));
             //     }

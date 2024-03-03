@@ -18,7 +18,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(nav2_costmap_2d REQUIRED)
 find_package(pcl_msgs REQUIRED)
-find_package(PCL REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common filters)
 
 include_directories(
   include
@@ -36,6 +36,11 @@ add_library(${PROJECT_NAME} SHARED
   src/pointcloud_costmap.cpp
 )
 
+target_link_libraries(${PROJECT_NAME}
+  ${nav2_costmap_2d_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
+
 set(dependencies
   rclcpp
   rclcpp_components
@@ -51,6 +56,8 @@ set(dependencies
   nav2_costmap_2d
   PCL
 )
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-undef")
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
