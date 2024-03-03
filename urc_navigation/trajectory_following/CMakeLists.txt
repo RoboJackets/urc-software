@@ -26,6 +26,8 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/pure_pursuit.cpp
+  src/geometry_util.cpp
+  src/follower_action_server.cpp
 )
 
 set(dependencies

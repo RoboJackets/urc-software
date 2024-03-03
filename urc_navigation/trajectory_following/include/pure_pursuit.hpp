@@ -4,25 +4,31 @@
 #include <bits/stdc++.h>
 #include <geometry_msgs/msg/pose.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 
 namespace pure_pursuit
 {
-    class PurePursuit
-    {
-    public:
-        explicit PurePursuit();
+struct PurePursuitParams
+{
+  double lookahead_distance;
+  double desired_linear_velocity;
+};
 
-        void setPath(const nav_msgs::msg::Path &path);
-        void setLookaheadDistance(double distance);
-        void setCurrentPose(const geometry_msgs::msg::Pose &pose);
+class PurePursuit
+{
+public:
+  explicit PurePursuit(PurePursuitParams params);
 
-        geometry_msgs::msg::Pose getTargetPose();
+  void setPath(const nav_msgs::msg::Path & path);
 
-    private:
-        nav_msgs::msg::Path path_;
-        double lookahead_distance_;
-        geometry_msgs::msg::Pose current_pose_;
-    };
+  geometry_msgs::msg::TwistStamped getCommandVelocity(
+    const geometry_msgs::msg::Pose & current_pose);
+
+private:
+  nav_msgs::msg::Path path_;
+
+  PurePursuitParams params_;
+};
 } // namespace pure_pursuit
 
 #endif // PURE_PURSUIT_HPP_
