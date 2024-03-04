@@ -17,7 +17,7 @@ double distSquared2D(const geometry_msgs::msg::Point & a, const geometry_msgs::m
 double calcCurvature(const geometry_msgs::msg::Point & a, const geometry_msgs::msg::Point & b);
 
 /**
- * @brief Calculate the intersection of a line segment and a circle. The derivation of the formula can be found in the following link: https://mathworld.wolfram.com/Circle-LineIntersection.html.
+ * @brief Calculate the intersection of a line segment and a circle. The derivation of the formula can be visualized here: https://www.desmos.com/calculator/qz1qjxws28.
  * This assumes that the circle is cenetered at robots pose and both points are in the same frame as the robot.
  * @param a The first point of the line segment in the robot frame
  * @param b The second point of the line segment in the robot frame
@@ -27,7 +27,7 @@ geometry_msgs::msg::Point circleSegmentIntersection(
   const geometry_msgs::msg::Point & a,
   const geometry_msgs::msg::Point & b, double r);
 
-}     // namespace geometry_util
+}   // namespace geometry_util
 } // namespace pure_pursuit
 
 #endif // GEOMETRY_UTIL_HPP_
