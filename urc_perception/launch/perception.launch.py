@@ -1,8 +1,8 @@
 from launch import LaunchDescription
 from launch.substitutions import PathJoinSubstitution
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetRemap, SetParameter
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
@@ -63,9 +63,25 @@ def generate_launch_description():
 
     realsense = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare(
-                "realsense2_camera"), "launch", "rs_launch.py"])]
+            [
+                PathJoinSubstitution(
+                    [
+                        FindPackageShare("realsense2_camera"),
+                        "launch", "rs_launch.py"
+                    ]
+                )
+            ],
         ),
+        launch_arguments={
+            "unite_imu_method": "2",
+            "enable_accel": "true",
+            "enable_gyro": "true"
+        }.items()
+    )
+
+    imu_fusion = Node(
+        package="imu_complementary_filter",
+        executable="complementary_filter_node"
     )
 
     return LaunchDescription([
@@ -73,6 +89,13 @@ def generate_launch_description():
         aruco_location_node,
         depth_laserscan_node,
         costmap_generator_node,
-        realsense,
-        aruco
+        aruco,
+        GroupAction([
+            SetRemap(src='/camera/imu', dst='/imu/data_raw'),
+            realsense,
+        ]),
+        GroupAction([
+            SetParameter(name="publish_tf", value="true"),
+            imu_fusion,
+        ])
     ])
