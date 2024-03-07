@@ -4,7 +4,7 @@
   <BehaviorTree ID="Main Strategy">
     <Sequence>
       <Repeat num_cycles="3">
-        <Delay delay_msec="1500">
+        <Delay delay_msec="1050">
           <LogInfo logger="&quot;urc_bt&quot;"
                    message="&quot;Replace this with the true message.&quot;"/>
         </Delay>

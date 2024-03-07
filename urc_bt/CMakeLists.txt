@@ -12,12 +12,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(urc_msgs REQUIRED)
 set(dependencies
  rclcpp
  behaviortree_cpp
  behaviortree_ros2
  pluginlib
  rclcpp_components
+ urc_msgs
 )
 
 include_directories(

@@ -6,6 +6,8 @@
 #include <rclcpp/logger.hpp>
 #include <rclcpp/node.hpp>
 #include <rclcpp/service.hpp>
+#include <urc_msgs/srv/detail/update_behavior_tree__struct.hpp>
+#include <urc_msgs/srv/update_behavior_tree.hpp>
 
 namespace behavior
 {
@@ -14,11 +16,11 @@ class BehaviorTreeOrchestor : public rclcpp::Node
 {
 public:
   BehaviorTreeOrchestor(const rclcpp::NodeOptions& options);
-  ~BehaviorTreeOrchestor() = default;
+  ~BehaviorTreeOrchestor();
 
 protected:
   BT::BehaviorTreeFactory tree_factory_;
-  std::shared_ptr<BT::Tree> tree_;
+  std::unique_ptr<BT::Tree> tree_;
 
   void Register();
   void RenewTree();
@@ -30,6 +32,7 @@ protected:
   bool is_running_;
 
   std::unique_ptr<rclcpp::Logger> logger_;
+  rclcpp::Service<urc_msgs::srv::UpdateBehaviorTree>::SharedPtr update_bt_service_;
 };
 
 }  // namespace behavior
