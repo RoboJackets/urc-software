@@ -1,0 +1,40 @@
+#include "urc_bt_nodes/base/log_info.hpp"
+#include "behaviortree_cpp/basic_types.h"
+#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp/exceptions.h"
+#include <rclcpp/logger.hpp>
+#include <rclcpp/logging.hpp>
+#include <string>
+#include <rclcpp/rclcpp.hpp>
+
+#include <behaviortree_ros2/plugins.hpp>
+
+BT_REGISTER_NODES(factory)
+{
+  behavior::base::RegisterNodes(factory);
+}
+
+namespace behavior::base
+{
+
+using namespace BT;
+
+NodeStatus LogInfo::tick()
+{
+  Expected<std::string> logger = getInput<std::string>("logger");
+  Expected<std::string> msg = getInput<std::string>("message");
+
+  if (!logger)
+  {
+    throw RuntimeError("Logging node does not have logger input.", logger.error());
+  }
+  if (!msg)
+  {
+    throw RuntimeError("Message not get.", msg.error());
+  }
+
+  RCLCPP_INFO(rclcpp::get_logger(logger->c_str()), "%s", msg->c_str());
+  return NodeStatus::SUCCESS;
+}
+
+}  // namespace behavior::base
