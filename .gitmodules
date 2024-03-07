@@ -9,3 +9,6 @@
 [submodule "external/aruco_ros"]
 	path = external/aruco_ros
 	url = https://github.com/pal-robotics/aruco_ros.git
+[submodule "BehaviorTree.ROS2"]
+	path = BehaviorTree.ROS2
+	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git

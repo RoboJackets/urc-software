@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="Main Strategy">
+  <BehaviorTree ID="Main Strategy">
+    <Sequence>
+      <Repeat num_cycles="3">
+        <Delay delay_msec="1500">
+          <LogInfo logger="&quot;urc_bt&quot;"
+                   message="&quot;Replace this with the true message.&quot;"/>
+        </Delay>
+      </Repeat>
+      <LogInfo logger="&quot;urc_bt&quot;"
+               message="&quot;YOOO!&quot;"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="LogInfo"
+            editable="true">
+      <input_port name="logger"
+                  default="&quot;urc_bt&quot;">Logger to use.</input_port>
+      <input_port name="message"
+                  default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+    </Action>
+  </TreeNodesModel>
+
+</root>

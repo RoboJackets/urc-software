@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="URC_Strategies">
+    <include path="test_strategy.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="LogInfo" editable="true">
+            <input_port name="logger" default="&quot;urc_bt&quot;">Logger to use.</input_port>
+            <input_port name="message" default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+        </Action>
+    </TreeNodesModel>
+</root>

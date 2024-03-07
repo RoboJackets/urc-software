@@ -1,29 +1,33 @@
-cmake_minimum_required(VERSION 3.5)
-project(urc_bringup)
+cmake_minimum_required(VERSION 3.8)
+project(urc_bt)
 
-include(../cmake/default_settings.cmake)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(rosbridge_server REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
+find_package(pluginlib REQUIRED)
+set(dependencies
+ rclcpp
+ behaviortree_cpp
+ behaviortree_ros2
+ pluginlib
+ rclcpp_components
+)
 
 include_directories(
   include
 )
 
-# Library creation
-add_library(${PROJECT_NAME} SHARED
-  src/heartbeat_publisher.cpp
-)
-
-set(dependencies
-  rclcpp
-  rclcpp_components
-  std_msgs
-  rosbridge_server
+add_library(
+  ${PROJECT_NAME} SHARED
+  src/bt_orchestor.cpp
+  include/urc_bt/bt_orchestor.hpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -33,19 +37,8 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "heartbeat_publisher::HeartbeatPublisher"
-  EXECUTABLE ${PROJECT_NAME}_HeartbeatPublisher
-)
-
-
-# Install launch files.
-install(
-  DIRECTORY
-  launch
-  config
-  rviz
-  strategies
-  DESTINATION share/${PROJECT_NAME}/
+  PLUGIN "behavior::BehaviorTreeOrchestor"
+  EXECUTABLE ${PROJECT_NAME}_orchestor
 )
 
 # Install library
@@ -62,10 +55,9 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
+
   ament_lint_auto_find_test_dependencies()
 endif()
-
-ament_export_include_directories(msg)
 
 ament_export_include_directories(include)
 
