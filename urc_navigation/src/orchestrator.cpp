@@ -174,8 +174,8 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
   RCLCPP_INFO(this->get_logger(), "CURRENT ANGLE");
   RCLCPP_INFO(this->get_logger(), "%f", currentAngle);
   RCLCPP_INFO(this->get_logger(), "TARGET ANGLE");
-  RCLCPP_INFO(this->get_logger(), "%f", (atan2(deltaY, deltaX) - M_PI/2));
-  double errorZ = currentAngle - (atan2(deltaY, deltaX) - M_PI/2);
+  RCLCPP_INFO(this->get_logger(), "%f", (atan2(deltaY, deltaX) - M_PI / 2));
+  double errorZ = currentAngle - (atan2(deltaY, deltaX) - M_PI / 2);
   RCLCPP_INFO(this->get_logger(), "ERRORZ");
   RCLCPP_INFO(this->get_logger(), "%f", errorZ);
   if (abs(errorZ) >= errorZThreshold) {
