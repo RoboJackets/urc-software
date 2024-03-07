@@ -34,7 +34,7 @@ private:
 
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
-  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr gps_subscriber;
+  rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
 
   bool purePursuitEnabled;
@@ -61,7 +61,7 @@ private:
     const std_msgs::msg::Bool & msg
   );
   void GPSCallback(
-    const nav_msgs::msg::Odometry & msg
+    const sensor_msgs::msg::NavSatFix & msg
   );
   void WaypointCallback(
     const urc_msgs::msg::Waypoint & msg

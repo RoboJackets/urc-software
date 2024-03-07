@@ -54,15 +54,15 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
     "/waypoint", rclcpp::SystemDefaultsQoS(),
     [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
-  gps_subscriber = create_subscription<nav_msgs::msg::Odometry>(
-    "/odometry/gps", rclcpp::SystemDefaultsQoS(),
-    [this](const nav_msgs::msg::Odometry msg) {GPSCallback(msg);});
+  gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
+    "/fix", rclcpp::SystemDefaultsQoS(),
+    [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
 }
 
-void Orchestrator::GPSCallback(const nav_msgs::msg::Odometry & msg)
+void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
 {
-  this->actualLatitude = msg.pose.pose.position.x;
-  this->actualLongitude = msg.pose.pose.position.y;
+  this->actualLatitude = msg.latitude;
+  this->actualLongitude = msg.longitude;
   if (this->baseLatitude == -1) {
     this->baseLatitude = this->actualLatitude;
     this->baseLongitude = this->actualLongitude;
@@ -91,7 +91,7 @@ void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
   double y = msg.orientation.y;
   double z = msg.orientation.z;
   double w = msg.orientation.w;
-  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(2, x) + pow(2, y)));
+  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(x, 2) + pow(y, 2)));
   if (this->initialYaw == -1) {
     this->initialYaw = yaw;
   }
@@ -140,10 +140,10 @@ void Orchestrator::DetermineState()
     return;
   }
 
-  double deltaX = abs(actualLatitude - waypointLatitude);
-  double deltaY = abs(actualLongitude - waypointLongitude);
+  double deltaX = waypointLongitude - actualLongitude;
+  double deltaY = waypointLatitude - actualLatitude;
   double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-  if (distance < maxDelta) {
+  if (distance < 0.00001) {
     state_message.message = "Goal";
     this->waypointLatitude = -1;
     this->waypointLongitude = -1;
@@ -151,7 +151,7 @@ void Orchestrator::DetermineState()
     state_message.message = "Navigating";
   }
   current_state_publisher->publish(state_message);
-  if (this->purePursuitEnabled) { // IMPORTANT: only for very basic testing
+  if (this->purePursuitEnabled && state_message.message != "Goal") { // IMPORTANT: only for very basic testing
     PurePursuit(deltaX, deltaY);
   }
   return;
@@ -160,18 +160,33 @@ void Orchestrator::DetermineState()
 void Orchestrator::PurePursuit(double deltaX, double deltaY)
 {
   // Publishing of Command Velocities.
-  double errorDThreshold = 0.1;
-  double errorZThreshold = 0.1;
+  double errorDThreshold = 0.00001;
+  double errorZThreshold = 0.05;
 
   geometry_msgs::msg::TwistStamped cmd_vel;
   double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
-  double currentAngle = currentYaw - initialYaw;
-  double errorZ = currentAngle - atan2(deltaY, deltaX);
+  // double currentAngle = currentYaw - initialYaw;
+  double currentAngle = this->currentYaw - this->initialYaw;
+  currentAngle *= 100;
 
-  if (abs(errorZ >= errorZThreshold)) {
-    cmd_vel.twist.angular.z = errorZ; // Will probably need to multiply by some constant.
+  RCLCPP_INFO(this->get_logger(), "BASE ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", this->initialYaw);
+  RCLCPP_INFO(this->get_logger(), "CURRENT ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", currentAngle);
+  RCLCPP_INFO(this->get_logger(), "TARGET ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", (atan2(deltaY, deltaX) - M_PI / 2));
+  double errorZ = currentAngle - (atan2(deltaY, deltaX) - M_PI / 2);
+  RCLCPP_INFO(this->get_logger(), "ERRORZ");
+  RCLCPP_INFO(this->get_logger(), "%f", errorZ);
+  if (abs(errorZ) >= errorZThreshold) {
+    RCLCPP_INFO(this->get_logger(), "CORRECTING ORIENTATION");
+    double thing = 1;
+    if (errorZ < 0) {
+      thing = -1;
+    }
+    cmd_vel.twist.angular.z = 1 * thing; // Will probably need to multiply by some constant.
   } else if (errorD >= errorDThreshold) {
-    cmd_vel.twist.linear.x = errorD; // Will probably need to multiply by some constant.
+    cmd_vel.twist.linear.x = 0.5; // Will probably need to multiply by some constant.
   }
 
   cmd_vel_publisher->publish(cmd_vel);
