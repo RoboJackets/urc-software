@@ -17,6 +17,7 @@
   <depend>behaviortree_cpp</depend>
   <depend>behaviortree_ros2</depend>
   <depend>std_msgs</depend>
+  <depend>urc_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
