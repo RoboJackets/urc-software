@@ -4,21 +4,35 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
-
-#include "pure_pursuit.hpp"
+#include <geometry_msgs/msg/twist_stamped.hpp>
+#include "urc_msgs/action/follow_path.hpp"
 
 namespace follower_action_server
 {
-class FollowerActionServer : public rclcpp::Node
-{
-public:
-  explicit FollowerActionServer(const rclcpp::NodeOptions & options);
+  class FollowerActionServer : public rclcpp::Node
+  {
+  public:
+    explicit FollowerActionServer(const rclcpp::NodeOptions &options);
 
-  ~FollowerActionServer();
+    ~FollowerActionServer();
 
-private:
-  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
-};
+  private:
+    rclcpp_action::GoalResponse handle_goal(
+        const rclcpp_action::GoalUUID &uuid,
+        std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
+
+    rclcpp_action::CancelResponse handle_cancel(
+        const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+
+    void handle_accepted(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+
+    void execute(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+
+    rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
+    rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_pub_;
+    rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
+    geometry_msgs::msg::PoseStamped current_pose_;
+  };
 } // namespace follower_action_server
 
 #endif // FOLLOWER_ACTION_SERVER_HPP_
