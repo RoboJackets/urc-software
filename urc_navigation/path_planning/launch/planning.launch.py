@@ -6,7 +6,7 @@ def generate_launch_description():
 
     path_planner_server = Node(
             package='path_planning',
-            executable='path_planning_PathPlanner',
+            executable='path_planning_PlannerServer',
             output='screen'
         )
 

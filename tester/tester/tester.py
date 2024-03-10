@@ -24,8 +24,9 @@ class TesterNode(Node):
 
         time.sleep(3)
 
-        self.call_planner_client()
+        path = self.call_planner_client()
         self.get_logger().info("Planner Server Called")
+        print(path)
 
     def call_planner_client(self):
         req = GeneratePlan.Request()
@@ -46,6 +47,8 @@ class TesterNode(Node):
         req.goal = goalPose
 
         self.future = self.client.call_async(req)
+
+        return self.future.result()
 
     def costmap_generate(self):
 
@@ -68,7 +71,7 @@ class TesterNode(Node):
         costmap.info.origin.orientation.w = 1.0
 
         map = np.ones((100, 100), dtype=np.int8)
-        map[4:8, 4:8] *= 10
+        # map[4:8, 4:8] *= 10
         costmap.data = map.flatten().tolist()
 
         costmap.data

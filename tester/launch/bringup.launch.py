@@ -28,7 +28,23 @@ def generate_launch_description():
         parameters=[LaunchConfiguration('tester_config')]
     )
 
+    trajectory_node_action_server = Node(
+        package="trajectory_following",
+        executable="trajectory_following_FollowerActionServer",
+        name="trajectory_following_FollowerActionServer",
+        output="screen",
+    )
+
+
+    path_planner_server = Node(
+        package='path_planning',
+        executable='path_planning_PlannerServer',
+        output='screen'
+    )
+
     # finalize
     ld.add_action(tester_node)
+    ld.add_action(trajectory_node_action_server)
+    ld.add_action(path_planner_server)
 
     return ld
