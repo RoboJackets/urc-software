@@ -12,6 +12,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/search/kdtree.h>
 
 namespace pointcloud_costmap
 {
@@ -24,11 +25,15 @@ class PointCloudCostmap : public rclcpp::Node
         nav_msgs::msg::OccupancyGrid convertCostmapToOccupancyGrid(const nav2_costmap_2d::Costmap2D & costmap);
         rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_subscriber;
         rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_publisher;
+        pcl::PointCloud<pcl::PointXYZ>::Ptr filterOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr& inputCloud);
+        void updateGradientsMinMax(const pcl::PointCloud<pcl::PointXYZ>::Ptr& filtered, std::vector<double>& gradients, double& minGradient, double& maxGradient, int k_neighbors);
+
+
 
         nav2_costmap_2d::Costmap2D* costmap_;
         int callback_count_;
+        int k_neighbors_;
         const int reset_frequency_ = 1;
-        std::vector<std::vector<double>> max_heights_;
 };
 
 
