@@ -30,7 +30,7 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 
 void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
-  RCLCPP_INFO(get_logger(), "Received Costmap!");
+  // RCLCPP_INFO(get_logger(), "Received Costmap!");
   current_costmap_ = *msg;
 }
 
