@@ -183,6 +183,13 @@ def generate_launch_description():
         }]
     )
 
+    twist_mux = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [PathJoinSubstitution([FindPackageShare(
+                "twist_mux"), "launch", "twist_mux_launch.py"])]
+        ),
+    )
+
     if use_simulation:
         return LaunchDescription([
             RegisterEventHandler(
@@ -196,7 +203,8 @@ def generate_launch_description():
                         load_drivetrain_controller,
                         aruco_detector,
                         aruco_location,
-                        teleop_launch
+                        teleop_launch,
+                        twist_mux
                     ],
                 )
             ),
@@ -231,5 +239,6 @@ def generate_launch_description():
             aruco_location,
             teleop_launch,
             launch_gps,
-            rosbridge_server_node
+            rosbridge_server_node,
+            twist_mux
         ])

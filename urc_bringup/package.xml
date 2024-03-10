@@ -11,6 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+  <depend>twist_mux</depend>
   <depend>rosbridge_server</depend>
   
 
