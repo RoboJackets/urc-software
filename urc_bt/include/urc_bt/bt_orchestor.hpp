@@ -2,6 +2,7 @@
 #define BT_ORCHESTOR_A6C307B5_B644_4561_AE6D_9833D66C7A1E_HPP__
 
 #include "behaviortree_cpp/bt_factory.h"
+#include "std_srvs/std_srvs/srv/detail/trigger__struct.hpp"
 #include <memory>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/node.hpp>
@@ -11,6 +12,11 @@
 
 namespace behavior
 {
+
+using TriggerRequest = std_srvs::srv::Trigger::Request::ConstSharedPtr;
+using TriggerResponse = std_srvs::srv::Trigger::Response::SharedPtr;
+using UpdateBTReqest = urc_msgs::srv::UpdateBehaviorTree::Request::ConstSharedPtr;
+using UpdateBTResponse = urc_msgs::srv::UpdateBehaviorTree::Response::SharedPtr;
 
 class BehaviorTreeOrchestor : public rclcpp::Node
 {
@@ -22,17 +28,21 @@ protected:
   BT::BehaviorTreeFactory tree_factory_;
   std::unique_ptr<BT::Tree> tree_;
 
-  void Register();
-  void RenewTree();
-  void Start();
-  void Clear();
+  void Initialize();
 
-  bool TreeLoaded();
+  UpdateBTResponse RenewTree(const UpdateBTReqest request, UpdateBTResponse response);
+  bool Start();
+  bool Stop();
 
+  bool is_tree_loaded();
   bool is_running_;
 
   std::unique_ptr<rclcpp::Logger> logger_;
+  std::shared_ptr<rclcpp::Node> bt_ros_nh_;
+  std::shared_ptr<rclcpp::Logger> bt_ros_logger_;
   rclcpp::Service<urc_msgs::srv::UpdateBehaviorTree>::SharedPtr update_bt_service_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr start_bt_service_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr stop_bt_service_;
 };
 
 }  // namespace behavior

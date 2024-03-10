@@ -4,9 +4,9 @@
   <BehaviorTree ID="Main Strategy">
     <Sequence>
       <Repeat num_cycles="3">
-        <Delay delay_msec="1050">
-          <LogInfo logger="&quot;urc_bt&quot;"
-                   message="&quot;Replace this with the true message.&quot;"/>
+        <Delay delay_msec="1000">
+          <LogInfo logger="{ros_log}"
+                   message="&quot;Testing things...&quot;"/>
         </Delay>
       </Repeat>
       <LogInfo logger="&quot;urc_bt&quot;"

@@ -2,6 +2,7 @@
 #include "behaviortree_cpp/basic_types.h"
 #include "behaviortree_cpp/bt_factory.h"
 #include "behaviortree_cpp/exceptions.h"
+#include <memory>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <string>
@@ -21,7 +22,7 @@ using namespace BT;
 
 NodeStatus LogInfo::tick()
 {
-  Expected<std::string> logger = getInput<std::string>("logger");
+  Expected<std::shared_ptr<rclcpp::Logger>> logger = getInput<std::shared_ptr<rclcpp::Logger>>("logger");
   Expected<std::string> msg = getInput<std::string>("message");
 
   if (!logger)
@@ -33,7 +34,7 @@ NodeStatus LogInfo::tick()
     throw RuntimeError("Message not get.", msg.error());
   }
 
-  RCLCPP_INFO(rclcpp::get_logger(logger->c_str()), "%s", msg->c_str());
+  RCLCPP_INFO(*logger->get(), "%s", msg->c_str());
   return NodeStatus::SUCCESS;
 }
 
