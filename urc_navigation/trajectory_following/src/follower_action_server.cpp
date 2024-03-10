@@ -104,3 +104,6 @@ namespace follower_action_server
   }
 
 } // namespace follower_node
+
+#include <rclcpp_components/register_node_macro.hpp>
+RCLCPP_COMPONENTS_REGISTER_NODE(follower_action_server::FollowerActionServer)
