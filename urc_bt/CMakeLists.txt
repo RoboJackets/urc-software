@@ -13,6 +13,8 @@ find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(urc_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+
 set(dependencies
  rclcpp
  behaviortree_cpp
@@ -20,6 +22,7 @@ set(dependencies
  pluginlib
  rclcpp_components
  urc_msgs
+ std_srvs
 )
 
 include_directories(
