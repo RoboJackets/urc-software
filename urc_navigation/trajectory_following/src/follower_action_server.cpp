@@ -12,7 +12,7 @@ namespace follower_action_server
     // Create a publisher for the carrot point
     carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
 
-    cmd_vel_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>("cmd_vel", 10);
+    cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("/diff_cont/cmd_vel_unstamped", 10);
 
     // Create an action server for the follow_path action
     follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
@@ -79,7 +79,7 @@ namespace follower_action_server
         [this, &pure_pursuit, &path, &feedback, &goal_handle]()
         {
           auto cmd_vel = pure_pursuit.getCommandVelocity(current_pose_);
-          cmd_vel_pub_->publish(cmd_vel);
+          cmd_vel_pub_->publish(cmd_vel.twist);
 
           // Publish feedback
           feedback->distance_to_goal = geometry_util::dist2D(current_pose_.pose.position, path.poses.back().pose.position);
@@ -95,8 +95,6 @@ namespace follower_action_server
         RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
         return;
       }
-
-      rclcpp::spin_some(this->get_node_base_interface());
     }
 
     // Cancel the timer

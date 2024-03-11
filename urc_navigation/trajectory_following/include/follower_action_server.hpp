@@ -5,6 +5,7 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
+#include <geometry_msgs/msg/twist.hpp>
 #include "urc_msgs/action/follow_path.hpp"
 
 namespace follower_action_server
@@ -29,7 +30,7 @@ namespace follower_action_server
     void execute(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
     rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
-    rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_pub_;
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
     rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
     geometry_msgs::msg::PoseStamped current_pose_;
   };
