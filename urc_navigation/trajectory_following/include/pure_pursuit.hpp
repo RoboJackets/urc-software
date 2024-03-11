@@ -9,54 +9,55 @@
 
 namespace pure_pursuit
 {
-  template <typename Iterator, typename UnaryPredicate>
-  Iterator find_min_by(Iterator first, Iterator last, UnaryPredicate pred)
-  {
-    auto minValue = pred(*first);
-    auto minIt = first;
-    while (first != last)
-    {
-      auto compareValue = pred(*first);
-      if (compareValue < minValue)
-      {
-        minValue = compareValue;
-        minIt = first;
-      }
-
-      ++first;
+template<typename Iterator, typename UnaryPredicate>
+Iterator find_min_by(Iterator first, Iterator last, UnaryPredicate pred)
+{
+  auto minValue = pred(*first);
+  auto minIt = first;
+  while (first != last) {
+    auto compareValue = pred(*first);
+    if (compareValue < minValue) {
+      minValue = compareValue;
+      minIt = first;
     }
-    return minIt;
+
+    ++first;
   }
+  return minIt;
+}
 
-  struct PurePursuitParams
-  {
-    double lookahead_distance;
-    double desired_linear_velocity;
-  };
+struct PurePursuitParams
+{
+  double lookahead_distance;
+  double desired_linear_velocity;
+};
 
-  struct PurePursuitOutput
-  {
-    geometry_msgs::msg::TwistStamped cmd_vel;
-    geometry_msgs::msg::PointStamped lookahead_point;
-  };
+struct PurePursuitOutput
+{
+  geometry_msgs::msg::TwistStamped cmd_vel;
+  geometry_msgs::msg::PointStamped lookahead_point;
+};
 
-  class PurePursuit
-  {
-  public:
-    explicit PurePursuit(PurePursuitParams params);
+class PurePursuit
+{
+public:
+  explicit PurePursuit(PurePursuitParams params);
 
-    void setPath(const nav_msgs::msg::Path &path);
+  void setPath(const nav_msgs::msg::Path & path);
 
-    PurePursuitOutput getCommandVelocity(
-        const geometry_msgs::msg::PoseStamped &current_pose);
+  PurePursuitOutput getCommandVelocity(
+    const geometry_msgs::msg::PoseStamped & current_pose);
 
-  private:
-    geometry_msgs::msg::PoseStamped getLookaheadPose(const nav_msgs::msg::Path &path, double lookahead_distance, const geometry_msgs::msg::PoseStamped &current_pose);
+private:
+  geometry_msgs::msg::PoseStamped getLookaheadPose(
+    const nav_msgs::msg::Path & path,
+    double lookahead_distance,
+    const geometry_msgs::msg::PoseStamped & current_pose);
 
-    nav_msgs::msg::Path path_;
+  nav_msgs::msg::Path path_;
 
-    PurePursuitParams params_;
-  };
+  PurePursuitParams params_;
+};
 } // namespace pure_pursuit
 
 #endif // PURE_PURSUIT_HPP_
