@@ -14,11 +14,15 @@ namespace pure_pursuit
     path_ = path;
   }
 
-  geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(const nav_msgs::msg::Path &path, double lookahead_distance)
+  geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(const nav_msgs::msg::Path &path, double lookahead_distance, const geometry_msgs::msg::PoseStamped &current_pose)
   {
-    // Find the first point outside the lookahead distance
-    auto pose = std::find_if(path.poses.begin(), path.poses.end(), [&](const geometry_msgs::msg::PoseStamped &pose)
-                             { return geometry_util::dist2D(pose.pose.position, path.poses.front().pose.position) > lookahead_distance; });
+    // Find the pose in the path closest to the current pose
+    auto closestPoseIt = find_min_by(path.poses.begin(), path.poses.end(), [&](const geometry_msgs::msg::PoseStamped &pose)
+                                     { return geometry_util::dist2D(pose.pose.position, current_pose.pose.position); });
+
+    // Find the first point outside the lookahead distance, starting at the pose closest to the current pose
+    auto pose = std::find_if(closestPoseIt, path.poses.end(), [&](const geometry_msgs::msg::PoseStamped &pose)
+                             { return geometry_util::dist2D(pose.pose.position, current_pose.pose.position) > lookahead_distance; });
 
     // If no point is found, return the last pose in the path
     if (pose == path.poses.end())
@@ -40,10 +44,10 @@ namespace pure_pursuit
     return lookahead_point;
   }
 
-  geometry_msgs::msg::TwistStamped PurePursuit::getCommandVelocity(
+  PurePursuitOutput PurePursuit::getCommandVelocity(
       const geometry_msgs::msg::PoseStamped &current_pose)
   {
-    auto lookahead_pose = getLookaheadPose(path_, params_.lookahead_distance);
+    auto lookahead_pose = getLookaheadPose(path_, params_.lookahead_distance, current_pose);
 
     double linear_vel, angular_vel;
     linear_vel = params_.desired_linear_velocity;
@@ -51,12 +55,21 @@ namespace pure_pursuit
     double curvature = geometry_util::calcCurvature(current_pose.pose.position, lookahead_pose.pose.position);
     angular_vel = linear_vel * curvature;
 
+    PurePursuitOutput output;
+
     geometry_msgs::msg::TwistStamped cmd_vel;
     cmd_vel.header = current_pose.header;
     cmd_vel.twist.linear.x = linear_vel;
     cmd_vel.twist.angular.z = angular_vel;
 
-    return cmd_vel;
+    output.cmd_vel = cmd_vel;
+
+    geometry_msgs::msg::PointStamped lookahead_point;
+    lookahead_point.header = current_pose.header;
+    lookahead_point.point = lookahead_pose.pose.position;
+    output.lookahead_point = lookahead_point;
+
+    return output;
   }
 
 } // namespace pure_pursuit

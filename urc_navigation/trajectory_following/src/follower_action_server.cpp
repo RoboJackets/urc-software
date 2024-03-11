@@ -14,6 +14,17 @@ namespace follower_action_server
 
     cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("/diff_cont/cmd_vel_unstamped", 10);
 
+    odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
+        "/diff_cont/odom",
+        10,
+        [this](const nav_msgs::msg::Odometry::SharedPtr msg)
+        {
+          geometry_msgs::msg::PoseStamped pose;
+          pose.header = msg->header;
+          pose.pose = msg->pose.pose;
+          current_pose_ = pose;
+        });
+
     // Create an action server for the follow_path action
     follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
         this,
@@ -66,7 +77,7 @@ namespace follower_action_server
 
     // Create a PurePursuit object
     pure_pursuit::PurePursuitParams params;
-    params.lookahead_distance = 0.5;
+    params.lookahead_distance = 1.5;
     params.desired_linear_velocity = 0.5;
     pure_pursuit::PurePursuit pure_pursuit(params);
 
@@ -78,8 +89,11 @@ namespace follower_action_server
         std::chrono::milliseconds(100),
         [this, &pure_pursuit, &path, &feedback, &goal_handle]()
         {
-          auto cmd_vel = pure_pursuit.getCommandVelocity(current_pose_);
-          cmd_vel_pub_->publish(cmd_vel.twist);
+          auto output = pure_pursuit.getCommandVelocity(current_pose_);
+          cmd_vel_pub_->publish(output.cmd_vel.twist);
+
+          // Publish the carrot point
+          carrot_pub_->publish(output.lookahead_point);
 
           // Publish feedback
           feedback->distance_to_goal = geometry_util::dist2D(current_pose_.pose.position, path.poses.back().pose.position);

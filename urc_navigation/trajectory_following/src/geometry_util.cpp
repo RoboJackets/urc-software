@@ -48,7 +48,7 @@ namespace geometry_util
 
     if (discriminant < 0)
     {
-      throw std::runtime_error("No intersection found");
+      throw std::runtime_error("No intersection found, discriminant is zero or negative.");
     }
 
     I_x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
@@ -73,7 +73,7 @@ namespace geometry_util
     }
     else
     {
-      throw std::runtime_error("No intersection found");
+      throw std::runtime_error("No intersection found between the segment end points.");
     }
 
     return intersection;

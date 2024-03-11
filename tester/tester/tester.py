@@ -56,13 +56,13 @@ class TesterNode(Node):
         req = GeneratePlan.Request()
 
         initialPose = PoseStamped()
-        initialPose.header.frame_id = "map"
+        initialPose.header.frame_id = "odom"
         initialPose.header.stamp = rclpy.time.Time().to_msg()
         initialPose.pose.position.x = 0.0
         initialPose.pose.position.y = 0.0
 
         goalPose = PoseStamped()
-        goalPose.header.frame_id = "map"
+        goalPose.header.frame_id = "odom"
         goalPose.header.stamp = rclpy.time.Time().to_msg()
         goalPose.pose.position.x = 10.0
         goalPose.pose.position.y = 10.0
@@ -82,7 +82,7 @@ class TesterNode(Node):
 
     def publish_costmap(self):
         costmap = OccupancyGrid()
-        costmap.header.frame_id = "map"
+        costmap.header.frame_id = "odom"
         costmap.header.stamp = rclpy.time.Time().to_msg()
 
         costmap.info.resolution = 1.0
