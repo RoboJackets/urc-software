@@ -25,7 +25,10 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/base/log_info.cpp
+  src/base/call_trigger.cpp
+  src/base/register.cpp
   include/urc_bt_nodes/base/log_info.hpp
+  include/urc_bt_nodes/base/call_trigger.hpp
 )
 
 # Register Node

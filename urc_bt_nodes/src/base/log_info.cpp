@@ -1,19 +1,12 @@
 #include "urc_bt_nodes/base/log_info.hpp"
 #include "behaviortree_cpp/basic_types.h"
-#include "behaviortree_cpp/bt_factory.h"
 #include "behaviortree_cpp/exceptions.h"
 #include <memory>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
 #include <string>
 #include <rclcpp/rclcpp.hpp>
-
 #include <behaviortree_ros2/plugins.hpp>
-
-BT_REGISTER_NODES(factory)
-{
-  behavior::base::RegisterNodes(factory);
-}
 
 namespace behavior::base
 {

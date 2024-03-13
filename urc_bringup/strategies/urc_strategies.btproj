@@ -3,6 +3,11 @@
     <include path="test_strategy.xml"/>
     <!-- Description of Node Models (used by Groot) -->
     <TreeNodesModel>
+        <Action ID="CallTrigger" editable="true">
+            <input_port name="nh" default="{ros_nh}">Node handle.</input_port>
+            <input_port name="service_name" default="&quot;&quot;">Service name.</input_port>
+            <input_port name="timeout" default="1.0">Timeout in seconds.</input_port>
+        </Action>
         <Action ID="LogInfo" editable="true">
             <input_port name="logger" default="&quot;urc_bt&quot;">Logger to use.</input_port>
             <input_port name="message" default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
