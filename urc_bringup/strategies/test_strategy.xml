@@ -9,7 +9,7 @@
                    message="&quot;Testing things...&quot;"/>
         </Delay>
       </Repeat>
-      <LogInfo logger="&quot;urc_bt&quot;"
+      <LogInfo logger="{ros_log}"
                message="&quot;YOOO!&quot;"/>
     </Sequence>
   </BehaviorTree>
