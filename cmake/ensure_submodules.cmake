@@ -2,7 +2,6 @@ find_package(Git QUIET)
 
 set(EXTERNAL_PACKAGES
 nanopb
-aruco_ros
 )
 set(EXTERNAL_PACKAGES_FOUND True)
 
