@@ -15,7 +15,7 @@ def generate_launch_description():
         "lib",
         "liburc_bt_nodes.so"
     )
-    bt_file_name = "test_strategy.xml"
+    bt_file_name = "bt_test.xml"
 
     enable_color = SetEnvironmentVariable(
         name="RCUTILS_COLORIZED_OUTPUT",
@@ -31,7 +31,8 @@ def generate_launch_description():
                 pkg_urc_bringup,
                 "strategies",
                 bt_file_name
-            )
+            ),
+            "tick_rate": 1
         }]
     )
 

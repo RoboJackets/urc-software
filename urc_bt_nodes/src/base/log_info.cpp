@@ -32,3 +32,8 @@ NodeStatus LogInfo::tick()
 }
 
 }  // namespace behavior::base
+
+BT_REGISTER_NODES(factory)
+{
+  factory.registerNodeType<behavior::base::LogInfo>("LogInfo");
+}
