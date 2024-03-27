@@ -1,5 +1,6 @@
 #include "urc_bt/bt_orchestor.hpp"
 #include "behaviortree_cpp/bt_factory.h"
+#include <chrono>
 #include <exception>
 #include <memory>
 #include <rclcpp/executors.hpp>
@@ -8,7 +9,9 @@
 #include <rclcpp/node.hpp>
 #include <rclcpp/node_options.hpp>
 #include <rclcpp/qos.hpp>
+#include <rclcpp/rate.hpp>
 #include <rclcpp/service.hpp>
+#include <rclcpp/time.hpp>
 #include <rclcpp/utilities.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <urc_msgs/srv/update_behavior_tree.hpp>
@@ -25,6 +28,7 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
   logger_->set_level(rclcpp::Logger::Level::Debug);
   declare_parameter<std::vector<std::string>>("node_lib_dirs");
   declare_parameter<std::string>("tree_file_dir");
+  declare_parameter<int>("tick_rate");
   declare_parameter<bool>("start_bridge", true);
 
   // register all the specified libraries
@@ -53,6 +57,15 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
     RCLCPP_WARN(*logger_,
                 "No behavior tree file set. Will not able to start the orchestor until upon calling service "
                 "/update_tree.");
+  }
+  if (has_parameter("tick_rate"))
+  {
+    tick_rate_ = get_parameter("tick_rate").as_int();
+    RCLCPP_INFO(*logger_, "Tick rate set to %d Hz.", tick_rate_);
+  }
+  else
+  {
+    RCLCPP_WARN(*logger_, "No tick rate set, default to run at 100 Hz.");
   }
 
   // starts service
@@ -164,10 +177,13 @@ bool BehaviorTreeOrchestor::Start()
   is_running_ = true;
   std::thread([this]() {
     RCLCPP_DEBUG(*logger_, "Staring BT Orchestor...");
-    // adding current node to the blackboard for conveient access
+    rclcpp::Rate rate(tick_rate_);
 
     while (is_running_)
+    {
       tree_->tickExactlyOnce();
+      rate.sleep();
+    }
   }).detach();
   return true;
 }

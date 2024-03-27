@@ -3,10 +3,14 @@
 
 #include "behaviortree_cpp/bt_factory.h"
 #include "std_srvs/std_srvs/srv/detail/trigger__struct.hpp"
+#include <chrono>
+#include <functional>
 #include <memory>
 #include <rclcpp/logger.hpp>
 #include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
 #include <rclcpp/service.hpp>
+#include <rclcpp/timer.hpp>
 #include <urc_msgs/srv/detail/update_behavior_tree__struct.hpp>
 #include <urc_msgs/srv/update_behavior_tree.hpp>
 
@@ -36,6 +40,7 @@ protected:
 
   bool is_tree_loaded();
   bool is_running_;
+  int tick_rate_ = 100;
 
   std::unique_ptr<rclcpp::Logger> logger_;
   std::shared_ptr<rclcpp::Node> bt_ros_nh_;
