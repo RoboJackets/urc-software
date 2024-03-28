@@ -13,6 +13,9 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/search/kdtree.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf2_sensor_msgs/tf2_sensor_msgs.h>
+#include <tf2_ros/buffer.h>
 
 namespace pointcloud_costmap
 {
@@ -28,12 +31,12 @@ class PointCloudCostmap : public rclcpp::Node
         pcl::PointCloud<pcl::PointXYZ>::Ptr filterOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr& inputCloud);
         void updateGradientsMinMax(const pcl::PointCloud<pcl::PointXYZ>::Ptr& filtered, std::vector<double>& gradients, double& minGradient, double& maxGradient, int k_neighbors);
 
-
-
         nav2_costmap_2d::Costmap2D* costmap_;
         int callback_count_;
         int k_neighbors_;
         const int reset_frequency_ = 1;
+        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+        std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 };
 
 
