@@ -54,7 +54,10 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(
   // Find the intersection of the lookahead circle and the line segment between prev_pose and pose, where prev_pose
   // is guaranteed to be within the lookahead circle.
   auto point = geometry_util::circleSegmentIntersection(
-    prev_pose->pose.position, pose->pose.position, lookahead_distance);
+    localized_pose_A, localized_pose_B, lookahead_distance);
+
+  point.x += current_pose.pose.position.x;
+  point.y += current_pose.pose.position.y;
 
   geometry_msgs::msg::PoseStamped lookahead_point;
   lookahead_point.header.frame_id = prev_pose->header.frame_id;
@@ -75,7 +78,10 @@ PurePursuitOutput PurePursuit::getCommandVelocity(
   double curvature = geometry_util::calcCurvature(
     current_pose.pose.position,
     lookahead_pose.pose.position);
+  
   angular_vel = linear_vel * curvature;
+
+  // TODO: take into account the robot orientation and the orientation of the lookahead point to determine angular vel
 
   PurePursuitOutput output;
 
