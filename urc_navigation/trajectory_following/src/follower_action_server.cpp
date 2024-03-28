@@ -14,6 +14,8 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 
   cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("/diff_cont/cmd_vel_unstamped", 10);
 
+  marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("marker", 10);
+
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
     "/diff_cont/odom",
     10,
@@ -92,10 +94,39 @@ void FollowerActionServer::execute(
   // Create a timer to publish the carrot point
   auto timer = create_wall_timer(
     std::chrono::milliseconds(100),
-    [this, &pure_pursuit, &path, &feedback, &goal_handle]()
+    [this, &pure_pursuit, &path, &feedback, &goal_handle, &params]()
     {
       auto output = pure_pursuit.getCommandVelocity(current_pose_);
       cmd_vel_pub_->publish(output.cmd_vel.twist);
+
+      visualization_msgs::msg::Marker circle;
+      circle.header.frame_id = "odom";
+      circle.header.stamp = get_clock()->now();
+      uint32_t shape = visualization_msgs::msg::Marker::CYLINDER;
+
+      circle.ns = "basic_shapes";
+      circle.id = 0;
+      circle.type = shape;
+      circle.action = visualization_msgs::msg::Marker::ADD;
+
+      circle.pose.position.x = current_pose_.pose.position.x;
+      circle.pose.position.y = current_pose_.pose.position.y;
+      circle.pose.position.z = 0.0;
+      circle.pose.orientation.x = 0.0;
+      circle.pose.orientation.y = 0.0;
+      circle.pose.orientation.z = 0.0;
+      circle.pose.orientation.w = 1.0;
+
+      circle.scale.x = 2 * params.lookahead_distance;
+      circle.scale.y = 2 * params.lookahead_distance;
+      circle.scale.z = 0.1;
+
+      circle.color.r = 0.0f;
+      circle.color.g = 1.0f;
+      circle.color.b = 0.0f;
+      circle.color.a = 0.5;
+
+      marker_pub_->publish(circle);
 
       // Publish the carrot point
       carrot_pub_->publish(output.lookahead_point);

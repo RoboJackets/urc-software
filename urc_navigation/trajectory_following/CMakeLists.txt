@@ -14,6 +14,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 include_directories(
   include
@@ -36,6 +37,7 @@ set(dependencies
   tf2
   tf2_geometry_msgs
   nav_msgs
+  visualization_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}

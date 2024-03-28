@@ -40,11 +40,21 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(
 
   auto prev_pose = std::prev(pose);
 
+  auto localized_pose_A = geometry_msgs::msg::Point();
+  auto localized_pose_B = geometry_msgs::msg::Point();
+
+  localized_pose_A.x = prev_pose->pose.position.x - current_pose.pose.position.x;
+  localized_pose_A.y = prev_pose->pose.position.y - current_pose.pose.position.y;
+  localized_pose_A.z = prev_pose->pose.position.z - current_pose.pose.position.z;
+
+  localized_pose_B.x = pose->pose.position.x - current_pose.pose.position.x;
+  localized_pose_B.y = pose->pose.position.y - current_pose.pose.position.y;
+  localized_pose_B.z = pose->pose.position.z - current_pose.pose.position.z;
+
   // Find the intersection of the lookahead circle and the line segment between prev_pose and pose, where prev_pose
   // is guaranteed to be within the lookahead circle.
   auto point = geometry_util::circleSegmentIntersection(
-    prev_pose->pose.position,
-    pose->pose.position, lookahead_distance);
+    prev_pose->pose.position, pose->pose.position, lookahead_distance);
 
   geometry_msgs::msg::PoseStamped lookahead_point;
   lookahead_point.header.frame_id = prev_pose->header.frame_id;

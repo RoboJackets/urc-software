@@ -71,5 +71,4 @@ geometry_msgs::msg::Point circleSegmentIntersection(
 
   return intersection;
 }
-
-} // namespace geometry_util
+}

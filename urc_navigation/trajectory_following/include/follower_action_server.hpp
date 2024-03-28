@@ -6,6 +6,7 @@
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/twist.hpp>
+#include <visualization_msgs/msg/marker.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include "urc_msgs/action/follow_path.hpp"
 
@@ -36,6 +37,8 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+  rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
   geometry_msgs::msg::PoseStamped current_pose_;
 };
