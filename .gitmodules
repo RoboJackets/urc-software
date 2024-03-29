@@ -6,9 +6,7 @@
 	path = external/gazebo_ros2_control
 	url = https://github.com/ros-controls/gazebo_ros2_control
 	branch = humble
-	ignore = dirty
 [submodule "external/aruco_ros"]
 	path = external/aruco_ros
 	url = https://github.com/yambati03/aruco_ros.git
 	branch = humble-devel
-	ignore = dirty
