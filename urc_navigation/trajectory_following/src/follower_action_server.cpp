@@ -9,6 +9,9 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(this->get_logger(), "Follower node has been started.");
 
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
   // Create a publisher for the carrot point
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
 
@@ -36,6 +39,29 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       std::placeholders::_2),
     std::bind(&FollowerActionServer::handle_cancel, this, std::placeholders::_1),
     std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
+}
+
+nav_msgs::msg::Path FollowerActionServer::transform_path_to_base_link(
+  const nav_msgs::msg::Path & path)
+{
+  nav_msgs::msg::Path transformed_path;
+  transformed_path.header = path.header;
+
+  geometry_msgs::msg::TransformStamped transform;
+  try {
+    transform = tf_buffer_->lookupTransform("base_link", path.header.frame_id, tf2::TimePointZero);
+  } catch (tf2::TransformException & ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not transform path to base_link: %s", ex.what());
+    return transformed_path;
+  }
+
+  for (const auto & pose : path.poses) {
+    geometry_msgs::msg::PoseStamped transformed_pose;
+    tf2::doTransform(pose, transformed_pose, transform);
+    transformed_path.poses.push_back(transformed_pose);
+  }
+
+  return transformed_path;
 }
 
 FollowerActionServer::~FollowerActionServer()
@@ -70,7 +96,43 @@ void FollowerActionServer::handle_accepted(
 {
   // this needs to return quickly to avoid blocking the executor, so spin up a new thread
   std::thread{std::bind(&FollowerActionServer::execute, this, std::placeholders::_1),
-    goal_handle}.detach();
+    goal_handle}
+  .detach();
+}
+
+visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
+  double x, double y,
+  double radius,
+  std::string frame_id)
+{
+  visualization_msgs::msg::Marker circle;
+  circle.header.frame_id = frame_id;
+  circle.header.stamp = get_clock()->now();
+  uint32_t shape = visualization_msgs::msg::Marker::CYLINDER;
+
+  circle.ns = "basic_shapes";
+  circle.id = 0;
+  circle.type = shape;
+  circle.action = visualization_msgs::msg::Marker::ADD;
+
+  circle.pose.position.x = x;
+  circle.pose.position.y = y;
+  circle.pose.position.z = 0.0;
+  circle.pose.orientation.x = 0.0;
+  circle.pose.orientation.y = 0.0;
+  circle.pose.orientation.z = 0.0;
+  circle.pose.orientation.w = 1.0;
+
+  circle.scale.x = 2 * radius;
+  circle.scale.y = 2 * radius;
+  circle.scale.z = 0.1;
+
+  circle.color.r = 0.0f;
+  circle.color.g = 1.0f;
+  circle.color.b = 0.0f;
+  circle.color.a = 0.5;
+
+  return circle;
 }
 
 void FollowerActionServer::execute(
@@ -89,7 +151,8 @@ void FollowerActionServer::execute(
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   // Set the path in the PurePursuit object
-  pure_pursuit.setPath(path);
+  auto transformed_path = transform_path_to_base_link(path);
+  pure_pursuit.setPath(transformed_path);
 
   // Create a timer to publish the carrot point
   auto timer = create_wall_timer(
@@ -99,33 +162,10 @@ void FollowerActionServer::execute(
       auto output = pure_pursuit.getCommandVelocity(current_pose_);
       cmd_vel_pub_->publish(output.cmd_vel.twist);
 
-      visualization_msgs::msg::Marker circle;
-      circle.header.frame_id = "odom";
-      circle.header.stamp = get_clock()->now();
-      uint32_t shape = visualization_msgs::msg::Marker::CYLINDER;
-
-      circle.ns = "basic_shapes";
-      circle.id = 0;
-      circle.type = shape;
-      circle.action = visualization_msgs::msg::Marker::ADD;
-
-      circle.pose.position.x = current_pose_.pose.position.x;
-      circle.pose.position.y = current_pose_.pose.position.y;
-      circle.pose.position.z = 0.0;
-      circle.pose.orientation.x = 0.0;
-      circle.pose.orientation.y = 0.0;
-      circle.pose.orientation.z = 0.0;
-      circle.pose.orientation.w = 1.0;
-
-      circle.scale.x = 2 * params.lookahead_distance;
-      circle.scale.y = 2 * params.lookahead_distance;
-      circle.scale.z = 0.1;
-
-      circle.color.r = 0.0f;
-      circle.color.g = 1.0f;
-      circle.color.b = 0.0f;
-      circle.color.a = 0.5;
-
+      auto circle =
+      create_lookahead_circle(
+        current_pose_.pose.position.x, current_pose_.pose.position.y,
+        params.lookahead_distance, "odom");
       marker_pub_->publish(circle);
 
       // Publish the carrot point

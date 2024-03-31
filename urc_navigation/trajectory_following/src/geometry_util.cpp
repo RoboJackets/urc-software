@@ -34,55 +34,39 @@ geometry_msgs::msg::Point circleSegmentIntersection(
   const geometry_msgs::msg::Point & a,
   const geometry_msgs::msg::Point & b, double r)
 {
+  double dy, dx, dr, D, discriminant, I_x1, I_x2, I_y1, I_y2;
+
+  dy = b.y - a.y;
+  dx = b.x - a.x;
+  dr = std::sqrt(dy * dy + dx * dx);
+  D = a.x * b.y - b.x * a.y;
+
+  discriminant = r * r * dr * dr - D * D;
+
+  if (discriminant < 0) {
+    throw std::runtime_error("No intersection found, discriminant is zero or negative.");
+  }
+
+  I_x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
+  I_x2 = (D * dy - std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
+
+  I_y1 = (-D * dx + std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
+  I_y2 = (-D * dx - std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
+
   geometry_msgs::msg::Point intersection;
 
-
-  double dx = b.x - a.x;
-  double dy = b.y - a.y;
-  
-  // Calculate the length of the vector
-  double d = std::sqrt(dx * dx + dy * dy);
-
-  // Calculate the intersection
-  intersection.x = a.x + dx * r / d;
-  intersection.y = a.y + dy * r / d;
-
-
-  return intersection;
+  if (std::min(a.x, b.x) <= I_x1 && I_x1 <= std::max(a.x, b.x) &&
+    std::min(a.y, b.y) <= I_y1 && I_y1 <= std::max(a.y, b.y))
+  {
+    intersection.x = I_x1;
+    intersection.y = I_y1;
+  } else if (std::min(a.x, b.x) <= I_x2 && I_x2 <= std::max(a.x, b.x) &&
+    std::min(a.y, b.y) <= I_y2 && I_y2 <= std::max(a.y, b.y))
+  {
+    intersection.x = I_x2;
+    intersection.y = I_y2;
+  } else {
+    throw std::runtime_error("No intersection found between the segment end points.");
+  }
 }
-}
-
-  // double dy, dx, dr, D, discriminant, I_x1, I_x2, I_y1, I_y2;
-
-  // dy = b.y - a.y;
-  // dx = b.x - a.x;
-  // dr = std::sqrt(dy * dy + dx * dx);
-  // D = a.x * b.y - b.x * a.y;
-
-  // discriminant = r * r * dr * dr - D * D;
-
-  // if (discriminant < 0) {
-  //   throw std::runtime_error("No intersection found, discriminant is zero or negative.");
-  // }
-
-  // I_x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
-  // I_x2 = (D * dy - std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
-
-  // I_y1 = (-D * dx + std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
-  // I_y2 = (-D * dx - std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
-
-  // geometry_msgs::msg::Point intersection;
-
-  // if (std::min(a.x, b.x) <= I_x1 && I_x1 <= std::max(a.x, b.x) &&
-  //   std::min(a.y, b.y) <= I_y1 && I_y1 <= std::max(a.y, b.y))
-  // {
-  //   intersection.x = I_x1;
-  //   intersection.y = I_y1;
-  // } else if (std::min(a.x, b.x) <= I_x2 && I_x2 <= std::max(a.x, b.x) &&
-  //   std::min(a.y, b.y) <= I_y2 && I_y2 <= std::max(a.y, b.y))
-  // {
-  //   intersection.x = I_x2;
-  //   intersection.y = I_y2;
-  // } else {
-  //   throw std::runtime_error("No intersection found between the segment end points.");
-  // }
+} // namespace geometry_util

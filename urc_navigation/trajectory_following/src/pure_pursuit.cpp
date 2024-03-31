@@ -78,7 +78,7 @@ PurePursuitOutput PurePursuit::getCommandVelocity(
   double curvature = geometry_util::calcCurvature(
     current_pose.pose.position,
     lookahead_pose.pose.position);
-  
+
   angular_vel = linear_vel * curvature;
 
   // TODO: take into account the robot orientation and the orientation of the lookahead point to determine angular vel

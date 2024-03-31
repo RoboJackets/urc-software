@@ -8,6 +8,9 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <nav_msgs/msg/path.hpp>
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/buffer.h"
 #include "urc_msgs/action/follow_path.hpp"
 
 namespace follower_action_server
@@ -20,6 +23,12 @@ public:
   ~FollowerActionServer();
 
 private:
+  nav_msgs::msg::Path transform_path_to_base_link(const nav_msgs::msg::Path & path);
+
+  visualization_msgs::msg::Marker create_lookahead_circle(
+    double x, double y, double radius,
+    std::string frame_id);
+
   rclcpp_action::GoalResponse handle_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
@@ -37,6 +46,9 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
