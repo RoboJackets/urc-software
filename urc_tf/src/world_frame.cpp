@@ -6,7 +6,7 @@ WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions & options
 : Node("world_frame", options)
 {
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
-  
+
   gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
     "/fix", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});

@@ -16,7 +16,7 @@ namespace world_frame
 class WorldFrameBroadcaster : public rclcpp::Node
 {
 public:
-  WorldFrameBroadcaster(const rclcpp::NodeOptions &options);
+  WorldFrameBroadcaster(const rclcpp::NodeOptions & options);
 
 private:
   double baseStationLat;
@@ -30,8 +30,9 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-  void GPSCallback(const sensor_msgs::msg::NavSatFix &msg);
-  void SetBaseCallback(const std_msgs::msg::Bool &msg);
-};}
+  void GPSCallback(const sensor_msgs::msg::NavSatFix & msg);
+  void SetBaseCallback(const std_msgs::msg::Bool & msg);
+};
+}
 
 #endif
