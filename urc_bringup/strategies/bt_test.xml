@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root BTCPP_format="4"
-      main_tree_to_execute="test">
+<root BTCPP_format="4">
   <BehaviorTree ID="test">
-    <LogInfo logger="&quot;urc_bt&quot;"
-             message="&quot;Replace this with the true message.&quot;"/>
+    <Sequence>
+      <LogInfo logger="{ros_log}"
+               message="&quot;Replace this with the true message.&quot;"/>
+      <CallTrigger service_name="/bt_orchestor/stop_bt"/>
+    </Sequence>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
+    <Action ID="CallTrigger"
+            editable="true">
+      <input_port name="service_name"
+                  default="&quot;&quot;">Service name.</input_port>
+    </Action>
     <Action ID="LogInfo"
             editable="true">
       <input_port name="logger"

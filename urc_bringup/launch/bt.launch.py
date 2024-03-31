@@ -8,13 +8,28 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_bt_nodes = os.path.join(
+    normal_lib_names = [
+        "liburc_bt_nodes.so"
+    ]
+    ros_lib_names = [
+        "libbt_call_generate_plan.so",
+        "libbt_call_trigger.so"
+    ]
+    node_lib_path_base = os.path.join(
         Path(
             get_package_share_directory("urc_bt_nodes")
         ).parent.parent.absolute(),
         "lib",
-        "liburc_bt_nodes.so"
     )
+
+    normal_lib_paths = [
+        os.path.join(node_lib_path_base, lib_name)
+        for lib_name in normal_lib_names
+    ]
+    ros_lib_paths = [
+        os.path.join(node_lib_path_base, lib_name)
+        for lib_name in ros_lib_names
+    ]
     bt_file_name = "bt_test.xml"
 
     enable_color = SetEnvironmentVariable(
@@ -26,7 +41,8 @@ def generate_launch_description():
         package="urc_bt",
         executable="urc_bt_orchestor",
         parameters=[{
-            "node_lib_dirs": [path_urc_bt_nodes],
+            "normal_node_lib_dirs": normal_lib_paths,
+            "ros_node_lib_dirs": ros_lib_paths,
             "tree_file_dir": os.path.join(
                 pkg_urc_bringup,
                 "strategies",

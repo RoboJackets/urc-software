@@ -1,5 +1,8 @@
 #include "urc_bt/bt_orchestor.hpp"
+#include "urc_bt_nodes/actions/call_trigger.hpp"
 #include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_ros2/plugins.hpp"
+#include "behaviortree_ros2/ros_node_params.hpp"
 #include <chrono>
 #include <exception>
 #include <memory>
@@ -26,21 +29,42 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
 {
   logger_ = std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestor"));
   logger_->set_level(rclcpp::Logger::Level::Debug);
-  declare_parameter<std::vector<std::string>>("node_lib_dirs");
+  declare_parameter<std::vector<std::string>>("normal_node_lib_dirs");
+  declare_parameter<std::vector<std::string>>("ros_node_lib_dirs");
   declare_parameter<std::string>("tree_file_dir");
   declare_parameter<int>("tick_rate");
   declare_parameter<bool>("start_bridge", true);
 
+  bt_ros_nh_ = create_sub_node("ros_nh");
+  bt_ros_logger_ = std::make_shared<rclcpp::Logger>(bt_ros_nh_->get_logger());
+
   // register all the specified libraries
-  if (has_parameter("node_lib_dirs"))
+  if (has_parameter("normal_node_lib_dirs"))
   {
     std::vector<std::string> temp;
-    get_parameter("node_lib_dirs", temp);
-    RCLCPP_INFO(*logger_, "All Loaded Plugins:");
+    get_parameter("normal_node_lib_dirs", temp);
+    RCLCPP_INFO(*logger_, "Loading %ld Normal Plugin%s All Loaded Plugins:", temp.size(), temp.size() > 1 ? "s." : ".");
+
     for (const auto& node_lib_dir : temp)
     {
       RCLCPP_INFO(*logger_, "\t%s", node_lib_dir.c_str());
       tree_factory_.registerFromPlugin(node_lib_dir);
+    }
+  }
+  if (has_parameter("ros_node_lib_dirs"))
+  {
+    std::vector<std::string> temp;
+    get_parameter("ros_node_lib_dirs", temp);
+    RCLCPP_INFO(*logger_, "Loading %ld ROS Plugin%s All Loaded Plugins:", temp.size(), temp.size() > 1 ? "s." : ".");
+
+    BT::RosNodeParams params_;
+    params_.nh = bt_ros_nh_;
+
+    for (const auto& node_lib_dir : temp)
+    {
+      RCLCPP_INFO(*logger_, "\t%s", node_lib_dir.c_str());
+      // tree_factory_.registerFromPlugin(node_lib_dir);
+      RegisterRosNode(tree_factory_, node_lib_dir, params_);
     }
   }
 
@@ -160,8 +184,6 @@ void BehaviorTreeOrchestor::Initialize()
   }
 
   // register current node to tree factory
-  bt_ros_nh_ = create_sub_node("ros_nh");
-  bt_ros_logger_ = std::make_shared<rclcpp::Logger>(bt_ros_nh_->get_logger());
   tree_->rootBlackboard()->set("ros_nh", bt_ros_nh_);
   tree_->rootBlackboard()->set("ros_log", bt_ros_logger_);
 }

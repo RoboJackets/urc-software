@@ -11,11 +11,20 @@ find_package(rclcpp_components REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(urc_msgs REQUIRED)
+
 set(dependencies
  rclcpp
  behaviortree_cpp
  behaviortree_ros2
  pluginlib
+
+ std_srvs
+ nav_msgs
+ urc_msgs
 )
 
 include_directories(
@@ -50,6 +59,32 @@ install(
     RUNTIME DESTINATION bin
 )
 
+# ROS Nodes Plugin Creation
+add_library(
+  bt_call_trigger SHARED
+  src/actions/call_trigger.cpp
+  include/urc_bt_nodes/actions/call_trigger.hpp
+)
+ament_target_dependencies(bt_call_trigger ${dependencies} )
+target_compile_features(bt_call_trigger PUBLIC c_std_99 cxx_std_17)
+target_compile_definitions(bt_call_trigger PRIVATE BT_PLUGIN_EXPORT)
+install(
+    TARGETS bt_call_trigger
+    LIBRARY DESTINATION lib
+)
+
+add_library(
+  bt_call_generate_plan SHARED
+  src/actions/call_generate_plan.cpp
+  include/urc_bt_nodes/actions/call_generate_plan.hpp
+)
+ament_target_dependencies(bt_call_generate_plan ${dependencies} )
+target_compile_features(bt_call_generate_plan PUBLIC c_std_99 cxx_std_17)
+target_compile_definitions(bt_call_generate_plan PRIVATE BT_PLUGIN_EXPORT)
+install(
+    TARGETS bt_call_generate_plan
+    LIBRARY DESTINATION lib
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

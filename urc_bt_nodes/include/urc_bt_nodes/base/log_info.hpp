@@ -1,7 +1,6 @@
 #ifndef LOG_INFO_B11B9468_675B_49F7_9582_049158C306CE_HPP__
 #define LOG_INFO_B11B9468_675B_49F7_9582_049158C306CE_HPP__
 
-#include "behaviortree_cpp/bt_factory.h"
 #include <behaviortree_cpp/action_node.h>
 #include <behaviortree_cpp/basic_types.h>
 #include <behaviortree_cpp/tree_node.h>
