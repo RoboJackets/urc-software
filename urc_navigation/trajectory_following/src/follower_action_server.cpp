@@ -59,8 +59,8 @@ geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_map_to_base_li
     transform = tf_buffer_->lookupTransform("base_link", map_frame, tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Could not transform path to base_link: %s", ex.what());
-    return transform;
   }
+  return transform;
 }
 
 FollowerActionServer::~FollowerActionServer()

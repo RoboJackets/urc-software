@@ -55,14 +55,14 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(
 }
 
 PurePursuitOutput PurePursuit::getCommandVelocity(
-  const geometry_msgs::msg::TransformStamped & odom_to_base_link)
+  const geometry_msgs::msg::TransformStamped & map_to_base_link)
 {
 
   nav_msgs::msg::Path transformed_path_;
 
   for (const auto & pose : path_.poses) {
     geometry_msgs::msg::PoseStamped transformed_pose;
-    tf2::doTransform(pose, transformed_pose, odom_to_base_link);
+    tf2::doTransform(pose, transformed_pose, map_to_base_link);
     transformed_path_.poses.push_back(transformed_pose);
   }
 
@@ -74,8 +74,6 @@ PurePursuitOutput PurePursuit::getCommandVelocity(
   double curvature = geometry_util::calcCurvature(lookahead_pose.pose.position);
   angular_vel = linear_vel * curvature;
 
-  // TODO(yambati03): take into account the robot orientation and the orientation of the lookahead point to determine angular vel
-
   PurePursuitOutput output;
 
   geometry_msgs::msg::TwistStamped cmd_vel;
@@ -86,20 +84,20 @@ PurePursuitOutput PurePursuit::getCommandVelocity(
   output.cmd_vel = cmd_vel;
 
   // Get inverse of odom_to_base_link
-  geometry_msgs::msg::TransformStamped base_link_to_odom;
-  base_link_to_odom.header.stamp = odom_to_base_link.header.stamp;
-  base_link_to_odom.header.frame_id = odom_to_base_link.child_frame_id;
-  base_link_to_odom.child_frame_id = odom_to_base_link.header.frame_id;
+  geometry_msgs::msg::TransformStamped base_link_to_map;
+  base_link_to_map.header.stamp = map_to_base_link.header.stamp;
+  base_link_to_map.header.frame_id = map_to_base_link.child_frame_id;
+  base_link_to_map.child_frame_id = map_to_base_link.header.frame_id;
 
-  tf2::Transform tf_odom_to_base_link;
-  tf2::fromMsg(odom_to_base_link.transform, tf_odom_to_base_link);
-  base_link_to_odom.transform = tf2::toMsg(tf_odom_to_base_link.inverse());
+  tf2::Transform tf_map_to_base_link;
+  tf2::fromMsg(map_to_base_link.transform, tf_map_to_base_link);
+  base_link_to_map.transform = tf2::toMsg(tf_map_to_base_link.inverse());
 
   geometry_msgs::msg::PointStamped lookahead_point;
   lookahead_point.header = path_.header;
   lookahead_point.point = lookahead_pose.pose.position;
 
-  tf2::doTransform(lookahead_point, lookahead_point, base_link_to_odom);
+  tf2::doTransform(lookahead_point, lookahead_point, base_link_to_map);
   output.lookahead_point = lookahead_point;
 
   return output;

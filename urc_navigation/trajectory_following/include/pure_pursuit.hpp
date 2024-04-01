@@ -52,10 +52,10 @@ public:
 
   /**
    * @brief Get the desired velocity command and lookahead point given the current pose
-   * @param current_pose The current pose of the robot in the global frame
+   * @param map_to_base_link Transform from the map frame to base link
    */
   PurePursuitOutput getCommandVelocity(
-    const geometry_msgs::msg::TransformStamped & odom_to_base_link);
+    const geometry_msgs::msg::TransformStamped & map_to_base_link);
 
 private:
   /**
