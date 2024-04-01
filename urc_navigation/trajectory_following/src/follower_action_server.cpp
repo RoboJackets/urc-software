@@ -12,21 +12,25 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(this->get_logger(), "Follower node has been started.");
 
+  declare_parameter("lookahead_distance", 1.0);
+  declare_parameter("desired_linear_velocity", 0.5);
+  declare_parameter("cmd_vel_topic", "/cmd_vel");
+  declare_parameter("odom_topic", "/odom");
+  declare_parameter("map_frame", "map");
+  declare_parameter("goal_tolerance", 0.1);
+
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  // Create a publisher for the carrot point
+  cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
+    get_parameter(
+      "cmd_vel_topic").as_string(), 10);
+
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
-
-  // Create publisher for transformed path
-  transformed_path_pub_ = create_publisher<nav_msgs::msg::Path>("transformed_path", 10);
-
-  cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>("/diff_cont/cmd_vel_unstamped", 10);
-
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
 
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
-    "/diff_cont/odom",
+    get_parameter("odom_topic").as_string(),
     10,
     [this](const nav_msgs::msg::Odometry::SharedPtr msg)
     {
@@ -47,11 +51,12 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
     std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
 }
 
-geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_odom_to_base_link()
+geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_map_to_base_link()
 {
+  std::string map_frame = get_parameter("map_frame").as_string();
   geometry_msgs::msg::TransformStamped transform;
   try {
-    transform = tf_buffer_->lookupTransform("base_link", "odom", tf2::TimePointZero);
+    transform = tf_buffer_->lookupTransform("base_link", map_frame, tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Could not transform path to base_link: %s", ex.what());
     return transform;
@@ -142,8 +147,8 @@ void FollowerActionServer::execute(
 
   // Create a PurePursuit object
   pure_pursuit::PurePursuitParams params;
-  params.lookahead_distance = 0.9;
-  params.desired_linear_velocity = 0.5;
+  params.lookahead_distance = get_parameter("lookahead_distance").as_double();
+  params.desired_linear_velocity = get_parameter("desired_linear_velocity").as_double();
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   pure_pursuit.setPath(path);
@@ -153,13 +158,13 @@ void FollowerActionServer::execute(
     std::chrono::milliseconds(100),
     [this, &pure_pursuit, &path, &feedback, &goal_handle, &params]()
     {
-      auto output = pure_pursuit.getCommandVelocity(lookup_odom_to_base_link());
+      auto output = pure_pursuit.getCommandVelocity(lookup_map_to_base_link());
       cmd_vel_pub_->publish(output.cmd_vel.twist);
 
       auto circle =
       create_lookahead_circle(
         current_pose_.pose.position.x, current_pose_.pose.position.y,
-        params.lookahead_distance, "odom");
+        params.lookahead_distance, get_parameter("map_frame").as_string());
       marker_pub_->publish(circle);
 
       // Publish the carrot point
@@ -179,7 +184,7 @@ void FollowerActionServer::execute(
       return;
     }
 
-    if (feedback->distance_to_goal < 0.1) {
+    if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");

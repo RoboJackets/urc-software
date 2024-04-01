@@ -23,7 +23,7 @@ public:
   ~FollowerActionServer();
 
 private:
-  geometry_msgs::msg::TransformStamped lookup_odom_to_base_link();
+  geometry_msgs::msg::TransformStamped lookup_map_to_base_link();
 
   visualization_msgs::msg::Marker create_lookahead_circle(
     double x, double y, double radius,
@@ -46,7 +46,6 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
-  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr transformed_path_pub_;
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

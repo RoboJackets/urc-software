@@ -70,7 +70,7 @@ void PlannerServer::generatePlan(
     response->path = plan;
     response->error_code = urc_msgs::srv::GeneratePlan::Response::SUCCESS;
 
-    RCLCPP_INFO(get_logger(), "Returning plan with %d poses", plan.poses.size());
+    RCLCPP_INFO(get_logger(), "Returning plan with %ld poses", plan.poses.size());
 
     publishPlan(plan);
   } catch (const std::exception & e) {
