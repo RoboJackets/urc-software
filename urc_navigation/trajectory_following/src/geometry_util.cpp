@@ -17,16 +17,20 @@ double distSquared2D(const geometry_msgs::msg::Point & a, const geometry_msgs::m
   return dx * dx + dy * dy;
 }
 
-double calcCurvature(
-  const geometry_msgs::msg::Point & current,
-  const geometry_msgs::msg::Point & goal)
+double magnitude(const geometry_msgs::msg::Point & p)
 {
-  double distSquared = distSquared2D(goal, current);
+  return std::sqrt(p.x * p.x + p.y * p.y);
+}
 
-  if (fabs(distSquared) > 0) {
-    return 2.0 * goal.y / distSquared;
+double calcCurvature(
+  const geometry_msgs::msg::Point & lookahead)
+{
+  double distSquared = lookahead.x * lookahead.x + lookahead.y * lookahead.y;
+
+  if (fabs(distSquared) > 0.001) {
+    return 2.0 * lookahead.y / distSquared;
   } else {
-    return MAX_CURVATURE;
+    return 0.0;
   }
 }
 

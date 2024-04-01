@@ -8,11 +8,13 @@ namespace geometry_util
 
 constexpr double MAX_CURVATURE = 1e9;
 
+double magnitude(const geometry_msgs::msg::Point & p);
+
 double dist2D(const geometry_msgs::msg::Point & a, const geometry_msgs::msg::Point & b);
 
 double distSquared2D(const geometry_msgs::msg::Point & a, const geometry_msgs::msg::Point & b);
 
-double calcCurvature(const geometry_msgs::msg::Point & a, const geometry_msgs::msg::Point & b);
+double calcCurvature(const geometry_msgs::msg::Point & lookahead);
 
 /**
    * @brief Calculate the intersection of a line segment and a circle. The derivation of the formula can be visualized here: https://www.desmos.com/calculator/vatao173by.

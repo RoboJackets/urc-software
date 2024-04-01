@@ -1,5 +1,6 @@
 #include "pure_pursuit.hpp"
 #include "geometry_util.hpp"
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace pure_pursuit
 {
@@ -16,85 +17,89 @@ void PurePursuit::setPath(const nav_msgs::msg::Path & path)
 
 geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(
   const nav_msgs::msg::Path & path,
-  double lookahead_distance,
-  const geometry_msgs::msg::PoseStamped & current_pose)
+  double lookahead_distance)
 {
-  // Find the pose in the path closest to the current pose
+  // Find the closest pose in the path
   auto closestPoseIt = find_min_by(
     path.poses.begin(), path.poses.end(), [&](const geometry_msgs::msg::PoseStamped & pose)
-    {return geometry_util::dist2D(pose.pose.position, current_pose.pose.position);});
+    {return geometry_util::magnitude(pose.pose.position);});
 
   // Find the first point outside the lookahead distance, starting at the pose closest to the current pose
   auto pose = std::find_if(
     closestPoseIt, path.poses.end(), [&](const geometry_msgs::msg::PoseStamped & pose)
-    {
-      return geometry_util::dist2D(
-        pose.pose.position,
-        current_pose.pose.position) > lookahead_distance;
-    });
+    {return geometry_util::magnitude(pose.pose.position) > lookahead_distance;});
 
   // If no point is found, return the last pose in the path
   if (pose == path.poses.end()) {
     return path.poses.back();
   }
 
+  return *pose;
+
+  // TODO(yambati03): Need to change this back to using the line-circle intersection method
+
   auto prev_pose = std::prev(pose);
-
-  auto localized_pose_A = geometry_msgs::msg::Point();
-  auto localized_pose_B = geometry_msgs::msg::Point();
-
-  localized_pose_A.x = prev_pose->pose.position.x - current_pose.pose.position.x;
-  localized_pose_A.y = prev_pose->pose.position.y - current_pose.pose.position.y;
-  localized_pose_A.z = prev_pose->pose.position.z - current_pose.pose.position.z;
-
-  localized_pose_B.x = pose->pose.position.x - current_pose.pose.position.x;
-  localized_pose_B.y = pose->pose.position.y - current_pose.pose.position.y;
-  localized_pose_B.z = pose->pose.position.z - current_pose.pose.position.z;
 
   // Find the intersection of the lookahead circle and the line segment between prev_pose and pose, where prev_pose
   // is guaranteed to be within the lookahead circle.
   auto point = geometry_util::circleSegmentIntersection(
-    localized_pose_A, localized_pose_B, lookahead_distance);
-
-  point.x += current_pose.pose.position.x;
-  point.y += current_pose.pose.position.y;
+    prev_pose->pose.position,
+    pose->pose.position, lookahead_distance);
 
   geometry_msgs::msg::PoseStamped lookahead_point;
-  lookahead_point.header.frame_id = prev_pose->header.frame_id;
-  lookahead_point.header.stamp = prev_pose->header.stamp;
+  lookahead_point.header.frame_id = pose->header.frame_id;
+  lookahead_point.header.stamp = pose->header.stamp;
   lookahead_point.pose.position = point;
 
   return lookahead_point;
 }
 
 PurePursuitOutput PurePursuit::getCommandVelocity(
-  const geometry_msgs::msg::PoseStamped & current_pose)
+  const geometry_msgs::msg::TransformStamped & odom_to_base_link)
 {
-  auto lookahead_pose = getLookaheadPose(path_, params_.lookahead_distance, current_pose);
+
+  nav_msgs::msg::Path transformed_path_;
+
+  for (const auto & pose : path_.poses) {
+    geometry_msgs::msg::PoseStamped transformed_pose;
+    tf2::doTransform(pose, transformed_pose, odom_to_base_link);
+    transformed_path_.poses.push_back(transformed_pose);
+  }
+
+  auto lookahead_pose = getLookaheadPose(transformed_path_, params_.lookahead_distance);
 
   double linear_vel, angular_vel;
   linear_vel = params_.desired_linear_velocity;
 
-  double curvature = geometry_util::calcCurvature(
-    current_pose.pose.position,
-    lookahead_pose.pose.position);
-
+  double curvature = geometry_util::calcCurvature(lookahead_pose.pose.position);
   angular_vel = linear_vel * curvature;
 
-  // TODO: take into account the robot orientation and the orientation of the lookahead point to determine angular vel
+  // TODO(yambati03): take into account the robot orientation and the orientation of the lookahead point to determine angular vel
 
   PurePursuitOutput output;
 
   geometry_msgs::msg::TwistStamped cmd_vel;
-  cmd_vel.header = current_pose.header;
+  cmd_vel.header = path_.header;
   cmd_vel.twist.linear.x = linear_vel;
   cmd_vel.twist.angular.z = angular_vel;
 
   output.cmd_vel = cmd_vel;
 
+  // Get inverse of odom_to_base_link
+  geometry_msgs::msg::TransformStamped base_link_to_odom;
+  base_link_to_odom.header.stamp = odom_to_base_link.header.stamp;
+  base_link_to_odom.header.frame_id = odom_to_base_link.child_frame_id;
+  base_link_to_odom.child_frame_id = odom_to_base_link.header.frame_id;
+
+  tf2::Transform tf_odom_to_base_link;
+  tf2::fromMsg(odom_to_base_link.transform, tf_odom_to_base_link);
+  base_link_to_odom.transform = tf2::toMsg(tf_odom_to_base_link.inverse());
+
   geometry_msgs::msg::PointStamped lookahead_point;
-  lookahead_point.header = current_pose.header;
+  lookahead_point.header = path_.header;
   lookahead_point.point = lookahead_pose.pose.position;
+
+  tf2::doTransform(lookahead_point, lookahead_point, base_link_to_odom);
   output.lookahead_point = lookahead_point;
 
   return output;
