@@ -72,8 +72,8 @@ class TesterNode(Node):
         goalPose = PoseStamped()
         goalPose.header.frame_id = "odom"
         goalPose.header.stamp = rclpy.time.Time().to_msg()
-        goalPose.pose.position.x = 1.0
-        goalPose.pose.position.y = 5.0
+        goalPose.pose.position.x = 10.0
+        goalPose.pose.position.y = 10.0
 
         req.start = initialPose
         req.goal = goalPose
