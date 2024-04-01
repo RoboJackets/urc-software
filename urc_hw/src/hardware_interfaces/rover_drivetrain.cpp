@@ -130,9 +130,9 @@ hardware_interface::return_type RoverDrivetrain::write(
   DriveEncodersMessage message = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR;
+  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR * -1;
   message.has_leftSpeed = true;
-  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR;
+  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR * -1;
   message.has_rightSpeed = true;
   message.timestamp = time.nanoseconds();
 
