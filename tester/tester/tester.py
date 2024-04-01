@@ -51,13 +51,13 @@ class TesterNode(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info("Result: {0}".format(result.sequence))
+        self.get_logger().info("Result: {0}".format(result.error_code))
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info(
-            "Received feedback: {0}".format(feedback.partial_sequence)
+            "Received feedback: {0}".format(feedback.distance_to_goal)
         )
 
     def call_planner_client(self):
@@ -127,7 +127,6 @@ def main(args=None):
     rclpy.spin(tester_node)
 
     tester_node.destroy_node()
-    rclpy.shutdown()
 
 
 if __name__ == "__main__":

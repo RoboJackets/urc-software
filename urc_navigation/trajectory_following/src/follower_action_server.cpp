@@ -56,15 +56,6 @@ geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_odom_to_base_l
     RCLCPP_ERROR(this->get_logger(), "Could not transform path to base_link: %s", ex.what());
     return transform;
   }
-
-  // for (const auto &pose : path.poses)
-  // {
-  //   geometry_msgs::msg::PoseStamped transformed_pose;
-  //   tf2::doTransform(pose, transformed_pose, transform);
-  //   transformed_path.poses.push_back(transformed_pose);
-  // }
-
-  // return transformed_path;
 }
 
 FollowerActionServer::~FollowerActionServer()
@@ -144,6 +135,8 @@ void FollowerActionServer::execute(
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   auto feedback = std::make_shared<urc_msgs::action::FollowPath::Feedback>();
+  feedback->distance_to_goal = std::numeric_limits<double>::max();
+
   auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
   auto & path = goal_handle->get_goal()->path;
 
@@ -183,6 +176,13 @@ void FollowerActionServer::execute(
     if (goal_handle->is_canceling()) {
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+      return;
+    }
+
+    if (feedback->distance_to_goal < 0.1) {
+      result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
+      goal_handle->succeed(result);
+      RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
       return;
     }
   }
