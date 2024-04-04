@@ -3,13 +3,36 @@
   <BehaviorTree ID="test">
     <Sequence>
       <LogInfo logger="{ros_log}"
-               message="&quot;Replace this with the true message.&quot;"/>
-      <CallTrigger service_name="/bt_orchestor/stop_bt"/>
+               message="Trying to Plan Path..."/>
+      <Fallback>
+        <Sequence>
+          <LogInfo logger="{ros_log}"
+                   message="Path Planning Looping..."/>
+          <RetryUntilSuccessful num_attempts="5">
+            <CallGeneratePlan start_pose="0,0,0"
+                              goal_pose="10,10,2"
+                              path="{generated_path}"
+                              service_name="/plan"/>
+          </RetryUntilSuccessful>
+        </Sequence>
+        <Sequence>
+          <LogInfo logger="{ros_log}"
+                   message="Nope."/>
+          <CallTrigger service_name="/bt_orchestor/stop_bt"/>
+        </Sequence>
+      </Fallback>
     </Sequence>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
+    <Action ID="CallGeneratePlan"
+            editable="true">
+      <input_port name="start_pose"/>
+      <input_port name="goal_pose"/>
+      <output_port name="path"/>
+      <input_port name="service_name"/>
+    </Action>
     <Action ID="CallTrigger"
             editable="true">
       <input_port name="service_name"

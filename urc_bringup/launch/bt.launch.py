@@ -13,7 +13,8 @@ def generate_launch_description():
     ]
     ros_lib_names = [
         "libbt_call_generate_plan.so",
-        "libbt_call_trigger.so"
+        "libbt_call_trigger.so",
+        "libbt_follow_path.so"
     ]
     node_lib_path_base = os.path.join(
         Path(
@@ -52,7 +53,14 @@ def generate_launch_description():
         }]
     )
 
+    path_planner_server = Node(
+        package='path_planning',
+        executable='path_planning_PlannerServer',
+        output='screen'
+    )
+
     return LaunchDescription([
+        path_planner_server,
         enable_color,
-        orchestor
+        orchestor,
     ])

@@ -1,9 +1,7 @@
 #include "urc_bt/bt_orchestor.hpp"
-#include "urc_bt_nodes/actions/call_trigger.hpp"
 #include "behaviortree_cpp/bt_factory.h"
 #include "behaviortree_ros2/plugins.hpp"
 #include "behaviortree_ros2/ros_node_params.hpp"
-#include <chrono>
 #include <exception>
 #include <memory>
 #include <rclcpp/executors.hpp>
@@ -16,6 +14,7 @@
 #include <rclcpp/service.hpp>
 #include <rclcpp/time.hpp>
 #include <rclcpp/utilities.hpp>
+#include <std_srvs/srv/detail/trigger__struct.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <urc_msgs/srv/update_behavior_tree.hpp>
 #include <string>
@@ -73,6 +72,7 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
   {
     std::string temp;
     get_parameter("tree_file_dir", temp);
+    tree_dir_ = std::make_shared<std::string>(temp);
     RCLCPP_INFO(*logger_, "Creating tree from configuration file %s.", temp.c_str());
     tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(temp));
   }
@@ -97,7 +97,21 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
       "~/update_tree",                                                //
       [this](                                                         //
           const UpdateBTReqest request, UpdateBTResponse response) {  //
-        return RenewTree(request, response);
+        response->success = RenewTree(request->use_dir, request->tree_dir, request->tree_content);
+        return response;
+      });
+  reload_bt_service_ =
+      create_service<std_srvs::srv::Trigger>("~/reload", [this](const TriggerRequest, TriggerResponse response) {
+        if (tree_dir_ == nullptr)
+        {
+          RCLCPP_WARN(*logger_, "Tree dir is null, cannot perform reload.");
+          response->success = false;
+        }
+        else
+        {
+          response->success = RenewTree(true, *tree_dir_, "");
+        }
+        return response;
       });
   start_bt_service_ = create_service<std_srvs::srv::Trigger>(  //
       "~/start_bt", [this](const TriggerRequest, TriggerResponse response) {
@@ -112,7 +126,6 @@ BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions& options)
         }
         return response;
       });
-
   stop_bt_service_ =
       create_service<std_srvs::srv::Trigger>("~/stop_bt", [this](TriggerRequest, TriggerResponse response) {
         if (is_running_)
@@ -140,19 +153,19 @@ BehaviorTreeOrchestor::~BehaviorTreeOrchestor()
   Stop();
 }
 
-UpdateBTResponse BehaviorTreeOrchestor::RenewTree(const UpdateBTReqest request, UpdateBTResponse response)
+bool BehaviorTreeOrchestor::RenewTree(bool use_dir, std::string dir, std::string content)
 {
   std::unique_ptr<BT::Tree> new_tree_;
 
   try
   {
-    if (request->use_dir)
+    if (use_dir)
     {
-      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(request->tree_dir));
+      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(dir));
     }
     else
     {
-      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromText(request->tree_content));
+      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromText(content));
     }
 
     Stop();
@@ -168,12 +181,10 @@ UpdateBTResponse BehaviorTreeOrchestor::RenewTree(const UpdateBTReqest request, 
     RCLCPP_ERROR(*logger_, "Fail to load new tree. %s.", e.what());
     is_running_ = false;
     tree_.reset(nullptr);  // auto stop tree
-    response->success = false;
-    return response;
+    return false;
   }
 
-  response->success = true;
-  return response;
+  return true;
 }
 
 void BehaviorTreeOrchestor::Initialize()

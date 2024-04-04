@@ -1,5 +1,4 @@
 #include "urc_bt_nodes/actions/call_trigger.hpp"
-#include "behaviortree_ros2/plugins.hpp"
 #include "behaviortree_cpp/basic_types.h"
 #include <rclcpp/logger.hpp>
 #include <rclcpp/logging.hpp>
@@ -27,4 +26,5 @@ BT::NodeStatus CallTrigger::onResponseReceived(const typename Response::SharedPt
 
 }  // namespace behavior::actions
 
+#include "behaviortree_ros2/plugins.hpp"
 CreateRosNodePlugin(behavior::actions::CallTrigger, "CallTrigger");

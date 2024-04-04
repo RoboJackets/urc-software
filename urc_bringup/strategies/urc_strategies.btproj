@@ -7,6 +7,12 @@
         <SubTree ID="ArmStrategies" editable="true">
             <input_port name="arm_teleop"/>
         </SubTree>
+        <Action ID="CallGeneratePlan" editable="true">
+            <input_port name="start_pose"/>
+            <input_port name="goal_pose"/>
+            <output_port name="path"/>
+            <input_port name="service_name"/>
+        </Action>
         <Action ID="CallTrigger" editable="true">
             <input_port name="service_name" default="&quot;&quot;">Service name.</input_port>
         </Action>

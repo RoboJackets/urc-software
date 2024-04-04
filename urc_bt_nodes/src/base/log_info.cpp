@@ -15,7 +15,6 @@ using namespace BT;
 
 NodeStatus LogInfo::tick()
 {
-  Expected<std::shared_ptr<rclcpp::Logger>> logger = getInput<std::shared_ptr<rclcpp::Logger>>("logger");
   Expected<std::string> msg = getInput<std::string>("message");
 
   if (!logger)

@@ -86,6 +86,19 @@ install(
     LIBRARY DESTINATION lib
 )
 
+add_library(
+  bt_follow_path SHARED
+  src/actions/follow_path.cpp
+  include/urc_bt_nodes/actions/follow_path.hpp
+)
+ament_target_dependencies(bt_follow_path ${dependencies} )
+target_compile_features(bt_follow_path PUBLIC c_std_99 cxx_std_17)
+target_compile_definitions(bt_follow_path PRIVATE BT_PLUGIN_EXPORT)
+install(
+    TARGETS bt_follow_path
+    LIBRARY DESTINATION lib
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

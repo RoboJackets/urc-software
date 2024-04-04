@@ -11,6 +11,15 @@ There are several parameters for the `urc_bt_orchestor` node:
 - `node_lib_dirs`: *array of string*, specifying path to dynamic library files for bt nodes. Will be loaded on runtime.
 - `tree_file_dir`: *string*, to the path of .xml file for behavior tree. If not specified, the tree will not be loaded and started on launching.
 - `start_bridge`: *bool*, whether initialize some of the convenient variables in the root Blackboard of the current behavior tree.
+  
+## Starting, Stopping, Hot Swapping
+
+To start or stop `bt_orchestor`, call `~/start_bt` or `~/stop_bt`. Note that the orchestor is still alive nomatter it is started or not, starting and stopping states determines whether the tree is going to tick the nodes.
+
+`bt_orchestor` enables hot-swapping by using service at runtime. After editing the tree, you do not need to restart everything. Instead, you have two options:
+
+- Calling `~/update_tree` with service type `UpdateBehaviorTree` under `urc_msgs`. You can choose to update the tree using the path to an existing .xml BT tree file, or you can directly pass the content of the tree in string.
+- Calling `~/reload` with service type `Trigger` under `std_srvs`. In this case, you have to preload the tree with a tree_dir. The orchestor will by-default load that file.
 
 ## Editing the Tree
 
@@ -22,3 +31,21 @@ Note that to provide a bridge between ros and bt, upon launch, `urc_bt_orchestor
 - `ros_log`: *shared ptr*, a ros logger.
 
 This functionality can be disabled by changing the settings.
+
+## Creating Custom Nodes
+
+### Program and Compile the New Node
+
+There are generally two types of nodes: raw BTCPP nodes and BTCPP.ROS2 nodes.
+
+`urc_bt` use dynamic libraries to enable hot load / unload of nodes at runtime, and thus this is the recommended way to extend the node library under `urc_bt_nodes`.
+
+Note that two types of nodes have to be registered differently: raw BTCPP nodes can be registered in multiples in one plugin, while for BTCPP.ROS2 nodes, you have to create one plugin for one node, and manually register them inside the cmake file. Generally, you can follow the template created by existing nodes.
+
+### Register the Node in Groot2
+
+After creating your nodes, you have to manually register them inside Groot2. Note that having your nodes' dynamic library loaded does not mean Groot2 will automatically get the definition of the nodes: Groot2 is only an editor and does not know the actual node implementation.
+
+You can register a new node by clicking the "plus" icon inside Groot2 and get all the input and output ports registered correctly.
+
+For more info on the nodes available, check [Nodes Library](https://www.behaviortree.dev/docs/category/nodes-library) from the official BT.CPP website.

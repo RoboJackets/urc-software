@@ -1,5 +1,5 @@
-#ifndef CALL_TRIGGER_BF19F36F_3E0F_49B8_AC4F_53643F93E828_HPP__
-#define CALL_TRIGGER_BF19F36F_3E0F_49B8_AC4F_53643F93E828_HPP__
+#ifndef CALL_TRIGGER_A933F4A5_2CB9_437C_AC3C_5B5A1EA815AA_HPP__
+#define CALL_TRIGGER_A933F4A5_2CB9_437C_AC3C_5B5A1EA815AA_HPP__
 
 #include "std_srvs/srv/trigger.hpp"
 #include "behaviortree_cpp/basic_types.h"
@@ -41,4 +41,4 @@ inline std::shared_ptr<rclcpp::Logger> convertFromString(StringView str)
 
 };  // namespace BT
 
-#endif /* CALL_TRIGGER_BF19F36F_3E0F_49B8_AC4F_53643F93E828_HPP__ */
+#endif /* CALL_TRIGGER_A933F4A5_2CB9_437C_AC3C_5B5A1EA815AA_HPP__ */
