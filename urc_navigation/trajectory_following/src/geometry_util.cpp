@@ -38,7 +38,7 @@ geometry_msgs::msg::Point circleSegmentIntersection(
   const geometry_msgs::msg::Point & a,
   const geometry_msgs::msg::Point & b, double r)
 {
-  double dy, dx, dr, D, discriminant, I_x1, I_x2, I_y1, I_y2;
+  double dy, dx, dr, D, discriminant, x1, x2, y1, y2;
 
   dy = b.y - a.y;
   dx = b.x - a.x;
@@ -51,26 +51,46 @@ geometry_msgs::msg::Point circleSegmentIntersection(
     throw std::runtime_error("No intersection found, discriminant is zero or negative.");
   }
 
-  I_x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
-  I_x2 = (D * dy - std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
+  x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
+  x2 = (D * dy - std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
 
-  I_y1 = (-D * dx + std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
-  I_y2 = (-D * dx - std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
+  y1 = (-D * dx + std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
+  y2 = (-D * dx - std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
+
+  bool p1_in_segment =
+    std::min(
+    a.x,
+    b.x) <= x1 &&
+    x1 <= std::max(a.x, b.x) && std::min(a.y, b.y) <= y1 && y1 <= std::max(a.y, b.y);
+  bool p2_in_segment =
+    std::min(
+    a.x,
+    b.x) <= x2 &&
+    x2 <= std::max(a.x, b.x) && std::min(a.y, b.y) <= y2 && y2 <= std::max(a.y, b.y);
 
   geometry_msgs::msg::Point intersection;
 
-  if (std::min(a.x, b.x) <= I_x1 && I_x1 <= std::max(a.x, b.x) &&
-    std::min(a.y, b.y) <= I_y1 && I_y1 <= std::max(a.y, b.y))
-  {
-    intersection.x = I_x1;
-    intersection.y = I_y1;
-  } else if (std::min(a.x, b.x) <= I_x2 && I_x2 <= std::max(a.x, b.x) &&
-    std::min(a.y, b.y) <= I_y2 && I_y2 <= std::max(a.y, b.y))
-  {
-    intersection.x = I_x2;
-    intersection.y = I_y2;
+  if (p1_in_segment && !p2_in_segment) {
+    intersection.x = x1;
+    intersection.y = y1;
+  } else if (p2_in_segment && !p1_in_segment) {
+    intersection.x = x2;
+    intersection.y = y2;
+  } else if (p1_in_segment && p2_in_segment) {
+    double d1 = distSquared2D(b, intersection);
+    double d2 = distSquared2D(b, intersection);
+
+    if (d1 < d2) {
+      intersection.x = x1;
+      intersection.y = y1;
+    } else {
+      intersection.x = x2;
+      intersection.y = y2;
+    }
   } else {
     throw std::runtime_error("No intersection found between the segment end points.");
   }
+
+  return intersection;
 }
 } // namespace geometry_util

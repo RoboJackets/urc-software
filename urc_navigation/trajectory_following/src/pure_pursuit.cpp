@@ -34,10 +34,6 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(
     return path.poses.back();
   }
 
-  return *pose;
-
-  // TODO(yambati03): Need to change this back to using the line-circle intersection method
-
   auto prev_pose = std::prev(pose);
 
   // Find the intersection of the lookahead circle and the line segment between prev_pose and pose, where prev_pose
