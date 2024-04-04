@@ -26,7 +26,7 @@ def generate_launch_description():
     spawn_robot = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '0.3',
+        arguments=['-entity', 'walli', '-x', '0', '-y', '0', '-z', '15',
                    '-topic', '/robot_description']
     )
     robot_state_publisher_node = Node(
@@ -46,21 +46,7 @@ def generate_launch_description():
         condition=launch.conditions.UnlessCondition(LaunchConfiguration('gui')),
         parameters=[{"use_sim_time": use_sim_time}]
     )
-    joint_state_publisher_gui_node = Node(
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui',
-        condition=launch.conditions.IfCondition(LaunchConfiguration('gui')),
-        parameters=[{"use_sim_time": use_sim_time}]
-    )
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
-        parameters=[{"use_sim_time": use_sim_time}]
-    )
+
     robot_localization_node = launch_ros.actions.Node(
         package='robot_localization',
         executable='ekf_node',
@@ -108,12 +94,6 @@ def generate_launch_description():
                         on_exit=[gorilla_grip],
                 )
         ),
-        RegisterEventHandler(
-                event_handler=OnProcessExit(
-                        target_action=load_joint_trajectory_controller,
-                        on_exit=[rviz_node],
-                )
-        ),
 
         DeclareLaunchArgument(name='gui',
                               default_value='True',
@@ -129,7 +109,6 @@ def generate_launch_description():
                               description='Flag to enable use_sim_time'),
         robot_state_publisher_node,
         joint_state_publisher_node,
-        joint_state_publisher_gui_node,
         robot_localization_node,
         spawn_robot
     ])

@@ -26,6 +26,7 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_nmea_navsat_driver = FindPackageShare(
         "nmea_navsat_driver").find("nmea_navsat_driver")
@@ -40,7 +41,7 @@ def generate_launch_description():
         pkg_urc_bringup,
         'config', 'controller_config.yaml'
     )
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     xacro_file = os.path.join(
@@ -56,8 +57,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
         ),
-        launch_arguments={"use_sim_time": "true"}.items()
-        # launch_arguments={"world": world_path}.items()
+        launch_arguments={"use_sim_time": "true", "world": world_path}.items()
     )
     control_node = Node(
         package="controller_manager",
