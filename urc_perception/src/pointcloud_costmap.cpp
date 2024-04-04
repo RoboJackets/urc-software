@@ -6,19 +6,17 @@ namespace pointcloud_costmap
         : rclcpp::Node("pointcloud_costmap", options)
     {
         pointcloud_subscriber = create_subscription<sensor_msgs::msg::PointCloud2>(
-            "/camera/depth/color/points", rclcpp::SystemDefaultsQoS(),
+            "/camera/points", rclcpp::SystemDefaultsQoS(),
             [this](const sensor_msgs::msg::PointCloud2 msg)
             { PointCloudCallback(msg); });
 
         costmap_publisher = create_publisher<nav_msgs::msg::OccupancyGrid>(
             "/costmap2", rclcpp::SystemDefaultsQoS());
 
-        // Initialize tf listener
-        tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
+        tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-        costmap_ = new nav2_costmap_2d::Costmap2D(50, 50, 0.1, -5, -5);
-        callback_count_ = 0;
+        costmap_ = new nav2_costmap_2d::Costmap2D(50, 50, 0.1, -2.5, -2.5);
         k_neighbors_ = 10;
     }
 
@@ -28,56 +26,35 @@ namespace pointcloud_costmap
         double xSize = (double)costmap_->getSizeInCellsX();
         double ySize = (double)costmap_->getSizeInCellsY();
 
-        callback_count_++;
+        pcl::PointCloud<pcl::PointXYZ> cloud;
+        pcl::fromROSMsg(msg, cloud);
 
-        if (callback_count_ % reset_frequency_ == 0)
-        {
-            costmap_->resetMap(0, 0, xSize, ySize);
-        }
-
-        sensor_msgs::msg::PointCloud2 transformed_cloud;
-        std::string target_frame = "map";
-        try{
-            if(tf_buffer_->canTransform(target_frame, msg.header.frame_id, msg.header.stamp, tf2::durationFromSec(1.0))){
-                tf_buffer_->transform(msg, transformed_cloud, target_frame);
-                pcl::PointCloud<pcl::PointXYZ> cloud;
-                pcl::fromROSMsg(transformed_cloud, cloud);
-
-                pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
-                *cloudPtr = cloud; // Copy the data into the shared pointer
-
-                pcl::PointCloud<pcl::PointXYZ>::Ptr filtered = filterOutliers(cloudPtr);
-
-                std::vector<double> gradients(filtered->points.size(), 0.0); // init grads to 0
-                double minGradient = std::numeric_limits<double>::max();
-                double maxGradient = std::numeric_limits<double>::lowest();
-
-                // Compute gradients and find min/max
-                updateGradientsMinMax(filtered, gradients, minGradient, maxGradient, k_neighbors_);
-
-                // Code to actually compute costmap
-                for (size_t i = 0; i < filtered->points.size(); i++)
-                {
-                    pcl::PointXYZ point = filtered->points[i];
-                    unsigned int mx, my;
-                    if (costmap_->worldToMap(point.x, point.y, mx, my))
-                    {
-                        unsigned char cost = (unsigned char)(gradients[i] * 100);
-                        costmap_->setCost(mx, my, cost);
-                    }
-                }
-            }
-            else {
-                RCLCPP_ERROR(this->get_logger(), "Transform failed");
-                return;
-            }
-        }
-        catch (const tf2::TransformException &ex) {
-            RCLCPP_ERROR(this->get_logger(), "Transform exception: %s", ex.what());
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
+        *cloudPtr = cloud; // Copy the data into the shared pointer
+        if(cloudPtr->points.empty()){
+            RCLCPP_ERROR(this->get_logger(), "Point cloud is empty");
             return;
         }
-        
+        pcl::PointCloud<pcl::PointXYZ>::Ptr filtered = filterOutliers(cloudPtr);
 
+        std::vector<double> gradients(filtered->points.size(), 0.0); // init grads to 0
+        double minGradient = std::numeric_limits<double>::max();
+        double maxGradient = std::numeric_limits<double>::lowest();
+
+        // Compute gradients and find min/max
+        updateGradientsMinMax(filtered, gradients, minGradient, maxGradient, k_neighbors_);
+
+        // Code to actually compute costmap
+        for (size_t i = 0; i < filtered->points.size(); i++)
+        {
+            pcl::PointXYZ point = filtered->points[i];
+            unsigned int mx, my;
+            if (costmap_->worldToMap(point.x, point.y, mx, my))
+            {
+                unsigned char cost = (unsigned char)(gradients[i] * 100);
+                costmap_->setCost(mx, my, cost);
+            }
+        }
         nav_msgs::msg::OccupancyGrid grid = convertCostmapToOccupancyGrid(*costmap_);
 
         costmap_publisher->publish(grid);
@@ -166,6 +143,13 @@ namespace pointcloud_costmap
                 }
             }
         }
+    }
+
+    // returns a transform from the camera link to the odom frame
+    geometry_msgs::msg::TransformStamped PointCloudCostmap::lookup_camera_odom(){
+        std::string map_frame = get_parameter("camera_link").as_string();
+        std::string odom_frame = get_parameter("odom").as_string();
+        return tf_buffer_->lookupTransform(map_frame, odom_frame, tf2::TimePointZero);
     }
 }
 

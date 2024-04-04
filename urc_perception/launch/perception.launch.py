@@ -69,13 +69,13 @@ def generate_launch_description():
     #     ),
     # )
 
-    realsense = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [PathJoinSubstitution([FindPackageShare(
-                "realsense2_camera"), "launch", "rs_launch.py"])]
-        ),
-        launch_arguments=[("align_depth", "true"), ("pointcloud.enable", "true")],
-    )
+    # realsense = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [PathJoinSubstitution([FindPackageShare(
+    #             "realsense2_camera"), "launch", "rs_launch.py"])]
+    #     ),
+    #     launch_arguments=[("align_depth", "true"), ("pointcloud.enable", "true")],
+    # )
 
     return LaunchDescription([
         aruco_detector_node,
@@ -83,6 +83,6 @@ def generate_launch_description():
         depth_laserscan_node,
         pointcloud_costmap_node,
         # costmap_generator_node,
-        realsense,
+        # realsense,
         # aruco
     ])

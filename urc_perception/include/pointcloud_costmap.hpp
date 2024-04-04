@@ -31,12 +31,10 @@ class PointCloudCostmap : public rclcpp::Node
         pcl::PointCloud<pcl::PointXYZ>::Ptr filterOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr& inputCloud);
         void updateGradientsMinMax(const pcl::PointCloud<pcl::PointXYZ>::Ptr& filtered, std::vector<double>& gradients, double& minGradient, double& maxGradient, int k_neighbors);
 
+        tf2_ros::Buffer tf_buffer_;
+        tf2_ros::TransformListener tf_listener_;
         nav2_costmap_2d::Costmap2D* costmap_;
-        int callback_count_;
         int k_neighbors_;
-        const int reset_frequency_ = 1;
-        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-        std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
 };
 
 
