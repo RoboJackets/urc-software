@@ -14,8 +14,8 @@
 #    disclaimer in the documentation and/or other materials provided
 #    with the distribution.
 #  * Neither the names of the authors nor the names of their
-#    affiliated organizations may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
+#    affiliated organizations may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import math
-
 import rclpy
 
 from rclpy.node import Node
@@ -138,11 +137,6 @@ class Ros2IMUDriver(Node):
 
         self.get_logger().warn("Sentence received: %s" % imu_string)
         things = re.findall("-?[0-9]\.[0-9][0-9]", str(imu_string))
-        self.get_logger().warn("First item: %s" % things[0])
-        self.get_logger().warn("Second item: %s" % things[1])
-        self.get_logger().warn("Third item: %s" % things[2])
-        self.get_logger().warn("Fourth item: %s" % things[3])
-        # self.get_logger().warn("Hello world")
         current_imu = Quaternion()
         current_imu.x = float(things[0])
         current_imu.y = float(things[1])

@@ -14,8 +14,8 @@
 #    disclaimer in the documentation and/or other materials provided
 #    with the distribution.
 #  * Neither the names of the authors nor the names of their
-#    affiliated organizations may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
+#    affiliated organizations may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -67,4 +67,6 @@ def main(args=None):
             driver.get_logger().error("Ros error: {0}".format(e))
             IMU.close()  # Close GPS serial port
     except serial.SerialException as ex:
-        driver.get_logger().fatal("Could not open serial port: I/O error({0}): {1}".format(ex.errno, ex.strerror))
+        driver.get_logger().fatal("Could not open serial port"
+                                  ": I/O error({0}): {1}".format(
+                                      ex.errno, ex.strerror))

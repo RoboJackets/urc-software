@@ -24,7 +24,9 @@ from launch_ros import actions
 
 def generate_launch_description():
     """Generate a launch description for a single serial driver."""
-    config_file = os.path.join(get_package_share_directory("imu_driver"), "config", "imu_serial_driver.yaml")
+    config_file = os.path.join(
+        get_package_share_directory("imu_driver"),
+        "config", "imu_serial_driver.yaml")
     driver_node = actions.Node(
         package='imu_driver',
         executable='imu_serial_driver',

@@ -13,8 +13,10 @@ setup(
         ('share/ament_index/resource_index/packages',
          ['resource/' + PACKAGE_NAME]),
         ('share/' + PACKAGE_NAME, ['package.xml']),
-        (os.path.join(SHARE_DIR, "launch"), glob(os.path.join("launch", "*.launch.py"))),
-        (os.path.join(SHARE_DIR, "config"), glob(os.path.join("config", "*.yaml")))],
+        (os.path.join(SHARE_DIR, "launch"),
+         glob(os.path.join("launch", "*.launch.py"))),
+        (os.path.join(SHARE_DIR, "config"),
+         glob(os.path.join("config", "*.yaml")))],
     package_dir={'': 'src', },
     py_modules=[],
     zip_safe=True,
@@ -25,13 +27,14 @@ setup(
     author='Eric Perko',
     maintainer='Ed Venator',
     keywords=['ROS2'],
-    description='Package to parse IMU strings and publish a very simple GPS message.',
+    description='Package to parse IMU strings' +
+    'and publish a very simple GPS message.',
     license='BSD',
     entry_points={
-        'console_scripts': ['imu_serial_driver = libimu_driver.nodes.imu_serial_driver:main',
-                            'imu_socket_driver = libimu_driver.nodes.imu_socket_driver:main',
-                            'imu_tcpclient_driver = libimu_driver.nodes.imu_tcpclient_driver:main',
-                            'imu_topic_driver = libimu_driver.nodes.imu_topic_driver:main',
-                            'imu_topic_serial_reader = libimu_driver.nodes.imu_topic_serial_reader:main'],
+        'console_scripts': [
+            'imu_serial_driver = libimu_driver.nodes.imu_serial_driver:main',
+            'imu_topic_driver = libimu_driver.nodes.imu_topic_driver:main',
+            'imu_topic_serial_reader = libimu_driver.nodes.' +
+            'imu_topic_serial_reader:main'],
     }
 )

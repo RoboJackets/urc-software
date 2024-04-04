@@ -14,8 +14,8 @@
 #    disclaimer in the documentation and/or other materials provided
 #    with the distribution.
 #  * Neither the names of the authors nor the names of their
-#    affiliated organizations may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
+#    affiliated organizations may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,12 +41,16 @@ from libimu_driver.driver import Ros2IMUDriver
 
 def imu_sentence_callback(imu_sentence, driver):
     try:
-        driver.add_sentence(imu_sentence.sentence, frame_id=imu_sentence.header.frame_id,
+        driver.add_sentence(imu_sentence.sentence,
+                            frame_id=imu_sentence.header.frame_id,
                             timestamp=imu_sentence.header.stamp)
     except ValueError as e:
         rclpy.get_logger().warn(
-            "Value error, likely due to missing fields in the IMU message. Error was: %s. "
-            "Please report this issue at github.com/ros-drivers/nmea_navsat_driver, including a bag file with "
+            "Value error, likely due to missing fields in the IMU message. "
+            "Error was: %s. "
+            "Please report this issue at "
+            "github.com/ros-drivers/nmea_navsat_driver, "
+            "including a bag file with "
             "the IMU sentences that caused it." % e)
 
 
@@ -57,7 +61,8 @@ def main(args=None):
     driver.get_frame_id()
 
     driver.create_subscription(
-        Sentence, 'imu_sentence', partial(imu_sentence_callback, driver=driver), 10)
+        Sentence, 'imu_sentence', partial(
+            imu_sentence_callback, driver=driver), 10)
 
     rclpy.spin(driver)
 

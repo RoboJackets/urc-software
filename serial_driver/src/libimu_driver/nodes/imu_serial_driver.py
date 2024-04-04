@@ -14,8 +14,8 @@
 #    disclaimer in the documentation and/or other materials provided
 #    with the distribution.
 #  * Neither the names of the authors nor the names of their
-#    affiliated organizations may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
+#    affiliated organizations may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -48,7 +48,9 @@ def main(args=None):
 
     try:
         IMU = serial.Serial(port=serial_port, baudrate=serial_baud, timeout=2)
-        driver.get_logger().info("Successfully connected to {0} at {1}.".format(serial_port, serial_baud))
+        driver.get_logger().info(
+            "Successfully connected to {0} at {1}.".format(
+                serial_port, serial_baud))
         try:
             while rclpy.ok():
                 data = IMU.readline().strip()
@@ -58,12 +60,16 @@ def main(args=None):
                     driver.add_sentence(data, frame_id)
                 except ValueError as e:
                     driver.get_logger().warn(
-                        "Value error, likely due to missing fields in the IMU message. Error was: %s. "
-                        "Please report this issue at github.com/ros-drivers/nmea_navsat_driver, including a bag file "
+                        "Value error, likely due to missing fields in the"
+                        "IMU message. Error was: %s. Please report this "
+                        "issue at github.com/ros-drivers/nmea_navsat_driver,"
+                        " including a bag file "
                         "with the NMEA sentences that caused it." % e)
 
         except Exception as e:
             driver.get_logger().error("Ros error: {0}".format(e))
             IMU.close()  # Close GPS serial port
     except serial.SerialException as ex:
-        driver.get_logger().fatal("Could not open serial port: I/O error({0}): {1}".format(ex.errno, ex.strerror))
+        driver.get_logger().fatal(
+            "Could not open serial port: I/O "
+            "error({0}): {1}".format(ex.errno, ex.strerror))
