@@ -21,17 +21,20 @@ namespace behavior::actions
 class CallGeneratePlan : public BT::RosServiceNode<urc_msgs::srv::GeneratePlan>
 {
 public:
-  CallGeneratePlan(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params)
-    : BT::RosServiceNode<urc_msgs::srv::GeneratePlan>(name, conf, params){};
+  CallGeneratePlan(
+    const std::string & name, const BT::NodeConfig & conf,
+    const BT::RosNodeParams & params)
+  : BT::RosServiceNode<urc_msgs::srv::GeneratePlan>(name, conf, params) {}
 
-  bool setRequest(Request::SharedPtr& request) override final;
-  virtual BT::NodeStatus onResponseReceived(const Response::SharedPtr& response) override final;
+  bool setRequest(Request::SharedPtr & request) override final;
+  virtual BT::NodeStatus onResponseReceived(const Response::SharedPtr & response) override final;
 
   static BT::PortsList providedPorts()
   {
-    return providedBasicPorts({ BT::InputPort<geometry_msgs::msg::Pose>("start_pose"),
-                                BT::InputPort<geometry_msgs::msg::Pose>("goal_pose"),
-                                BT::OutputPort<nav_msgs::msg::Path>("path", "Path to follow.") });
+    return providedBasicPorts(
+      {BT::InputPort<geometry_msgs::msg::Pose>("start_pose"),
+        BT::InputPort<geometry_msgs::msg::Pose>("goal_pose"),
+        BT::OutputPort<nav_msgs::msg::Path>("path", "Path to follow.")});
   }
 };
 }  // namespace behavior::actions
@@ -39,12 +42,12 @@ public:
 namespace BT
 {
 
-template <>
+template<>
 inline std::shared_ptr<rclcpp::Logger> convertFromString(StringView str)
 {
   return std::make_shared<rclcpp::Logger>(rclcpp::get_logger(std::string(str).c_str()));
 }
 
-};  // namespace BT
+}   // namespace BT
 
 #endif /* CALL_GENERATE_PLAN_CC0D7EFA_5619_4D48_88B3_B305A8565228_HPP__ */

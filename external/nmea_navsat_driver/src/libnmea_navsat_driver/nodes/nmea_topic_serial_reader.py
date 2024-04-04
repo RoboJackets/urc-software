@@ -45,8 +45,8 @@ def main(args=None):
 
     nmea_pub = driver.create_publisher(Sentence, "nmea_sentence", 10)
 
-    serial_port = driver.declare_parameter('port', '/dev/ttyUSB0').value
-    serial_baud = driver.declare_parameter('baud', 4800).value
+    serial_port = driver.declare_parameter("port", "/dev/ttyUSB0").value
+    serial_baud = driver.declare_parameter("baud", 4800).value
 
     # Get the frame_id
     frame_id = driver.get_frame_id()
@@ -67,4 +67,8 @@ def main(args=None):
             driver.get_logger().error("Ros error: {0}".format(e))
             GPS.close()  # Close GPS serial port
     except serial.SerialException as ex:
-        driver.get_logger().fatal("Could not open serial port: I/O error({0}): {1}".format(ex.errno, ex.strerror))
+        driver.get_logger().fatal(
+            "Could not open serial port: I/O error({0}): {1}".format(
+                ex.errno, ex.strerror
+            )
+        )

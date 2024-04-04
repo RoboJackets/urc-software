@@ -16,11 +16,13 @@ namespace behavior::actions
 class CallTrigger : public BT::RosServiceNode<std_srvs::srv::Trigger>
 {
 public:
-  CallTrigger(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params)
-    : BT::RosServiceNode<std_srvs::srv::Trigger>(name, conf, params){};
+  CallTrigger(
+    const std::string & name, const BT::NodeConfig & conf,
+    const BT::RosNodeParams & params)
+  : BT::RosServiceNode<std_srvs::srv::Trigger>(name, conf, params) {}
 
-  bool setRequest(Request::SharedPtr& request) override final;
-  virtual BT::NodeStatus onResponseReceived(const Response::SharedPtr& response) override final;
+  bool setRequest(Request::SharedPtr & request) override final;
+  virtual BT::NodeStatus onResponseReceived(const Response::SharedPtr & response) override final;
 
   static BT::PortsList providedPorts()
   {
@@ -33,12 +35,12 @@ public:
 namespace BT
 {
 
-template <>
+template<>
 inline std::shared_ptr<rclcpp::Logger> convertFromString(StringView str)
 {
   return std::make_shared<rclcpp::Logger>(rclcpp::get_logger(std::string(str).c_str()));
 }
 
-};  // namespace BT
+}   // namespace BT
 
 #endif /* CALL_TRIGGER_F0DD3642_B22A_4B70_92C6_3CF025406B0B_HPP__ */

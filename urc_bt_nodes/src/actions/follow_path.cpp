@@ -6,7 +6,7 @@
 namespace behavior::actions
 {
 
-bool FollowPath::setGoal(Goal& goal)
+bool FollowPath::setGoal(Goal & goal)
 {
   goal.path = getInput<nav_msgs::msg::Path>("path").value();
   return true;
@@ -19,20 +19,22 @@ void FollowPath::onHalt()
 
 BT::NodeStatus FollowPath::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
-  if (feedback->distance_to_goal < 0)
-  {
+  if (feedback->distance_to_goal < 0) {
     RCLCPP_ERROR(node_->get_logger(), "Negative distance to target, terminating following.");
     return BT::NodeStatus::FAILURE;
   }
-  RCLCPP_INFO(node_->get_logger(), "Following Path, %.2f m away from destination.", feedback->distance_to_goal);
+  RCLCPP_INFO(
+    node_->get_logger(), "Following Path, %.2f m away from destination.",
+    feedback->distance_to_goal);
   return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus FollowPath::onResultReceived(const WrappedResult& wr)
+BT::NodeStatus FollowPath::onResultReceived(const WrappedResult & wr)
 {
   RCLCPP_INFO(node_->get_logger(), "Path following is finished, code: %hu.", wr.result->error_code);
-  if (wr.result->error_code == 0)
+  if (wr.result->error_code == 0) {
     return BT::NodeStatus::SUCCESS;
+  }
 
   // TODO: do some processing with the other error codes
   return BT::NodeStatus::FAILURE;

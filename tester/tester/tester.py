@@ -12,17 +12,16 @@ from urc_msgs.action import FollowPath
 class TesterNode(Node):
 
     def __init__(self):
-        super().__init__('tester')
+        super().__init__("tester")
         self.costmap_pub = self.create_publisher(OccupancyGrid, "/costmap", 10)
         self.timer = self.create_timer(0.02, self.publish_costmap)
 
         self.planner_client = self.create_client(GeneratePlan, "plan")
         self.follower_client = ActionClient(self, FollowPath, "follow_path")
 
-
     def call_trajectory_follower(self, path):
         goal_msg = FollowPath.Goal()
-        goal_msg.path = path 
+        goal_msg.path = path
 
         self.follower_client.wait_for_server()
 
@@ -30,27 +29,28 @@ class TesterNode(Node):
         self.get_logger().info("Trajectory Follower Called...")
 
         follower_future.add_done_callback(self.goal_response_callback)
-    
+
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected :(')
+            self.get_logger().info("Goal rejected :(")
             return
 
-        self.get_logger().info('Goal accepted :)')
+        self.get_logger().info("Goal accepted :)")
 
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Result: {0}'.format(result.sequence))
+        self.get_logger().info("Result: {0}".format(result.sequence))
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
-        self.get_logger().info('Received feedback: {0}'.format(feedback.partial_sequence))
-
+        self.get_logger().info(
+            "Received feedback: {0}".format(feedback.partial_sequence)
+        )
 
     def call_planner_client(self):
         req = GeneratePlan.Request()
@@ -78,7 +78,6 @@ class TesterNode(Node):
         planner_response = self.planner_future.result()
 
         return planner_response
-
 
     def publish_costmap(self):
         costmap = OccupancyGrid()
@@ -108,13 +107,13 @@ def main(args=None):
 
     rclpy.init(args=args)
     tester_node = TesterNode()
-    
+
     res = tester_node.call_planner_client()
-    
+
     while int(res.error_code) == 1:
         time.sleep(0.5)
         res = tester_node.call_planner_client()
-        tester_node.get_logger().info(f"{res.error_code}") 
+        tester_node.get_logger().info(f"{res.error_code}")
 
     tester_node.call_trajectory_follower(res.path)
     rclpy.spin(tester_node)

@@ -43,10 +43,10 @@ def main(args=None):
     driver = Ros2NMEADriver()
 
     try:
-        local_ip = driver.declare_parameter('ip', '0.0.0.0').value
-        local_port = driver.declare_parameter('port', 10110).value
-        buffer_size = driver.declare_parameter('buffer_size', 4096).value
-        timeout = driver.declare_parameter('timeout_sec', 2).value
+        local_ip = driver.declare_parameter("ip", "0.0.0.0").value
+        local_port = driver.declare_parameter("port", 10110).value
+        buffer_size = driver.declare_parameter("buffer_size", 4096).value
+        timeout = driver.declare_parameter("timeout_sec", 2).value
     except KeyError as e:
         driver.get_logger().err("Parameter %s not found" % e)
         sys.exit(1)
@@ -54,8 +54,10 @@ def main(args=None):
     frame_id = driver.get_frame_id()
 
     driver.get_logger().info(
-        " Using parameters ip {} port {} buffer_size {} timeout_sec {}"
-        .format(local_ip, local_port, buffer_size, timeout))
+        " Using parameters ip {} port {} buffer_size {} timeout_sec {}".format(
+            local_ip, local_port, buffer_size, timeout
+        )
+    )
 
     # Connection-loop: connect and keep receiving. If receiving fails, reconnect
     while rclpy.ok():
@@ -69,7 +71,9 @@ def main(args=None):
             # Set timeout
             socket_.settimeout(timeout)
         except socket.error as exc:
-            driver.get_logger().error("Caught exception socket.error when setting up socket: %s" % exc)
+            driver.get_logger().error(
+                "Caught exception socket.error when setting up socket: %s" % exc
+            )
             sys.exit(1)
 
         # recv-loop: When we're connected, keep receiving stuff until that fails
@@ -88,10 +92,14 @@ def main(args=None):
                         driver.get_logger().warn(
                             "Value error, likely due to missing fields in the NMEA message. "
                             "Error was: %s. Please report this issue at github.com/ros-drivers/nmea_navsat_driver, "
-                            "including a bag file with the NMEA sentences that caused it." % e)
+                            "including a bag file with the NMEA sentences that caused it."
+                            % e
+                        )
 
             except socket.error as exc:
-                driver.get_logger().error("Caught exception socket.error during recvfrom: %s" % exc)
+                driver.get_logger().error(
+                    "Caught exception socket.error during recvfrom: %s" % exc
+                )
                 socket_.close()
                 # This will break out of the recv-loop so we start another iteration of the connection-loop
                 break

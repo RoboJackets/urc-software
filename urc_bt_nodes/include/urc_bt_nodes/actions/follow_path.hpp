@@ -16,17 +16,19 @@ namespace behavior::actions
 class FollowPath : public BT::RosActionNode<urc_msgs::action::FollowPath>
 {
 public:
-  FollowPath(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params)
-    : BT::RosActionNode<urc_msgs::action::FollowPath>(name, conf, params){};
+  FollowPath(
+    const std::string & name, const BT::NodeConfig & conf,
+    const BT::RosNodeParams & params)
+  : BT::RosActionNode<urc_msgs::action::FollowPath>(name, conf, params) {}
   static BT::PortsList providedPorts()
   {
-    return providedBasicPorts({ BT::InputPort<nav_msgs::msg::Path>("path") });
+    return providedBasicPorts({BT::InputPort<nav_msgs::msg::Path>("path")});
   }
 
-  bool setGoal(Goal& goal) override;
+  bool setGoal(Goal & goal) override;
   void onHalt() override;
   BT::NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
-  BT::NodeStatus onResultReceived(const WrappedResult& wr) override;
+  BT::NodeStatus onResultReceived(const WrappedResult & wr) override;
   virtual BT::NodeStatus onFailure(BT::ActionNodeErrorCode error) override;
 };
 

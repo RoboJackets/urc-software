@@ -24,7 +24,7 @@ using UpdateBTResponse = urc_msgs::srv::UpdateBehaviorTree::Response::SharedPtr;
 class BehaviorTreeOrchestor : public rclcpp::Node
 {
 public:
-  BehaviorTreeOrchestor(const rclcpp::NodeOptions& options);
+  BehaviorTreeOrchestor(const rclcpp::NodeOptions & options);
   ~BehaviorTreeOrchestor();
 
 protected:

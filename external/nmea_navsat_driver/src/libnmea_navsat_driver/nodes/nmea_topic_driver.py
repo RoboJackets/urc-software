@@ -41,13 +41,17 @@ from libnmea_navsat_driver.driver import Ros2NMEADriver
 
 def nmea_sentence_callback(nmea_sentence, driver):
     try:
-        driver.add_sentence(nmea_sentence.sentence, frame_id=nmea_sentence.header.frame_id,
-                            timestamp=nmea_sentence.header.stamp)
+        driver.add_sentence(
+            nmea_sentence.sentence,
+            frame_id=nmea_sentence.header.frame_id,
+            timestamp=nmea_sentence.header.stamp,
+        )
     except ValueError as e:
         rclpy.get_logger().warn(
             "Value error, likely due to missing fields in the NMEA message. Error was: %s. "
             "Please report this issue at github.com/ros-drivers/nmea_navsat_driver, including a bag file with "
-            "the NMEA sentences that caused it." % e)
+            "the NMEA sentences that caused it." % e
+        )
 
 
 def main(args=None):
@@ -57,7 +61,8 @@ def main(args=None):
     driver.get_frame_id()
 
     driver.create_subscription(
-        Sentence, 'nmea_sentence', partial(nmea_sentence_callback, driver=driver), 10)
+        Sentence, "nmea_sentence", partial(nmea_sentence_callback, driver=driver), 10
+    )
 
     rclpy.spin(driver)
 

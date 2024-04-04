@@ -36,14 +36,14 @@ import calendar
 import math
 import rclpy
 
-logger = rclpy.logging.get_logger('nmea_navsat_driver')
+logger = rclpy.logging.get_logger("nmea_navsat_driver")
 
 
 def safe_float(field):
     try:
         return float(field)
     except ValueError:
-        return float('NaN')
+        return float("NaN")
 
 
 def safe_int(field):
@@ -67,7 +67,7 @@ def convert_time(nmea_utc):
     utc_list = list(utc_struct)
     # If one of the time fields is empty, return NaN seconds
     if not nmea_utc[0:2] or not nmea_utc[2:4] or not nmea_utc[4:6]:
-        return float('NaN')
+        return float("NaN")
     else:
         hours = int(nmea_utc[0:2])
         minutes = int(nmea_utc[2:4])
@@ -138,26 +138,29 @@ parse_maps = {
     ],
     "VTG": [
         ("true_course", convert_deg_to_rads, 1),
-        ("speed", convert_knots_to_mps, 5)
-    ]
+        ("speed", convert_knots_to_mps, 5),
+    ],
 }
 
 
 def parse_nmea_sentence(nmea_sentence):
     # Check for a valid nmea sentence
 
-    if not re.match(r'(^\$GP|^\$GN|^\$GL|^\$IN).*\*[0-9A-Fa-f]{2}$', nmea_sentence):
-        logger.debug("Regex didn't match, sentence not valid NMEA? Sentence was: %s"
-                     % repr(nmea_sentence))
+    if not re.match(r"(^\$GP|^\$GN|^\$GL|^\$IN).*\*[0-9A-Fa-f]{2}$", nmea_sentence):
+        logger.debug(
+            "Regex didn't match, sentence not valid NMEA? Sentence was: %s"
+            % repr(nmea_sentence)
+        )
         return False
-    fields = [field.strip(',') for field in nmea_sentence.split(',')]
+    fields = [field.strip(",") for field in nmea_sentence.split(",")]
 
     # Ignore the $ and talker ID portions (e.g. GP)
     sentence_type = fields[0][3:]
 
     if sentence_type not in parse_maps:
-        logger.debug("Sentence type %s not in parse map, ignoring."
-                     % repr(sentence_type))
+        logger.debug(
+            "Sentence type %s not in parse map, ignoring." % repr(sentence_type)
+        )
         return False
 
     parse_map = parse_maps[sentence_type]

@@ -24,12 +24,17 @@ from launch_ros import actions
 
 def generate_launch_description():
     """Generate a launch description for a single tcpclient driver."""
-    config_file = os.path.join(get_package_share_directory("nmea_navsat_driver"), "config", "nmea_tcpclient_driver.yaml")
+    config_file = os.path.join(
+        get_package_share_directory("nmea_navsat_driver"),
+        "config",
+        "nmea_tcpclient_driver.yaml",
+    )
     driver_node = actions.Node(
-        package='nmea_navsat_driver',
-        executable='nmea_tcpclient_driver',
-        output='screen',
-        parameters=[config_file])
+        package="nmea_navsat_driver",
+        executable="nmea_tcpclient_driver",
+        output="screen",
+        parameters=[config_file],
+    )
 
     return LaunchDescription([driver_node])
 
@@ -37,19 +42,19 @@ def generate_launch_description():
 def main(argv):
     ld = generate_launch_description()
 
-    print('Starting introspection of launch description...')
-    print('')
+    print("Starting introspection of launch description...")
+    print("")
 
     print(LaunchIntrospector().format_launch_description(ld))
 
-    print('')
-    print('Starting launch of launch description...')
-    print('')
+    print("")
+    print("Starting launch of launch description...")
+    print("")
 
     ls = LaunchService()
     ls.include_launch_description(ld)
     return ls.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(sys.argv)

@@ -15,7 +15,8 @@ using namespace BT;
 class LogInfo : public BT::SyncActionNode
 {
 public:
-  LogInfo(const std::string& name, const NodeConfig& config) : SyncActionNode(name, config){};
+  LogInfo(const std::string & name, const NodeConfig & config)
+  : SyncActionNode(name, config) {}
 
   inline static PortsList providedPorts()
   {
@@ -33,12 +34,12 @@ public:
 namespace BT
 {
 
-template <>
+template<>
 inline std::shared_ptr<rclcpp::Logger> convertFromString(StringView str)
 {
   return std::make_shared<rclcpp::Logger>(rclcpp::get_logger(std::string(str).c_str()));
 }
 
-};  // namespace BT
+}   // namespace BT
 
 #endif /* LOG_INFO_B11B9468_675B_49F7_9582_049158C306CE_HPP__ */

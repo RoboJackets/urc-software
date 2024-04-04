@@ -6,19 +6,16 @@
 namespace behavior::actions
 {
 
-bool CallTrigger::setRequest(typename Request::SharedPtr&)
+bool CallTrigger::setRequest(typename Request::SharedPtr &)
 {
   return true;
 }
 
-BT::NodeStatus CallTrigger::onResponseReceived(const typename Response::SharedPtr& response)
+BT::NodeStatus CallTrigger::onResponseReceived(const typename Response::SharedPtr & response)
 {
-  if (response->success)
-  {
+  if (response->success) {
     return BT::NodeStatus::SUCCESS;
-  }
-  else
-  {
+  } else {
     RCLCPP_WARN(node_->get_logger(), "Service call failed. %s", response->message.c_str());
     return BT::NodeStatus::FAILURE;
   }

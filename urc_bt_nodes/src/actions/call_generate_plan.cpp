@@ -10,7 +10,7 @@
 namespace behavior::actions
 {
 
-bool CallGeneratePlan::setRequest(typename Request::SharedPtr& request)
+bool CallGeneratePlan::setRequest(typename Request::SharedPtr & request)
 {
   auto start_pose = getInput<geometry_msgs::msg::Pose>("start_pose").value();
   auto goal_pose = getInput<geometry_msgs::msg::Pose>("goal_pose").value();
@@ -21,15 +21,12 @@ bool CallGeneratePlan::setRequest(typename Request::SharedPtr& request)
   return true;
 }
 
-BT::NodeStatus CallGeneratePlan::onResponseReceived(const typename Response::SharedPtr& response)
+BT::NodeStatus CallGeneratePlan::onResponseReceived(const typename Response::SharedPtr & response)
 {
-  if (response->error_code == 0)
-  {
+  if (response->error_code == 0) {
     setOutput("path", response->path);
     return BT::NodeStatus::SUCCESS;
-  }
-  else
-  {
+  } else {
     RCLCPP_WARN(node_->get_logger(), "Failed to plan path.");
     return BT::NodeStatus::FAILURE;
   }
@@ -40,12 +37,11 @@ BT::NodeStatus CallGeneratePlan::onResponseReceived(const typename Response::Sha
 namespace BT
 {
 
-template <>
+template<>
 inline geometry_msgs::msg::Pose convertFromString(StringView str)
 {
   auto coordinates = splitString(str, ',');
-  if (coordinates.size() != 3)
-  {
+  if (coordinates.size() != 3) {
     throw std::runtime_error("Invalid input for pose. It should have three entries (x, y, theta)");
   }
 
@@ -57,6 +53,6 @@ inline geometry_msgs::msg::Pose convertFromString(StringView str)
   return output;
 }
 
-};  // namespace BT
+}   // namespace BT
 
 CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "CallGeneratePlan");
