@@ -27,9 +27,6 @@ def load_yaml(package_name, file_path):
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
-        "nmea_navsat_driver"
-    )
 
     hardware_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "hardware_config.yaml"
@@ -41,13 +38,19 @@ def generate_launch_description():
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
     )
+    nmea_config_file = os.path.join(
+        get_package_share_directory("urc_bringup"),
+        "config",
+        "nmea_serial_driver.yaml",
+    )
     # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
+    + str(xacro_file)
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
 
@@ -61,10 +64,12 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir, {"robot_description": robot_desc}],
+        parameters=[controller_config_file_dir,
+                    {"robot_description": robot_desc}],
         output="both",
     )
-    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
+    enable_color = SetEnvironmentVariable(
+        name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
     aruco_detector = Node(
         package="urc_perception",
@@ -125,7 +130,8 @@ def generate_launch_description():
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
+        arguments=["-p", controller_config_file_dir,
+                   "joint_state_broadcaster"],
     )
 
     load_arm_controller = Node(
@@ -137,13 +143,15 @@ def generate_launch_description():
     load_gripper_controller_left = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
+        arguments=["-p", controller_config_file_dir,
+                   "gripper_controller_left"],
     )
 
     load_gripper_controller_right = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
+        arguments=["-p", controller_config_file_dir,
+                   "gripper_controller_right"],
     )
 
     load_drivetrain_controller = Node(
@@ -157,15 +165,12 @@ def generate_launch_description():
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
         )
     )
-
-    launch_gps = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py"
-            )
-        )
+    gps_node = Node(
+        package="nmea_navsat_driver",
+        executable="nmea_serial_driver",
+        output="screen",
+        parameters=[nmea_config_file],
     )
-
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -229,7 +234,7 @@ def generate_launch_description():
                 aruco_detector,
                 aruco_location,
                 teleop_launch,
-                launch_gps,
+                gps_node,
                 rosbridge_server_node,
             ]
         )

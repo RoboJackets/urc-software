@@ -17,6 +17,7 @@
   <depend>behaviortree_cpp</depend>
   <depend>behaviortree_ros2</depend>
   <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
   <depend>urc_msgs</depend>
   <depend>urc_bt_nodes</depend>
 
