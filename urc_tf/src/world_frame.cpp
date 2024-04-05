@@ -19,6 +19,10 @@ WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions & options
     "/set_base", rclcpp::SystemDefaultsQoS(),
     [this](const std_msgs::msg::Bool msg) {SetBaseCallback(msg);});
 
+  imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
+    "/imu/data", rclcpp::SystemDefaultsQoS(),
+    [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
+
   baseStationLat = -1000;
   baseStationLng = -1000;
   baseStationAlt = -1000;
@@ -29,6 +33,14 @@ void WorldFrameBroadcaster::SetBaseCallback(const std_msgs::msg::Bool & msg)
   this->baseStationLat = currentLat;
   this->baseStationLng = currentLng;
   this->baseStationAlt = currentAlt;
+}
+
+void WorldFrameBroadcaster::IMUCallback(const sensor_msgs::msg::Imu & msg)
+{
+  this->imu_x = msg.orientation.x;
+  this->imu_y = msg.orientation.y;
+  this->imu_z = msg.orientation.z;
+  this->imu_w = msg.orientation.w;
 }
 
 void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
@@ -49,11 +61,10 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   t.transform.translation.y = (currentLng - baseStationLng) * 111139;
   t.transform.translation.z = currentAlt - baseStationAlt;
 
-  // TODO: IMU data
-  t.transform.rotation.x = 0.0;
-  t.transform.rotation.y = 0.0;
-  t.transform.rotation.z = 0.0;
-  t.transform.rotation.w = 1.0;
+  t.transform.rotation.x = this->imu_x;
+  t.transform.rotation.y = this->imu_y;
+  t.transform.rotation.z = this->imu_z;
+  t.transform.rotation.w = this->imu_w;
 
   tf_broadcaster_->sendTransform(t);
 }
