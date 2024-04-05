@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-""" A simple launch file for the nmea_serial_driver node. """
+""" A simple launch file for the imu_serial_driver node. """
 
 import os
 import sys
@@ -38,16 +38,6 @@ def generate_launch_description():
 
 def main(argv):
     ld = generate_launch_description()
-
-    print('Starting introspection of launch description...')
-    print('')
-
-    print(LaunchIntrospector().format_launch_description(ld))
-
-    print('')
-    print('Starting launch of launch description...')
-    print('')
-
     ls = LaunchService()
     ls.include_launch_description(ld)
     return ls.run()
