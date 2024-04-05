@@ -5,6 +5,7 @@
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <urc_msgs/msg/waypoint.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <rclcpp/subscription.hpp>
@@ -27,10 +28,15 @@ private:
   double currentLng;
   double currentAlt;
 
+  double waypointLat;
+  double waypointLng;
+
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
+  rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
   void GPSCallback(const sensor_msgs::msg::NavSatFix & msg);
+  void WaypointCallback(const urc_msgs::msg::Waypoint & msg);
   void SetBaseCallback(const std_msgs::msg::Bool & msg);
 };
 }

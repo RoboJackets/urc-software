@@ -11,9 +11,17 @@ WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions & options
     "/fix", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
 
+  waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
+    "/waypoint", rclcpp::SystemDefaultsQoS(),
+    [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
+
   set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
     "/set_base", rclcpp::SystemDefaultsQoS(),
     [this](const std_msgs::msg::Bool msg) {SetBaseCallback(msg);});
+
+  baseStationLat = -1000;
+  baseStationLng = -1000;
+  baseStationAlt = -1000;
 }
 
 void WorldFrameBroadcaster::SetBaseCallback(const std_msgs::msg::Bool & msg)
@@ -29,6 +37,9 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   this->currentLng = msg.longitude;
   this->currentAlt = msg.altitude;
 
+  if (baseStationLat < -200 || baseStationLng < -200) {
+    return;
+  }
   geometry_msgs::msg::TransformStamped t;
   t.header.stamp = this->get_clock()->now();
   t.header.frame_id = "world";
@@ -43,6 +54,31 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   t.transform.rotation.y = 0.0;
   t.transform.rotation.z = 0.0;
   t.transform.rotation.w = 1.0;
+
+  tf_broadcaster_->sendTransform(t);
+}
+
+void WorldFrameBroadcaster::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
+{
+  this->waypointLat = msg.latitude;
+  this->waypointLng = msg.longitude;
+
+  if (baseStationLat < -200 || baseStationLng < -200) {
+    return;
+  }
+  geometry_msgs::msg::TransformStamped t;
+  t.header.stamp = this->get_clock()->now();
+  t.header.frame_id = "world";
+  t.child_frame_id = "waypoint";
+
+  t.transform.translation.x = (waypointLat - baseStationLat) * 111139;
+  t.transform.translation.y = (waypointLng - baseStationLng) * 111139;
+  t.transform.translation.z = 0; // waypoint doesn't work
+
+  t.transform.rotation.x = 0.0;
+  t.transform.rotation.y = 0.0;
+  t.transform.rotation.z = 0.0;
+  t.transform.rotation.w = 1.0; // waypoint doesn't have any rotation data
 
   tf_broadcaster_->sendTransform(t);
 }
