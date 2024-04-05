@@ -13,6 +13,9 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include "tf2/exceptions.h"
+#include "tf2_ros/transform_listener.h"
+#include "tf2_ros/buffer.h"
 #include <math.h>
 #include <rclcpp/qos.hpp>
 #include <unistd.h>
@@ -36,6 +39,9 @@ private:
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr set_base_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
+
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   bool purePursuitEnabled;
   double maxDelta;

@@ -20,6 +20,9 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   current_metric_pose.position.y = -1;
   current_metric_pose.position.z = -1;
 
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
   current_state_publisher = create_publisher<urc_msgs::msg::NavigationStatus>(
     "/current_navigation_state",
     rclcpp::SystemDefaultsQoS()
@@ -130,18 +133,38 @@ void Orchestrator::DetermineState()
   this->gpsTimestamp = this->get_clock()->now();
 
   urc_msgs::msg::NavigationStatus state_message;
-  if (actualLatitude == -1 || actualLongitude == -1) {
+
+  geometry_msgs::msg::TransformStamped robotRelWorld; // robot transform relative to world frame
+  geometry_msgs::msg::TransformStamped waypointRelRobot; // waypoint transform relative to robot frame
+
+  try {
+    robotRelWorld = tf_buffer_->lookupTransform(
+      "base_link", "world",
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      this->get_logger(), "Could not transform %s to %s: %s",
+      "base_link", "world", ex.what());
     state_message.message = "NoGPS";
     current_state_publisher->publish(state_message);
     return;
-  } else if (waypointLatitude == -1 || waypointLongitude == -1) {
+  }
+
+  try {
+    waypointRelRobot = tf_buffer_->lookupTransform(
+      "waypoint", "base_link",
+      tf2::TimePointZero);
+  } catch (const tf2::TransformException & ex) {
+    RCLCPP_INFO(
+      this->get_logger(), "Could not transform %s to %s: %s",
+      "waypoint", "base_link", ex.what());
     state_message.message = "NoWaypoint";
     current_state_publisher->publish(state_message);
     return;
   }
 
-  double deltaX = waypointLongitude - actualLongitude;
-  double deltaY = waypointLatitude - actualLatitude;
+  double deltaX = waypointRelRobot.transform.translation.x;
+  double deltaY = waypointRelRobot.transform.translation.y;
   double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
   if (distance < 0.00001) {
     state_message.message = "Goal";
