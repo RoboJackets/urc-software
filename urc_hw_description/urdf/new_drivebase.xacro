@@ -375,7 +375,6 @@
             <fdir1>1 0 0</fdir1>
             <minDepth>0.003</minDepth>
         </gazebo>
-
         <gazebo reference="left_front_wheel">
             <material>Gazebo/Black</material>
             <kp>1e6</kp>
