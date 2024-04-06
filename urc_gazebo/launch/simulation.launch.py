@@ -1,97 +1,132 @@
+import os
+from xacro import process_file
+import yaml
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.substitutions import PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
+from launch.actions import SetEnvironmentVariable, RegisterEventHandler
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
-import os
+
+
+def load_yaml(package_name, file_path):
+    package_path = get_package_share_directory(package_name)
+    absolute_file_path = os.path.join(package_path, file_path)
+
+    try:
+        with open(absolute_file_path, "r") as file:
+            return yaml.safe_load(file)
+    except EnvironmentError:  # parent of IOError, OSError *and* WindowsError
+        return None
 
 
 def generate_launch_description():
-
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    pkg_urc_bringup = get_package_share_directory("urc_bringup")
+
+    hardware_config_file_dir = os.path.join(
+        pkg_urc_bringup, "config", "hardware_config.yaml"
+    )
+    with open(hardware_config_file_dir) as f:
+        hardware_config = yaml.safe_load(f)
+
+    controller_config_file_dir = os.path.join(
+        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
+    )
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
+
+    xacro_file = os.path.join(
+        get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
+    )
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+    robot_description_config = process_file(xacro_file)
+    robot_desc = robot_description_config.toxml()
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"world": world_path}.items(),
+        launch_arguments={"use_sim_time": "true", "world": world_path}.items(),
     )
 
-    walli = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_gazebo, "launch", "spawn_walli.py")
-        )
+    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
+
+    spawn_robot = Node(
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        arguments=[
+            "-entity",
+            "walli",
+            "-x",
+            "0",
+            "-y",
+            "0",
+            "-z",
+            "10",
+            "-R",
+            "0",
+            "-P",
+            "0",
+            "-Y",
+            "0",
+            "-topic",
+            "robot_description",
+        ],
     )
 
-    control = Node(
-        package="urc_gazebo",
-        executable="urc_gazebo_Control",
-        output="screen",
+    load_robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
         parameters=[
-            PathJoinSubstitution(
-                [FindPackageShare("urc_gazebo"), "config", "control_params.yaml"]
-            ),
-            {"use_sim_time": use_sim_time},
-        ],
-        remappings=[
-            (
-                "/control/right_wheel_shock_controller/command",
-                "/right_wheel_shock_controller/command",
-            ),
-            (
-                "/control/left_wheel_shock_controller/command",
-                "/left_wheel_shock_controller/command",
-            ),
-            (
-                "/control/right_wheel_effort_controller/command",
-                "/right_wheel_effort_controller/command",
-            ),
-            (
-                "/control/left_wheel_effort_controller/command",
-                "/left_wheel_effort_controller/command",
-            ),
-            ("/control/robot_enabled", "/robot_enabled"),
-            ("/control/encoders", "/encoders"),
-            ("/control/motors", "/motors"),
-            ("/control/joint_states", "/joint_states"),
-        ],
-    )
-
-    ground_truth = Node(
-        package="urc_gazebo",
-        executable="urc_gazebo_GroundTruth",
-        output="screen",
-        parameters=[
-            PathJoinSubstitution(
-                [FindPackageShare("urc_gazebo"), "config", "ground_truth_params.yaml"]
-            ),
-            {"use_sim_time": use_sim_time},
-        ],
-        remappings=[
-            ("/ground_truth/odometry/filtered", "/odometry/filtered"),
-            ("/ground_truth/ground_truth", "/ground_truth"),
-            ("/ground_truth/ground_truth/state_raw", "/ground_truth/state_raw"),
-        ],
-    )
-
-    ExecuteProcess(
-        cmd=[
-            "gazebo",
-            "--verbose",
-            "-s",
-            "libgazebo_ros_init.so",
-            "-s",
-            "libgazebo_ros_factory.so",
-            world_path,
+            {"use_sim_time": use_sim_time, "robot_description": robot_desc},
         ],
         output="screen",
     )
 
-    return LaunchDescription([gazebo, walli, control, ground_truth])
+    load_joint_state_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
+    )
+
+    # load_arm_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
+    # )
+
+    # load_gripper_controller_left = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
+    # )
+
+    # load_gripper_controller_right = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
+    # )
+
+    load_drivetrain_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
+    )
+
+    return LaunchDescription(
+        [
+            enable_color,
+            gazebo,
+            load_robot_state_publisher,
+            load_joint_state_broadcaster,
+            spawn_robot,
+            load_drivetrain_controller,
+        ]
+    )

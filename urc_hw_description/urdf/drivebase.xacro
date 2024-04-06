@@ -1,40 +1,14 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-
-    <!-- Approximated Wheel -->
-    <!-- <xacro:macro name="approximate_wheel" params="prefix x_reflect y_reflect">
-        <link name="${prefix}_link">
-        <visual>
-            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
-            <geometry>
-                <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
-            </geometry>
-            <material name="Gray">
-            <color rgba="0.5 0.5 0.5 1.0"/>
-            </material>
-        </visual>
-        </link>
-
-        <joint name="${prefix}_joint" type="continuous">
-        <parent link="base_link"/>
-        <child link="${prefix}_link"/>
-        <origin xyz="${x_reflect*wheel_xoff} ${y_reflect*(base_width/2+wheel_ygap)} ${-wheel_zoff}" rpy="0
-    0 0"/>
-        <axis xyz="0 1 0"/>
-        </joint>
-    </xacro:macro> -->
-
-
     <xacro:macro name="drivebase" params="wheel_radius wheel_thickness wheel_friction approximate">
         <link name="base_link">
             <inertial>
                 <origin xyz="-0.22771 0.0020794 0.13424" rpy="0 0 0" />
                 <mass value="4.0" />
-                <inertia ixx="0.017201" ixy="-2.0986E-11" ixz="5.8899E-06" iyy="0.0028906"
+                <inertia ixx="0.17201" ixy="-2.0986E-11" ixz="5.8899E-06" iyy="0.028906"
                     iyz="5.0336E-07"
-                    izz="0.019124" />
+                    izz="0.19124" />
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -50,12 +24,13 @@
                 </geometry>
             </collision>
         </link>
+
         <link name="rightrocker">
             <inertial>
                 <origin xyz="0.062687 0.034616 -0.016048" rpy="0 0 0" />
                 <mass value="0.57523" />
-                <inertia ixx="0.00040232" ixy="-8.4972E-11" ixz="-0.00023706" iyy="0.00095582"
-                    iyz="-4.2951E-08" izz="0.00061776" />
+                <inertia ixx="0.0040232" ixy="-8.4972E-11" ixz="-0.00023706" iyy="0.0095582"
+                    iyz="-4.2951E-08" izz="0.0061776" />
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -75,8 +50,9 @@
             <origin xyz="-0.194 -0.33715 0.080295" rpy="0 0 0" />
             <parent link="base_link" />
             <child link="rightrocker" />
-            <axis xyz="0 0 0" />
-            <dynamics damping="0.01" friction="0.01" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.9" friction="0.01" />
+            <limit effort="1000.0" lower="${-pi/20}" upper="${pi/20}" velocity="0.1" />
         </joint>
 
         <!-- Wheel 1 -->
@@ -107,6 +83,12 @@
                 </geometry>
             </collision>
             <surface>
+                <contact>
+                    <ode>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
+                    </ode>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>
@@ -122,12 +104,13 @@
             <axis xyz="0 1 0" />
             <dynamics damping="0.01" friction="0.01" />
         </joint>
+
         <link name="rightbogie">
             <inertial>
                 <origin xyz="-6.8787E-09 0.032385 -0.015429" rpy="0 0 0" />
                 <mass value="0.66758" />
-                <inertia ixx="0.00019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.00044836"
-                    iyz="2.6509E-13" izz="0.0003846" />
+                <inertia ixx="0.019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.044836"
+                    iyz="2.6509E-13" izz="0.03846" />
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -147,9 +130,11 @@
             <origin xyz="0.24177 -0.00254 -0.074203" rpy="0 0 0" />
             <parent link="rightrocker" />
             <child link="rightbogie" />
-            <axis xyz="0 0 0" />
-            <dynamics damping="0.02" friction="0" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.9" friction="0.01" />
+            <limit effort="1000.0" lower="${-pi/20}" upper="${pi/20}" velocity="0.1" />
         </joint>
+
         <link name="right_front_wheel">
             <inertial>
                 <origin xyz="-0.00066285 0.10248 0.00082496" rpy="0 0 0" />
@@ -177,14 +162,12 @@
                 </geometry>
             </collision>
             <surface>
-                <friction>
+                <contact>
                     <ode>
-                        <mu>${wheel_friction}</mu>
-                        <mu2>${wheel_friction}</mu2>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
                     </ode>
-                </friction>
-            </surface>
-            <surface>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>
@@ -200,6 +183,7 @@
             <axis xyz="0 1 0" />
             <dynamics damping="0.01" friction="0.01" />
         </joint>
+
         <link name="right_center_wheel">
             <inertial>
                 <origin xyz="0.0010444 0.10248 0.00016665" rpy="0 0 0" />
@@ -227,6 +211,12 @@
                 </geometry>
             </collision>
             <surface>
+                <contact>
+                    <ode>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
+                    </ode>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>
@@ -242,11 +232,12 @@
             <axis xyz="0 1 0" />
             <dynamics damping="0.01" friction="0.01" />
         </joint>
+
         <link name="leftrocker">
             <inertial>
                 <origin xyz="0.065435 -0.034981 -0.01685" rpy="0 0 0" />
                 <mass value="0.58415" />
-                <inertia ixx="0.0004044" ixy="-5.259E-11" ixz="-0.00023722" iyy="0.00095925"
+                <inertia ixx="0.004044" ixy="-5.259E-11" ixz="-0.0023722" iyy="0.0095925"
                     iyz="-4.2951E-08" izz="0.00061912" />
             </inertial>
             <visual>
@@ -267,9 +258,11 @@
             <origin xyz="-0.19241 0.33715 0.080257" rpy="0 0 0" />
             <parent link="base_link" />
             <child link="leftrocker" />
-            <axis xyz="0 0 0" />
-            <dynamics damping="60" friction="4" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.9" friction="0.01" />
+            <limit effort="1000.0" lower="${-pi/20}" upper="${pi/20}" velocity="0.1" />
         </joint>
+
         <link name="left_rear_wheel">
             <inertial>
                 <origin xyz="0.00069452 -0.10248 0.00079886" rpy="0 0 0" />
@@ -297,6 +290,12 @@
                 </geometry>
             </collision>
             <surface>
+                <contact>
+                    <ode>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
+                    </ode>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>
@@ -312,12 +311,13 @@
             <axis xyz="0 1 0" />
             <dynamics damping="0.01" friction="0.01" />
         </joint>
+
         <link name="leftbogie">
             <inertial>
                 <origin xyz="-6.8787E-09 -0.032385 -0.015429" rpy="0 0 0" />
                 <mass value="0.66758" />
-                <inertia ixx="0.00019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.00044836"
-                    iyz="2.6509E-13" izz="0.0003846" />
+                <inertia ixx="0.019756" ixy="-5.9804E-10" ixz="9.4624E-11" iyy="0.044836"
+                    iyz="2.6509E-13" izz="0.03846" />
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -337,9 +337,11 @@
             <origin xyz="0.24182 0.00254 -0.073984" rpy="0 0 0" />
             <parent link="leftrocker" />
             <child link="leftbogie" />
-            <axis xyz="0 0 0" />
-            <dynamics damping="60" friction="4" />
+            <axis xyz="0 1 0" />
+            <dynamics damping="0.9" friction="0.01" />
+            <limit effort="1000.0" lower="${-pi/20}" upper="${pi/20}" velocity="0.1" />
         </joint>
+
         <link name="left_front_wheel">
             <inertial>
                 <origin xyz="-0.001042 -0.10248 0.00016516" rpy="0 0 0" />
@@ -349,10 +351,17 @@
             </inertial>
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
-                <geometry>
-                    <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_front_wheel.STL" />
-                </geometry>
+                <xacro:if value="${approximate}">
+                    <geometry>
+                        <cylinder radius="${wheel_radius}" length="${wheel_thickness}" />
+                    </geometry>
+                </xacro:if>
+                <xacro:if value="${not approximate}">
+                    <geometry>
+                        <mesh
+                            filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_front_wheel.STL" />
+                    </geometry>
+                </xacro:if>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
@@ -367,6 +376,12 @@
                 </geometry>
             </collision>
             <surface>
+                <contact>
+                    <ode>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
+                    </ode>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>
@@ -382,6 +397,7 @@
             <axis xyz="0 1 0" />
             <dynamics damping="0.01" friction="0.01" />
         </joint>
+
         <link name="left_center_wheel">
             <inertial>
                 <origin xyz="0.00066514 -0.10248 0.00082348" rpy="0 0 0" />
@@ -409,6 +425,12 @@
                 </geometry>
             </collision>
             <surface>
+                <contact>
+                    <ode>
+                        <kp>1e15</kp>
+                        <kd>1</kd>
+                    </ode>
+                </contact>
                 <friction>
                     <ode>
                         <mu>${wheel_friction}</mu>

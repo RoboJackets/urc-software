@@ -38,10 +38,6 @@
     <atmosphere type='adiabatic' />
 
     <physics type='ode'>
-      <solver>
-        <friction_model>cone_model</friction_model>
-        <island_threads>6</island_threads>
-      </solver>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
@@ -52,8 +48,6 @@
       <shadows>true</shadows>
       <origin_visual>false</origin_visual>
     </scene>
-
-    <wind />
 
     <spherical_coordinates>
       <surface_model>EARTH_WGS84</surface_model>
