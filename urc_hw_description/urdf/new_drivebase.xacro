@@ -55,7 +55,7 @@
             <child link="rightrocker" />
             <axis xyz="0 1 0" />
             <limit effort="100.0" lower="-0.24" upper="0.24" velocity="100.0" />
-            <dynamics friction="3.0" damping="0.1" />
+            <dynamics friction="1.0" damping="0.1" />
         </joint>
 
         <link name="leftrocker">
