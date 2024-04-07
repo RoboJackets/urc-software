@@ -160,36 +160,23 @@ def generate_launch_description():
     if use_simulation:
         return LaunchDescription(
             [
-                # RegisterEventHandler(
-                #     event_handler=OnProcessExit(
-                #         target_action=spawn_robot,
-                #         on_exit=[
-                #             load_joint_state_broadcaster,
-                #             # load_arm_controller,
-                #             # load_gripper_controller_left,
-                #             # load_gripper_controller_right,
-                #             load_drivetrain_controller,
-                #             teleop_launch,
-                #         ],
-                #     )
-                # ),
-                # IncludeLaunchDescription(
-                #     XMLLaunchDescriptionSource(
-                #         [
-                #             FindPackageShare("foxglove_bridge"),
-                #             "/launch",
-                #             "/foxglove_bridge_launch.xml",
-                #         ]
-                #     ),
-                #     launch_arguments={"port": "8765"}.items(),
-                # ),
+                RegisterEventHandler(
+                    event_handler=OnProcessExit(
+                        target_action=spawn_robot,
+                        on_exit=[
+                            load_joint_state_broadcaster,
+                            # load_arm_controller,
+                            # load_gripper_controller_left,
+                            # load_gripper_controller_right,
+                            load_drivetrain_controller,
+                            teleop_launch,
+                        ],
+                    )
+                ),
                 enable_color,
                 gazebo,
                 load_robot_state_publisher,
-                load_joint_state_broadcaster,
                 spawn_robot,
-                load_drivetrain_controller,
-                # teleop_launch,
             ]
         )
     else:
