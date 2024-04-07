@@ -183,6 +183,12 @@ def generate_launch_description():
         }]
     )
 
+    odom_frame_node = Node(
+      package="urc_tf",
+      executable="urc_tf_WorldFrameBroadcaster",
+      output='screen'
+    )
+
     if use_simulation:
         return LaunchDescription([
             RegisterEventHandler(
@@ -231,5 +237,6 @@ def generate_launch_description():
             aruco_location,
             teleop_launch,
             launch_gps,
+            odom_frame_node,
             rosbridge_server_node
         ])
