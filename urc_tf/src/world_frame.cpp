@@ -54,7 +54,7 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   }
   geometry_msgs::msg::TransformStamped t;
   t.header.stamp = this->get_clock()->now();
-  t.header.frame_id = "world";
+  t.header.frame_id = "odom";
   t.child_frame_id = "base_link";
 
   t.transform.translation.x = (currentLat - baseStationLat) * 111139;
