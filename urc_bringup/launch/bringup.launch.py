@@ -159,13 +159,6 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
-    joint_state_publisher_gui_node = Node(
-        package="joint_state_publisher_gui",
-        executable="joint_state_publisher_gui",
-        name="joint_state_publisher_gui",
-        parameters=[{"use_sim_time": use_sim_time}],
-    )
-
     if use_simulation:
         return LaunchDescription(
             [
@@ -173,7 +166,7 @@ def generate_launch_description():
                     event_handler=OnProcessExit(
                         target_action=spawn_robot,
                         on_exit=[
-                            joint_state_publisher_gui_node,
+                            load_joint_state_broadcaster,
                             # load_arm_controller,
                             # load_gripper_controller_left,
                             # load_gripper_controller_right,
