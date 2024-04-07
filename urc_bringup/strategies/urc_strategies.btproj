@@ -20,6 +20,10 @@
         <Action ID="FollowArmTrajectory" editable="true">
             <input_port name="trajectory"/>
         </Action>
+        <Action ID="FollowPath" editable="true">
+            <input_port name="path"/>
+            <input_port name="action_name"/>
+        </Action>
         <Action ID="LogInfo" editable="true">
             <input_port name="logger" default="&quot;urc_bt&quot;">Logger to use.</input_port>
             <input_port name="message" default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>

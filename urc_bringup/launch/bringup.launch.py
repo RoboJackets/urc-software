@@ -49,8 +49,6 @@ def generate_launch_description():
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
-    + str(xacro_file)
     robot_description_config = process_file(xacro_file)
     robot_desc = robot_description_config.toxml()
 
@@ -178,6 +176,12 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
+    bt_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+        )
+    )
+
     if use_simulation:
         return LaunchDescription(
             [
@@ -192,7 +196,9 @@ def generate_launch_description():
                             load_drivetrain_controller,
                             aruco_detector,
                             aruco_location,
+                            gps_node,
                             teleop_launch,
+                            bt_launch,
                         ],
                     )
                 ),

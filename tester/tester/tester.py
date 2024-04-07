@@ -115,8 +115,9 @@ def main(args=None):
         res = tester_node.call_planner_client()
         tester_node.get_logger().info(f"{res.error_code}")
 
-    tester_node.call_trajectory_follower(res.path)
-    rclpy.spin(tester_node)
+    # tester_node.call_trajectory_follower(res.path)
+    while rclpy.ok():
+        rclpy.spin(tester_node)
 
     tester_node.destroy_node()
     rclpy.shutdown()

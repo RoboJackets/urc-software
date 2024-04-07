@@ -14,6 +14,12 @@
                               path="{generated_path}"
                               service_name="/plan"/>
           </RetryUntilSuccessful>
+          <LogInfo logger="{ros_log}"
+                   message="Path Planning Successful!"/>
+          <RetryUntilSuccessful num_attempts="5">
+            <FollowPath path="{generated_path}"
+                        action_name="/follow_path"/>
+          </RetryUntilSuccessful>
         </Sequence>
         <Sequence>
           <LogInfo logger="{ros_log}"
@@ -37,6 +43,11 @@
             editable="true">
       <input_port name="service_name"
                   default="&quot;&quot;">Service name.</input_port>
+    </Action>
+    <Action ID="FollowPath"
+            editable="true">
+      <input_port name="path"/>
+      <input_port name="action_name"/>
     </Action>
     <Action ID="LogInfo"
             editable="true">
