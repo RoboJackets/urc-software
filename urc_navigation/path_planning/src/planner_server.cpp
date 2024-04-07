@@ -30,7 +30,7 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 
 void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
-  RCLCPP_INFO(get_logger(), "Received Costmap!");
+  // RCLCPP_INFO(get_logger(), "Received Costmap!");
   current_costmap_ = *msg;
 }
 
@@ -55,7 +55,7 @@ void PlannerServer::generatePlan(
     for (auto & node : path) {
       geometry_msgs::msg::PoseStamped pose;
 
-      pose.header.frame_id = "base_link";
+      pose.header.frame_id = "odom";
       pose.header.stamp = get_clock()->now();
       pose.pose = node.getPose();
 
@@ -63,14 +63,14 @@ void PlannerServer::generatePlan(
     }
 
     nav_msgs::msg::Path plan;
-    plan.header.frame_id = "map";
+    plan.header.frame_id = "odom";
     plan.header.stamp = get_clock()->now();
     plan.poses = poses;
 
     response->path = plan;
     response->error_code = urc_msgs::srv::GeneratePlan::Response::SUCCESS;
 
-    RCLCPP_INFO(get_logger(), "Returning plan with %d poses", plan.poses.size());
+    RCLCPP_INFO(get_logger(), "Returning plan with %ld poses", plan.poses.size());
 
     publishPlan(plan);
   } catch (const std::exception & e) {
