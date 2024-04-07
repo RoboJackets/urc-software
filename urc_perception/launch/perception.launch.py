@@ -64,9 +64,10 @@ def generate_launch_description():
     realsense = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [PathJoinSubstitution([FindPackageShare(
-                "realsense2_camera"), "launch", "rs_launch.py"])]
+                "urc_perception"), "launch", "rs_multi_camera_launch.py"])]
         ),
     )
+
 
     return LaunchDescription([
         aruco_detector_node,
