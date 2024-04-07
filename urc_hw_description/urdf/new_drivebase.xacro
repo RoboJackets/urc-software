@@ -175,7 +175,7 @@
             </collision>
         </link>
         <joint name="right_rear_wheel_joint" type="continuous">
-            <origin xyz="-0.36316 -0.08 -0.19158" rpy="0 0 0" />
+            <origin xyz="-0.36316 -0.04 -0.19158" rpy="0 0 0" />
             <parent link="rightrocker" />
             <child link="right_rear_wheel" />
             <axis xyz="0 1 0" />
@@ -203,7 +203,7 @@
             </collision>
         </link>
         <joint name="right_front_wheel_joint" type="continuous">
-            <origin xyz="0.20139 -0.08 -0.11671" rpy="0 0 0" />
+            <origin xyz="0.20139 -0.04 -0.11671" rpy="0 0 0" />
             <parent link="rightbogie" />
             <child link="right_front_wheel" />
             <axis xyz="0 1 0" />
@@ -231,7 +231,7 @@
             </collision>
         </link>
         <joint name="right_center_wheel_joint" type="continuous">
-            <origin xyz="-0.20177 -0.08 -0.11606" rpy="0 0 0" />
+            <origin xyz="-0.20177 -0.04 -0.11606" rpy="0 0 0" />
             <parent link="rightbogie" />
             <child link="right_center_wheel" />
             <axis xyz="0 1 0" />
@@ -260,7 +260,7 @@
             </collision>
         </link>
         <joint name="left_rear_wheel_joint" type="continuous">
-            <origin xyz="-0.36266 0.08 -0.19248" rpy="0 0 0" />
+            <origin xyz="-0.36266 0.04 -0.19248" rpy="0 0 0" />
             <parent link="leftrocker" />
             <child link="left_rear_wheel" />
             <axis xyz="0 1 0" />
@@ -288,7 +288,7 @@
             </collision>
         </link>
         <joint name="left_front_wheel_joint" type="continuous">
-            <origin xyz="0.20177 0.08 -0.11606" rpy="0 0 0" />
+            <origin xyz="0.20177 0.04 -0.11606" rpy="0 0 0" />
             <parent link="leftbogie" />
             <child link="left_front_wheel" />
             <axis xyz="0 1 0" />
@@ -316,7 +316,7 @@
             </collision>
         </link>
         <joint name="left_center_wheel_joint" type="continuous">
-            <origin xyz="-0.20139 0.08 -0.11671" rpy="0 0 0" />
+            <origin xyz="-0.20139 0.04 -0.11671" rpy="0 0 0" />
             <parent link="leftbogie" />
             <child link="left_center_wheel" />
             <axis xyz="0 1 0" />
