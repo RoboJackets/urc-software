@@ -13,3 +13,7 @@
 [submodule "BehaviorTree.ROS2"]
 	path = BehaviorTree.ROS2
 	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
+[submodule "external/articubot_one"]
+	path = external/articubot_one
+	url = https://github.com/joshnewans/articubot_one.git
+	branch = humble
