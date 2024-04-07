@@ -29,6 +29,8 @@ def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_nmea_navsat_driver = FindPackageShare(
         "nmea_navsat_driver").find("nmea_navsat_driver")
+    pkg_imu_driver = FindPackageShare(
+        "imu_driver").find("imu_driver")
 
     hardware_config_file_dir = os.path.join(
         pkg_urc_bringup, 'config', 'hardware_config.yaml')
@@ -174,6 +176,13 @@ def generate_launch_description():
         )
     )
 
+    launch_imu = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_nmea_navsat_driver, "launch",
+                         "imu_serial_driver.launch.py")
+        )
+    )
+
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -231,5 +240,6 @@ def generate_launch_description():
             aruco_location,
             teleop_launch,
             launch_gps,
+            launch_imu,
             rosbridge_server_node
         ])
