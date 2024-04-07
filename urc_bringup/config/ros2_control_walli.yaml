@@ -61,7 +61,7 @@ rover_drivetrain_controller:
     wheels_per_side: 3
     wheel_radius: 0.1
 
-    use_stamped_vel: false
+    use_stamped_vel: true
 
     enable_odom_tf: true
 
@@ -73,3 +73,43 @@ rover_drivetrain_controller:
     linear.x.min_velocity: -5.0
     linear.x.max_acceleration: -1.0
     linear.x.max_acceleration: 1.0
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - shoulderjoint
+      - bicepjoint
+      - elbowjoint
+      - wristjoint
+      - clawjoint
+
+gripper_controller_left:
+  ros__parameters:
+    action_monitor_rate: 20.0
+    allow_stalling: false
+    goal_tolerance: 0.01
+    max_effort: 0.50
+    stall_timeout: 1.0
+    stall_velocity_threshold: 0.001
+    joint: leftgripperjoint
+
+gripper_controller_right:
+  ros__parameters:
+    action_monitor_rate: 20.0
+    allow_stalling: false
+    goal_tolerance: 0.01
+    max_effort: 0.50
+    stall_timeout: 1.0
+    stall_velocity_threshold: 0.001
+    joint: rightgripperjoint
+
+joy_drive:
+  ros__parameters:
+    max_linear_velocity_ms: 3.0
+    max_angular_velocity_radians: 5.0
+    joy_command_topic: /driver/joy
+    cmd_vel_topic: /rover_drivetrain_controller/cmd_vel
+    target_axes: [1, 3]
+    invert_linear_velocity: false
+    invert_angular_velocity: false
+

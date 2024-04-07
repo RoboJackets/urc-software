@@ -173,7 +173,7 @@ def generate_launch_description():
                     event_handler=OnProcessExit(
                         target_action=spawn_robot,
                         on_exit=[
-                            load_joint_state_broadcaster,
+                            joint_state_publisher_gui_node,
                             # load_arm_controller,
                             # load_gripper_controller_left,
                             # load_gripper_controller_right,

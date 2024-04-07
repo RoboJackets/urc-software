@@ -54,7 +54,7 @@
             <parent link="base_link" />
             <child link="rightrocker" />
             <axis xyz="0 1 0" />
-            <limit effort="100.0" lower="-0.24" upper="0.24" velocity="100.0" />
+            <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
             <dynamics friction="1.0" damping="0.1" />
         </joint>
 
@@ -86,7 +86,7 @@
             <parent link="base_link" />
             <child link="leftrocker" />
             <axis xyz="0 1 0" />
-            <limit effort="100.0" lower="-0.24" upper="0.24" velocity="100.0" />
+            <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
             <dynamics friction="1.0" damping="0.1" />
         </joint>
 
@@ -118,7 +118,7 @@
             <parent link="rightrocker" />
             <child link="rightbogie" />
             <axis xyz="0 1 0" />
-            <limit effort="100.0" lower="-0.24" upper="0.24" velocity="100.0" />
+            <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
             <dynamics friction="1.0" damping="0.1" />
         </joint>
 
@@ -148,7 +148,7 @@
             <parent link="leftrocker" />
             <child link="leftbogie" />
             <axis xyz="0 1 0" />
-            <limit effort="100.0" lower="-0.24" upper="0.24" velocity="100.0" />
+            <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
             <dynamics friction="1.0" damping="0.1" />
         </joint>
 
