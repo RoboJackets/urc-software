@@ -119,7 +119,7 @@ private:
 
   std::vector<AStarNode> path_;
   std::unordered_map<int, AStarNode> closed_set_;
-  const double EPSILON = 1e-6;
+  const double EPSILON = 0.5;
 };
 } // namespace astar
 

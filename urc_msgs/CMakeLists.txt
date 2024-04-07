@@ -22,6 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/NavigationStatus.msg"
   "msg/GridLocation.msg"
   "srv/GeneratePlan.srv"
+  "action/FollowPath.action"
 
   DEPENDENCIES
   std_msgs

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>urc_navigation</name>
+  <name>path_planning</name>
   <version>0.0.0</version>
-  <description>Package for custom navigation implementation</description>
-  <maintainer email="davidcalderon03@hotmail.com">davidcalderon03</maintainer>
+  <description>Package for path planning</description>
+  <maintainer email="yashas.amb@gmail.com">yambati03</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
