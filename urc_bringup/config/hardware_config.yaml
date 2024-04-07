@@ -1,7 +1,3 @@
 hardware_config:
   use_simulation: true
-<<<<<<< HEAD
   use_simplified_model: false
-=======
-  use_simplified_model: true
->>>>>>> master
