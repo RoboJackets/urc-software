@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(urc_navigation)
+project(urc_orchestrator)
 
 include(../cmake/default_settings.cmake)
 
