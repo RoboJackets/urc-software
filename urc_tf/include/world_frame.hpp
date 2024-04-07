@@ -15,6 +15,8 @@
 
 namespace world_frame
 {
+const int gpsOffsetToMetres = 111139;
+
 class WorldFrameBroadcaster : public rclcpp::Node
 {
 public:

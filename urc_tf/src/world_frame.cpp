@@ -57,8 +57,8 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   t.header.frame_id = "odom";
   t.child_frame_id = "base_link";
 
-  t.transform.translation.x = (currentLat - baseStationLat) * 111139;
-  t.transform.translation.y = (currentLng - baseStationLng) * 111139;
+  t.transform.translation.x = (currentLat - baseStationLat) * gpsOffsetToMetres;
+  t.transform.translation.y = (currentLng - baseStationLng) * gpsOffsetToMetres;
   t.transform.translation.z = currentAlt - baseStationAlt;
 
   t.transform.rotation.x = this->imu_x;
