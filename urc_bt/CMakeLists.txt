@@ -17,14 +17,14 @@ find_package(std_srvs REQUIRED)
 find_package(urc_bt_nodes REQUIRED)
 
 set(dependencies
- rclcpp
- behaviortree_cpp
- behaviortree_ros2
- pluginlib
- rclcpp_components
- urc_msgs
- std_srvs
- urc_bt_nodes
+  rclcpp
+  behaviortree_cpp
+  behaviortree_ros2
+  pluginlib
+  rclcpp_components
+  urc_msgs
+  std_srvs
+  urc_bt_nodes
 )
 
 include_directories(

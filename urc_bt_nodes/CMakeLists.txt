@@ -17,14 +17,13 @@ find_package(geometry_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 
 set(dependencies
- rclcpp
- behaviortree_cpp
- behaviortree_ros2
- pluginlib
-
- std_srvs
- nav_msgs
- urc_msgs
+  rclcpp
+  behaviortree_cpp
+  behaviortree_ros2
+  pluginlib
+  std_srvs
+  nav_msgs
+  urc_msgs
 )
 
 include_directories(
@@ -65,7 +64,7 @@ add_library(
   src/actions/call_trigger.cpp
   include/urc_bt_nodes/actions/call_trigger.hpp
 )
-ament_target_dependencies(bt_call_trigger ${dependencies} )
+ament_target_dependencies(bt_call_trigger ${dependencies})
 target_compile_features(bt_call_trigger PUBLIC c_std_99 cxx_std_17)
 target_compile_definitions(bt_call_trigger PRIVATE BT_PLUGIN_EXPORT)
 install(
@@ -78,7 +77,7 @@ add_library(
   src/actions/call_generate_plan.cpp
   include/urc_bt_nodes/actions/call_generate_plan.hpp
 )
-ament_target_dependencies(bt_call_generate_plan ${dependencies} )
+ament_target_dependencies(bt_call_generate_plan ${dependencies})
 target_compile_features(bt_call_generate_plan PUBLIC c_std_99 cxx_std_17)
 target_compile_definitions(bt_call_generate_plan PRIVATE BT_PLUGIN_EXPORT)
 install(
@@ -91,7 +90,7 @@ add_library(
   src/actions/follow_path.cpp
   include/urc_bt_nodes/actions/follow_path.hpp
 )
-ament_target_dependencies(bt_follow_path ${dependencies} )
+ament_target_dependencies(bt_follow_path ${dependencies})
 target_compile_features(bt_follow_path PUBLIC c_std_99 cxx_std_17)
 target_compile_definitions(bt_follow_path PRIVATE BT_PLUGIN_EXPORT)
 install(
