@@ -29,12 +29,6 @@ def generate_launch_description():
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
 
-    hardware_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "hardware_config.yaml"
-    )
-    with open(hardware_config_file_dir) as f:
-        hardware_config = yaml.safe_load(f)
-
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
