@@ -2,7 +2,7 @@ import os
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.actions import SetEnvironmentVariable, RegisterEventHandler
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.event_handlers import OnProcessExit
@@ -48,8 +48,7 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir, {"robot_description": robot_desc}],
-        output="both",
+        parameters=[controller_config_file_dir],
     )
 
     load_robot_state_publisher = Node(
@@ -131,8 +130,8 @@ def generate_launch_description():
                 ),
                 launch_arguments={"port": "8765"}.items(),
             ),
-            load_robot_state_publisher,
             control_node,
+            load_robot_state_publisher,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_arm_controller,
