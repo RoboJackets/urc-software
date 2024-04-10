@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="Main Strategy">
+  <BehaviorTree ID="ArmStrategies">
+    <IfThenElse>
+      <ScriptCondition code="{arm_teleop}"/>
+      <IfThenElse>
+        <ScriptCondition code="{arm_singularity}"/>
+        <RecoverFromSingularity/>
+        <ServoArm/>
+      </IfThenElse>
+      <Sequence>
+        <RetryUntilSuccessful num_attempts="3">
+          <Sequence>
+            <PlanArmTrajectory target_ee_pose="{home_pose}"
+                               trajectory="{arm_trajectory}"/>
+            <FollowArmTrajectory trajectory="{arm_trajectory}"/>
+          </Sequence>
+        </RetryUntilSuccessful>
+      </Sequence>
+    </IfThenElse>
+  </BehaviorTree>
+
+  <BehaviorTree ID="DrivetrainStrategies">
+    <AlwaysSuccess/>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Main Strategy">
+    <Sequence>
+      <Repeat num_cycles="3">
+        <Delay delay_msec="1000">
+          <LogInfo logger="{ros_log}"
+                   message="&quot;Testing things...&quot;"/>
+        </Delay>
+      </Repeat>
+      <LogInfo logger="{ros_log}"
+               message="&quot;YOOO!&quot;"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Strategy Prototype">
+    <ReactiveSequence>
+      <Enabled/>
+      <ReactiveSequence>
+        <UpdateStatus _description="Update flags and conditions for the Rover."/>
+        <SubTree ID="DrivetrainStrategies"
+                 _autoremap="false"/>
+        <SubTree ID="ArmStrategies"
+                 arm_teleop="{flag_arm_teleop}"
+                 _autoremap="true"/>
+      </ReactiveSequence>
+    </ReactiveSequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <SubTree ID="ArmStrategies"
+             editable="true">
+      <input_port name="arm_teleop"/>
+    </SubTree>
+    <Condition ID="Enabled"
+               editable="true"/>
+    <Action ID="FollowArmTrajectory"
+            editable="true">
+      <input_port name="trajectory"/>
+    </Action>
+    <Action ID="LogInfo"
+            editable="true">
+      <input_port name="logger"
+                  default="&quot;urc_bt&quot;">Logger to use.</input_port>
+      <input_port name="message"
+                  default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+    </Action>
+    <Action ID="PlanArmTrajectory"
+            editable="true">
+      <input_port name="target_ee_pose"/>
+      <output_port name="trajectory"/>
+    </Action>
+    <Action ID="RecoverFromSingularity"
+            editable="true"/>
+    <Action ID="ServoArm"
+            editable="true"/>
+    <Action ID="UpdateStatus"
+            editable="true"/>
+  </TreeNodesModel>
+
+</root>

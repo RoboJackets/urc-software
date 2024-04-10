@@ -19,7 +19,7 @@ class Ros2IMUDriver(Node):
             return False
 
         self.get_logger().warn("Sentence received: %s" % imu_string)
-        things = re.findall("-?[0-9]\.[0-9][0-9]", str(imu_string))
+        things = re.findall(r"-?[0-9]\.[0-9][0-9]", str(imu_string))
         current_imu = Quaternion()
         current_imu.x = float(things[0])
         current_imu.y = float(things[1])

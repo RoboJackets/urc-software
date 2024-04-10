@@ -11,33 +11,34 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [
                 PathJoinSubstitution(
-                    [
-                        FindPackageShare("realsense2_camera"),
-                        "launch", "rs_launch.py"
-                    ]
+                    [FindPackageShare("realsense2_camera"), "launch", "rs_launch.py"]
                 )
             ],
         ),
         launch_arguments={
             "unite_imu_method": "2",
             "enable_accel": "true",
-            "enable_gyro": "true"
-        }.items()
+            "enable_gyro": "true",
+        }.items(),
     )
 
     imu_fusion = Node(
-        package="imu_complementary_filter",
-        executable="complementary_filter_node"
+        package="imu_complementary_filter", executable="complementary_filter_node"
     )
 
-    return LaunchDescription([
-        GroupAction([
-            SetRemap(src='/camera/imu', dst='/imu/data_raw'),
-            realsense,
-        ]),
-        GroupAction([
-            SetParameter(name="publish_tf", value="true"),
-            imu_fusion,
-        ])
-
-    ])
+    return LaunchDescription(
+        [
+            GroupAction(
+                [
+                    SetRemap(src="/camera/imu", dst="/imu/data_raw"),
+                    realsense,
+                ]
+            ),
+            GroupAction(
+                [
+                    SetParameter(name="publish_tf", value="true"),
+                    imu_fusion,
+                ]
+            ),
+        ]
+    )
