@@ -45,7 +45,6 @@ class TesterNode(Node):
             self.get_logger().info("Goal rejected :(")
             return
 
-
         self.get_logger().info("Goal accepted :)")
 
         self._get_result_future = goal_handle.get_result_async()

@@ -27,8 +27,6 @@ def load_yaml(package_name, file_path):
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    pkg_nmea_navsat_driver = FindPackageShare(
-        "nmea_navsat_driver").find("nmea_navsat_driver")
     pkg_imu_driver = FindPackageShare(
         "imu_driver").find("imu_driver")
 
@@ -167,7 +165,7 @@ def generate_launch_description():
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
         )
     )
-    gps_node = Node(
+    launch_gps = Node(
         package="nmea_navsat_driver",
         executable="nmea_serial_driver",
         output="screen",
@@ -176,7 +174,7 @@ def generate_launch_description():
 
     launch_imu = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_nmea_navsat_driver, "launch",
+            os.path.join(pkg_imu_driver, "launch",
                          "imu_serial_driver.launch.py")
         )
     )
@@ -243,19 +241,16 @@ def generate_launch_description():
                     ),
                     launch_arguments={"port": "8765"}.items(),
                 ),
-
-                launch_arguments={'port': '8765'}.items(),
-            ),
-            load_robot_state_publisher,
-            control_node,
-            load_joint_state_broadcaster,
-            load_drivetrain_controller,
-            load_gripper_controller_left,
-            load_gripper_controller_right,
-            aruco_detector,
-            aruco_location,
-            teleop_launch,
-            launch_gps,
-            launch_imu,
-            rosbridge_server_node
-        ])
+                load_robot_state_publisher,
+                control_node,
+                load_joint_state_broadcaster,
+                load_drivetrain_controller,
+                load_gripper_controller_left,
+                load_gripper_controller_right,
+                aruco_detector,
+                aruco_location,
+                teleop_launch,
+                launch_gps,
+                launch_imu,
+                rosbridge_server_node
+            ])
