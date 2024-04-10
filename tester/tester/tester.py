@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from nav_msgs.msg import OccupancyGrid
-from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import OccupancyGrid, Odometry
+from geometry_msgs.msg import PoseStamped, Pose
 from urc_msgs.srv import GeneratePlan
 import numpy as np
 import time
@@ -14,10 +14,19 @@ class TesterNode(Node):
     def __init__(self):
         super().__init__("tester")
         self.costmap_pub = self.create_publisher(OccupancyGrid, "/costmap", 10)
+
+        self.odom_sub = self.create_subscription(
+            Odometry, "/diff_cont/odom", self.odom_callback, 10
+        )
         self.timer = self.create_timer(0.02, self.publish_costmap)
 
         self.planner_client = self.create_client(GeneratePlan, "plan")
         self.follower_client = ActionClient(self, FollowPath, "follow_path")
+
+        self.current_pose = Pose()
+
+    def odom_callback(self, msg):
+        self.current_pose = msg.pose.pose
 
     def call_trajectory_follower(self, path):
         goal_msg = FollowPath.Goal()
@@ -36,6 +45,7 @@ class TesterNode(Node):
             self.get_logger().info("Goal rejected :(")
             return
 
+
         self.get_logger().info("Goal accepted :)")
 
         self._get_result_future = goal_handle.get_result_async()
@@ -43,13 +53,13 @@ class TesterNode(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info("Result: {0}".format(result.sequence))
+        self.get_logger().info("Result: {0}".format(result.error_code))
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info(
-            "Received feedback: {0}".format(feedback.partial_sequence)
+            "Received feedback: {0}".format(feedback.distance_to_goal)
         )
 
     def call_planner_client(self):
@@ -58,8 +68,8 @@ class TesterNode(Node):
         initialPose = PoseStamped()
         initialPose.header.frame_id = "odom"
         initialPose.header.stamp = rclpy.time.Time().to_msg()
-        initialPose.pose.position.x = 0.0
-        initialPose.pose.position.y = 0.0
+        initialPose.pose.position.x = self.current_pose.position.x
+        initialPose.pose.position.y = self.current_pose.position.y
 
         goalPose = PoseStamped()
         goalPose.header.frame_id = "odom"
@@ -115,12 +125,10 @@ def main(args=None):
         res = tester_node.call_planner_client()
         tester_node.get_logger().info(f"{res.error_code}")
 
-    # tester_node.call_trajectory_follower(res.path)
-    while rclpy.ok():
-        rclpy.spin(tester_node)
+    tester_node.call_trajectory_follower(res.path)
+    rclpy.spin(tester_node)
 
     tester_node.destroy_node()
-    rclpy.shutdown()
 
 
 if __name__ == "__main__":

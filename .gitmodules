@@ -17,3 +17,7 @@
 	path = external/articubot_one
 	url = https://github.com/joshnewans/articubot_one.git
 	branch = humble
+[submodule "external/articubot_one"]
+	path = external/articubot_one
+	url = https://github.com/joshnewans/articubot_one.git
+	branch = humble

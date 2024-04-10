@@ -1,0 +1,8 @@
+follower_action_server:
+  ros__parameters:
+    lookahead_distance: 0.9
+    desired_linear_velocity: 0.5
+    cmd_vel_topic: "/diff_cont/cmd_vel_unstamped"
+    odom_topic: "/diff_cont/odom"
+    map_frame: "odom"
+    goal_tolerance: 0.1

@@ -6,6 +6,7 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
+#include "geometry_msgs/msg/transform_stamped.hpp"
 
 namespace pure_pursuit
 {
@@ -43,16 +44,28 @@ class PurePursuit
 public:
   explicit PurePursuit(PurePursuitParams params);
 
+  /**
+   * @brief Set the path to follow
+   * @param path The path to follow in the local frame (usually the base_link frame)
+   */
   void setPath(const nav_msgs::msg::Path & path);
 
+  /**
+   * @brief Get the desired velocity command and lookahead point given the current pose
+   * @param map_to_base_link Transform from the map frame to base link
+   */
   PurePursuitOutput getCommandVelocity(
-    const geometry_msgs::msg::PoseStamped & current_pose);
+    const geometry_msgs::msg::TransformStamped & map_to_base_link);
 
 private:
+  /**
+   * @brief Get the lookahead pose
+   * @param path The path to follow in the local frame (usually the base_link frame)
+   * @param lookahead_distance The distance to look ahead (m)
+   */
   geometry_msgs::msg::PoseStamped getLookaheadPose(
     const nav_msgs::msg::Path & path,
-    double lookahead_distance,
-    const geometry_msgs::msg::PoseStamped & current_pose);
+    double lookahead_distance);
 
   nav_msgs::msg::Path path_;
 

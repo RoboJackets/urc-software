@@ -23,7 +23,7 @@ public:
   ~FollowerActionServer();
 
 private:
-  nav_msgs::msg::Path transform_path_to_base_link(const nav_msgs::msg::Path & path);
+  geometry_msgs::msg::TransformStamped lookup_map_to_base_link();
 
   visualization_msgs::msg::Marker create_lookahead_circle(
     double x, double y, double radius,
