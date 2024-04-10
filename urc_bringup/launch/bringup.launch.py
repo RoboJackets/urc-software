@@ -206,7 +206,6 @@ def generate_launch_description():
                             load_drivetrain_controller,
                             aruco_detector,
                             aruco_location,
-                            gps_node,
                             teleop_launch,
                             bt_launch,
                         ],
