@@ -1,0 +1,6 @@
+planner_server:
+  ros__parameters:
+    plan_publish_topic: "/path"
+    costmap_topic: "/costmap"
+    robot_radius: 0.5
+    frame: "odom"

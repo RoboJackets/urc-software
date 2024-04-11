@@ -45,6 +45,7 @@ protected:
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
   rclcpp::Service<urc_msgs::srv::GeneratePlan>::SharedPtr plan_service_;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr new_costmap_pub_;
 };
 } // namespace planner_server
 

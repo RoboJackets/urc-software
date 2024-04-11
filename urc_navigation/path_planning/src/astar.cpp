@@ -13,9 +13,39 @@ Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
   return {x, y};
 }
 
-void AStar::setMap(const nav_msgs::msg::OccupancyGrid & costmap)
+void AStar::setMap(const nav_msgs::msg::OccupancyGrid & costmap,
+  const double robot_radius,
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr new_costmap_pub)
 {
-  costmap_ = costmap;
+
+ // Adjust the costmap based on the robot radius
+  nav_msgs::msg::OccupancyGrid adjusted_costmap = costmap;
+  adjusted_costmap.header.stamp = rclcpp::Clock().now();
+  adjusted_costmap.header.frame_id = "odom";
+
+  int inflation_radius = static_cast<int>(std::ceil(robot_radius / adjusted_costmap.info.resolution));
+  for (int y = 0; y < costmap.info.height; ++y) {
+    for (int x = 0; x < costmap.info.width; ++x) {
+      int index = y * costmap.info.width + x;
+      if (costmap.data[index] > 1) { 
+
+        for (int dy = -inflation_radius; dy <= inflation_radius; ++dy) {
+          for (int dx = -inflation_radius; dx <= inflation_radius; ++dx) {
+            int nx = x + dx;
+            int ny = y + dy;
+            if (nx >= 0 && nx < costmap.info.width && ny >= 0 && ny < costmap.info.height) {
+              int nIndex = ny * costmap.info.width + nx;
+              adjusted_costmap.data[nIndex] += 10; 
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  costmap_ = adjusted_costmap;
+  new_costmap_pub->publish(costmap_);
 }
 
 void AStar::setGoalNode(const geometry_msgs::msg::Pose & goal_pose)
@@ -23,6 +53,11 @@ void AStar::setGoalNode(const geometry_msgs::msg::Pose & goal_pose)
   goal_node_.x = goal_pose.position.x;
   goal_node_.y = goal_pose.position.y;
 }
+
+// int AStar::gradientCost(int cost, double robot_radius)
+// {
+//   return cost + 10 * (1 / robot_radius);
+// }
 
 void AStar::createPlan(
   const geometry_msgs::msg::Pose & start_pose,
@@ -33,6 +68,7 @@ void AStar::createPlan(
   {
     throw std::runtime_error("Costmap is invalid");
   }
+
 
   AStarNodeQueue open_set;
 

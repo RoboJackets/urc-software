@@ -11,6 +11,12 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(get_logger(), "Planner server started.");
 
+  // declare parameters
+  this->declare_parameter("plan_publish_topic", "/path");
+  this->declare_parameter("costmap_topic", "/costmap");
+  this->declare_parameter("robot_radius", 0.5);
+  this->declare_parameter("frame", "odom");
+
   // Create the service
   plan_service_ = create_service<urc_msgs::srv::GeneratePlan>(
     "plan",
@@ -18,12 +24,16 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 
   // Create the publisher
   plan_publisher_ = create_publisher<nav_msgs::msg::Path>(
-    "/path",
+    get_parameter("plan_publish_topic").as_string(),
+    rclcpp::SystemDefaultsQoS());
+
+  new_costmap_pub_ = create_publisher<nav_msgs::msg::OccupancyGrid>(
+    "new_costmap",
     rclcpp::SystemDefaultsQoS());
 
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
-    "/costmap",
+    get_parameter("costmap_topic").as_string(),
     rclcpp::SystemDefaultsQoS(),
     std::bind(&PlannerServer::handleCostmap, this, std::placeholders::_1));
 }
@@ -42,7 +52,7 @@ void PlannerServer::generatePlan(
 {
   try {
     astar::AStar astar;
-    astar.setMap(current_costmap_);
+    astar.setMap(current_costmap_, get_parameter("robot_radius").as_double(), new_costmap_pub_);
 
     auto start = request->start.pose;
     auto goal = request->goal.pose;
@@ -55,7 +65,7 @@ void PlannerServer::generatePlan(
     for (auto & node : path) {
       geometry_msgs::msg::PoseStamped pose;
 
-      pose.header.frame_id = "odom";
+      pose.header.frame_id = get_parameter("frame").as_string();
       pose.header.stamp = get_clock()->now();
       pose.pose = node.getPose();
 
@@ -63,7 +73,7 @@ void PlannerServer::generatePlan(
     }
 
     nav_msgs::msg::Path plan;
-    plan.header.frame_id = "odom";
+    plan.header.frame_id = get_parameter("frame").as_string();
     plan.header.stamp = get_clock()->now();
     plan.poses = poses;
 
