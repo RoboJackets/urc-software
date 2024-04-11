@@ -16,25 +16,23 @@ namespace pointcloud_costmap
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-        costmap_ = new nav2_costmap_2d::Costmap2D(50, 50, 0.1, -2.5, -2.5);
-        k_neighbors_ = 10;
+        costmap_ = new nav2_costmap_2d::Costmap2D(500, 500, 0.01, -0.25, -0.25);
+        k_neighbors_ = 50;
     }
 
     void PointCloudCostmap::PointCloudCallback(const sensor_msgs::msg::PointCloud2 &msg)
     {
-
-        double xSize = (double)costmap_->getSizeInCellsX();
-        double ySize = (double)costmap_->getSizeInCellsY();
-
         pcl::PointCloud<pcl::PointXYZ> cloud;
         pcl::fromROSMsg(msg, cloud);
 
+        // Transform pt cloud to odom frame
+        geometry_msgs::msg::TransformStamped transform = lookup_camera_odom();
+        sensor_msgs::msg::PointCloud2 transformed_cloud;
+        tf2::doTransform(msg, transformed_cloud, transform);
+
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
-        *cloudPtr = cloud; // Copy the data into the shared pointer
-        if(cloudPtr->points.empty()){
-            RCLCPP_ERROR(this->get_logger(), "Point cloud is empty");
-            return;
-        }
+        pcl::fromROSMsg(transformed_cloud, *cloudPtr);
+
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered = filterOutliers(cloudPtr);
 
         std::vector<double> gradients(filtered->points.size(), 0.0); // init grads to 0
@@ -51,7 +49,9 @@ namespace pointcloud_costmap
             unsigned int mx, my;
             if (costmap_->worldToMap(point.x, point.y, mx, my))
             {
-                unsigned char cost = (unsigned char)(gradients[i] * 100);
+                double gradient_range = maxGradient - minGradient;
+                double normalized_gradient = (gradients[i] - minGradient) / gradient_range;
+                unsigned char cost = static_cast<unsigned char>(normalized_gradient * 100);
                 costmap_->setCost(mx, my, cost);
             }
         }
@@ -65,7 +65,7 @@ namespace pointcloud_costmap
         nav_msgs::msg::OccupancyGrid grid;
 
         grid.header.stamp = rclcpp::Clock().now();
-        grid.header.frame_id = "map";
+        grid.header.frame_id = "odom";
 
         grid.info.resolution = costmap.getResolution();
         grid.info.width = costmap.getSizeInCellsX();
@@ -82,9 +82,7 @@ namespace pointcloud_costmap
             for (unsigned int j = 0; j < grid.info.width; ++j)
             {
                 unsigned int index = grid.info.width * i + j;
-
                 unsigned char cost = costmap.getCost(j, i);
-
                 grid.data[index] = cost;
             }
         }
@@ -97,11 +95,12 @@ namespace pointcloud_costmap
     {
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
         sor.setInputCloud(inputCloud); // Use the input cloud
-        sor.setMeanK(50);              // Number of neighbors to analyze for each point
+        sor.setMeanK(k_neighbors_);              // Number of neighbors to analyze for each point
         sor.setStddevMulThresh(1.0);   // Standard deviation multiplier
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered(new pcl::PointCloud<pcl::PointXYZ>);
         sor.filter(*filtered);
-        return filtered;
+        // return filtered;
+        return inputCloud;
     }
 
     // Extracted method for updating gradients, min, and max
@@ -147,8 +146,8 @@ namespace pointcloud_costmap
 
     // returns a transform from the camera link to the odom frame
     geometry_msgs::msg::TransformStamped PointCloudCostmap::lookup_camera_odom(){
-        std::string map_frame = get_parameter("camera_link").as_string();
-        std::string odom_frame = get_parameter("odom").as_string();
+        std::string map_frame = "camera_link";
+        std::string odom_frame = "odom";
         return tf_buffer_->lookupTransform(map_frame, odom_frame, tf2::TimePointZero);
     }
 }

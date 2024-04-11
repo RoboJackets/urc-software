@@ -30,9 +30,10 @@ class PointCloudCostmap : public rclcpp::Node
         rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_publisher;
         pcl::PointCloud<pcl::PointXYZ>::Ptr filterOutliers(const pcl::PointCloud<pcl::PointXYZ>::Ptr& inputCloud);
         void updateGradientsMinMax(const pcl::PointCloud<pcl::PointXYZ>::Ptr& filtered, std::vector<double>& gradients, double& minGradient, double& maxGradient, int k_neighbors);
+        geometry_msgs::msg::TransformStamped lookup_camera_odom();
 
-        tf2_ros::Buffer tf_buffer_;
-        tf2_ros::TransformListener tf_listener_;
+        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
         nav2_costmap_2d::Costmap2D* costmap_;
         int k_neighbors_;
 };
