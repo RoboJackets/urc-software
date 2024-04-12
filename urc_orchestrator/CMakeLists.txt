@@ -27,8 +27,6 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/orchestrator.cpp
-  src/planner_server.cpp
-  src/astar.cpp
 )
 
 set(dependencies
@@ -56,12 +54,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "orchestrator::Orchestrator"
   EXECUTABLE ${PROJECT_NAME}_Orchestrator
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "planner_server::PlannerServer"
-  EXECUTABLE ${PROJECT_NAME}_PlannerServer
 )
 
 # Install launch files.
