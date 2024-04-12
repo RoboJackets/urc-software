@@ -1,50 +1,46 @@
 #include "world_frame.hpp"
 
-namespace world_frame
-{
-WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions & options)
-: Node("world_frame", options)
-{
+namespace world_frame {
+WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions &options)
+    : Node("world_frame", options) {
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
 
   gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
-    "/fix", rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::NavSatFix msg) {GPSCallback(msg);});
+      "/fix", rclcpp::SystemDefaultsQoS(),
+      [this](const sensor_msgs::msg::NavSatFix msg) { GPSCallback(msg); });
 
   waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
-    "/waypoint", rclcpp::SystemDefaultsQoS(),
-    [this](const urc_msgs::msg::Waypoint msg) {WaypointCallback(msg);});
+      "/waypoint", rclcpp::SystemDefaultsQoS(),
+      [this](const urc_msgs::msg::Waypoint msg) { WaypointCallback(msg); });
 
   set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
-    "/set_base", rclcpp::SystemDefaultsQoS(),
-    [this](const std_msgs::msg::Bool msg) {SetBaseCallback(msg);});
+      "/set_base", rclcpp::SystemDefaultsQoS(),
+      [this](const std_msgs::msg::Bool msg) { SetBaseCallback(msg); });
 
   imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
-    "/imu/data", rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
+      "/imu/data", rclcpp::SystemDefaultsQoS(),
+      [this](const sensor_msgs::msg::Imu msg) { IMUCallback(msg); });
 
   baseStationLat = -1000;
   baseStationLng = -1000;
   baseStationAlt = -1000;
 }
 
-void WorldFrameBroadcaster::SetBaseCallback(const std_msgs::msg::Bool & msg)
-{
+void WorldFrameBroadcaster::SetBaseCallback(const std_msgs::msg::Bool &msg) {
   this->baseStationLat = currentLat;
   this->baseStationLng = currentLng;
   this->baseStationAlt = currentAlt;
 }
 
-void WorldFrameBroadcaster::IMUCallback(const sensor_msgs::msg::Imu & msg)
-{
+void WorldFrameBroadcaster::IMUCallback(const sensor_msgs::msg::Imu &msg) {
   this->imu_x = msg.orientation.x;
   this->imu_y = msg.orientation.y;
   this->imu_z = msg.orientation.z;
   this->imu_w = msg.orientation.w;
 }
 
-void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
-{
+void WorldFrameBroadcaster::GPSCallback(
+    const sensor_msgs::msg::NavSatFix &msg) {
   this->currentLat = msg.latitude;
   this->currentLng = msg.longitude;
   this->currentAlt = msg.altitude;
@@ -69,8 +65,8 @@ void WorldFrameBroadcaster::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   tf_broadcaster_->sendTransform(t);
 }
 
-void WorldFrameBroadcaster::WaypointCallback(const urc_msgs::msg::Waypoint & msg)
-{
+void WorldFrameBroadcaster::WaypointCallback(
+    const urc_msgs::msg::Waypoint &msg) {
   this->waypointLat = msg.latitude;
   this->waypointLng = msg.longitude;
 
@@ -82,8 +78,10 @@ void WorldFrameBroadcaster::WaypointCallback(const urc_msgs::msg::Waypoint & msg
   t.header.frame_id = "world";
   t.child_frame_id = "waypoint";
 
-  t.transform.translation.x = (waypointLat - baseStationLat) * 111139;
-  t.transform.translation.y = (waypointLng - baseStationLng) * 111139;
+  t.transform.translation.x =
+      (waypointLat - baseStationLat) * gpsOffsetToMetres;
+  t.transform.translation.y =
+      (waypointLng - baseStationLng) * gpsOffsetToMetres;
   t.transform.translation.z = 0; // waypoint doesn't work
 
   t.transform.rotation.x = 0.0;
@@ -93,6 +91,6 @@ void WorldFrameBroadcaster::WaypointCallback(const urc_msgs::msg::Waypoint & msg
 
   tf_broadcaster_->sendTransform(t);
 }
-}
+} // namespace world_frame
 
 RCLCPP_COMPONENTS_REGISTER_NODE(world_frame::WorldFrameBroadcaster)
