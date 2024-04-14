@@ -24,29 +24,19 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   current_state_publisher = create_publisher<urc_msgs::msg::NavigationStatus>(
-    "/current_navigation_state",
-    rclcpp::SystemDefaultsQoS()
-  );
+    "/current_navigation_state", rclcpp::SystemDefaultsQoS());
   cmd_vel_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
-    "/rover_drivetrain_controller/cmd_vel",
-    rclcpp::SystemDefaultsQoS()
-  );
+    "/rover_drivetrain_controller/cmd_vel", rclcpp::SystemDefaultsQoS());
 
   metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
-    "/metric_pose_offset",
-    rclcpp::SystemDefaultsQoS()
-  );
+    "/metric_pose_offset", rclcpp::SystemDefaultsQoS());
   costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
-    "/costmap_pose",
-    rclcpp::SystemDefaultsQoS()
-  );
+    "/costmap_pose", rclcpp::SystemDefaultsQoS());
 
   metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
-    "/pose/metric", rclcpp::SystemDefaultsQoS()
-  );
+    "/pose/metric", rclcpp::SystemDefaultsQoS());
   costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
-    "/pose/costmap", rclcpp::SystemDefaultsQoS()
-  );
+    "/pose/costmap", rclcpp::SystemDefaultsQoS());
 
   imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
     "/imu/data", rclcpp::SystemDefaultsQoS(),
@@ -134,13 +124,14 @@ void Orchestrator::DetermineState()
 
   urc_msgs::msg::NavigationStatus state_message;
 
-  geometry_msgs::msg::TransformStamped robotRelWorld; // robot transform relative to world frame
-  geometry_msgs::msg::TransformStamped waypointRelRobot; // waypoint transform relative to robot frame
+  geometry_msgs::msg::TransformStamped
+    robotRelWorld;   // robot transform relative to world frame
+  geometry_msgs::msg::TransformStamped
+    waypointRelRobot;   // waypoint transform relative to robot frame
 
   try {
-    robotRelWorld = tf_buffer_->lookupTransform(
-      "base_link", "world",
-      tf2::TimePointZero);
+    robotRelWorld =
+      tf_buffer_->lookupTransform("base_link", "world", tf2::TimePointZero);
   } catch (const tf2::TransformException & ex) {
     RCLCPP_INFO(
       this->get_logger(), "Could not transform %s to %s: %s",
@@ -174,7 +165,10 @@ void Orchestrator::DetermineState()
     state_message.message = "Navigating";
   }
   current_state_publisher->publish(state_message);
-  if (this->purePursuitEnabled && state_message.message != "Goal") { // IMPORTANT: only for very basic testing
+  if (this->purePursuitEnabled &&
+    state_message.message !=
+    "Goal")         // IMPORTANT: only for very basic testing
+  {
     PurePursuit(deltaX, deltaY);
   }
   return;
@@ -207,9 +201,11 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
     if (errorZ < 0) {
       thing = -1;
     }
-    cmd_vel.twist.angular.z = 1 * thing; // Will probably need to multiply by some constant.
+    cmd_vel.twist.angular.z =
+      1 * thing;   // Will probably need to multiply by some constant.
   } else if (errorD >= errorDThreshold) {
-    cmd_vel.twist.linear.x = 0.5; // Will probably need to multiply by some constant.
+    cmd_vel.twist.linear.x =
+      0.5;   // Will probably need to multiply by some constant.
   }
 
   cmd_vel_publisher->publish(cmd_vel);
@@ -220,6 +216,6 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
   // }
 }
 
-}
+} // namespace orchestrator
 
 RCLCPP_COMPONENTS_REGISTER_NODE(orchestrator::Orchestrator)
