@@ -14,7 +14,6 @@ class TesterNode(Node):
     def __init__(self):
         super().__init__("tester")
         self.costmap_pub = self.create_publisher(OccupancyGrid, "/costmap", 10)
-
         self.odom_sub = self.create_subscription(
             Odometry, "/diff_cont/odom", self.odom_callback, 10
         )
