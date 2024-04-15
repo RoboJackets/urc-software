@@ -1,220 +1,183 @@
-#include "urc_bt/bt_orchestor.hpp"
-#include "behaviortree_cpp/bt_factory.h"
-#include "behaviortree_ros2/plugins.hpp"
-#include "behaviortree_ros2/ros_node_params.hpp"
-#include <exception>
-#include <memory>
-#include <rclcpp/executors.hpp>
-#include <rclcpp/logger.hpp>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp/node_options.hpp>
-#include <rclcpp/qos.hpp>
-#include <rclcpp/rate.hpp>
-#include <rclcpp/service.hpp>
-#include <rclcpp/time.hpp>
-#include <rclcpp/utilities.hpp>
-#include <std_srvs/srv/detail/trigger__struct.hpp>
-#include <std_srvs/srv/trigger.hpp>
-#include <urc_msgs/srv/update_behavior_tree.hpp>
-#include <string>
-#include <thread>
-#include <vector>
+#include "orchestrator.hpp"
 
-namespace behavior
-{
+namespace orchestrator {
+Orchestrator::Orchestrator(const rclcpp::NodeOptions &options)
+    : rclcpp::Node("orchestrator", options) {
+  this->purePursuitEnabled = 1;
+  this->maxDelta = 1.0;
+  this->actualLongitude = -1;
+  this->actualLatitude = -1;
+  this->baseLatitude = -1;
+  this->baseLongitude = -1;
+  this->waypointLatitude = -1;
+  this->waypointLongitude = -1;
+  this->initialYaw = -1;
+  this->currentYaw = -1;
+  this->gpsTimestamp = this->get_clock()->now();
+  current_metric_pose.position.x = -1;
+  current_metric_pose.position.y = -1;
+  current_metric_pose.position.z = -1;
 
-BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions & options)
-: rclcpp::Node("bt_orchestor", options)
-{
-  logger_ = std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestor"));
-  logger_->set_level(rclcpp::Logger::Level::Debug);
-  declare_parameter<std::vector<std::string>>("normal_node_lib_dirs");
-  declare_parameter<std::vector<std::string>>("ros_node_lib_dirs");
-  declare_parameter<std::string>("tree_file_dir");
-  declare_parameter<int>("tick_rate");
-  declare_parameter<bool>("start_bridge", true);
+  current_state_publisher = create_publisher<urc_msgs::msg::NavigationStatus>(
+      "/current_navigation_state", rclcpp::SystemDefaultsQoS());
+  cmd_vel_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
+      "/rover_drivetrain_controller/cmd_vel", rclcpp::SystemDefaultsQoS());
 
-  bt_ros_nh_ = create_sub_node("ros_nh");
-  bt_ros_logger_ = std::make_shared<rclcpp::Logger>(bt_ros_nh_->get_logger());
+  metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+      "/metric_pose_offset", rclcpp::SystemDefaultsQoS());
+  costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+      "/costmap_pose", rclcpp::SystemDefaultsQoS());
 
-  // register all the specified libraries
-  if (has_parameter("normal_node_lib_dirs")) {
-    std::vector<std::string> temp;
-    get_parameter("normal_node_lib_dirs", temp);
-    RCLCPP_INFO(
-      *logger_, "Loading %ld Normal Plugin%s All Loaded Plugins:", temp.size(),
-      temp.size() > 1 ? "s." : ".");
+  metric_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+      "/pose/metric", rclcpp::SystemDefaultsQoS());
+  costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
+      "/pose/costmap", rclcpp::SystemDefaultsQoS());
 
-    for (const auto & node_lib_dir : temp) {
-      RCLCPP_INFO(*logger_, "\t%s", node_lib_dir.c_str());
-      tree_factory_.registerFromPlugin(node_lib_dir);
-    }
-  }
-  if (has_parameter("ros_node_lib_dirs")) {
-    std::vector<std::string> temp;
-    get_parameter("ros_node_lib_dirs", temp);
-    RCLCPP_INFO(
-      *logger_, "Loading %ld ROS Plugin%s All Loaded Plugins:", temp.size(),
-      temp.size() > 1 ? "s." : ".");
-
-    BT::RosNodeParams params_;
-    params_.nh = bt_ros_nh_;
-
-    for (const auto & node_lib_dir : temp) {
-      RCLCPP_INFO(*logger_, "\t%s", node_lib_dir.c_str());
-      // tree_factory_.registerFromPlugin(node_lib_dir);
-      RegisterRosNode(tree_factory_, node_lib_dir, params_);
-    }
-  }
-
-  // create default tree if a file is speficied
-  if (has_parameter("tree_file_dir")) {
-    std::string temp;
-    get_parameter("tree_file_dir", temp);
-    tree_dir_ = std::make_shared<std::string>(temp);
-    RCLCPP_INFO(*logger_, "Creating tree from configuration file %s.", temp.c_str());
-    tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(temp));
-  } else {
-    RCLCPP_WARN(
-      *logger_,
-      "No behavior tree file set. Will not able to start the orchestor until upon calling service "
-      "/update_tree.");
-  }
-  if (has_parameter("tick_rate")) {
-    tick_rate_ = get_parameter("tick_rate").as_int();
-    RCLCPP_INFO(*logger_, "Tick rate set to %d Hz.", tick_rate_);
-  } else {
-    RCLCPP_WARN(*logger_, "No tick rate set, default to run at 100 Hz.");
-  }
-
-  // starts service
-  update_bt_service_ = create_service<urc_msgs::srv::UpdateBehaviorTree>(
-    "~/update_tree",                                                  //
-    [this](                                                           //
-      const UpdateBTReqest request, UpdateBTResponse response) {      //
-      response->success = RenewTree(request->use_dir, request->tree_dir, request->tree_content);
-      return response;
-    });
-  reload_bt_service_ =
-    create_service<std_srvs::srv::Trigger>(
-    "~/reload", [this](const TriggerRequest, TriggerResponse response) {
-      if (tree_dir_ == nullptr) {
-        RCLCPP_WARN(*logger_, "Tree dir is null, cannot perform reload.");
-        response->success = false;
-      } else {
-        response->success = RenewTree(true, *tree_dir_, "");
-      }
-      return response;
-    });
-  start_bt_service_ = create_service<std_srvs::srv::Trigger>(
-    //
-    "~/start_bt", [this](const TriggerRequest, TriggerResponse response) {
-      if (!is_running_) {
-        response->success = Start();
-      } else {
-        response->message = "Behavior tree has already been started.";
-        response->success = false;
-      }
-      return response;
-    });
-  stop_bt_service_ =
-    create_service<std_srvs::srv::Trigger>(
-    "~/stop_bt", [this](TriggerRequest, TriggerResponse response) {
-      if (is_running_) {
-        response->success = Stop();
-      } else {
-        response->message = "Behavior tree has not been started.";
-        response->success = false;
-      }
-      return response;
-    });
-
-  // if the tree is loaded, start the tree.
-  if (is_tree_loaded()) {
-    Initialize();
-    Start();
-  }
+  imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
+      "/imu/data", rclcpp::SystemDefaultsQoS(),
+      [this](const sensor_msgs::msg::Imu msg) { IMUCallback(msg); });
+  set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
+      "/set_base", rclcpp::SystemDefaultsQoS(),
+      [this](const std_msgs::msg::Bool msg) { SetBaseCallback(msg); });
+  waypoint_subscriber = create_subscription<urc_msgs::msg::Waypoint>(
+      "/waypoint", rclcpp::SystemDefaultsQoS(),
+      [this](const urc_msgs::msg::Waypoint msg) { WaypointCallback(msg); });
+  gps_subscriber = create_subscription<sensor_msgs::msg::NavSatFix>(
+      "/fix", rclcpp::SystemDefaultsQoS(),
+      [this](const sensor_msgs::msg::NavSatFix msg) { GPSCallback(msg); });
 }
 
-BehaviorTreeOrchestor::~BehaviorTreeOrchestor()
-{
-  Stop();
-}
-
-bool BehaviorTreeOrchestor::RenewTree(bool use_dir, std::string dir, std::string content)
-{
-  std::unique_ptr<BT::Tree> new_tree_;
-
-  try {
-    if (use_dir) {
-      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(dir));
-    } else {
-      new_tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromText(content));
-    }
-
-    Stop();
-    RCLCPP_DEBUG(*logger_, "Load tree successfull. Start hot swapping...");
-    tree_ = std::move(new_tree_);
-
-    Initialize();
-    Start();  // auto start
-    RCLCPP_DEBUG(*logger_, "Hot swapping successful!");
-  } catch (std::exception & e) {
-    RCLCPP_ERROR(*logger_, "Fail to load new tree. %s.", e.what());
-    is_running_ = false;
-    tree_.reset(nullptr);  // auto stop tree
-    return false;
+void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix &msg) {
+  this->actualLatitude = msg.latitude;
+  this->actualLongitude = msg.longitude;
+  if (this->baseLatitude == -1) {
+    this->baseLatitude = this->actualLatitude;
+    this->baseLongitude = this->actualLongitude;
   }
-
-  return true;
+  if (this->actualLatitude != -1 && this->actualLongitude != -1 &&
+      this->waypointLatitude != -1 && this->waypointLongitude != -1) {
+    RCLCPP_INFO(this->get_logger(), "Publishing Poses");
+    PublishMetricPose(this->actualLatitude - this->baseLatitude,
+                      this->actualLongitude - this->baseLongitude);
+    PublishCostmapPose(this->actualLatitude - this->baseLatitude,
+                       this->actualLongitude - this->baseLongitude);
+  }
+  DetermineState();
 }
 
-void BehaviorTreeOrchestor::Initialize()
-{
-  if (!get_parameter("start_bridge").get_parameter_value().to_value_msg().bool_value) {
+void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu &msg) {
+  this->current_metric_pose.orientation.x = msg.orientation.x;
+  this->current_metric_pose.orientation.y = msg.orientation.y;
+  this->current_metric_pose.orientation.z = msg.orientation.z;
+  this->current_metric_pose.orientation.w = msg.orientation.w;
+  double x = msg.orientation.x;
+  double y = msg.orientation.y;
+  double z = msg.orientation.z;
+  double w = msg.orientation.w;
+  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(x, 2) + pow(y, 2)));
+  if (this->initialYaw == -1) {
+    this->initialYaw = yaw;
+  }
+  this->currentYaw = yaw;
+}
+
+void Orchestrator::SetBaseCallback(const std_msgs::msg::Bool &msg) {
+  this->baseLatitude = this->actualLatitude;
+  this->baseLongitude = this->actualLongitude;
+}
+
+void Orchestrator::WaypointCallback(const urc_msgs::msg::Waypoint &msg) {
+  this->waypointLatitude = msg.latitude;
+  this->waypointLongitude = msg.longitude;
+  DetermineState();
+}
+
+void Orchestrator::PublishMetricPose(double gpsOffsetX, double gpsOffsetY) {
+  this->current_metric_pose.position.x = gpsOffsetX * 111139;
+  this->current_metric_pose.position.y = gpsOffsetY * 111139;
+  metric_offset_pose_publisher->publish(current_metric_pose);
+}
+
+void Orchestrator::PublishCostmapPose(double gpsOffsetX, double gpsOffsetY) {
+  this->current_costmap_pose.position.x = floor((gpsOffsetX * 111139) * 4 + 50);
+  this->current_costmap_pose.position.y = floor((gpsOffsetY * 111139) * 4 + 50);
+  costmap_offset_pose_publisher->publish(current_costmap_pose);
+}
+
+void Orchestrator::DetermineState() {
+  this->gpsTimestamp = this->get_clock()->now();
+
+  urc_msgs::msg::NavigationStatus state_message;
+  if (actualLatitude == -1 || actualLongitude == -1) {
+    state_message.message = "NoGPS";
+    current_state_publisher->publish(state_message);
+    return;
+  } else if (waypointLatitude == -1 || waypointLongitude == -1) {
+    state_message.message = "NoWaypoint";
+    current_state_publisher->publish(state_message);
     return;
   }
 
-  // register current node to tree factory
-  tree_->rootBlackboard()->set("ros_nh", bt_ros_nh_);
-  tree_->rootBlackboard()->set("ros_log", bt_ros_logger_);
+  double deltaX = waypointLongitude - actualLongitude;
+  double deltaY = waypointLatitude - actualLatitude;
+  double distance = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
+  if (distance < 0.00001) {
+    state_message.message = "Goal";
+    this->waypointLatitude = -1;
+    this->waypointLongitude = -1;
+  } else {
+    state_message.message = "Navigating";
+  }
+  current_state_publisher->publish(state_message);
+  if (this->purePursuitEnabled &&
+      state_message.message !=
+          "Goal") { // IMPORTANT: only for very basic testing
+    PurePursuit(deltaX, deltaY);
+  }
+  return;
 }
 
-bool BehaviorTreeOrchestor::Start()
-{
-  if (!is_tree_loaded()) {
-    RCLCPP_ERROR(*logger_, "Tree is not loaded! Not able to start the orchestor.");
-    return false;
+void Orchestrator::PurePursuit(double deltaX, double deltaY) {
+  // Publishing of Command Velocities.
+  double errorDThreshold = 0.00001;
+  double errorZThreshold = 0.05;
+
+  geometry_msgs::msg::TwistStamped cmd_vel;
+  double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
+  // double currentAngle = currentYaw - initialYaw;
+  double currentAngle = this->currentYaw - this->initialYaw;
+  currentAngle *= 100;
+
+  RCLCPP_INFO(this->get_logger(), "BASE ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", this->initialYaw);
+  RCLCPP_INFO(this->get_logger(), "CURRENT ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", currentAngle);
+  RCLCPP_INFO(this->get_logger(), "TARGET ANGLE");
+  RCLCPP_INFO(this->get_logger(), "%f", (atan2(deltaY, deltaX) - M_PI / 2));
+  double errorZ = currentAngle - (atan2(deltaY, deltaX) - M_PI / 2);
+  RCLCPP_INFO(this->get_logger(), "ERRORZ");
+  RCLCPP_INFO(this->get_logger(), "%f", errorZ);
+  if (abs(errorZ) >= errorZThreshold) {
+    RCLCPP_INFO(this->get_logger(), "CORRECTING ORIENTATION");
+    double thing = 1;
+    if (errorZ < 0) {
+      thing = -1;
+    }
+    cmd_vel.twist.angular.z =
+        1 * thing; // Will probably need to multiply by some constant.
+  } else if (errorD >= errorDThreshold) {
+    cmd_vel.twist.linear.x =
+        0.5; // Will probably need to multiply by some constant.
   }
 
-  is_running_ = true;
-  std::thread(
-    [this]() {
-      RCLCPP_DEBUG(*logger_, "Staring BT Orchestor...");
-      rclcpp::Rate rate(tick_rate_);
-
-      while (is_running_) {
-        tree_->tickExactlyOnce();
-        rate.sleep();
-      }
-    }).detach();
-  return true;
+  cmd_vel_publisher->publish(cmd_vel);
+  // sleep(15);
+  // RCLCPP_INFO(this->get_logger(), "15 seconds");
+  // if ((this->get_clock()->now() - this->gpsTimestamp).seconds() > 15) {
+  //   RCLCPP_INFO(this->get_logger(), "True");
+  // }
 }
 
-bool BehaviorTreeOrchestor::Stop()
-{
-  is_running_ = false;
-  RCLCPP_DEBUG(*logger_, "Stopping BT Orchestor...");
-  return true;
-}
+} // namespace orchestrator
 
-bool BehaviorTreeOrchestor::is_tree_loaded()
-{
-  return tree_ != nullptr;
-}
-
-}  // namespace behavior
-
-#include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(behavior::BehaviorTreeOrchestor);
+RCLCPP_COMPONENTS_REGISTER_NODE(orchestrator::Orchestrator)
