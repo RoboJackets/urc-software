@@ -39,9 +39,6 @@ set(dependencies
   cv_bridge
   image_transport
   OpenCV
-  tf2
-  tf2_ros
-  tf2_geometry_msgs
   nav_msgs
 )
 
