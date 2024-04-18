@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = "tester"
+package_name = "urc_test"
 
 setup(
     name=package_name,
