@@ -110,6 +110,12 @@ def generate_launch_description():
         )
     )
 
+    ekf_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [FindPackageShare("urc_localization"), "/launch/dual_ekf_navsat.launch.py"]
+        )
+    )
+
     return LaunchDescription(
         [
             RegisterEventHandler(
@@ -129,5 +135,6 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
+            # ekf_launch,
         ]
     )
