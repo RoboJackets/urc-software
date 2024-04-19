@@ -1,43 +1,31 @@
-import rclpy
-from rclpy.node import Node
-from nav_msgs.msg import OccupancyGrid
-import numpy as np
+import os
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
+from ament_index_python.packages import get_package_share_directory
 
 
-class CostmapGenerator(Node):
+def generate_launch_description():
+    tester_config = os.path.join(
+        get_package_share_directory("urc_test"), "config", "tester.yaml"
+    )
 
-    def __init__(self):
-        super().__init__("tester")
-        self.costmap_pub = self.create_publisher(OccupancyGrid, "/costmap", 10)
-        self.timer = self.create_timer(0.02, self.publish_costmap)
+    tester_la = DeclareLaunchArgument(
+        "tester_config", default_value=tester_config, description=""
+    )
 
-    def publish_costmap(self):
-        costmap = OccupancyGrid()
-        costmap.header.frame_id = "odom"
-        costmap.header.stamp = rclpy.time.Time().to_msg()
+    ld = LaunchDescription([tester_la])
 
-        costmap.info.resolution = 1.0
-        costmap.info.width = 100
-        costmap.info.height = 100
+    costmap_generator_node = Node(
+        package="urc_test",
+        executable="costmap_generator",
+        name="costmap_generator",
+        output="screen",
+        parameters=[LaunchConfiguration("tester_config")],
+    )
 
-        costmap.info.origin.position.x = 0.0
-        costmap.info.origin.position.y = 0.0
-        costmap.info.origin.position.z = 0.0
-        costmap.info.origin.orientation.x = 0.0
-        costmap.info.origin.orientation.y = 0.0
-        costmap.info.origin.orientation.z = 0.0
-        costmap.info.origin.orientation.w = 1.0
+    # finalize
+    ld.add_action(costmap_generator_node)
 
-        map = np.ones((100, 100), dtype=np.int8)
-        map[4:8, 4:8] *= 10
-        costmap.data = map.flatten().tolist()
-
-        self.costmap_pub.publish(costmap)
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-
-if __name__ == "__main__":
-    main()
+    return ld

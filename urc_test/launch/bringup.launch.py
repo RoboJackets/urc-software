@@ -21,8 +21,8 @@ def generate_launch_description():
 
     tester_node = Node(
         package="urc_test",
-        executable="tester",
-        name="tester",
+        executable="urc_test",
+        name="urc_test",
         output="screen",
         parameters=[LaunchConfiguration("tester_config")],
     )
