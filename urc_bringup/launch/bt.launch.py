@@ -62,8 +62,8 @@ def generate_launch_description():
     )
 
     dummy_costmap_publisher = Node(
-        package="tester",
-        executable="tester",
+        package="urc_test",
+        executable="costmap_generator",
         output="screen"
     )
 

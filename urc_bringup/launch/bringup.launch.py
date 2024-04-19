@@ -258,5 +258,6 @@ def generate_launch_description():
                 launch_gps,
                 launch_imu,
                 odom_frame_node,
-                rosbridge_server_node
+                rosbridge_server_node,
+                bt_launch
             ])
