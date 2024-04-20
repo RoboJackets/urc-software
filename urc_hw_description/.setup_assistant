@@ -1,0 +1,27 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: urc_hw_description
+    relative_path: urdf/walli.xacro
+  package_settings:
+    author_name: Zimeng Chai
+    author_email: zchai33@gatech.edu
+    generated_timestamp: 1705272329
+  control_xacro:
+    command:
+      - position
+      - velocity
+      - effort
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+      - velocity
+      - effort
+    state:
+      - position
+      - velocity

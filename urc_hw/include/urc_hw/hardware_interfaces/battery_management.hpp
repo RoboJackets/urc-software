@@ -1,5 +1,5 @@
-#ifndef URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
-#define URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
+#ifndef HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__
+#define HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__
 
 #include "memory"
 #include "vector"
@@ -63,4 +63,4 @@ private:
 
 }  // namespace urc_hardware::hardware_interfaces
 
-#endif  // URC_HW__BATTERY_MANAGEMENT_HW_INTERFACE_HPP
+#endif /* HARDWARE_INTERFACES_BATTERY_MANAGEMENT_HPP__ */
