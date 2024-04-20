@@ -16,7 +16,7 @@ namespace pointcloud_costmap
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-        costmap_ = new nav2_costmap_2d::Costmap2D(500, 500, 0.01, -0.25, -0.25);
+        costmap_ = new nav2_costmap_2d::Costmap2D(50, 50, 0.1, -2.5, -2.5);
         k_neighbors_ = 50;
     }
 
@@ -33,19 +33,20 @@ namespace pointcloud_costmap
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(transformed_cloud, *cloudPtr);
 
-        pcl::PointCloud<pcl::PointXYZ>::Ptr filtered = filterOutliers(cloudPtr);
+        // filtering makes it processing to slow
+        // pcl::PointCloud<pcl::PointXYZ>::Ptr filtered = filterOutliers(cloudPtr);
 
-        std::vector<double> gradients(filtered->points.size(), 0.0); // init grads to 0
+        std::vector<double> gradients(cloudPtr->points.size(), 0.0); // init grads to 0
         double minGradient = std::numeric_limits<double>::max();
         double maxGradient = std::numeric_limits<double>::lowest();
 
         // Compute gradients and find min/max
-        updateGradientsMinMax(filtered, gradients, minGradient, maxGradient, k_neighbors_);
+        updateGradientsMinMax(cloudPtr, gradients, minGradient, maxGradient, k_neighbors_);
 
         // Code to actually compute costmap
-        for (size_t i = 0; i < filtered->points.size(); i++)
+        for (size_t i = 0; i < cloudPtr->points.size(); i++)
         {
-            pcl::PointXYZ point = filtered->points[i];
+            pcl::PointXYZ point = cloudPtr->points[i];
             unsigned int mx, my;
             if (costmap_->worldToMap(point.x, point.y, mx, my))
             {
@@ -99,8 +100,8 @@ namespace pointcloud_costmap
         sor.setStddevMulThresh(1.0);   // Standard deviation multiplier
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered(new pcl::PointCloud<pcl::PointXYZ>);
         sor.filter(*filtered);
-        // return filtered;
-        return inputCloud;
+        return filtered;
+        // return inputCloud;
     }
 
     // Extracted method for updating gradients, min, and max
