@@ -1,5 +1,5 @@
 from rclpy.node import Node
-from geometry_msgs.msg import Quaternion
+from sensor_msgs.msg import Imu
 from libimu_driver.checksum_utils import check_imu_checksum
 import re
 
@@ -8,7 +8,7 @@ class Ros2IMUDriver(Node):
     def __init__(self):
         super().__init__('imu_driver')
 
-        self.imu_pub = self.create_publisher(Quaternion, '/imu', 10)
+        self.imu_pub = self.create_publisher(Imu, '/imu', 10)
 
     # Returns True if we successfully did something with the passed in
     def add_sentence(self, imu_string, frame_id, timestamp=None):
@@ -20,11 +20,15 @@ class Ros2IMUDriver(Node):
 
         self.get_logger().warn("Sentence received: %s" % imu_string)
         things = re.findall(r"-?[0-9]\.[0-9][0-9]", str(imu_string))
-        current_imu = Quaternion()
-        current_imu.x = float(things[0])
-        current_imu.y = float(things[1])
-        current_imu.z = float(things[2])
-        current_imu.w = float(things[3])
+        current_imu = Imu()
+        current_imu.orientation.x = float(things[0])
+        current_imu.orientation.y = float(things[1])
+        current_imu.orientation.z = float(things[2])
+        current_imu.orientation.w = float(things[3])
+        current_imu.angular_velocity.x = float(things[4])
+        current_imu.linear_acceleration.x = float(things[5])
+        current_imu.linear_acceleration.y = float(things[6])
+        current_imu.linear_acceleration.z = float(things[7])
         self.imu_pub.publish(current_imu)
 
         return True
