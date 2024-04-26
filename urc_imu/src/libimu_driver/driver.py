@@ -18,8 +18,8 @@ class Ros2IMUDriver(Node):
                                    "Sentence was: %s" % imu_string)
             return False
 
-        self.get_logger().warn("Sentence received: %s" % imu_string)
-        things = re.findall(r"-?[0-9]\.[0-9][0-9]", str(imu_string))
+        self.get_logger().info("Sentence received: %s" % imu_string)
+        things = re.findall(r"-?[0-9]?[0-9]\.[0-9][0-9]", str(imu_string))
         current_imu = Imu()
         current_imu.orientation.x = float(things[0])
         current_imu.orientation.y = float(things[1])
