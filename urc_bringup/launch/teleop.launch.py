@@ -30,13 +30,16 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            # IncludeLaunchDescription(
-            #     XMLLaunchDescriptionSource(
-            #         [FindPackageShare("foxglove_bridge"),
-            #          '/launch', '/foxglove_bridge_launch.xml']
-            #     ),
-            #     launch_arguments={'port': '8765'}.items(),
-            # ),
+            IncludeLaunchDescription(
+                XMLLaunchDescriptionSource(
+                    [
+                        FindPackageShare("foxglove_bridge"),
+                        "/launch",
+                        "/foxglove_bridge_launch.xml",
+                    ]
+                ),
+                launch_arguments={"port": "8765"}.items(),
+            ),
             driver_joy_node,
             joy_drive,
         ]

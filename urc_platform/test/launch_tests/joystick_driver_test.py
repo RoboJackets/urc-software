@@ -16,23 +16,30 @@ import urc_msgs.msg
 def generate_test_description():
 
     joystick_driver = launch_ros.actions.Node(
-            package='urc_platform',
-            executable='urc_platform_JoystickDriver',
-            output='screen',
-            parameters=[
-                PathJoinSubstitution([FindPackageShare('urc_platform'), 'config',
-                                     'joystick_driver_params.yaml'])
-            ],
-            remappings=[
-                ('/joystick_driver/joy', '/joy'),
-                ('/joystick_driver/motors', '/motors')
-            ]
-        )
+        package="urc_platform",
+        executable="urc_platform_JoystickDriver",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_platform"),
+                    "config",
+                    "joystick_driver_params.yaml",
+                ]
+            )
+        ],
+        remappings=[
+            ("/joystick_driver/joy", "/joy"),
+            ("/joystick_driver/motors", "/motors"),
+        ],
+    )
 
-    return launch.LaunchDescription([
-        joystick_driver,
-        launch_testing.actions.ReadyToTest()
-    ]), locals()
+    return (
+        launch.LaunchDescription(
+            [joystick_driver, launch_testing.actions.ReadyToTest()]
+        ),
+        locals(),
+    )
 
 
 class TestJoystickDriver(unittest.TestCase):
@@ -40,19 +47,19 @@ class TestJoystickDriver(unittest.TestCase):
         self.context = rclpy.Context()
         rclpy.init(context=self.context)
         self.node = rclpy.create_node(
-            'test_joystick_driver_node', context=self.context,
-            allow_undeclared_parameters=True, automatically_declare_parameters_from_overrides=True
+            "test_joystick_driver_node",
+            context=self.context,
+            allow_undeclared_parameters=True,
+            automatically_declare_parameters_from_overrides=True,
         )
         self.message_pump = launch_testing_ros.MessagePump(
             self.node, context=self.context
         )
 
-        self.joyPub = self.node.create_publisher(
-            sensor_msgs.msg.Joy, '/joy', 1
-        )
+        self.joyPub = self.node.create_publisher(sensor_msgs.msg.Joy, "/joy", 1)
 
         self.velocitySub = self.node.create_subscription(
-            urc_msgs.msg.VelocityPair, '/motors', self.velocityCallback, 1
+            urc_msgs.msg.VelocityPair, "/motors", self.velocityCallback, 1
         )
         self.received_vel_msg = None
 
@@ -60,13 +67,7 @@ class TestJoystickDriver(unittest.TestCase):
 
     def createJoyMsg(self, left, right):
         joy_msg = sensor_msgs.msg.Joy()
-        joy_msg.axes = [
-            0.0,
-            left,
-            0.0,
-            0.0,
-            right
-        ]
+        joy_msg.axes = [0.0, left, 0.0, 0.0, right]
         joy_msg.buttons = [0] * 4
 
         return joy_msg
@@ -79,12 +80,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, 1.0
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, 1.0
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, 1.0)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, 1.0)
 
     def test_1_fullReverse(self):
         full_speed = 1.0
@@ -94,12 +91,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, -1.0
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, -1.0
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, -1.0)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, -1.0)
 
     def test_2_spinRight(self):
         full_speed = 1.0
@@ -109,12 +102,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, 1.0
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, -1.0
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, 1.0)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, -1.0)
 
     def test_3_spinLeft(self):
         full_speed = 1.0
@@ -124,12 +113,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, -1.0
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, 1.0
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, -1.0)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, 1.0)
 
     def test_4_halfForward(self):
         full_speed = 1.0
@@ -139,12 +124,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, 0.5
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, 0.5
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, 0.5)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, 0.5)
 
     def test_5_halfReverse(self):
         full_speed = 1.0
@@ -154,12 +135,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, -0.5
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, -0.5
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, -0.5)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, -0.5)
 
     def test_6_halfSpinRight(self):
         full_speed = 1.0
@@ -169,12 +146,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, 0.5
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, -0.5
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, 0.5)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, -0.5)
 
     def test_7_halfSpinLeft(self):
         full_speed = 1.0
@@ -184,12 +157,8 @@ class TestJoystickDriver(unittest.TestCase):
 
         self.assertIsNotNone(self.received_vel_msg)
 
-        self.assertAlmostEqual(
-            self.received_vel_msg.left_velocity, -0.5
-        )
-        self.assertAlmostEqual(
-            self.received_vel_msg.right_velocity, 0.5
-        )
+        self.assertAlmostEqual(self.received_vel_msg.left_velocity, -0.5)
+        self.assertAlmostEqual(self.received_vel_msg.right_velocity, 0.5)
 
     def velocityCallback(self, msg):
         self.received_vel_msg = msg
