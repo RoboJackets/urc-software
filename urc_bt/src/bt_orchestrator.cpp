@@ -1,4 +1,4 @@
-#include "urc_bt/bt_orchestor.hpp"
+#include "urc_bt/bt_orchestrator.hpp"
 #include "behaviortree_cpp/bt_factory.h"
 #include "behaviortree_ros2/plugins.hpp"
 #include "behaviortree_ros2/ros_node_params.hpp"
@@ -24,8 +24,8 @@
 namespace behavior
 {
 
-BehaviorTreeOrchestor::BehaviorTreeOrchestor(const rclcpp::NodeOptions & options)
-: rclcpp::Node("bt_orchestor", options)
+BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & options)
+: rclcpp::Node("bt_orchestrator", options)
 {
   logger_ =
     std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestor"));
@@ -176,7 +176,7 @@ bool BehaviorTreeOrchestor::RenewTree(
   return true;
 }
 
-void BehaviorTreeOrchestor::Initialize()
+void BehaviorTreeOrchestrator::Initialize()
 {
   if (!get_parameter("start_bridge")
     .get_parameter_value()
@@ -191,19 +191,19 @@ void BehaviorTreeOrchestor::Initialize()
   tree_->rootBlackboard()->set("ros_log", bt_ros_logger_);
 }
 
-bool BehaviorTreeOrchestor::Start()
+bool BehaviorTreeOrchestrator::Start()
 {
   if (!is_tree_loaded()) {
     RCLCPP_ERROR(
       *logger_,
-      "Tree is not loaded! Not able to start the orchestor.");
+      "Tree is not loaded! Not able to start the orchestrator.");
     return false;
   }
 
   is_running_ = true;
   std::thread(
     [this]() {
-      RCLCPP_DEBUG(*logger_, "Staring BT Orchestor...");
+      RCLCPP_DEBUG(*logger_, "Staring BT Orchestrator...");
       rclcpp::Rate rate(tick_rate_);
 
       while (is_running_) {
@@ -214,16 +214,16 @@ bool BehaviorTreeOrchestor::Start()
   return true;
 }
 
-bool BehaviorTreeOrchestor::Stop()
+bool BehaviorTreeOrchestrator::Stop()
 {
   is_running_ = false;
-  RCLCPP_DEBUG(*logger_, "Stopping BT Orchestor...");
+  RCLCPP_DEBUG(*logger_, "Stopping BT Orchestrator...");
   return true;
 }
 
-bool BehaviorTreeOrchestor::is_tree_loaded() {return tree_ != nullptr;}
+bool BehaviorTreeOrchestrator::is_tree_loaded() {return tree_ != nullptr;}
 
 } // namespace behavior
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(behavior::BehaviorTreeOrchestor);
+RCLCPP_COMPONENTS_REGISTER_NODE(behavior::BehaviorTreeOrchestrator);

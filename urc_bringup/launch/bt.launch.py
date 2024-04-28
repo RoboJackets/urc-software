@@ -34,9 +34,9 @@ def generate_launch_description():
         name="RCUTILS_COLORIZED_OUTPUT", value="1"
     )
 
-    orchestor = Node(
+    orchestrator = Node(
         package="urc_bt",
-        executable="urc_bt_orchestor",
+        executable="urc_bt_orchestrator",
         parameters=[
             {
                 "normal_node_lib_dirs": normal_lib_paths,
@@ -62,8 +62,8 @@ def generate_launch_description():
     )
 
     dummy_costmap_publisher = Node(
-        package="tester",
-        executable="tester",
+        package="urc_test",
+        executable="costmap_generator",
         output="screen"
     )
 
@@ -73,6 +73,6 @@ def generate_launch_description():
             path_planner_server,
             trajectory_following_action_server,
             enable_color,
-            orchestor,
+            orchestrator,
         ]
     )

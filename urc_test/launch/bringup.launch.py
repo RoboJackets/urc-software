@@ -10,7 +10,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     tester_config = os.path.join(
-        get_package_share_directory("tester"), "config", "tester.yaml"
+        get_package_share_directory("urc_test"), "config", "tester.yaml"
     )
 
     tester_la = DeclareLaunchArgument(
@@ -20,9 +20,9 @@ def generate_launch_description():
     ld = LaunchDescription([tester_la])
 
     tester_node = Node(
-        package="tester",
-        executable="tester",
-        name="tester",
+        package="urc_test",
+        executable="urc_test",
+        name="urc_test",
         output="screen",
         parameters=[LaunchConfiguration("tester_config")],
     )
