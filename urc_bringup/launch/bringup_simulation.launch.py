@@ -135,6 +135,6 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
-            # ekf_launch,
+            ekf_launch,
         ]
     )

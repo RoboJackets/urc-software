@@ -289,10 +289,10 @@
       <visualize>true</visualize>
       <update_rate>30.0</update_rate>
       <camera name="camera">
-        <horizontal_fov>1.047198</horizontal_fov>
+        <horizontal_fov>1.51844</horizontal_fov>
         <image>
-          <width>640</width>
-          <height>480</height>
+          <width>1280</width>
+          <height>720</height>
           <format>R8G8B8</format>
         </image>
         <clip>
