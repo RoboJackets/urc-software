@@ -3,9 +3,9 @@
 <package format="3">
   <name>mapping</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="yashas.amb@gmail.com">yashas</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Convert point cloud from depth camera to elevation map</description>
+  <maintainer email="yashas.amb@gmail.com">yambati03</maintainer>
+  <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
