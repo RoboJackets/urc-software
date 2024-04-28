@@ -27,18 +27,17 @@ private:
   double baseStationAlt;
   int baseStationSet;
 
-  geometry_msgs::msg::Quaternion imu;
+  sensor_msgs::msg::Imu imu;
 
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr waypoint_subscriber;
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr base_subscriber;
-  rclcpp::Subscription<geometry_msgs::msg::Quaternion>::SharedPtr
-    imu_subscriber;
+  rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
   void GPSCallback(const sensor_msgs::msg::NavSatFix & msg);
-  void IMUCallback(const geometry_msgs::msg::Quaternion & msg);
+  void IMUCallback(const sensor_msgs::msg::Imu & msg);
   void WaypointCallback(const urc_msgs::msg::Waypoint & msg);
   void BaseFixCallback(const sensor_msgs::msg::NavSatFix & msg);
 };
