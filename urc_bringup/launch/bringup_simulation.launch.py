@@ -16,6 +16,8 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    pkg_path_planning = get_package_share_directory("path_planning")
+    pkg_trajectory_following = get_package_share_directory("trajectory_following")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
@@ -116,6 +118,32 @@ def generate_launch_description():
         )
     )
 
+    bt_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+        )
+    )
+
+    path_planning_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_path_planning, "launch", "planning.launch.py")
+        )
+    )
+
+    trajectory_following_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                pkg_trajectory_following,
+                "launch",
+                "trajectory_following.launch.py",
+            )
+        )
+    )
+
+    dummy_costmap_publisher = Node(
+        package="tester", executable="tester", output="screen"
+    )
+
     return LaunchDescription(
         [
             RegisterEventHandler(
@@ -123,11 +151,12 @@ def generate_launch_description():
                     target_action=spawn_robot,
                     on_exit=[
                         load_joint_state_broadcaster,
-                        # load_arm_controller,
-                        # load_gripper_controller_left,
-                        # load_gripper_controller_right,
                         load_drivetrain_controller,
                         teleop_launch,
+                        dummy_costmap_publisher,
+                        path_planning_launch,
+                        trajectory_following_launch,
+                        bt_launch,
                     ],
                 )
             ),
@@ -135,6 +164,5 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
-            ekf_launch,
         ]
     )
