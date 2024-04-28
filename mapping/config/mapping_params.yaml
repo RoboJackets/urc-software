@@ -1,0 +1,7 @@
+elevation_mapping:
+  ros__parameters:
+    map_frame: "odom"
+    camera_frame: "camera_depth_frame"
+    resolution: 0.1
+    width: 60
+    odom_topic: "/odom"
