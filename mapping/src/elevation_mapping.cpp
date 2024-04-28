@@ -20,10 +20,10 @@ namespace mapping
 
         declare_parameter("map_frame", "odom");
         declare_parameter("camera_frame", "camera_depth_frame");
+        declare_parameter("depth_topic", "/depth_camera/points");
+
         declare_parameter("resolution", 0.1);
         declare_parameter("width", 60);
-        declare_parameter("odom_topic", "/rover_drivetrain_controller/odom");
-        declare_parameter("depth_topic", "/depth_camera/points");
         declare_parameter("min_z", 0.1);
         declare_parameter("max_z", 2.0);
 

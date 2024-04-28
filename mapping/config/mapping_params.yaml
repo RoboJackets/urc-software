@@ -4,4 +4,6 @@ elevation_mapping:
     camera_frame: "camera_depth_frame"
     resolution: 0.1
     width: 60
-    odom_topic: "/odom"
+    depth_topic: "/depth_camera/points"
+    min_z: 0.1
+    max_z: 3.0
