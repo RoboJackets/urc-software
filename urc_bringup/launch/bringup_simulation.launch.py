@@ -3,12 +3,11 @@ from xacro import process_file
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable, RegisterEventHandler
-from launch.substitutions import LaunchConfiguration, Command
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -17,7 +16,8 @@ def generate_launch_description():
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
-    pkg_trajectory_following = get_package_share_directory("trajectory_following")
+    pkg_trajectory_following = get_package_share_directory(
+        "trajectory_following")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
@@ -28,7 +28,8 @@ def generate_launch_description():
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
+    + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "true"}
     )
@@ -41,7 +42,8 @@ def generate_launch_description():
         launch_arguments={"use_sim_time": "true", "world": world_path}.items(),
     )
 
-    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
+    enable_color = SetEnvironmentVariable(
+        name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
     spawn_robot = Node(
         package="gazebo_ros",
@@ -82,28 +84,31 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_arm_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "arm_controller"],
-    )
+    # load_arm_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
+    # )
 
-    load_gripper_controller_left = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
-    )
+    # load_gripper_controller_left = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir,
+    #                "gripper_controller_left"],
+    # )
 
-    load_gripper_controller_right = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
-    )
+    # load_gripper_controller_right = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir,
+    #                "gripper_controller_right"],
+    # )
 
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
+        arguments=["-p",
+                   controller_config_file_dir, "rover_drivetrain_controller"],
     )
 
     teleop_launch = IncludeLaunchDescription(
@@ -112,11 +117,12 @@ def generate_launch_description():
         )
     )
 
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_localization"), "/launch/dual_ekf_navsat.launch.py"]
-        )
-    )
+    # ekf_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [FindPackageShare("urc_localization"),
+    #          "/launch/dual_ekf_navsat.launch.py"]
+    #     )
+    # )
 
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
