@@ -24,7 +24,7 @@
         <Sequence>
           <LogInfo logger="{ros_log}"
                    message="Nope."/>
-          <CallTrigger service_name="/bt_orchestor/stop_bt"/>
+          <CallTrigger service_name="/bt_orchestrator/stop_bt"/>
         </Sequence>
       </Fallback>
     </Sequence>

@@ -33,8 +33,8 @@ include_directories(
 
 add_library(
   ${PROJECT_NAME} SHARED
-  src/bt_orchestor.cpp
-  include/urc_bt/bt_orchestor.hpp
+  src/bt_orchestrator.cpp
+  include/urc_bt/bt_orchestrator.hpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -44,8 +44,8 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "behavior::BehaviorTreeOrchestor"
-  EXECUTABLE ${PROJECT_NAME}_orchestor
+  PLUGIN "behavior::BehaviorTreeOrchestrator"
+  EXECUTABLE ${PROJECT_NAME}_orchestrator
 )
 
 # Install library

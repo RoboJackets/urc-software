@@ -1,31 +1,31 @@
 # URC Behavior Tree
 
-This package provides the central orchestor for running the behavior tree.
+This package provides the central orchestrator for running the behavior tree.
 
 ## Launching
 
-You should run `urc_bt_orchestor` node, which is registered as a plugin in this package. For an example, check out `bt.launch.py` under `urc_bringup` package.
+You should run the `urc_bt_orchestrator` node, which is registered as a plugin in this package. For an example, check out `bt.launch.py` under the `urc_bringup` package.
 
-There are several parameters for the `urc_bt_orchestor` node:
+There are several parameters for the `urc_bt_orchestrator` node:
 
-- `node_lib_dirs`: *array of string*, specifying path to dynamic library files for bt nodes. Will be loaded on runtime.
-- `tree_file_dir`: *string*, to the path of .xml file for behavior tree. If not specified, the tree will not be loaded and started on launching.
-- `start_bridge`: *bool*, whether initialize some of the convenient variables in the root Blackboard of the current behavior tree.
+- `node_lib_dirs`: *array of strings*, specifying the path to dynamic library files needed for bt nodes. Will be loaded on runtime.
+- `tree_file_dir`: *string*, to the path of the .xml file for the behavior tree. If not specified, the tree will not be loaded and started on launching.
+- `start_bridge`: *bool*, whether to initialize some of the convenient variables in the root Blackboard of the current behavior tree.
   
 ## Starting, Stopping, Hot Swapping
 
-To start or stop `bt_orchestor`, call `~/start_bt` or `~/stop_bt`. Note that the orchestor is still alive nomatter it is started or not, starting and stopping states determines whether the tree is going to tick the nodes.
+To start or stop `bt_orchestrator`, call `~/start_bt` or `~/stop_bt`. Note that the orchestrator is still alive regardless of whether it is started or not; starting and stopping states determines whether the tree is going to tick the nodes.
 
-`bt_orchestor` enables hot-swapping by using service at runtime. After editing the tree, you do not need to restart everything. Instead, you have two options:
+`bt_orchestrator` enables hot-swapping by using service at runtime. After editing the tree, you do not need to restart everything. Instead, you have two options:
 
-- Calling `~/update_tree` with service type `UpdateBehaviorTree` under `urc_msgs`. You can choose to update the tree using the path to an existing .xml BT tree file, or you can directly pass the content of the tree in string.
-- Calling `~/reload` with service type `Trigger` under `std_srvs`. In this case, you have to preload the tree with a tree_dir. The orchestor will by-default load that file.
+- Calling `~/update_tree` with service type `UpdateBehaviorTree` under `urc_msgs`. You can choose to update the tree using the path to an existing .xml BT tree file, or you can directly pass the content of the tree in the string.
+- Calling `~/reload` with service type `Trigger` under `std_srvs`. In this case, you have to preload the tree with a tree_dir. The orchestrator will by-default load that file.
 
 ## Editing the Tree
 
 You can specify path to your tree during launch. For an example, check out `strategies` folder under `urc_bringup` package, which contains `.btproj` containing definitions for all the nodes that is going to be used inside URC.
 
-Note that to provide a bridge between ros and bt, upon launch, `urc_bt_orchestor` write several values to the root Blackboard of the current behavior tree by default. They are:
+Note that to provide a bridge between ros and bt, upon launch, `urc_bt_orchestrator` writes several values to the root Blackboard of the current behavior tree by default. They are:
 
 - `ros_nh`: *shared ptr*, node handle to a ros node.
 - `ros_log`: *shared ptr*, a ros logger.

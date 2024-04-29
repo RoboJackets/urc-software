@@ -20,9 +20,9 @@ WorldFrameBroadcaster::WorldFrameBroadcaster(const rclcpp::NodeOptions & options
     "/base_fix", rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::NavSatFix msg) {BaseFixCallback(msg);});
 
-  imu_subscriber = create_subscription<geometry_msgs::msg::Quaternion>(
+  imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
     "/imu/data", rclcpp::SystemDefaultsQoS(),
-    [this](const geometry_msgs::msg::Quaternion msg) {IMUCallback(msg);});
+    [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
 
   baseStationSet = 0;
 }
@@ -36,8 +36,7 @@ void WorldFrameBroadcaster::BaseFixCallback(
   this->baseStationSet = 1;
 }
 
-void WorldFrameBroadcaster::IMUCallback(
-  const geometry_msgs::msg::Quaternion & msg)
+void WorldFrameBroadcaster::IMUCallback(const sensor_msgs::msg::Imu & msg)
 {
   this->imu = msg;
 }
@@ -59,7 +58,7 @@ void WorldFrameBroadcaster::GPSCallback(
   t.transform.translation.y =
     (msg.longitude - baseStationLng) * gpsOffsetToMetres;
   t.transform.translation.z = msg.altitude - baseStationAlt;
-  t.transform.rotation = this->imu;
+  t.transform.rotation = this->imu.orientation;
 
   tf_broadcaster_->sendTransform(t);
 }

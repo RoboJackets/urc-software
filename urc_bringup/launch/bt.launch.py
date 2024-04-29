@@ -32,9 +32,9 @@ def generate_launch_description():
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
-    orchestor = Node(
+    orchestrator = Node(
         package="urc_bt",
-        executable="urc_bt_orchestor",
+        executable="urc_bt_orchestrator",
         parameters=[
             {
                 "normal_node_lib_dirs": normal_lib_paths,
@@ -50,6 +50,6 @@ def generate_launch_description():
     return LaunchDescription(
         [
             enable_color,
-            orchestor,
+            orchestrator,
         ]
     )

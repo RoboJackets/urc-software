@@ -12,7 +12,7 @@ from urc_msgs.action import FollowPath
 class TesterNode(Node):
 
     def __init__(self):
-        super().__init__("tester")
+        super().__init__("urc_test")
         self.costmap_pub = self.create_publisher(OccupancyGrid, "/costmap", 10)
         self.odom_sub = self.create_subscription(
             Odometry, "/diff_cont/odom", self.odom_callback, 10
