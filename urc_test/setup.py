@@ -2,7 +2,7 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = "tester"
+package_name = "urc_test"
 
 setup(
     name=package_name,
@@ -14,6 +14,7 @@ setup(
         (os.path.join("share", package_name, "launch"), glob("launch/*.py")),
         (os.path.join("share", package_name, "config"), glob("config/*.yaml")),
     ],
+    package_dir={'': 'src', },
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="nvidia",
@@ -23,7 +24,8 @@ setup(
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [
-            "tester = tester.tester:main",
+            "urc_test = urc_test.urc_test:main",
+            "costmap_generator = urc_test.costmap_generator:main",
             "imu_rpy = tester.pub_imu_rpy:main",
         ],
     },

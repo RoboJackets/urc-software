@@ -1,5 +1,5 @@
-#ifndef BT_ORCHESTOR_A6C307B5_B644_4561_AE6D_9833D66C7A1E_HPP__
-#define BT_ORCHESTOR_A6C307B5_B644_4561_AE6D_9833D66C7A1E_HPP__
+#ifndef BT_ORCHESTRATOR_A6C307B5_B644_4561_AE6D_9833D66C7A1E_HPP__
+#define BT_ORCHESTRATOR_A6C307B5_B644_4561_AE6D_9833D66C7A1E_HPP__
 
 #include "behaviortree_cpp/bt_factory.h"
 #include "std_srvs/std_srvs/srv/detail/trigger__struct.hpp"
@@ -21,11 +21,11 @@ using TriggerResponse = std_srvs::srv::Trigger::Response::SharedPtr;
 using UpdateBTReqest = urc_msgs::srv::UpdateBehaviorTree::Request::ConstSharedPtr;
 using UpdateBTResponse = urc_msgs::srv::UpdateBehaviorTree::Response::SharedPtr;
 
-class BehaviorTreeOrchestor : public rclcpp::Node
+class BehaviorTreeOrchestrator : public rclcpp::Node
 {
 public:
-  BehaviorTreeOrchestor(const rclcpp::NodeOptions & options);
-  ~BehaviorTreeOrchestor();
+  BehaviorTreeOrchestrator(const rclcpp::NodeOptions & options);
+  ~BehaviorTreeOrchestrator();
 
 protected:
   BT::BehaviorTreeFactory tree_factory_;
@@ -53,4 +53,4 @@ protected:
 
 }  // namespace behavior
 
-#endif /* BT_ORCHESTOR_F88CE7D9_55E9_48BD_B38C_30B689BFC542_HPP__ */
+#endif /* BT_ORCHESTRATOR_F88CE7D9_55E9_48BD_B38C_30B689BFC542_HPP__ */

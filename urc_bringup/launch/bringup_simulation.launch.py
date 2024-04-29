@@ -3,12 +3,11 @@ from xacro import process_file
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.actions import SetEnvironmentVariable, RegisterEventHandler
-from launch.substitutions import LaunchConfiguration, Command
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -82,23 +81,25 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_arm_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "arm_controller"],
-    )
+    # load_arm_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
+    # )
 
-    load_gripper_controller_left = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
-    )
+    # load_gripper_controller_left = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir,
+    #                "gripper_controller_left"],
+    # )
 
-    load_gripper_controller_right = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
-    )
+    # load_gripper_controller_right = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir,
+    #                "gripper_controller_right"],
+    # )
 
     load_drivetrain_controller = Node(
         package="controller_manager",
@@ -112,11 +113,12 @@ def generate_launch_description():
         )
     )
 
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_localization"), "/launch/dual_ekf_navsat.launch.py"]
-        )
-    )
+    # ekf_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [FindPackageShare("urc_localization"),
+    #          "/launch/dual_ekf_navsat.launch.py"]
+    #     )
+    # )
 
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -141,7 +143,7 @@ def generate_launch_description():
     )
 
     dummy_costmap_publisher = Node(
-        package="tester", executable="tester", output="screen"
+        package="urc_test", executable="costmap_generator", output="screen"
     )
 
     return LaunchDescription(
