@@ -118,6 +118,10 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
+    odom_frame_node = Node(
+        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
+    )
+
     return LaunchDescription(
         [
             IncludeLaunchDescription(
@@ -141,5 +145,6 @@ def generate_launch_description():
             launch_gps,
             launch_imu,
             rosbridge_server_node,
+            odom_frame_node,
         ]
     )

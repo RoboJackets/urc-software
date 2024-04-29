@@ -16,8 +16,7 @@ def generate_launch_description():
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
-    pkg_trajectory_following = get_package_share_directory(
-        "trajectory_following")
+    pkg_trajectory_following = get_package_share_directory("trajectory_following")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
@@ -28,8 +27,7 @@ def generate_launch_description():
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
-    + str(xacro_file)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "true"}
     )
@@ -42,8 +40,7 @@ def generate_launch_description():
         launch_arguments={"use_sim_time": "true", "world": world_path}.items(),
     )
 
-    enable_color = SetEnvironmentVariable(
-        name="RCUTILS_COLORIZED_OUTPUT", value="1")
+    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
     spawn_robot = Node(
         package="gazebo_ros",
@@ -107,8 +104,7 @@ def generate_launch_description():
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p",
-                   controller_config_file_dir, "rover_drivetrain_controller"],
+        arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
     )
 
     teleop_launch = IncludeLaunchDescription(
@@ -147,7 +143,7 @@ def generate_launch_description():
     )
 
     dummy_costmap_publisher = Node(
-        package="tester", executable="tester", output="screen"
+        package="urc_test", executable="costmap_generator", output="screen"
     )
 
     return LaunchDescription(
