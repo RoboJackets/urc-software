@@ -29,6 +29,8 @@ private:
     double x, double y, double radius,
     std::string frame_id);
 
+  void publishZeroVelocity();
+
   rclcpp_action::GoalResponse handle_goal(
     const rclcpp_action::GoalUUID & uuid,
     std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
@@ -44,6 +46,7 @@ private:
 
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
   rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
@@ -53,6 +56,7 @@ private:
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
   geometry_msgs::msg::PoseStamped current_pose_;
+  bool stamped_;
 };
 } // namespace follower_action_server
 

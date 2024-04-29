@@ -18,13 +18,27 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("odom_topic", "/odom");
   declare_parameter("map_frame", "map");
   declare_parameter("goal_tolerance", 0.1);
+  declare_parameter("cmd_vel_stamped", false);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
-    get_parameter(
-      "cmd_vel_topic").as_string(), 10);
+  stamped_ = get_parameter("cmd_vel_stamped").as_bool();
+
+  if (stamped_) {
+    cmd_vel_stamped_pub_ =
+      create_publisher<geometry_msgs::msg::TwistStamped>(
+      get_parameter(
+        "cmd_vel_topic")
+      .as_string(),
+      10);
+  } else {
+    cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
+      get_parameter(
+        "cmd_vel_topic")
+      .as_string(),
+      10);
+  }
 
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
@@ -134,6 +148,20 @@ visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
   return circle;
 }
 
+void FollowerActionServer::publishZeroVelocity()
+{
+  geometry_msgs::msg::TwistStamped cmd_vel;
+  cmd_vel.header.stamp = get_clock()->now();
+  cmd_vel.twist.linear.x = 0.0;
+  cmd_vel.twist.angular.z = 0.0;
+
+  if (stamped_) {
+    cmd_vel_stamped_pub_->publish(cmd_vel);
+  } else {
+    cmd_vel_pub_->publish(cmd_vel.twist);
+  }
+}
+
 void FollowerActionServer::execute(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
 {
@@ -153,13 +181,17 @@ void FollowerActionServer::execute(
 
   pure_pursuit.setPath(path);
 
-  // Create a timer to publish the carrot point
   auto timer = create_wall_timer(
     std::chrono::milliseconds(100),
     [this, &pure_pursuit, &path, &feedback, &goal_handle, &params]()
     {
       auto output = pure_pursuit.getCommandVelocity(lookup_map_to_base_link());
-      cmd_vel_pub_->publish(output.cmd_vel.twist);
+
+      if (stamped_) {
+        cmd_vel_stamped_pub_->publish(output.cmd_vel);
+      } else {
+        cmd_vel_pub_->publish(output.cmd_vel.twist);
+      }
 
       auto circle =
       create_lookahead_circle(
@@ -176,11 +208,11 @@ void FollowerActionServer::execute(
       goal_handle->publish_feedback(feedback);
     });
 
-  // Wait for the goal to be canceled
   while (rclcpp::ok()) {
     if (goal_handle->is_canceling()) {
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
+      publishZeroVelocity();
       return;
     }
 
@@ -188,6 +220,7 @@ void FollowerActionServer::execute(
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
+      publishZeroVelocity();
       return;
     }
   }

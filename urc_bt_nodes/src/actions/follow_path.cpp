@@ -10,6 +10,7 @@ bool FollowPath::setGoal(Goal & goal)
 {
   RCLCPP_INFO(node_->get_logger(), "Setting Goal...");
   goal.path = getInput<nav_msgs::msg::Path>("path").value();
+  RCLCPP_INFO(node_->get_logger(), "Path size: %lu", goal.path.poses.size());
   return true;
 }
 
@@ -27,7 +28,7 @@ BT::NodeStatus FollowPath::onFeedback(const std::shared_ptr<const Feedback> feed
   RCLCPP_INFO(
     node_->get_logger(), "Following Path, %.2f m away from destination.",
     feedback->distance_to_goal);
-  return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::RUNNING;
 }
 
 BT::NodeStatus FollowPath::onResultReceived(const WrappedResult & wr)
@@ -47,7 +48,7 @@ BT::NodeStatus FollowPath::onFailure(BT::ActionNodeErrorCode error)
   return BT::NodeStatus::FAILURE;
 }
 
-}  // namespace behavior::actions
+} // namespace behavior::actions
 
 #include "behaviortree_ros2/plugins.hpp"
 CreateRosNodePlugin(behavior::actions::FollowPath, "FollowPath");

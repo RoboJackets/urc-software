@@ -2,8 +2,10 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="test">
     <Sequence>
-      <LogInfo logger="{ros_log}"
-               message="Trying to Plan Path..."/>
+      <Delay delay_msec="1000">
+        <LogInfo logger="{ros_log}"
+                 message="Trying to Plan Path..."/>
+      </Delay>
       <Fallback>
         <Sequence>
           <LogInfo logger="{ros_log}"
@@ -16,10 +18,8 @@
           </RetryUntilSuccessful>
           <LogInfo logger="{ros_log}"
                    message="Path Planning Successful!"/>
-          <RetryUntilSuccessful num_attempts="5">
-            <FollowPath path="{generated_path}"
-                        action_name="/follow_path"/>
-          </RetryUntilSuccessful>
+          <FollowPath path="{generated_path}"
+                      action_name="/follow_path"/>
         </Sequence>
         <Sequence>
           <LogInfo logger="{ros_log}"
