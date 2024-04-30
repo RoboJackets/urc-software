@@ -28,7 +28,7 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
 : rclcpp::Node("bt_orchestrator", options)
 {
   logger_ =
-    std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_Orchestrator"));
+    std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestrator"));
   logger_->set_level(rclcpp::Logger::Level::Debug);
   declare_parameter<std::vector<std::string>>("normal_node_lib_dirs");
   declare_parameter<std::vector<std::string>>("ros_node_lib_dirs");
@@ -83,7 +83,7 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
   } else {
     RCLCPP_WARN(
       *logger_, "No behavior tree file set. Will not able to start "
-      "the Orchestrator until upon calling service "
+      "the orchestrator until upon calling service "
       "/update_tree.");
   }
   if (has_parameter("tick_rate")) {
