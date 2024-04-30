@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <robot name="walli" xmlns:xacro="http://ros.org/wiki/xacro">
-   <xacro:property name="config_file"
-      value="$(find urc_bringup)/config/hardware_config.yaml" />
-   <xacro:property name="config_data" value="${load_yaml(config_file)}"></xacro:property>
-   <xacro:property name="use_simulation" value="${config_data['hardware_config']['use_simulation']}" />
+   <xacro:arg name="use_simulation" default="true" />
 
    <xacro:include filename="$(find urc_hw_description)/urdf/walli_prop.xacro" />
    <xacro:include filename="$(find urc_hw_description)/urdf/walli_inertials.xacro" />
@@ -13,10 +10,10 @@
    <xacro:include filename="$(find urc_hw_description)/urdf/drivebase.xacro" />
    <xacro:include filename="$(find urc_hw_description)/urdf/arm.xacro" />
 
-   <xacro:drivebase wheel_friction="0.012" wheel_radius="0.10" wheel_thickness="0.05"
+   <xacro:drivebase mu="1.0" mu2="0.25" wheel_radius="0.1" wheel_thickness="0.08"
       approximate="false" />
-   <xacro:arm />
-   <xacro:ros2_control use_simulation="${use_simulation}"
-      config_file_path="$(find urc_bringup)/config/controller_config.yaml"
+   <!-- <xacro:arm /> -->
+   <xacro:ros2_control use_simulation="$(arg use_simulation)"
+      config_file_path="$(find urc_bringup)/config/ros2_control_walli.yaml"
       arm_initial_positions_file="$(find urc_hw_description)/config/initial_positions.yaml" />
 </robot>

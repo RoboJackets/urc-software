@@ -8,15 +8,28 @@
     <xacro:if value="${use_simulation}">
       <ros2_control name="GazeboSystem" type="system">
         <hardware>
-          <!-- TODO make a launch param to switch between real/fake hardware. You can only use ONE. -->
-          <!--Use
-          for functionality in Gazebo, also needed for drivetrain-->
           <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-          <!--Use
-          for functionality in RViz-->
-          <!-- <plugin>mock_components/GenericSystem</plugin> -->
-          <!-- <plugin>ros2_control_demo_hardware/VelocityActuatorHardware</plugin> -->
         </hardware>
+
+        <joint name="leftbogiejoint">
+          <state_interface name="velocity" />
+          <state_interface name="position" />
+        </joint>
+
+        <joint name="leftrockerjoint">
+          <state_interface name="velocity" />
+          <state_interface name="position" />
+        </joint>
+
+        <joint name="rightbogiejoint">
+          <state_interface name="velocity" />
+          <state_interface name="position" />
+        </joint>
+
+        <joint name="rightrockerjoint">
+          <state_interface name="velocity" />
+          <state_interface name="position" />
+        </joint>
 
         <joint name="left_front_wheel_joint">
           <command_interface name="velocity">

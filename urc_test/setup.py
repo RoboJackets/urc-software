@@ -26,6 +26,7 @@ setup(
         "console_scripts": [
             "urc_test = urc_test.urc_test:main",
             "costmap_generator = urc_test.costmap_generator:main",
+            "imu_rpy = tester.pub_imu_rpy:main",
         ],
     },
 )

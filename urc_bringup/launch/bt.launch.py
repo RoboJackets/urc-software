@@ -8,6 +8,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+
     normal_lib_names = ["liburc_bt_nodes.so"]
     ros_lib_names = [
         "libbt_call_generate_plan.so",
@@ -15,24 +16,19 @@ def generate_launch_description():
         "libbt_follow_path.so",
     ]
     node_lib_path_base = os.path.join(
-        Path(
-            get_package_share_directory("urc_bt_nodes")).parent.parent.absolute(),
+        Path(get_package_share_directory("urc_bt_nodes")).parent.parent.absolute(),
         "lib",
     )
 
     normal_lib_paths = [
-        os.path.join(node_lib_path_base, lib_name)
-        for lib_name in normal_lib_names
+        os.path.join(node_lib_path_base, lib_name) for lib_name in normal_lib_names
     ]
     ros_lib_paths = [
-        os.path.join(node_lib_path_base, lib_name)
-        for lib_name in ros_lib_names
+        os.path.join(node_lib_path_base, lib_name) for lib_name in ros_lib_names
     ]
     bt_file_name = "bt_test.xml"
 
-    enable_color = SetEnvironmentVariable(
-        name="RCUTILS_COLORIZED_OUTPUT", value="1"
-    )
+    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
     orchestrator = Node(
         package="urc_bt",
@@ -49,29 +45,8 @@ def generate_launch_description():
         ],
     )
 
-    path_planner_server = Node(
-        package="path_planning",
-        executable="path_planning_PlannerServer",
-        output="screen",
-    )
-
-    trajectory_following_action_server = Node(
-        package="trajectory_following",
-        executable="trajectory_following_FollowerActionServer",
-        output="screen"
-    )
-
-    dummy_costmap_publisher = Node(
-        package="urc_test",
-        executable="costmap_generator",
-        output="screen"
-    )
-
     return LaunchDescription(
         [
-            dummy_costmap_publisher,
-            path_planner_server,
-            trajectory_following_action_server,
             enable_color,
             orchestrator,
         ]
