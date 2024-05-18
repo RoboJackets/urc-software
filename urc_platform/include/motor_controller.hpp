@@ -56,7 +56,7 @@ public:
   rclcpp::TimerBase::SharedPtr timer_;
   double publish_encoder_ticks_frequency_;
 
-  const int ENCODER_CPR = 6144;
+  const int ENCODER_CPR = 2048;
   const float WHEEL_RADIUS = 0.170;
   const float VEL_TO_COUNTS_FACTOR = ENCODER_CPR / (2 * M_PI * WHEEL_RADIUS);
   const int QPPR = 15562;
