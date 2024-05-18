@@ -30,9 +30,9 @@ def generate_launch_description():
     pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
+        pkg_urc_bringup, "config", "controller_config.yaml"
     )
-    use_sim_time = LaunchConfiguration("use_sim_time", default="false")
+    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
@@ -86,7 +86,7 @@ def generate_launch_description():
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
+        arguments=["rover_drivetrain_controller"],
     )
 
     teleop_launch = IncludeLaunchDescription(
