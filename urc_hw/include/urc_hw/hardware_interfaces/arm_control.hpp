@@ -47,7 +47,7 @@ public:
 private:
   const std::string hardware_interface_name;
   double publish_encoder_ticks_frequency_;
-  const int ENCODER_CPR = 6144;
+  const int ENCODER_CPR = 2048;
   const int QPPR = 15562;
 
   // states

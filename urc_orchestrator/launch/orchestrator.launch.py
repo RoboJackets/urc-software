@@ -5,8 +5,8 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     orchestrator = Node(
-            package='urc_navigation',
-            executable='urc_navigation_Orchestrator',
+            package='urc_orchestrator',
+            executable='urc_orchestrator_Orchestrator',
             output='screen'
         )
 

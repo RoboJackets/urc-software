@@ -35,9 +35,9 @@ Orchestrator::Orchestrator(const rclcpp::NodeOptions & options)
   costmap_offset_pose_publisher = create_publisher<geometry_msgs::msg::Pose>(
     "/pose/costmap", rclcpp::SystemDefaultsQoS());
 
-  imu_subscriber = create_subscription<sensor_msgs::msg::Imu>(
-    "/imu/data", rclcpp::SystemDefaultsQoS(),
-    [this](const sensor_msgs::msg::Imu msg) {IMUCallback(msg);});
+  imu_subscriber = create_subscription<geometry_msgs::msg::Quaternion>(
+    "/imu", rclcpp::SystemDefaultsQoS(),
+    [this](const geometry_msgs::msg::Quaternion msg) {IMUCallback(msg);});
   set_base_subscriber = create_subscription<std_msgs::msg::Bool>(
     "/set_base", rclcpp::SystemDefaultsQoS(),
     [this](const std_msgs::msg::Bool msg) {SetBaseCallback(msg);});
@@ -71,17 +71,17 @@ void Orchestrator::GPSCallback(const sensor_msgs::msg::NavSatFix & msg)
   DetermineState();
 }
 
-void Orchestrator::IMUCallback(const sensor_msgs::msg::Imu & msg)
+void Orchestrator::IMUCallback(const geometry_msgs::msg::Quaternion & msg)
 {
-  this->current_metric_pose.orientation.x = msg.orientation.x;
-  this->current_metric_pose.orientation.y = msg.orientation.y;
-  this->current_metric_pose.orientation.z = msg.orientation.z;
-  this->current_metric_pose.orientation.w = msg.orientation.w;
-  double x = msg.orientation.x;
-  double y = msg.orientation.y;
-  double z = msg.orientation.z;
-  double w = msg.orientation.w;
-  double yaw = atan2(2 * (w * x + y * z), 1 - 2 * (pow(x, 2) + pow(y, 2)));
+  this->current_metric_pose.orientation.x = msg.x;
+  this->current_metric_pose.orientation.y = msg.y;
+  this->current_metric_pose.orientation.z = msg.z;
+  this->current_metric_pose.orientation.w = msg.w;
+  double x = msg.x;
+  double y = msg.y;
+  double z = msg.z;
+  double w = msg.w;
+  double yaw = atan2(2 * (y * z + w * x), pow(w, 2) + pow(z, 2) - pow(x, 2) - pow(y, 2));
   if (this->initialYaw == -1) {
     this->initialYaw = yaw;
   }
@@ -154,12 +154,12 @@ void Orchestrator::PurePursuit(double deltaX, double deltaY)
 {
   // Publishing of Command Velocities.
   double errorDThreshold = 0.00001;
-  double errorZThreshold = 0.05;
+  double errorZThreshold = 2 ;
 
   geometry_msgs::msg::TwistStamped cmd_vel;
   double errorD = sqrt(pow(deltaX, 2) + pow(deltaY, 2));
   // double currentAngle = currentYaw - initialYaw;
-  double currentAngle = this->currentYaw - this->initialYaw;
+  double currentAngle = this->currentYaw;
   currentAngle *= 100;
 
   RCLCPP_INFO(this->get_logger(), "BASE ANGLE");
