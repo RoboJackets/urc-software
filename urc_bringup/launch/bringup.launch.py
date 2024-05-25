@@ -2,17 +2,12 @@ import os
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
-from launch.actions import (
-    IncludeLaunchDescription,
-    SetEnvironmentVariable,
-    RegisterEventHandler,
-)
+from launch.actions import IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
-from launch.event_handlers import OnProcessStart
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
@@ -48,10 +43,12 @@ def generate_launch_description():
     )
     robot_desc = robot_description_config.toxml()
 
-    controller_manager = Node(
+    control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir],
+        parameters=[controller_config_file_dir,
+                    {"robot_description": robot_desc}],
+        output="both"
     )
 
     load_robot_state_publisher = Node(
@@ -125,8 +122,6 @@ def generate_launch_description():
         package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
 
-    enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
-
     return LaunchDescription(
         [
             IncludeLaunchDescription(
@@ -139,24 +134,17 @@ def generate_launch_description():
                 ),
                 launch_arguments={"port": "8765"}.items(),
             ),
-            RegisterEventHandler(
-                event_handler=OnProcessStart(
-                    target_action=controller_manager,
-                    on_start=[
-                        load_drivetrain_controller,
-                        load_joint_state_broadcaster,
-                        load_arm_controller,
-                        load_gripper_controller_left,
-                        load_gripper_controller_right,
-                    ],
-                )
-            ),
-            enable_color,
+            control_node,
             load_robot_state_publisher,
+            load_joint_state_broadcaster,
+            load_drivetrain_controller,
+            load_arm_controller,
+            load_gripper_controller_left,
+            load_gripper_controller_right,
             teleop_launch,
             launch_gps,
             launch_imu,
             rosbridge_server_node,
-            odom_frame_node,
+            odom_frame_node
         ]
     )
