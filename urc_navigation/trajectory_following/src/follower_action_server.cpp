@@ -57,6 +57,12 @@ namespace follower_action_server
           current_pose_ = pose;
         });
 
+    // Setup the costmap
+    costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+        "/costmap",
+        rclcpp::SystemDefaultsQoS(),
+        std::bind(&FollowerActionServer::handleCostmap, this, std::placeholders::_1));
+
     // Create an action server for the follow_path action
     follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
         this,
@@ -66,6 +72,12 @@ namespace follower_action_server
             std::placeholders::_2),
         std::bind(&FollowerActionServer::handle_cancel, this, std::placeholders::_1),
         std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
+  }
+
+  void FollowerActionServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
+  {
+    // RCLCPP_INFO(get_logger(), "Received Costmap!");
+    current_costmap_ = *msg;
   }
 
   geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_map_to_base_link()
@@ -171,6 +183,19 @@ namespace follower_action_server
     }
   }
 
+  int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid &costmap, double x, double y)
+  {
+    int map_x = (x - costmap.info.origin.position.x) / costmap.info.resolution;
+    int map_y = (y - costmap.info.origin.position.y) / costmap.info.resolution;
+
+    if (map_x < 0 || map_x >= costmap.info.width || map_y < 0 || map_y >= costmap.info.height)
+    {
+      return 0;
+    }
+
+    return costmap.data[map_y * costmap.info.width + map_x];
+  }
+
   void FollowerActionServer::execute(
       const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
   {
@@ -190,11 +215,13 @@ namespace follower_action_server
 
     pure_pursuit.setPath(path);
 
+    pure_pursuit::PurePursuitOutput output;
+
     auto timer = create_wall_timer(
         std::chrono::milliseconds(100),
-        [this, &pure_pursuit, &path, &feedback, &goal_handle, &params]()
+        [this, &pure_pursuit, &path, &feedback, &goal_handle, &params, &output]()
         {
-          auto output = pure_pursuit.getCommandVelocity(lookup_map_to_base_link());
+          output = pure_pursuit.getCommandVelocity(lookup_map_to_base_link());
 
           if (stamped_)
           {
@@ -239,6 +266,16 @@ namespace follower_action_server
 
         result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
         goal_handle->succeed(result);
+        return;
+      }
+      if (getCost(current_costmap_, output.lookahead_point.point.x, output.lookahead_point.point.y) > 0)
+      {
+        timer->cancel();
+        RCLCPP_INFO(this->get_logger(), "Obstacle detected!");
+        publishZeroVelocity();
+
+        result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
+        goal_handle->abort(result);
         return;
       }
     }

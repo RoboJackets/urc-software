@@ -98,6 +98,19 @@ install(
     LIBRARY DESTINATION lib
 )
 
+add_library(
+  bt_update_current_pose SHARED
+  src/subscribers/update_current_pose.cpp
+  include/urc_bt_nodes/subscribers/update_current_pose.hpp
+)
+ament_target_dependencies(bt_update_current_pose ${dependencies})
+target_compile_features(bt_update_current_pose PUBLIC c_std_99 cxx_std_17)
+target_compile_definitions(bt_update_current_pose PRIVATE BT_PLUGIN_EXPORT)
+install(
+    TARGETS bt_update_current_pose
+    LIBRARY DESTINATION lib
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

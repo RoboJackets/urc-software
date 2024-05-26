@@ -12,6 +12,7 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/follow_path.hpp"
+#include <nav_msgs/msg/occupancy_grid.hpp>
 
 namespace follower_action_server
 {
@@ -44,6 +45,16 @@ private:
   void execute(
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
+  /**
+   * @brief Handle the costmap data
+   * @param msg The costmap data
+   */
+  void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+
+  int getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y);
+
+  nav_msgs::msg::OccupancyGrid current_costmap_;
+  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;

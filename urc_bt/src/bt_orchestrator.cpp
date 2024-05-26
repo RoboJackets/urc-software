@@ -87,9 +87,7 @@ namespace behavior
     else
     {
       RCLCPP_WARN(
-          *logger_, "No behavior tree file set. Will not able to start "
-                    "the orchestrator until upon calling service "
-                    "/update_tree.");
+          *logger_, "The behavior tree file is not set. Cannot start the orchestrator until the /update_tree service is called.");
     }
     if (has_parameter("tick_rate"))
     {
@@ -112,16 +110,18 @@ namespace behavior
               request->tree_content);
           return response;
         });
+
     reload_bt_service_ = create_service<std_srvs::srv::Trigger>(
         "~/reload", [this](const TriggerRequest, TriggerResponse response)
         {
       if (tree_dir_ == nullptr) {
-        RCLCPP_WARN(*logger_, "Tree dir is null, cannot perform reload.");
+        RCLCPP_WARN(*logger_, "Tree directory is null, cannot perform reload.");
         response->success = false;
       } else {
         response->success = RenewTree(true, *tree_dir_, "");
       }
       return response; });
+
     start_bt_service_ = create_service<std_srvs::srv::Trigger>(
         "~/start_bt", [this](const TriggerRequest, TriggerResponse response)
         {
@@ -132,6 +132,7 @@ namespace behavior
         response->success = false;
       }
       return response; });
+
     stop_bt_service_ = create_service<std_srvs::srv::Trigger>(
         "~/stop_bt", [this](TriggerRequest, TriggerResponse response)
         {
@@ -143,7 +144,6 @@ namespace behavior
       }
       return response; });
 
-    // if the tree is loaded, start the tree.
     if (is_tree_loaded())
     {
       Initialize();
@@ -173,16 +173,16 @@ namespace behavior
       }
 
       Stop();
-      RCLCPP_DEBUG(*logger_, "Load tree successfull. Start hot swapping...");
+      RCLCPP_DEBUG(*logger_, "Loaded new tree successfully, hot-swapping...");
       tree_ = std::move(new_tree_);
 
       Initialize();
       Start(); // auto start
-      RCLCPP_DEBUG(*logger_, "Hot swapping successful!");
+      RCLCPP_DEBUG(*logger_, "Successfully hot-swapped the tree.");
     }
     catch (std::exception &e)
     {
-      RCLCPP_ERROR(*logger_, "Fail to load new tree. %s.", e.what());
+      RCLCPP_ERROR(*logger_, "Failed to load new tree: %s.", e.what());
       is_running_ = false;
       tree_.reset(nullptr); // auto stop tree
       return false;
@@ -212,7 +212,7 @@ namespace behavior
     {
       RCLCPP_ERROR(
           *logger_,
-          "Tree is not loaded! Not able to start the orchestrator.");
+          "No tree is loaded! Cannot start the orchestrator.");
       return false;
     }
 
@@ -220,7 +220,7 @@ namespace behavior
     std::thread(
         [this]()
         {
-          RCLCPP_DEBUG(*logger_, "Starting BT Orchestrator...");
+          RCLCPP_DEBUG(*logger_, "Starting BT orchestrator...");
           rclcpp::Rate rate(tick_rate_);
 
           while (is_running_)
@@ -236,7 +236,7 @@ namespace behavior
   bool BehaviorTreeOrchestrator::Stop()
   {
     is_running_ = false;
-    RCLCPP_DEBUG(*logger_, "Stopping BT Orchestrator...");
+    RCLCPP_DEBUG(*logger_, "Stopping BT orchestrator...");
     return true;
   }
 

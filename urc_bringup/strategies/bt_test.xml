@@ -10,9 +10,11 @@
         <KeepRunningUntilFailure>
           <Inverter>
             <Sequence>
+              <UpdateCurrentPose topic_name="/rover_drivetrain_controller/odom"
+                                 pose="{current_pose}"/>
               <LogInfo logger="{ros_log}"
                        message="Path Planning Looping..."/>
-              <CallGeneratePlan start_pose="0,0,0"
+              <CallGeneratePlan start_pose="{current_pose}"
                                 goal_pose="5,5,2"
                                 path="{generated_path}"
                                 service_name="/plan"/>
@@ -47,6 +49,11 @@
                   default="&quot;urc_bt&quot;">Logger to use.</input_port>
       <input_port name="message"
                   default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+    </Action>
+    <Action ID="UpdateCurrentPose"
+            editable="true">
+      <input_port name="topic_name"/>
+      <output_port name="pose"/>
     </Action>
   </TreeNodesModel>
 

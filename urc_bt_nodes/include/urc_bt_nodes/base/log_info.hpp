@@ -21,8 +21,8 @@ public:
   inline static PortsList providedPorts()
   {
     return {
-      InputPort<std::shared_ptr<rclcpp::Logger>>("logger"),  //
-      InputPort<std::string>("message")                      //
+      InputPort<std::shared_ptr<rclcpp::Logger>>("logger"),
+      InputPort<std::string>("message")                     
     };
   }
 
