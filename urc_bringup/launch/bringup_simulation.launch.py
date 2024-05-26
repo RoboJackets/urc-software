@@ -1,10 +1,13 @@
 import os
 from xacro import process_file
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.actions import SetEnvironmentVariable, RegisterEventHandler
-from launch.substitutions import LaunchConfiguration
-from launch.event_handlers import OnProcessExit
+from launch.actions import (
+    IncludeLaunchDescription,
+    SetEnvironmentVariable,
+    RegisterEventHandler,
+)
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -142,6 +145,21 @@ def generate_launch_description():
         )
     )
 
+    elevation_mapping_node = Node(
+        package="mapping",
+        executable="mapping_ElevationMapping",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("mapping"),
+                    "config",
+                    "mapping_params.yaml",
+                ]
+            )
+        ],
+    )
+
     dummy_costmap_publisher = Node(
         package="urc_test", executable="costmap_generator", output="screen"
     )
@@ -155,7 +173,19 @@ def generate_launch_description():
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
                         teleop_launch,
-                        dummy_costmap_publisher,
+                    ],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_drivetrain_controller,
+                    on_exit=[elevation_mapping_node],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessStart(
+                    target_action=elevation_mapping_node,
+                    on_start=[
                         path_planning_launch,
                         trajectory_following_launch,
                         bt_launch,
