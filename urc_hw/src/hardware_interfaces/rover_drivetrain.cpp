@@ -127,16 +127,19 @@ hardware_interface::return_type RoverDrivetrain::write(
     return hardware_interface::return_type::OK;
   }
 
-  DriveEncodersMessage message = DriveEncodersMessage_init_zero;
+  TeensyMessage message = TeensyMessage_init_zero;
+  DriveEncodersMessage driveMessage = DriveEncodersMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR * -1;
-  message.has_leftSpeed = true;
-  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.has_rightSpeed = true;
-  message.timestamp = time.nanoseconds();
+  driveMessage.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR * -1;
+  driveMessage.has_leftSpeed = true;
+  driveMessage.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR * -1;
+  driveMessage.has_rightSpeed = true;
+  driveMessage.timestamp = time.nanoseconds();
+  message.messageID = 0;
+  message.payload.driveEncodersMessage = driveMessage;
 
-  bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
+  bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;
 
   if (!status) {

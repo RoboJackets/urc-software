@@ -117,15 +117,19 @@ hardware_interface::return_type StatusLight::read(const rclcpp::Time &, const rc
 
 hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  StatusLightCommand message = StatusLightCommand_init_zero;
+
+  TeensyMessage message = TeensyMessage_init_zero;
+  StatusLightCommand statusMessage = StatusLightCommand_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.color = signals[0];
-  message.has_color = true;
-  message.display = signals[1];
-  message.has_display = true;
+  statusMessage.color = signals[0];
+  statusMessage.has_color = true;
+  statusMessage.display = signals[1];
+  statusMessage.has_display = true;
+  message.messageID = 1;
+  message.payload.statusLightCommand = statusMessage;
 
-  bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
+  bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;
 
   if (!status) {
