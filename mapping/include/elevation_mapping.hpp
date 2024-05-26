@@ -12,34 +12,37 @@
 namespace mapping
 {
 
-    class ElevationMapping : public rclcpp::Node
-    {
-    public:
-        explicit ElevationMapping(const rclcpp::NodeOptions &options);
-        ~ElevationMapping();
+class ElevationMapping : public rclcpp::Node
+{
+public:
+  explicit ElevationMapping(const rclcpp::NodeOptions & options);
+  ~ElevationMapping();
 
-    private:
-        void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+private:
+  void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
 
-        geometry_msgs::msg::TransformStamped lookup_transform(std::string target_frame, std::string source_frame, rclcpp::Time time);
+  geometry_msgs::msg::TransformStamped lookup_transform(
+    std::string target_frame,
+    std::string source_frame,
+    rclcpp::Time time);
 
-        bool worldToMap(double x, double y, nav_msgs::msg::MapMetaData info, std::pair<int, int> &out);
+  bool worldToMap(double x, double y, nav_msgs::msg::MapMetaData info, std::pair<int, int> & out);
 
-        rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr depth_subscriber_;
-        rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr map_publisher_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr depth_subscriber_;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr map_publisher_;
 
-        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-        nav_msgs::msg::OccupancyGrid map_;
+  nav_msgs::msg::OccupancyGrid map_;
 
-        double resolution_;
-        double min_z_;
-        double max_z_;
-        unsigned int width_;
-        std::string map_frame_;
-        std::string camera_frame_;
-    };
+  double resolution_;
+  double min_z_;
+  double max_z_;
+  unsigned int width_;
+  std::string map_frame_;
+  std::string camera_frame_;
+};
 
 } // namespace mapping
 

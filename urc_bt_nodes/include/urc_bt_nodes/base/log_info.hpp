@@ -22,7 +22,7 @@ public:
   {
     return {
       InputPort<std::shared_ptr<rclcpp::Logger>>("logger"),
-      InputPort<std::string>("message")                     
+      InputPort<std::string>("message")
     };
   }
 

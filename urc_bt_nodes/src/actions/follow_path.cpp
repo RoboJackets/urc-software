@@ -32,7 +32,8 @@ BT::NodeStatus FollowPath::onFeedback(const std::shared_ptr<const Feedback> feed
 
 BT::NodeStatus FollowPath::onResultReceived(const WrappedResult & wr)
 {
-  RCLCPP_INFO(node_->get_logger(), "Finished following path with error code: %hu.", wr.result->error_code);
+  RCLCPP_INFO(
+    node_->get_logger(), "Finished following path with error code: %hu.", wr.result->error_code);
   if (wr.result->error_code == 0) {
     return BT::NodeStatus::SUCCESS;
   }
