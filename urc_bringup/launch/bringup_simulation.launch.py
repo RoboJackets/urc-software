@@ -26,7 +26,7 @@ def generate_launch_description():
 
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"),
-        "urdf/walli_sim.xacro"
+        "urdf/walli.xacro"
     )
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
