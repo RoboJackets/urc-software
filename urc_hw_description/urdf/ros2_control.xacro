@@ -10,27 +10,22 @@
         <hardware>
           <plugin>gazebo_ros2_control/GazeboSystem</plugin>
         </hardware>
-
         <joint name="leftbogiejoint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="leftrockerjoint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="rightbogiejoint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="rightrockerjoint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="left_front_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -39,7 +34,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="right_front_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -48,7 +42,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="left_center_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -57,7 +50,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="right_center_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -66,7 +58,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="left_rear_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -75,7 +66,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="right_rear_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
@@ -84,7 +74,6 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-
         <joint name="shoulderjoint">
           <command_interface name="position" />
           <command_interface name="velocity" />
@@ -149,9 +138,6 @@
           <state_interface name="velocity" />
         </joint>
       </ros2_control>
-    </xacro:if>
-
-    <xacro:if value="${use_simulation}">
       <gazebo>
         <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
           <parameters>${config_file_path}</parameters>
@@ -160,19 +146,6 @@
     </xacro:if>
 
     <xacro:if value="${not use_simulation}">
-      <ros2_control name="walli_others" type="system">
-        <hardware>
-          <plugin>urc_hw/StatusLight</plugin>
-          <param name="serial_port">/dev/ttyACM0</param>
-          <param name="udp_address">143.215.63.147</param>
-          <param name="udp_port">5000</param>
-        </hardware>
-
-        <gpio name="status_light">
-          <command_interface name="color" />
-          <command_interface name="display" />
-        </gpio>
-      </ros2_control>
       <ros2_control name="rover_drivetrain" type="system">
         <hardware>
           <plugin>urc_hw/RoverDrivetrain</plugin>
@@ -251,13 +224,4 @@
       </ros2_control>
     </xacro:if>
   </xacro:macro>
-
-  <!-- Gazebo Configuration -->
-
-
 </robot>
-
-
-
-
-    

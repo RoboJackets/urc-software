@@ -67,29 +67,35 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_arm_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "arm_controller"],
-    )
-
-    load_gripper_controller_left = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
-    )
-
-    load_gripper_controller_right = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
-    )
-
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["rover_drivetrain_controller"],
     )
+
+    load_status_light_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "status_light_controller"],
+    )
+
+    # load_arm_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
+    # )
+
+    # load_gripper_controller_left = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
+    # )
+
+    # load_gripper_controller_right = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
+    # )
 
     teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -138,9 +144,10 @@ def generate_launch_description():
             load_robot_state_publisher,
             load_joint_state_broadcaster,
             load_drivetrain_controller,
-            load_arm_controller,
-            load_gripper_controller_left,
-            load_gripper_controller_right,
+            load_status_light_controller,
+            # load_arm_controller,
+            # load_gripper_controller_left,
+            # load_gripper_controller_right,
             teleop_launch,
             launch_gps,
             launch_imu,
