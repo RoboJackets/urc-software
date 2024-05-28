@@ -53,7 +53,7 @@ ament_target_dependencies(
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
-pluginlib_export_plugin_description_file(controller_interface test_hardware_controller.xml)
+pluginlib_export_plugin_description_file(controller_interface urc_controllers.xml)
 
 install(
   DIRECTORY include/
