@@ -73,9 +73,13 @@ private:
   std::string udp_address;
   std::string udp_port;
 
-  // nanopb
+  // nanopb drive encoders message
   uint8_t buffer[DriveEncodersMessage_size];
   size_t message_length;
+
+  // nanopb encoder feedback message
+  uint8_t buffer2[DrivetrainResponse_size];
+  size_t message_length2;
 };
 
 }  // namespace urc_hardware::hardware_interfaces
