@@ -34,13 +34,9 @@
         </Action>
         <Action ID="RecoverFromSingularity" editable="true"/>
         <Action ID="ServoArm" editable="true"/>
-        <Action ID="StatusLightColorPublisher" editable="true">
+        <Action ID="StatusLightPublisher" editable="true">
             <input_port name="topic_name"/>
-            <input_port name="color"/>
-        </Action>
-        <Action ID="StatusLightDisplayPublisher" editable="true">
-            <input_port name="topic_name"/>
-            <input_port name="display"/>
+            <input_port name="value"/>
         </Action>
         <Action ID="UpdateCurrentPose" editable="true">
             <input_port name="topic_name"/>

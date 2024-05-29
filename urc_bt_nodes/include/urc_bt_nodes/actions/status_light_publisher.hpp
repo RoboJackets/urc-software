@@ -1,5 +1,5 @@
-#ifndef STATUS_LIGHT_COLOR_PUBLISHER_HPP__
-#define STATUS_LIGHT_COLOR_PUBLISHER_HPP__
+#ifndef STATUS_LIGHT_PUBLISHER_HPP__
+#define STATUS_LIGHT_PUBLISHER_HPP__
 
 #include "behaviortree_cpp/basic_types.h"
 #include "behaviortree_cpp/tree_node.h"
@@ -11,16 +11,16 @@
 
 namespace behavior::actions
 {
-class StatusLightColorPublisher : public BT::RosTopicPubNode<std_msgs::msg::Int8>
+class StatusLightPublisher : public BT::RosTopicPubNode<std_msgs::msg::Int8>
 {
     public:
-    StatusLightColorPublisher(const std::string& instance_name, const BT::NodeConfig& conf,
+    StatusLightPublisher(const std::string& instance_name, const BT::NodeConfig& conf,
         const BT::RosNodeParams& params)
     : BT::RosTopicPubNode<std_msgs::msg::Int8>(instance_name, conf, params) {}
     
     static BT::PortsList providedPorts() {
         return providedBasicPorts({
-            BT::InputPort<std_msgs::msg::Int8>("color"),
+            BT::InputPort<std_msgs::msg::Int8>("value"),
         });
     }
 

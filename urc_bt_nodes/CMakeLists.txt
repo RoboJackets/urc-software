@@ -99,28 +99,15 @@ install(
 )
 
 add_library(
-  bt_status_light_color_publisher SHARED
-  src/actions/status_light_color_publisher.cpp
-  include/urc_bt_nodes/actions/status_light_color_publisher.hpp
+  bt_status_light_publisher SHARED
+  src/actions/status_light_publisher.cpp
+  include/urc_bt_nodes/actions/status_light_publisher.hpp
 )
-ament_target_dependencies(bt_status_light_color_publisher ${dependencies})
-target_compile_features(bt_status_light_color_publisher PUBLIC c_std_99 cxx_std_17)
-target_compile_definitions(bt_status_light_color_publisher PRIVATE BT_PLUGIN_EXPORT)
+ament_target_dependencies(bt_status_light_publisher ${dependencies})
+target_compile_features(bt_status_light_publisher PUBLIC c_std_99 cxx_std_17)
+target_compile_definitions(bt_status_light_publisher PRIVATE BT_PLUGIN_EXPORT)
 install(
-    TARGETS bt_status_light_color_publisher
-    LIBRARY DESTINATION lib
-)
-
-add_library(
-  bt_status_light_display_publisher SHARED
-  src/actions/status_light_display_publisher.cpp
-  include/urc_bt_nodes/actions/status_light_display_publisher.hpp
-)
-ament_target_dependencies(bt_status_light_display_publisher ${dependencies})
-target_compile_features(bt_status_light_display_publisher PUBLIC c_std_99 cxx_std_17)
-target_compile_definitions(bt_status_light_display_publisher PRIVATE BT_PLUGIN_EXPORT)
-install(
-    TARGETS bt_status_light_display_publisher
+    TARGETS bt_status_light_publisher
     LIBRARY DESTINATION lib
 )
 
