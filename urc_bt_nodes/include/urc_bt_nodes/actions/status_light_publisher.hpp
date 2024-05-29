@@ -13,18 +13,21 @@ namespace behavior::actions
 {
 class StatusLightPublisher : public BT::RosTopicPubNode<std_msgs::msg::Int8>
 {
-    public:
-    StatusLightPublisher(const std::string& instance_name, const BT::NodeConfig& conf,
-        const BT::RosNodeParams& params)
-    : BT::RosTopicPubNode<std_msgs::msg::Int8>(instance_name, conf, params) {}
-    
-    static BT::PortsList providedPorts() {
-        return providedBasicPorts({
-            BT::InputPort<std_msgs::msg::Int8>("value"),
-        });
-    }
+public:
+  StatusLightPublisher(
+    const std::string & instance_name, const BT::NodeConfig & conf,
+    const BT::RosNodeParams & params)
+  : BT::RosTopicPubNode<std_msgs::msg::Int8>(instance_name, conf, params) {}
 
-    bool setMessage(std_msgs::msg::Int8& msg) override;
+  static BT::PortsList providedPorts()
+  {
+    return providedBasicPorts(
+      {
+        BT::InputPort<std_msgs::msg::Int8>("value"),
+      });
+  }
+
+  bool setMessage(std_msgs::msg::Int8 & msg) override;
 
 };
 }

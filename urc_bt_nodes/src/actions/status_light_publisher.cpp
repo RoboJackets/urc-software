@@ -4,10 +4,11 @@
 
 namespace behavior::actions
 {
-    bool StatusLightPublisher::setMessage(std_msgs::msg::Int8& msg) {
-        msg = getInput<std_msgs::msg::Int8>("value").value();
-        return true;
-    }
+bool StatusLightPublisher::setMessage(std_msgs::msg::Int8 & msg)
+{
+  msg = getInput<std_msgs::msg::Int8>("value").value();
+  return true;
+}
 }
 
 namespace BT
