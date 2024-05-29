@@ -12,34 +12,51 @@
 namespace mapping
 {
 
-    class ElevationMapping : public rclcpp::Node
-    {
-    public:
-        explicit ElevationMapping(const rclcpp::NodeOptions &options);
-        ~ElevationMapping();
+class ElevationMapping : public rclcpp::Node
+{
+public:
+  explicit ElevationMapping(const rclcpp::NodeOptions & options);
+  ~ElevationMapping();
 
-    private:
-        void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+private:
+  void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
 
-        geometry_msgs::msg::TransformStamped lookup_transform(std::string target_frame, std::string source_frame, rclcpp::Time time);
+  geometry_msgs::msg::TransformStamped lookup_transform(
+    std::string target_frame,
+    std::string source_frame,
+    rclcpp::Time time);
 
-        bool worldToMap(double x, double y, nav_msgs::msg::MapMetaData info, std::pair<int, int> &out);
+  bool worldToMap(double x, double y, nav_msgs::msg::MapMetaData info, std::pair<int, int> & out);
 
-        rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr depth_subscriber_;
-        rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr map_publisher_;
+  int cellDistance(double world_dist)
+  {
+    return std::ceil(world_dist / resolution_);
+  }
 
-        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  void inflate(int cell_x, int cell_y, double cell_cost, int radius);
 
-        nav_msgs::msg::OccupancyGrid map_;
+  double gaussian(double x);
 
-        double resolution_;
-        double min_z_;
-        double max_z_;
-        unsigned int width_;
-        std::string map_frame_;
-        std::string camera_frame_;
-    };
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr depth_subscriber_;
+  rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr map_publisher_;
+
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+
+  nav_msgs::msg::OccupancyGrid map_;
+
+  int cell_inflation_radius_;
+  bool inflate_obstacles_;
+
+  int8_t max_cost_ = 100;
+
+  double resolution_;
+  double min_z_;
+  double max_z_;
+  unsigned int width_;
+  std::string map_frame_;
+  std::string camera_frame_;
+};
 
 } // namespace mapping
 

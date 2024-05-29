@@ -18,13 +18,27 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("odom_topic", "/odom");
   declare_parameter("map_frame", "map");
   declare_parameter("goal_tolerance", 0.1);
+  declare_parameter("cmd_vel_stamped", false);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
-    get_parameter(
-      "cmd_vel_topic").as_string(), 10);
+  stamped_ = get_parameter("cmd_vel_stamped").as_bool();
+
+  if (stamped_) {
+    cmd_vel_stamped_pub_ =
+      create_publisher<geometry_msgs::msg::TwistStamped>(
+      get_parameter(
+        "cmd_vel_topic")
+      .as_string(),
+      10);
+  } else {
+    cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
+      get_parameter(
+        "cmd_vel_topic")
+      .as_string(),
+      10);
+  }
 
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
@@ -40,6 +54,12 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       current_pose_ = pose;
     });
 
+  // Setup the costmap
+  costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+    "/costmap",
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&FollowerActionServer::handleCostmap, this, std::placeholders::_1));
+
   // Create an action server for the follow_path action
   follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
     this,
@@ -51,14 +71,19 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
     std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
 }
 
-geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_map_to_base_link()
+void FollowerActionServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
 {
-  std::string map_frame = get_parameter("map_frame").as_string();
+  current_costmap_ = *msg;
+}
+
+geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_transform(
+  std::string target_frame, std::string source_frame)
+{
   geometry_msgs::msg::TransformStamped transform;
   try {
-    transform = tf_buffer_->lookupTransform("base_link", map_frame, tf2::TimePointZero);
+    transform = tf_buffer_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
-    RCLCPP_ERROR(this->get_logger(), "Could not transform path to base_link: %s", ex.what());
+    RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
   }
   return transform;
 }
@@ -134,6 +159,32 @@ visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
   return circle;
 }
 
+void FollowerActionServer::publishZeroVelocity()
+{
+  geometry_msgs::msg::TwistStamped cmd_vel;
+  cmd_vel.header.stamp = get_clock()->now();
+  cmd_vel.twist.linear.x = 0.0;
+  cmd_vel.twist.angular.z = 0.0;
+
+  if (stamped_) {
+    cmd_vel_stamped_pub_->publish(cmd_vel);
+  } else {
+    cmd_vel_pub_->publish(cmd_vel.twist);
+  }
+}
+
+int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y)
+{
+  int map_x = (x - costmap.info.origin.position.x) / costmap.info.resolution;
+  int map_y = (y - costmap.info.origin.position.y) / costmap.info.resolution;
+
+  if (map_x < 0 || map_x >= costmap.info.width || map_y < 0 || map_y >= costmap.info.height) {
+    return 0;
+  }
+
+  return costmap.data[map_y * costmap.info.width + map_x];
+}
+
 void FollowerActionServer::execute(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
 {
@@ -153,47 +204,64 @@ void FollowerActionServer::execute(
 
   pure_pursuit.setPath(path);
 
-  // Create a timer to publish the carrot point
-  auto timer = create_wall_timer(
-    std::chrono::milliseconds(100),
-    [this, &pure_pursuit, &path, &feedback, &goal_handle, &params]()
-    {
-      auto output = pure_pursuit.getCommandVelocity(lookup_map_to_base_link());
-      cmd_vel_pub_->publish(output.cmd_vel.twist);
+  pure_pursuit::PurePursuitOutput output;
+  rclcpp::Rate rate(10);
 
-      auto circle =
-      create_lookahead_circle(
-        current_pose_.pose.position.x, current_pose_.pose.position.y,
-        params.lookahead_distance, get_parameter("map_frame").as_string());
-      marker_pub_->publish(circle);
-
-      // Publish the carrot point
-      carrot_pub_->publish(output.lookahead_point);
-
-      // Publish feedback
-      feedback->distance_to_goal =
-      geometry_util::dist2D(current_pose_.pose.position, path.poses.back().pose.position);
-      goal_handle->publish_feedback(feedback);
-    });
-
-  // Wait for the goal to be canceled
   while (rclcpp::ok()) {
     if (goal_handle->is_canceling()) {
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
-      return;
-    }
-
-    if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
+      break;
+    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
-      return;
+      break;
+    } else if (getCost(
+        current_costmap_, output.lookahead_point.point.x,
+        output.lookahead_point.point.y) > 0)
+    {
+      result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
+      goal_handle->abort(result);
+      RCLCPP_INFO(this->get_logger(), "Obstacle detected!");
+      break;
     }
+
+    output =
+      pure_pursuit.getCommandVelocity(
+      lookup_transform(
+        "base_link",
+        get_parameter("map_frame").as_string()));
+
+    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "odom");
+
+    if (stamped_) {
+      cmd_vel_stamped_pub_->publish(output.cmd_vel);
+    } else {
+      cmd_vel_pub_->publish(output.cmd_vel.twist);
+    }
+
+    geometry_msgs::msg::PoseStamped current_pose_map_frame_;
+    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+
+    auto circle =
+      create_lookahead_circle(
+      current_pose_map_frame_.pose.position.x, current_pose_map_frame_.pose.position.y,
+      params.lookahead_distance, get_parameter("map_frame").as_string());
+    marker_pub_->publish(circle);
+
+    // Publish the carrot point
+    carrot_pub_->publish(output.lookahead_point);
+
+    // Publish feedback
+    feedback->distance_to_goal =
+      geometry_util::dist2D(current_pose_map_frame_.pose.position, path.poses.back().pose.position);
+    goal_handle->publish_feedback(feedback);
+
+    rate.sleep();
   }
 
-  // Cancel the timer
-  timer->cancel();
+  publishZeroVelocity();
 }
 
 } // namespace follower_node

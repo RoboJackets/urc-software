@@ -4,6 +4,7 @@ nav_msgs/Path path
 # response definition
 uint16 SUCCESS=0
 uint16 FAILURE=1
+uint16 OBSTACLE_DETECTED=2
 
 std_msgs/Empty result
 uint16 error_code
