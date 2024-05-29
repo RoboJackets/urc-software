@@ -112,9 +112,9 @@ hardware_interface::return_type RoverDrivetrain::read(
   const rclcpp::Time &,
   const rclcpp::Duration &)
 {
-  RCLCPP_INFO(
-    rclcpp::get_logger(
-      "test"), "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
+  // RCLCPP_INFO(
+  //  rclcpp::get_logger(
+  //      "test"), "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
 
   return hardware_interface::return_type::OK;
 }
