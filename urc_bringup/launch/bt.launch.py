@@ -15,7 +15,8 @@ def generate_launch_description():
         "libbt_call_trigger.so",
         "libbt_follow_path.so",
         "libbt_update_current_pose.so",
-        "libbt_status_light_publisher.so"
+        "libbt_status_light_color_publisher.so",
+        "libbt_status_light_display_publisher.so"
     ]
     node_lib_path_base = os.path.join(
         Path(get_package_share_directory("urc_bt_nodes")).parent.parent.absolute(),

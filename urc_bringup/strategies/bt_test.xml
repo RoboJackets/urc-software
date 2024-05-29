@@ -7,7 +7,8 @@
           <LogInfo logger="{ros_log}"
                    message="Trying to Plan Path..."/>
         </Delay>
-        <StatusLightPublisher topic_name="/cmd_statuslight_color" color="{1}" display="{1}" />
+        <StatusLightColorPublisher color="{1}"/>
+        <StatusLightDisplayPublisher display="{1}"/>
         <KeepRunningUntilFailure>
           <Inverter>
             <Sequence>
@@ -21,7 +22,8 @@
                                 service_name="/plan"/>
               <LogInfo logger="{ros_log}"
                        message="Path Planning Successful!"/>
-              <StatusLightPublisher topic_name="/cmd_statuslight_color" color="{1}" display="{1}" />
+              <StatusLightColorPublisher color="2"/>
+              <StatusLightDisplayPublisher display="2"/>
               <FollowPath path="{generated_path}"
                           action_name="/follow_path"/>
             </Sequence>
@@ -51,6 +53,14 @@
                   default="&quot;urc_bt&quot;">Logger to use.</input_port>
       <input_port name="message"
                   default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+    </Action>
+    <Action ID="StatusLightColorPublisher"
+            editable="true">
+      <input_port name="color"/>
+    </Action>
+    <Action ID="StatusLightDisplayPublisher"
+            editable="true">
+      <input_port name="display"/>
     </Action>
     <Action ID="UpdateCurrentPose"
             editable="true">
