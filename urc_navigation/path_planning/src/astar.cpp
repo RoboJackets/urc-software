@@ -7,8 +7,8 @@ AStar::AStar() {}
 
 Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 {
-  int x = pose.position.x / costmap_.info.resolution;
-  int y = pose.position.y / costmap_.info.resolution;
+  int x = (pose.position.x - costmap_.info.origin.position.x) / costmap_.info.resolution;
+  int y = (pose.position.y - costmap_.info.origin.position.y) / costmap_.info.resolution;
 
   return {x, y};
 }
@@ -98,7 +98,7 @@ double AStar::cost(const AStarNode * from, const AStarNode * to)
   int costmap_index = to_coord.y * costmap_.info.width + to_coord.x;
 
 
-  double cell_cost = 0.0;
+  double cell_cost = 1.0;
 
   // Check cell cost if index is within the costmap
   if (costmap_index >= 0 && costmap_index < costmap_.data.size()) {

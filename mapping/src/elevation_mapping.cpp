@@ -27,12 +27,22 @@ ElevationMapping::ElevationMapping(const rclcpp::NodeOptions & options)
   declare_parameter("min_z", 0.1);
   declare_parameter("max_z", 2.0);
 
+  declare_parameter("inflation_radius", 0.1);
+  declare_parameter("inflate_obstacles", true);
+
   width_ = get_parameter("width").as_int();
   resolution_ = get_parameter("resolution").as_double();
   map_frame_ = get_parameter("map_frame").as_string();
   camera_frame_ = get_parameter("camera_frame").as_string();
   min_z_ = get_parameter("min_z").as_double();
   max_z_ = get_parameter("max_z").as_double();
+
+  cell_inflation_radius_ = cellDistance(get_parameter("inflation_radius").as_double());
+  inflate_obstacles_ = get_parameter("inflate_obstacles").as_bool();
+
+  RCLCPP_INFO(this->get_logger(), "Cell inflation radius set to %d", cell_inflation_radius_);
+  RCLCPP_INFO(
+    this->get_logger(), "Inflate obstacles set to %s.", inflate_obstacles_ ? "true" : "false");
 
   map_.header.frame_id = map_frame_;
   map_.info.resolution = resolution_;
@@ -126,26 +136,61 @@ void ElevationMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::Sha
     }
 
     double z = point.z - pos.z();
-    if (z < min_z_) {
+    double y = point.y - pos.y();
+    double x = point.x - pos.x();
+
+    if (z < min_z_ || std::sqrt(x * x + y * y) > 2.8) {
       continue;
     }
 
     int costmap_index = map_coord.first + map_coord.second * map_.info.width;
 
-    if (z > max_z_) {
-      map_.data[costmap_index] = 100;
-      continue;
-    }
+    double cost = 0.0;
 
-    double cost = (z - min_z_) / (max_z_ - min_z_) * 100;
+    if (z > max_z_) {
+      cost = max_cost_;
+    } else {
+      cost = (z - min_z_) / (max_z_ - min_z_) * max_cost_;
+    }
 
     if (cost > map_.data[costmap_index]) {
       map_.data[costmap_index] = cost;
+
+      if (inflate_obstacles_) {
+        inflate(map_coord.first, map_coord.second, cost, cell_inflation_radius_);
+      }
     }
   }
 
   map_.header.stamp = get_clock()->now();
   map_publisher_->publish(map_);
+}
+
+void ElevationMapping::inflate(int cell_x, int cell_y, double cell_cost, int radius)
+{
+  for (int x = cell_x - radius; x <= cell_x + radius; x++) {
+    for (int y = cell_y - radius; y <= cell_y + radius; y++) {
+      if (x < 0 || x >= map_.info.width || y < 0 || y >= map_.info.height) {
+        continue;
+      }
+
+      int dist = std::sqrt(std::pow(x - cell_x, 2) + std::pow(y - cell_y, 2));
+
+      if (dist <= radius) {
+        int index = x + y * map_.info.width;
+        double inflated_cost = gaussian(dist) * cell_cost;
+
+        if (inflated_cost > map_.data[index]) {
+          map_.data[index] = inflated_cost;
+        }
+      }
+    }
+  }
+}
+
+double ElevationMapping::gaussian(double x)
+{
+  return std::exp(-0.5 * x * x / cell_inflation_radius_);
 }
 
 } // namespace mapping

@@ -14,7 +14,9 @@ setup(
         (os.path.join("share", package_name, "launch"), glob("launch/*.py")),
         (os.path.join("share", package_name, "config"), glob("config/*.yaml")),
     ],
-    package_dir={'': 'src', },
+    package_dir={
+        "": "src",
+    },
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="nvidia",
@@ -26,7 +28,8 @@ setup(
         "console_scripts": [
             "urc_test = urc_test.urc_test:main",
             "costmap_generator = urc_test.costmap_generator:main",
-            "imu_rpy = tester.pub_imu_rpy:main",
+            "imu_rpy = urc_test.pub_imu_rpy:main",
+            "odom_to_map_pose = urc_test.odom_to_map_pose:main",
         ],
     },
 )

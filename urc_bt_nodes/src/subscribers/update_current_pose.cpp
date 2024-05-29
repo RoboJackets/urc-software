@@ -4,11 +4,12 @@ using namespace BT;
 
 namespace behavior::subscribers
 {
-NodeStatus UpdateCurrentPose::onTick(const std::shared_ptr<nav_msgs::msg::Odometry> & last_msg)
+NodeStatus UpdateCurrentPose::onTick(
+  const std::shared_ptr<geometry_msgs::msg::PoseStamped> & last_msg)
 {
   if (last_msg) {
     RCLCPP_INFO(node_->get_logger(), "New current pose received!");
-    setOutput("pose", last_msg->pose.pose);
+    setOutput("pose", last_msg->pose);
   }
 
   return NodeStatus::SUCCESS;
