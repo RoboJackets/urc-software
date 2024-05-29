@@ -22,7 +22,7 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [
                     FindPackageShare("urc_platform"),
-                    "config" "joystick_driver_params.yaml",
+                    "config/" "joystick_driver_params.yaml",
                 ]
             )
         ],
