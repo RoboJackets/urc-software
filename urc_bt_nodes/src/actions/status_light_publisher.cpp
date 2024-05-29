@@ -5,6 +5,7 @@
 namespace behavior::actions
 {
     bool StatusLightPublisher::setMessage(std_msgs::msg::Int8& msg) {
+        RCLCPP_INFO(node_->get_logger(), "Published DATA!");
         msg.data = 1;
         return true;
     }

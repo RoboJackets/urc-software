@@ -7,6 +7,7 @@
           <LogInfo logger="{ros_log}"
                    message="Trying to Plan Path..."/>
         </Delay>
+        <StatusLightPublisher topic_name="/cmd_statuslight_color" color="{1}" display="{1}" />
         <KeepRunningUntilFailure>
           <Inverter>
             <Sequence>
@@ -20,6 +21,7 @@
                                 service_name="/plan"/>
               <LogInfo logger="{ros_log}"
                        message="Path Planning Successful!"/>
+              <StatusLightPublisher topic_name="/cmd_statuslight_color" color="{1}" display="{1}" />
               <FollowPath path="{generated_path}"
                           action_name="/follow_path"/>
             </Sequence>

@@ -39,5 +39,9 @@
             <output_port name="pose"/>
         </Action>
         <Action ID="UpdateStatus" editable="true"/>
+        <Action ID="StatusLightPublisher" editable="true">
+            <input_port name="color"/>
+            <input_port name="display"/>
+        </Action>
     </TreeNodesModel>
 </root>
