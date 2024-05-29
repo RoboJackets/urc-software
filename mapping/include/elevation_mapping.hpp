@@ -28,6 +28,15 @@ private:
 
   bool worldToMap(double x, double y, nav_msgs::msg::MapMetaData info, std::pair<int, int> & out);
 
+  int cellDistance(double world_dist)
+  {
+    return std::ceil(world_dist / resolution_);
+  }
+
+  void inflate(int cell_x, int cell_y, double cell_cost, int radius);
+
+  double gaussian(double x);
+
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr depth_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr map_publisher_;
 
@@ -35,6 +44,11 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   nav_msgs::msg::OccupancyGrid map_;
+
+  int cell_inflation_radius_;
+  bool inflate_obstacles_;
+
+  int8_t max_cost_ = 100;
 
   double resolution_;
   double min_z_;

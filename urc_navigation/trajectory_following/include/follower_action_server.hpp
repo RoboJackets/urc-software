@@ -24,7 +24,9 @@ public:
   ~FollowerActionServer();
 
 private:
-  geometry_msgs::msg::TransformStamped lookup_map_to_base_link();
+  geometry_msgs::msg::TransformStamped lookup_transform(
+    std::string target_frame,
+    std::string source_frame);
 
   visualization_msgs::msg::Marker create_lookahead_circle(
     double x, double y, double radius,

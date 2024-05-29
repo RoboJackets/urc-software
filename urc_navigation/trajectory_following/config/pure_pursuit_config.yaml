@@ -5,5 +5,5 @@ follower_action_server:
     cmd_vel_stamped: true
     cmd_vel_topic: "/rover_drivetrain_controller/cmd_vel"
     odom_topic: "/rover_drivetrain_controller/odom"
-    map_frame: "odom"
+    map_frame: "map"
     goal_tolerance: 0.1

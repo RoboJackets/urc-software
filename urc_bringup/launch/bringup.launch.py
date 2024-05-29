@@ -7,8 +7,8 @@ from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
+from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def load_yaml(package_name, file_path):
@@ -30,9 +30,9 @@ def generate_launch_description():
     pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
+        pkg_urc_bringup, "config", "controller_config.yaml"
     )
-    use_sim_time = LaunchConfiguration("use_sim_time", default="false")
+    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
@@ -46,7 +46,9 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir],
+        parameters=[controller_config_file_dir,
+                    {"robot_description": robot_desc}],
+        output="both"
     )
 
     load_robot_state_publisher = Node(
@@ -86,7 +88,7 @@ def generate_launch_description():
     load_drivetrain_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
+        arguments=["rover_drivetrain_controller"],
     )
 
     teleop_launch = IncludeLaunchDescription(
@@ -143,6 +145,6 @@ def generate_launch_description():
             launch_gps,
             launch_imu,
             rosbridge_server_node,
-            odom_frame_node,
+            odom_frame_node
         ]
     )

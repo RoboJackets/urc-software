@@ -11,12 +11,12 @@
         <KeepRunningUntilFailure>
           <Inverter>
             <Sequence>
-              <UpdateCurrentPose topic_name="/rover_drivetrain_controller/odom"
+              <UpdateCurrentPose topic_name="/map/pose"
                                  pose="{current_pose}"/>
               <LogInfo logger="{ros_log}"
                        message="Path Planning Looping..."/>
               <CallGeneratePlan start_pose="{current_pose}"
-                                goal_pose="5,5,2"
+                                goal_pose="15,15,2"
                                 path="{generated_path}"
                                 service_name="/plan"/>
               <LogInfo logger="{ros_log}"
