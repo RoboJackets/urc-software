@@ -34,6 +34,14 @@
         </Action>
         <Action ID="RecoverFromSingularity" editable="true"/>
         <Action ID="ServoArm" editable="true"/>
+        <Action ID="StatusLightPublisher" editable="true">
+            <input_port name="topic_name"/>
+            <input_port name="value"/>
+        </Action>
+        <Action ID="UpdateCurrentPose" editable="true">
+            <input_port name="topic_name"/>
+            <output_port name="pose"/>
+        </Action>
         <Action ID="UpdateStatus" editable="true"/>
     </TreeNodesModel>
 </root>

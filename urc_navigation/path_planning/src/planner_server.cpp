@@ -55,7 +55,7 @@ void PlannerServer::generatePlan(
     for (auto & node : path) {
       geometry_msgs::msg::PoseStamped pose;
 
-      pose.header.frame_id = "odom";
+      pose.header.frame_id = "map";
       pose.header.stamp = get_clock()->now();
       pose.pose = node.getPose();
 
@@ -63,7 +63,7 @@ void PlannerServer::generatePlan(
     }
 
     nav_msgs::msg::Path plan;
-    plan.header.frame_id = "odom";
+    plan.header.frame_id = "map";
     plan.header.stamp = get_clock()->now();
     plan.poses = poses;
 
