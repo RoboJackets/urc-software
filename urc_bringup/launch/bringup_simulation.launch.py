@@ -1,10 +1,13 @@
 import os
 from xacro import process_file
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.actions import SetEnvironmentVariable, RegisterEventHandler
-from launch.substitutions import LaunchConfiguration
-from launch.event_handlers import OnProcessExit
+from launch.actions import (
+    IncludeLaunchDescription,
+    SetEnvironmentVariable,
+    RegisterEventHandler,
+)
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -17,6 +20,7 @@ def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
+    pkg_urc_test = get_package_share_directory("urc_test")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
@@ -38,7 +42,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true", "world": world_path}.items(),
+        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
@@ -143,8 +147,35 @@ def generate_launch_description():
         )
     )
 
-    dummy_costmap_publisher = Node(
-        package="urc_test", executable="costmap_generator", output="screen"
+    elevation_mapping_node = Node(
+        package="mapping",
+        executable="mapping_ElevationMapping",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("mapping"),
+                    "config",
+                    "mapping_params.yaml",
+                ]
+            )
+        ],
+    )
+
+    map_to_odom_transform_node = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["10", "10", "0", "0", "0", "0", "map", "odom"],
+    )
+
+    map_to_odom_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                pkg_urc_test,
+                "launch",
+                "odom_to_map_pose.launch.py",
+            )
+        )
     )
 
     return LaunchDescription(
@@ -156,7 +187,20 @@ def generate_launch_description():
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
                         teleop_launch,
-                        dummy_costmap_publisher,
+                        map_to_odom_launch,
+                    ],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_drivetrain_controller,
+                    on_exit=[elevation_mapping_node],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessStart(
+                    target_action=elevation_mapping_node,
+                    on_start=[
                         path_planning_launch,
                         trajectory_following_launch,
                         bt_launch,
@@ -167,5 +211,6 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
+            map_to_odom_transform_node,
         ]
     )

@@ -27,8 +27,7 @@ namespace behavior
 BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & options)
 : rclcpp::Node("bt_orchestrator", options)
 {
-  logger_ =
-    std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestrator"));
+  logger_ = std::make_unique<rclcpp::Logger>(rclcpp::get_logger("bt_orchestrator"));
   logger_->set_level(rclcpp::Logger::Level::Debug);
   declare_parameter<std::vector<std::string>>("normal_node_lib_dirs");
   declare_parameter<std::vector<std::string>>("ros_node_lib_dirs");
@@ -66,12 +65,11 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
 
     for (const auto & node_lib_dir : temp) {
       RCLCPP_INFO(*logger_, "\t%s", node_lib_dir.c_str());
-      // tree_factory_.registerFromPlugin(node_lib_dir);
       RegisterRosNode(tree_factory_, node_lib_dir, params_);
     }
   }
 
-  // create default tree if a file is speficied
+  // create default tree if a file is specified
   if (has_parameter("tree_file_dir")) {
     std::string temp;
     get_parameter("tree_file_dir", temp);
@@ -82,9 +80,8 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
     tree_ = std::make_unique<BT::Tree>(tree_factory_.createTreeFromFile(temp));
   } else {
     RCLCPP_WARN(
-      *logger_, "No behavior tree file set. Will not able to start "
-      "the orchestrator until upon calling service "
-      "/update_tree.");
+      *logger_,
+      "The behavior tree file is not set. Cannot start the orchestrator until the /update_tree service is called.");
   }
   if (has_parameter("tick_rate")) {
     tick_rate_ = get_parameter("tick_rate").as_int();
@@ -95,27 +92,31 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
 
   // starts service
   update_bt_service_ = create_service<urc_msgs::srv::UpdateBehaviorTree>(
-    "~/update_tree",                                                 //
-    [this](                                                          //
-      const UpdateBTReqest request, UpdateBTResponse response) {     //
+    "~/update_tree",
+    [this](
+      const UpdateBTReqest request, UpdateBTResponse response)
+    {
       response->success = RenewTree(
         request->use_dir, request->tree_dir,
         request->tree_content);
       return response;
     });
+
   reload_bt_service_ = create_service<std_srvs::srv::Trigger>(
-    "~/reload", [this](const TriggerRequest, TriggerResponse response) {
+    "~/reload", [this](const TriggerRequest, TriggerResponse response)
+    {
       if (tree_dir_ == nullptr) {
-        RCLCPP_WARN(*logger_, "Tree dir is null, cannot perform reload.");
+        RCLCPP_WARN(*logger_, "Tree directory is null, cannot perform reload.");
         response->success = false;
       } else {
         response->success = RenewTree(true, *tree_dir_, "");
       }
       return response;
     });
+
   start_bt_service_ = create_service<std_srvs::srv::Trigger>(
-    //
-    "~/start_bt", [this](const TriggerRequest, TriggerResponse response) {
+    "~/start_bt", [this](const TriggerRequest, TriggerResponse response)
+    {
       if (!is_running_) {
         response->success = Start();
       } else {
@@ -124,8 +125,10 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
       }
       return response;
     });
+
   stop_bt_service_ = create_service<std_srvs::srv::Trigger>(
-    "~/stop_bt", [this](TriggerRequest, TriggerResponse response) {
+    "~/stop_bt", [this](TriggerRequest, TriggerResponse response)
+    {
       if (is_running_) {
         response->success = Stop();
       } else {
@@ -135,7 +138,6 @@ BehaviorTreeOrchestrator::BehaviorTreeOrchestrator(const rclcpp::NodeOptions & o
       return response;
     });
 
-  // if the tree is loaded, start the tree.
   if (is_tree_loaded()) {
     Initialize();
     Start();
@@ -160,16 +162,16 @@ bool BehaviorTreeOrchestrator::RenewTree(
     }
 
     Stop();
-    RCLCPP_DEBUG(*logger_, "Load tree successfull. Start hot swapping...");
+    RCLCPP_DEBUG(*logger_, "Loaded new tree successfully, hot-swapping...");
     tree_ = std::move(new_tree_);
 
     Initialize();
-    Start(); // auto start
-    RCLCPP_DEBUG(*logger_, "Hot swapping successful!");
+    Start();   // auto start
+    RCLCPP_DEBUG(*logger_, "Successfully hot-swapped the tree.");
   } catch (std::exception & e) {
-    RCLCPP_ERROR(*logger_, "Fail to load new tree. %s.", e.what());
+    RCLCPP_ERROR(*logger_, "Failed to load new tree: %s.", e.what());
     is_running_ = false;
-    tree_.reset(nullptr); // auto stop tree
+    tree_.reset(nullptr);   // auto stop tree
     return false;
   }
 
@@ -196,28 +198,30 @@ bool BehaviorTreeOrchestrator::Start()
   if (!is_tree_loaded()) {
     RCLCPP_ERROR(
       *logger_,
-      "Tree is not loaded! Not able to start the orchestrator.");
+      "No tree is loaded! Cannot start the orchestrator.");
     return false;
   }
 
   is_running_ = true;
   std::thread(
-    [this]() {
-      RCLCPP_DEBUG(*logger_, "Staring BT Orchestrator...");
+    [this]()
+    {
+      RCLCPP_DEBUG(*logger_, "Starting BT orchestrator...");
       rclcpp::Rate rate(tick_rate_);
 
       while (is_running_) {
         tree_->tickExactlyOnce();
         rate.sleep();
       }
-    }).detach();
+    })
+  .detach();
   return true;
 }
 
 bool BehaviorTreeOrchestrator::Stop()
 {
   is_running_ = false;
-  RCLCPP_DEBUG(*logger_, "Stopping BT Orchestrator...");
+  RCLCPP_DEBUG(*logger_, "Stopping BT orchestrator...");
   return true;
 }
 

@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="test">
-    <Sequence>
-      <LogInfo logger="{ros_log}"
-               message="Trying to Plan Path..."/>
-      <Fallback>
-        <Sequence>
+    <RunOnce then_skip="true">
+      <Sequence>
+        <Delay delay_msec="1000">
           <LogInfo logger="{ros_log}"
-                   message="Path Planning Looping..."/>
-          <RetryUntilSuccessful num_attempts="5">
-            <CallGeneratePlan start_pose="0,0,0"
-                              goal_pose="10,10,2"
-                              path="{generated_path}"
-                              service_name="/plan"/>
-          </RetryUntilSuccessful>
-          <LogInfo logger="{ros_log}"
-                   message="Path Planning Successful!"/>
-          <RetryUntilSuccessful num_attempts="5">
-            <FollowPath path="{generated_path}"
-                        action_name="/follow_path"/>
-          </RetryUntilSuccessful>
-        </Sequence>
-        <Sequence>
-          <LogInfo logger="{ros_log}"
-                   message="Nope."/>
-          <CallTrigger service_name="/bt_orchestrator/stop_bt"/>
-        </Sequence>
-      </Fallback>
-    </Sequence>
+                   message="Trying to Plan Path..."/>
+        </Delay>
+        <StatusLightPublisher topic_name="/cmd_statuslight_color" value="1"/>
+        <StatusLightPublisher topic_name="/cmd_statuslight_display" value="1"/>
+        <KeepRunningUntilFailure>
+          <Inverter>
+            <Sequence>
+              <UpdateCurrentPose topic_name="/map/pose"
+                                 pose="{current_pose}"/>
+              <LogInfo logger="{ros_log}"
+                       message="Path Planning Looping..."/>
+              <CallGeneratePlan start_pose="{current_pose}"
+                                goal_pose="15,15,2"
+                                path="{generated_path}"
+                                service_name="/plan"/>
+              <LogInfo logger="{ros_log}"
+                       message="Path Planning Successful!"/>
+              <FollowPath path="{generated_path}"
+                          action_name="/follow_path"/>
+            </Sequence>
+          </Inverter>
+        </KeepRunningUntilFailure>
+      </Sequence>
+    </RunOnce>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
@@ -38,11 +39,6 @@
       <input_port name="goal_pose"/>
       <output_port name="path"/>
       <input_port name="service_name"/>
-    </Action>
-    <Action ID="CallTrigger"
-            editable="true">
-      <input_port name="service_name"
-                  default="&quot;&quot;">Service name.</input_port>
     </Action>
     <Action ID="FollowPath"
             editable="true">
@@ -55,6 +51,16 @@
                   default="&quot;urc_bt&quot;">Logger to use.</input_port>
       <input_port name="message"
                   default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+    </Action>
+    <Action ID="StatusLightPublisher"
+            editable="true">
+      <input_port name="topic_name"/>
+      <input_port name="value"/>
+    </Action>
+    <Action ID="UpdateCurrentPose"
+            editable="true">
+      <input_port name="topic_name"/>
+      <output_port name="pose"/>
     </Action>
   </TreeNodesModel>
 
