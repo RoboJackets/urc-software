@@ -42,7 +42,8 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
-    gps_config = os.path.join(get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml")
+    gps_config = os.path.join(get_package_share_directory("urc_bringup"),
+                              "config", "nmea_serial_driver.yaml")
 
     control_node = Node(
         package="controller_manager",

@@ -133,7 +133,7 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   message.greenEnabled = (lightModes[2] != 0);
   message.greenBlink = (lightModes[2] == 2);
 
-  // Junk
+  // Fill Required Fields
   message.m1Setpoint = 0;
   message.m2Setpoint = 0;
   message.m3Setpoint = 0;

@@ -112,7 +112,7 @@ hardware_interface::return_type RoverDrivetrain::read(
   const rclcpp::Time &,
   const rclcpp::Duration &)
 {
-  
+
   // RCLCPP_INFO(rclcpp::get_logger("test"),
   //   "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
 
@@ -140,7 +140,7 @@ hardware_interface::return_type RoverDrivetrain::write(
   message.m6Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
 
 
-  // Junk
+  // Fill Required Fields
   message.redEnabled = 0;
   message.blueEnabled = 0;
   message.greenEnabled = 0;
