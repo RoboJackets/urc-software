@@ -130,7 +130,7 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   statusMessage.greenBlink = (signals[0] == 2 && signals[1] == 1);
 
   message.messageID = 1;
-  message.payload.newStatusLightCommand = statusMessage;
+  message.payload.statusLightCommand = statusMessage;
 
   bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;

@@ -31,8 +31,8 @@ message NewStatusLightCommand {
 message TeensyMessage {
     required int32 messageID = 1;
     oneof payload {
-        DrivetrainRequest drivetrainRequest = 2;
-        NewStatusLightCommand newStatusLightCommand = 3;
+        DrivetrainRequest driveEncodersMessage = 2;
+        NewStatusLightCommand statusLightCommand = 3;
     }
 }
 

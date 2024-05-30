@@ -74,7 +74,7 @@ private:
   std::string udp_port;
 
   // nanopb
-  uint8_t buffer[DrivetrainRequest_size];
+  uint8_t buffer[TeensyMessage_size];
   size_t message_length;
 };
 
