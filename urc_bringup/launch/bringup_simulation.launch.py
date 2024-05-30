@@ -25,7 +25,7 @@ def generate_launch_description():
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
-    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
