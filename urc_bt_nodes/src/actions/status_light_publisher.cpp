@@ -4,24 +4,21 @@
 
 namespace behavior::actions
 {
-  bool StatusLightPublisher::setMessage(urc_msgs::msg::StatusLightCommand &msg)
-  {
-    std::string color = getInput<std::string>("color").value();
-    std::string state = getInput<std::string>("state").value();
+bool StatusLightPublisher::setMessage(urc_msgs::msg::StatusLightCommand & msg)
+{
+  std::string color = getInput<std::string>("color").value();
+  std::string state = getInput<std::string>("state").value();
 
-    try
-    {
-      msg.color = stringToColor(color);
-      msg.state = stringToState(state);
-    }
-    catch (std::invalid_argument &e)
-    {
-      RCLCPP_ERROR(node_->get_logger(), "Invalid argument: %s", e.what());
-      return false;
-    }
-
-    return true;
+  try {
+    msg.color = stringToColor(color);
+    msg.state = stringToState(state);
+  } catch (std::invalid_argument & e) {
+    RCLCPP_ERROR(node_->get_logger(), "Invalid argument: %s", e.what());
+    return false;
   }
+
+  return true;
+}
 }
 
 #include "behaviortree_ros2/plugins.hpp"
