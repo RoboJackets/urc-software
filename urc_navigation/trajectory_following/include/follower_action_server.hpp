@@ -16,61 +16,61 @@
 
 namespace follower_action_server
 {
-  class FollowerActionServer : public rclcpp::Node
-  {
-  public:
-    explicit FollowerActionServer(const rclcpp::NodeOptions &options);
+class FollowerActionServer : public rclcpp::Node
+{
+public:
+  explicit FollowerActionServer(const rclcpp::NodeOptions & options);
 
-    ~FollowerActionServer();
+  ~FollowerActionServer();
 
-  private:
-    geometry_msgs::msg::TransformStamped lookup_transform(
-        std::string target_frame,
-        std::string source_frame);
+private:
+  geometry_msgs::msg::TransformStamped lookup_transform(
+    std::string target_frame,
+    std::string source_frame);
 
-    visualization_msgs::msg::Marker create_lookahead_circle(
-        double x, double y, double radius,
-        std::string frame_id);
+  visualization_msgs::msg::Marker create_lookahead_circle(
+    double x, double y, double radius,
+    std::string frame_id);
 
-    void publishZeroVelocity();
+  void publishZeroVelocity();
 
-    rclcpp_action::GoalResponse handle_goal(
-        const rclcpp_action::GoalUUID &uuid,
-        std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
+  rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
 
-    rclcpp_action::CancelResponse handle_cancel(
-        const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  rclcpp_action::CancelResponse handle_cancel(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
-    void handle_accepted(
-        const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  void handle_accepted(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
-    void execute(
-        const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  void execute(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
-    /**
-     * @brief Handle the costmap data
-     * @param msg The costmap data
-     */
-    void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+  /**
+   * @brief Handle the costmap data
+   * @param msg The costmap data
+   */
+  void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
-    int getCost(const nav_msgs::msg::OccupancyGrid &costmap, double x, double y);
+  int getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y);
 
-    nav_msgs::msg::OccupancyGrid current_costmap_;
-    rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
-    rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
-    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-    rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
-    rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  nav_msgs::msg::OccupancyGrid current_costmap_;
+  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
+  rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
+  rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
-    std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-    std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
+  rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
-    geometry_msgs::msg::PoseStamped current_pose_;
-    bool stamped_;
-  };
+  geometry_msgs::msg::PoseStamped current_pose_;
+  bool stamped_;
+};
 } // namespace follower_action_server
 
 #endif // FOLLOWER_ACTION_SERVER_HPP_

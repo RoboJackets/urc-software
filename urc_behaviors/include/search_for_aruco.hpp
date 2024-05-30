@@ -14,33 +14,35 @@
 
 namespace urc_behaviors
 {
-    class SearchForAruco : public rclcpp::Node
-    {
-    public:
-        using FollowPath = urc_msgs::action::FollowPath;
-        using GoalHandleFollowPath = rclcpp_action::ClientGoalHandle<FollowPath>;
+class SearchForAruco : public rclcpp::Node
+{
+public:
+  using FollowPath = urc_msgs::action::FollowPath;
+  using GoalHandleFollowPath = rclcpp_action::ClientGoalHandle<FollowPath>;
 
-        explicit SearchForAruco(const rclcpp::NodeOptions &options);
+  explicit SearchForAruco(const rclcpp::NodeOptions & options);
 
-        ~SearchForAruco() = default;
+  ~SearchForAruco() = default;
 
-    private:
-        void search();
+private:
+  void search();
 
-        nav_msgs::msg::Path generate_search_path(double spiral_coeff);
+  nav_msgs::msg::Path generate_search_path(double spiral_coeff);
 
-        void goal_response_callback(const GoalHandleFollowPath::SharedPtr &goal_handle);
-        void result_callback(const GoalHandleFollowPath::WrappedResult &result);
-        void feedback_callback(GoalHandleFollowPath::SharedPtr, const std::shared_ptr<const FollowPath::Feedback> feedback);
+  void goal_response_callback(const GoalHandleFollowPath::SharedPtr & goal_handle);
+  void result_callback(const GoalHandleFollowPath::WrappedResult & result);
+  void feedback_callback(
+    GoalHandleFollowPath::SharedPtr,
+    const std::shared_ptr<const FollowPath::Feedback> feedback);
 
-        rclcpp_action::Client<FollowPath>::SharedPtr follow_path_client_;
+  rclcpp_action::Client<FollowPath>::SharedPtr follow_path_client_;
 
-        bool aruco_seen_;
-        rclcpp::Time aruco_first_seen_time_;
+  bool aruco_seen_;
+  rclcpp::Time aruco_first_seen_time_;
 
-        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-    };
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+};
 } // namespace urc_behaviors
 
 #endif // SEARCH_FOR_ARUCO_HPP_
