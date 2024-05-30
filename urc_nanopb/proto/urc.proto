@@ -30,10 +30,18 @@ message NewStatusLightCommand {
 
 message TeensyMessage {
     required int32 messageID = 1;
-    oneof payload {
-        DrivetrainRequest driveEncodersMessage = 2;
-        NewStatusLightCommand statusLightCommand = 3;
-    }
+    required int32 m1Setpoint           = 2;  
+    required int32 m2Setpoint           = 3;
+    required int32 m3Setpoint           = 4;
+    required int32 m4Setpoint           = 5;
+    required int32 m5Setpoint           = 6;
+    required int32 m6Setpoint           = 7;      
+    required int32 redEnabled = 8;
+    required int32 blueEnabled = 9;
+    required int32 greenEnabled = 10;
+    required int32 redBlink = 11;
+    required int32 blueBlink = 12;
+    required int32 greenBlink = 13;
 }
 
 message RequestMessage {  

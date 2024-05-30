@@ -54,7 +54,7 @@ private:
   std::string udp_port;
 
   // nanopb
-  uint8_t buffer[StatusLightCommand_size];
+  uint8_t buffer[TeensyMessage_size];
   size_t message_length;
 };
 
