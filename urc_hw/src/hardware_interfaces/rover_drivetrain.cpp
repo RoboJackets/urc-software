@@ -127,6 +127,8 @@ hardware_interface::return_type RoverDrivetrain::read(
   velocity_rps_states[0] = (message.m1Feedback + message.m2Feedback + message.m3Feedback) / 3.0;
   velocity_rps_states[1] = (message.m4Feedback + message.m5Feedback + message.m4Feedback) / 3.0;
 
+  // RCLCPP_INFO(rclcpp::get_logger("test"),
+  //   "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
 
   return hardware_interface::return_type::OK;
 }
@@ -139,16 +141,30 @@ hardware_interface::return_type RoverDrivetrain::write(
     return hardware_interface::return_type::OK;
   }
 
-  DriveEncodersMessage message = DriveEncodersMessage_init_zero;
+  TeensyMessage message = TeensyMessage_init_zero;
+  // DrivetrainRequest drivetrainRequest = DrivetrainRequest_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.leftSpeed = velocity_rps_commands[0] * ENCODER_CPR * -1;
-  message.has_leftSpeed = true;
-  message.rightSpeed = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.has_rightSpeed = true;
-  message.timestamp = time.nanoseconds();
+  message.m1Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
+  message.m2Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
+  message.m3Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
 
-  bool status = pb_encode(&stream, DriveEncodersMessage_fields, &message);
+  message.m4Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
+  message.m5Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
+  message.m6Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
+
+
+  // Fill Required Fields
+  message.redEnabled = 0;
+  message.blueEnabled = 0;
+  message.greenEnabled = 0;
+  message.redBlink = 0;
+  message.blueBlink = 0;
+  message.greenBlink = 0;
+
+  message.messageID = 0;
+
+  bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;
 
   if (!status) {

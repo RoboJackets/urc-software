@@ -45,7 +45,7 @@ void WorldFrameBroadcaster::GPSCallback(
   const sensor_msgs::msg::NavSatFix & msg)
 {
   if (!baseStationSet) {
-    RCLCPP_ERROR(this->get_logger(), "Base Station Not Set!");
+    // RCLCPP_ERROR(this->get_logger(), "Base Station Not Set!");
     return;
   }
   geometry_msgs::msg::TransformStamped t;
