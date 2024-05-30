@@ -21,59 +21,59 @@
 #include <sensor_msgs/msg/detail/imu__struct.hpp>
 #include "std_msgs/msg/int8.hpp"
 #include <std_msgs/msg/detail/int8__struct.hpp>
+#include <urc_msgs/msg/status_light_command.hpp>
 #include <string>
 #include <vector>
 
 namespace urc_controllers
 {
 
-class StatusLightController : public controller_interface::ControllerInterface
-{
-public:
-  StatusLightController();
+  class StatusLightController : public controller_interface::ControllerInterface
+  {
+  public:
+    StatusLightController();
 
-  controller_interface::InterfaceConfiguration command_interface_configuration() const override;
-  controller_interface::InterfaceConfiguration state_interface_configuration() const override;
+    controller_interface::InterfaceConfiguration command_interface_configuration() const override;
+    controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-  controller_interface::return_type update(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+    controller_interface::return_type update(
+        const rclcpp::Time &time,
+        const rclcpp::Duration &period) override;
 
-  controller_interface::CallbackReturn on_init() override;
+    controller_interface::CallbackReturn on_init() override;
 
-  controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-  controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-  controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-  controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-  controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-  controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & previous_state)
-  override;
+    controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &previous_state)
+        override;
 
-protected:
-  // status_light related
-  std::string status_light_name;
-  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Int8>> color_command_subscriber_;
-  std::shared_ptr<rclcpp::Subscription<std_msgs::msg::Int8>> display_command_subscriber_;
-  realtime_tools::RealtimeBuffer<double> color_command_;
-  realtime_tools::RealtimeBuffer<double> display_command_;
+  protected:
+    // status_light related
+    std::string status_light_name;
+    std::shared_ptr<rclcpp::Subscription<urc_msgs::msg::StatusLightCommand>> status_light_command_subscriber_;
+    realtime_tools::RealtimeBuffer<uint8_t> color_command_;
+    realtime_tools::RealtimeBuffer<uint8_t> state_command_;
 
-  // command interfaces
-  std::unordered_map<std::string,
-    std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
-  command_interface_map;
-  const std::vector<std::string> STATUS_LIGHT_INTERFACES{"color", "display"};
-};
+    // command interfaces
+    std::unordered_map<std::string,
+                       std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
+        command_interface_map;
+    const std::vector<std::string> STATUS_LIGHT_INTERFACES{"color", "state"};
+  };
 
-}  // namespace urc_controllers
+} // namespace urc_controllers
 
-#endif  // URC_CONTROLLERS__IMU_BROADCASTER_HPP_
+#endif // URC_CONTROLLERS__IMU_BROADCASTER_HPP_

@@ -18,50 +18,62 @@
 
 namespace urc_hardware::hardware_interfaces
 {
+  std::string num_to_state(uint8_t num)
+  {
+    switch (num)
+    {
+    case 0:
+      return "off";
+    case 1:
+      return "on";
+    case 2:
+      return "blinking";
+    default:
+      return "unknown";
+    }
+  }
 
-class StatusLight : public hardware_interface::SystemInterface
-{
-public:
-  StatusLight();
-  ~StatusLight();
+  class StatusLight : public hardware_interface::SystemInterface
+  {
+  public:
+    StatusLight();
+    ~StatusLight();
 
-  hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & hardware_info)
-  override;
-  std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
-  std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
-  hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state)
-  override;
-  hardware_interface::return_type read(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
-  hardware_interface::return_type write(
-    const rclcpp::Time & time,
-    const rclcpp::Duration & period) override;
+    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo &hardware_info)
+        override;
+    std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+    std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
+    hardware_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state)
+        override;
+    hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state)
+        override;
+    hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &previous_state)
+        override;
+    hardware_interface::return_type read(
+        const rclcpp::Time &time,
+        const rclcpp::Duration &period) override;
+    hardware_interface::return_type write(
+        const rclcpp::Time &time,
+        const rclcpp::Duration &period) override;
 
-private:
-  // basic info
-  const std::string hardware_interface_name;
-  // states
-  std::vector<double> signals;  // [0]: color choice, [1]: display mode(e.g. flashing / idle / double flashing)
+  private:
+    // basic info
+    const std::string hardware_interface_name;
+    // states
+    std::vector<double> signals; // [0]: color selection, [1]: state (on, off, blinking)
 
-  // hardware resources
-  std::shared_ptr<UDPSocket<128>> udp_;
-  std::string udp_address;
-  std::string udp_port;
+    // hardware resources
+    std::shared_ptr<UDPSocket<128>> udp_;
+    std::string udp_address;
+    std::string udp_port;
 
-  // nanopb
-  uint8_t buffer[TeensyMessage_size];
-  size_t message_length;
+    // nanopb
+    uint8_t buffer[TeensyMessage_size];
+    size_t message_length;
 
-  // private info for lights
-  uint8_t currentLight = 0;
-  uint8_t lightModes[3]; // current pattern for each of 3 lights
-};
+    uint8_t lightStates[3]; // current state of each light (red, green, blue).
+  };
 
-}  // namespace urc_hardware::hardware_interfaces
+} // namespace urc_hardware::hardware_interfaces
 
-#endif  // URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP
+#endif // URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP
