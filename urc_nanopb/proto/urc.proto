@@ -10,17 +10,29 @@ message ArmEncodersMessage {
     required int32 wristSwivelTicks     = 6;
 }
 
-message DriveEncodersMessage {  
-    optional int32 leftSpeed            = 1;        
-    optional int32 rightSpeed           = 2;
-    required int32 timestamp            = 3;
+message DrivetrainRequest {  
+    required int32 m1Setpoint           = 1;  
+    required int32 m2Setpoint           = 2;
+    required int32 m3Setpoint           = 3;
+    required int32 m4Setpoint           = 4;
+    required int32 m5Setpoint           = 5;
+    required int32 m6Setpoint           = 6;      
+}
+
+message NewStatusLightCommand {
+    required int32 redEnabled = 1;
+    required int32 blueEnabled = 2;
+    required int32 greenEnabled = 3;
+    required int32 redBlink = 4;
+    required int32 blueBlink = 5;
+    required int32 greenBlink = 6;
 }
 
 message TeensyMessage {
     required int32 messageID = 1;
     oneof payload {
-        DriveEncodersMessage driveEncodersMessage = 2;
-        StatusLightCommand statusLightCommand = 3;
+        DrivetrainRequest drivetrainRequest = 2;
+        NewStatusLightCommand newStatusLightCommand = 3;
     }
 }
 

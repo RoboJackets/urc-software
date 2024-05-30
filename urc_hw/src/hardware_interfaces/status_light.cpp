@@ -119,15 +119,18 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
 {
 
   TeensyMessage message = TeensyMessage_init_zero;
-  StatusLightCommand statusMessage = StatusLightCommand_init_zero;
+  NewStatusLightCommand statusMessage = NewStatusLightCommand_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  statusMessage.color = signals[0];
-  statusMessage.has_color = true;
-  statusMessage.display = signals[1];
-  statusMessage.has_display = true;
+  statusMessage.redEnabled = (signals[0] == 0);
+  statusMessage.redBlink = (signals[0] == 0 && signals[1] == 1);
+  statusMessage.blueEnabled = (signals[0] == 1);
+  statusMessage.blueBlink = (signals[0] == 1 && signals[1] == 1);
+  statusMessage.greenEnabled = (signals[0] == 2);
+  statusMessage.greenBlink = (signals[0] == 2 && signals[1] == 1);
+
   message.messageID = 1;
-  message.payload.statusLightCommand = statusMessage;
+  message.payload.newStatusLightCommand = statusMessage;
 
   bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;
