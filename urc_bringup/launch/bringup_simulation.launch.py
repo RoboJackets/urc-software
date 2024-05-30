@@ -29,8 +29,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
-        get_package_share_directory("urc_hw_description"),
-        "urdf/walli_sim.xacro"
+        get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
@@ -186,7 +185,6 @@ def generate_launch_description():
                     on_exit=[
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
-                        teleop_launch,
                         map_to_odom_launch,
                     ],
                 )
@@ -203,7 +201,7 @@ def generate_launch_description():
                     on_start=[
                         path_planning_launch,
                         trajectory_following_launch,
-                        bt_launch,
+                        # bt_launch,
                     ],
                 )
             ),

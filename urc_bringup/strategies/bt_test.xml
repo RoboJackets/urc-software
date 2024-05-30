@@ -7,8 +7,6 @@
           <LogInfo logger="{ros_log}"
                    message="Trying to Plan Path..."/>
         </Delay>
-        <StatusLightPublisher topic_name="/cmd_statuslight_color" value="1"/>
-        <StatusLightPublisher topic_name="/cmd_statuslight_display" value="1"/>
         <KeepRunningUntilFailure>
           <Inverter>
             <Sequence>
@@ -51,11 +49,6 @@
                   default="&quot;urc_bt&quot;">Logger to use.</input_port>
       <input_port name="message"
                   default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
-    </Action>
-    <Action ID="StatusLightPublisher"
-            editable="true">
-      <input_port name="topic_name"/>
-      <input_port name="value"/>
     </Action>
     <Action ID="UpdateCurrentPose"
             editable="true">
