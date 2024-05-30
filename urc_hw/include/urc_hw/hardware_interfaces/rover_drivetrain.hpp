@@ -44,6 +44,12 @@ public:
     const rclcpp::Time & time,
     const rclcpp::Duration & period) override;
 
+  static void onMessageReceived(const std::string& message, const std::string& host, uint16_t port) {
+    RCLCPP_INFO(rclcpp::get_logger("test"),
+    "RECEIVED");
+    std::cout << "Received message from " << host << ":" << port << " - " << message << std::endl;
+  }
+
 private:
   // basic info
   const std::string hardware_interface_name;

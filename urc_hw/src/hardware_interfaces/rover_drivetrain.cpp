@@ -30,6 +30,7 @@ RoverDrivetrain::RoverDrivetrain()
   , velocity_rps_states(2, 0)
   , velocity_rps_breakdown(6, 0)
 {
+  // udp_.get()->onMessageReceived = onMessageReceived;
 }
 RoverDrivetrain::~RoverDrivetrain() = default;
 
@@ -116,16 +117,16 @@ hardware_interface::return_type RoverDrivetrain::read(
     return hardware_interface::return_type::OK;
   }
 
-  udp_->Receive(udp_.get());
+  // udp_->Receive(udp_.get());
 
-  // Decode the received protobuf message
-  DrivetrainResponse message = DrivetrainResponse_init_zero;
-  pb_istream_t stream = pb_istream_from_buffer((uint8_t*)buffer2, message_length2);
+  // // Decode the received protobuf message
+  // DrivetrainResponse message = DrivetrainResponse_init_zero;
+  // pb_istream_t stream = pb_istream_from_buffer((uint8_t*)buffer2, message_length2);
   
-  pb_decode(&stream, DrivetrainResponse_fields, &message);
+  // pb_decode(&stream, DrivetrainResponse_fields, &message);
   
-  velocity_rps_states[0] = (message.m1Feedback + message.m2Feedback + message.m3Feedback) / 3.0;
-  velocity_rps_states[1] = (message.m4Feedback + message.m5Feedback + message.m4Feedback) / 3.0;
+  // velocity_rps_states[0] = (message.m1Feedback + message.m2Feedback + message.m3Feedback) / 3.0;
+  // velocity_rps_states[1] = (message.m4Feedback + message.m5Feedback + message.m4Feedback) / 3.0;
 
   // RCLCPP_INFO(rclcpp::get_logger("test"),
   //   "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);

@@ -133,6 +133,7 @@ public:
     this->Connect(host.c_str(), port, onError);
   }
 
+private:
   static void Receive(UDPSocket * udpSocket)
   {
     char tempBuffer[BUFFER_SIZE + 1];
@@ -154,7 +155,6 @@ public:
     }
   }
 
-private:
   static void ReceiveFrom(UDPSocket * udpSocket)
   {
     sockaddr_in hostAddr;
