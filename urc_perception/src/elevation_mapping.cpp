@@ -10,7 +10,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 
-namespace mapping
+namespace urc_perception
 {
 
 ElevationMapping::ElevationMapping(const rclcpp::NodeOptions & options)
@@ -193,7 +193,7 @@ double ElevationMapping::gaussian(double x)
   return std::exp(-0.5 * x * x / cell_inflation_radius_);
 }
 
-} // namespace mapping
+} // namespace urc_perception
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(mapping::ElevationMapping)
+RCLCPP_COMPONENTS_REGISTER_NODE(urc_perception::ElevationMapping)
