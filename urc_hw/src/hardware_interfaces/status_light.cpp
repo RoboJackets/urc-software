@@ -121,12 +121,17 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   TeensyMessage message = TeensyMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.redEnabled = 1;
-  message.redBlink = (signals[0] == 0 && signals[1] == 1);
-  message.blueEnabled = 1;
-  message.blueBlink = (signals[0] == 1 && signals[1] == 1);
-  message.greenEnabled = 1;
-  message.greenBlink = (signals[0] == 2 && signals[1] == 1);
+  currentLight = signals[0];
+  if (currentLight >= 0 && currentLight < 3 && signals[1] >= 0 && signals[1] < 3) {
+    lightModes[currentLight] = signals[1];
+  }
+
+  message.redEnabled = (lightModes[0] != 0);
+  message.redBlink = (lightModes[0] == 2);
+  message.blueEnabled = (lightModes[1] != 0);
+  message.blueBlink = (lightModes[1] == 2);
+  message.greenEnabled = (lightModes[2] != 0);
+  message.greenBlink = (lightModes[2] == 2);
 
   // Junk
   message.m1Setpoint = 0;

@@ -56,6 +56,10 @@ private:
   // nanopb
   uint8_t buffer[TeensyMessage_size];
   size_t message_length;
+
+  // private info for lights
+  uint8_t currentLight = 0;
+  uint8_t lightModes[3]; // current pattern for each of 3 lights
 };
 
 }  // namespace urc_hardware::hardware_interfaces
