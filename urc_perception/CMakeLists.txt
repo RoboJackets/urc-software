@@ -28,7 +28,6 @@ add_library(${PROJECT_NAME} SHARED
   src/aruco_detector.cpp
   src/aruco_location.cpp
   src/depth_laserscan.cpp
-  src/costmap_generator.cpp
 )
 
 set(dependencies
@@ -67,12 +66,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "depth_laserscan::DepthLaserScan"
   EXECUTABLE ${PROJECT_NAME}_DepthLaserScan
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "costmap_generator::CostmapGenerator"
-  EXECUTABLE ${PROJECT_NAME}_CostmapGenerator
 )
 
 # Install launch files.
