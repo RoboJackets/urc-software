@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" project_name="URC_Strategies">
     <include path="bt_test.xml"/>
+    <include path="status_light.xml"/>
     <include path="test_strategy.xml"/>
     <!-- Description of Node Models (used by Groot) -->
     <TreeNodesModel>
@@ -35,8 +36,9 @@
         <Action ID="RecoverFromSingularity" editable="true"/>
         <Action ID="ServoArm" editable="true"/>
         <Action ID="StatusLightPublisher" editable="true">
-            <input_port name="topic_name"/>
-            <input_port name="value"/>
+            <input_port name="topic_name" default="/command/status_light"/>
+            <input_port name="color"/>
+            <input_port name="state"/>
         </Action>
         <Action ID="UpdateCurrentPose" editable="true">
             <input_port name="topic_name"/>

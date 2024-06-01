@@ -20,10 +20,7 @@ namespace urc_controllers
 {
 
 StatusLightController::StatusLightController()
-: color_command_subscriber_(nullptr)
-  , display_command_subscriber_(nullptr)
-  , color_command_(0.0)
-  , display_command_(0.0) {}
+: status_light_command_subscriber_(nullptr), color_command_(0), state_command_(0) {}
 
 controller_interface::CallbackReturn StatusLightController::on_init()
 {
@@ -51,7 +48,7 @@ const
     controller_interface::interface_configuration_type::INDIVIDUAL;
 
   command_interfaces_configuration.names.push_back(status_light_name + "/" + "color");
-  command_interfaces_configuration.names.push_back(status_light_name + "/" + "display");
+  command_interfaces_configuration.names.push_back(status_light_name + "/" + "state");
   return command_interfaces_configuration;
 }
 
@@ -84,15 +81,13 @@ controller_interface::CallbackReturn StatusLightController::on_activate(
     return controller_interface::CallbackReturn::ERROR;
   }
 
-  color_command_subscriber_ = get_node()->create_subscription<std_msgs::msg::Int8>(
-    "/cmd_statuslight_color", rclcpp::SystemDefaultsQoS(),
-    [this](std::shared_ptr<std_msgs::msg::Int8> message) {
-      color_command_.writeFromNonRT(static_cast<double>(message->data));
-    });
-  display_command_subscriber_ = get_node()->create_subscription<std_msgs::msg::Int8>(
-    "/cmd_statuslight_display", rclcpp::SystemDefaultsQoS(),
-    [this](std::shared_ptr<std_msgs::msg::Int8> message) {
-      display_command_.writeFromNonRT(static_cast<double>(message->data));
+  status_light_command_subscriber_ =
+    get_node()->create_subscription<urc_msgs::msg::StatusLightCommand>(
+    "/command/status_light", rclcpp::SystemDefaultsQoS(),
+    [this](std::shared_ptr<urc_msgs::msg::StatusLightCommand> msg)
+    {
+      color_command_.writeFromNonRT(static_cast<uint8_t>(msg->color));
+      state_command_.writeFromNonRT(static_cast<uint8_t>(msg->state));
     });
 
   RCLCPP_INFO(get_node()->get_logger(), "StatusLightController activated!");
@@ -102,32 +97,28 @@ controller_interface::CallbackReturn StatusLightController::on_activate(
 controller_interface::CallbackReturn StatusLightController::on_deactivate(
   const rclcpp_lifecycle::State &)
 {
-  color_command_subscriber_.reset();
-  display_command_subscriber_.reset();
+  status_light_command_subscriber_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn StatusLightController::on_cleanup(
   const rclcpp_lifecycle::State &)
 {
-  color_command_subscriber_.reset();
-  display_command_subscriber_.reset();
+  status_light_command_subscriber_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn StatusLightController::on_error(
   const rclcpp_lifecycle::State &)
 {
-  color_command_subscriber_.reset();
-  display_command_subscriber_.reset();
+  status_light_command_subscriber_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::CallbackReturn StatusLightController::on_shutdown(
   const rclcpp_lifecycle::State &)
 {
-  color_command_subscriber_.reset();
-  display_command_subscriber_.reset();
+  status_light_command_subscriber_.reset();
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
@@ -136,8 +127,8 @@ controller_interface::return_type StatusLightController::update(
   const rclcpp::Duration &)
 {
   command_interface_map["color"]->get().set_value(*color_command_.readFromRT());
-  command_interface_map["display"]->get().set_value(*display_command_.readFromRT());
+  command_interface_map["state"]->get().set_value(*state_command_.readFromRT());
   return controller_interface::return_type::OK;
 }
 
-}  // namespace urc_controllers
+} // namespace urc_controllers

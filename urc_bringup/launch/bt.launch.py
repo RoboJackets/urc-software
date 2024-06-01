@@ -15,7 +15,7 @@ def generate_launch_description():
         "libbt_call_trigger.so",
         "libbt_follow_path.so",
         "libbt_update_current_pose.so",
-        "libbt_status_light_publisher.so"
+        "libbt_status_light_publisher.so",
     ]
     node_lib_path_base = os.path.join(
         Path(get_package_share_directory("urc_bt_nodes")).parent.parent.absolute(),
@@ -28,7 +28,7 @@ def generate_launch_description():
     ros_lib_paths = [
         os.path.join(node_lib_path_base, lib_name) for lib_name in ros_lib_names
     ]
-    bt_file_name = "bt_test.xml"
+    bt_file_name = "status_light.xml"
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
