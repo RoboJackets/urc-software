@@ -3,83 +3,63 @@ project(urc_perception)
 
 include(../cmake/default_settings.cmake)
 
-# find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(diagnostic_updater REQUIRED)
-find_package(OpenCV 4 REQUIRED)
-find_package(cv_bridge REQUIRED)
-find_package(image_transport REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(nav2_costmap_2d REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(PCL 1.10 REQUIRED)
 
 include_directories(
   include
-  ${nav2_costmap_2d_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/aruco_detector.cpp
-  src/aruco_location.cpp
-  src/depth_laserscan.cpp
-  src/costmap_generator.cpp
+  src/elevation_mapping.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${PCL_LIBRARIES}
 )
 
 set(dependencies
   rclcpp
   rclcpp_components
-  urc_msgs
   std_msgs
   sensor_msgs
-  diagnostic_updater
-  cv_bridge
-  image_transport
-  OpenCV
+  geometry_msgs
   tf2
+  tf2_sensor_msgs
   tf2_geometry_msgs
-  nav2_costmap_2d
+  nav_msgs
+  pcl_conversions
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
-# Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "aruco_detector::ArucoDetector"
-  EXECUTABLE ${PROJECT_NAME}_ArucoDetector
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "aruco_location::ArucoLocation"
-  EXECUTABLE ${PROJECT_NAME}_ArucoLocation
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "depth_laserscan::DepthLaserScan"
-  EXECUTABLE ${PROJECT_NAME}_DepthLaserScan
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "costmap_generator::CostmapGenerator"
-  EXECUTABLE ${PROJECT_NAME}_CostmapGenerator
+  PLUGIN "urc_perception::ElevationMapping"
+  EXECUTABLE ${PROJECT_NAME}_ElevationMapping
 )
 
 # Install launch files.
 install(
   DIRECTORY
-  launch
   config
+  launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -93,18 +73,14 @@ install(TARGETS
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the copyright linker
+  # the following line skips the linter which checks for copyrights
+  # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
+  # comment the line when this package is in a git repo and when
+  # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-ament_export_include_directories(msg)
-
-ament_export_include_directories(include)
-
-ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${dependencies})
 
 ament_package()

@@ -1,3 +1,0 @@
-aruco_detector:
-  ros__parameters:
-    tagWidth: 20
