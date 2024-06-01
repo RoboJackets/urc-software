@@ -161,6 +161,12 @@ def generate_launch_description():
         ],
     )
 
+    search_for_aruco_node = Node(
+        package="urc_behaviors",
+        executable="urc_behaviors_SearchForAruco",
+        output="screen",
+    )
+
     map_to_odom_transform_node = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -185,7 +191,6 @@ def generate_launch_description():
                     on_exit=[
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
-                        map_to_odom_launch,
                     ],
                 )
             ),
@@ -198,9 +203,17 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessStart(
                     target_action=elevation_mapping_node,
+                    on_start=[map_to_odom_transform_node],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnProcessStart(
+                    target_action=map_to_odom_transform_node,
                     on_start=[
+                        map_to_odom_launch,
                         path_planning_launch,
                         trajectory_following_launch,
+                        search_for_aruco_node,
                         # bt_launch,
                     ],
                 )
@@ -209,6 +222,5 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
-            map_to_odom_transform_node,
         ]
     )

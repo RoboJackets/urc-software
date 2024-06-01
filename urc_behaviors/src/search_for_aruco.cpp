@@ -20,6 +20,14 @@ SearchForAruco::SearchForAruco(const rclcpp::NodeOptions & options)
 
 void SearchForAruco::search()
 {
+  // Wait until base_link to map transform is available
+  while (!tf_buffer_->canTransform("map", "base_link", tf2::TimePointZero)) {
+    RCLCPP_INFO(this->get_logger(), "Waiting for transform from base_link to map...");
+    rclcpp::sleep_for(std::chrono::seconds(1));
+  }
+
+  RCLCPP_INFO(this->get_logger(), "Transform from base_link to map is available.");
+
   // Generate a search path
   auto path = generate_search_path(0.1);
 
@@ -77,14 +85,15 @@ void SearchForAruco::feedback_callback(
 
 nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 {
+  rclcpp::Time now = this->now();
   nav_msgs::msg::Path path;
   path.header.frame_id = "map";
-  path.header.stamp = this->now();
+  path.header.stamp = now;
 
   // Lookup transform from base_link to map
   geometry_msgs::msg::TransformStamped transform;
   try {
-    transform = tf_buffer_->lookupTransform("odom", "base_link", tf2::TimePointZero);
+    transform = tf_buffer_->lookupTransform("map", "base_link", tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Failed to lookup transform: %s", ex.what());
     throw std::runtime_error("Failed to lookup transform.");
@@ -92,17 +101,17 @@ nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 
   for (double t = 0; t < 12 * M_PI; t += M_PI / 4) {
     geometry_msgs::msg::PoseStamped pose;
-    pose.header = path.header;
+    pose.header.frame_id = "map";
+    pose.header.stamp = now;
 
     pose.pose.position.x = spiral_coeff * t * cos(t);
     pose.pose.position.y = spiral_coeff * t * sin(t);
     pose.pose.orientation.w = 1.0;
 
     // Transform pose to map frame
-    geometry_msgs::msg::PoseStamped transformed_pose;
-    tf2::doTransform(pose, transformed_pose, transform);
+    tf2::doTransform(pose.pose, pose.pose, transform);
 
-    path.poses.push_back(transformed_pose);
+    path.poses.push_back(pose);
   }
 
   return path;
