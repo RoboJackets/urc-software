@@ -4,24 +4,22 @@
 
 namespace behavior::actions
 {
-bool StatusLightPublisher::setMessage(std_msgs::msg::Int8 & msg)
+bool StatusLightPublisher::setMessage(urc_msgs::msg::StatusLightCommand & msg)
 {
-  msg = getInput<std_msgs::msg::Int8>("value").value();
+  std::string color = getInput<std::string>("color").value();
+  std::string state = getInput<std::string>("state").value();
+
+  try {
+    msg.color = stringToColor(color);
+    msg.state = stringToState(state);
+  } catch (std::invalid_argument & e) {
+    RCLCPP_ERROR(node_->get_logger(), "Invalid argument: %s", e.what());
+    return false;
+  }
+
   return true;
 }
 }
-
-namespace BT
-{
-template<>
-inline std_msgs::msg::Int8 convertFromString(StringView str)
-{
-  std_msgs::msg::Int8 output;
-  output.data = convertFromString<int8_t>(str);
-  return output;
-}
-} // namespace BT
-
 
 #include "behaviortree_ros2/plugins.hpp"
 CreateRosNodePlugin(behavior::actions::StatusLightPublisher, "StatusLightPublisher");

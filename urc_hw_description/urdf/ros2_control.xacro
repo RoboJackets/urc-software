@@ -175,7 +175,7 @@
         </hardware>
         <gpio name="status_light">
           <command_interface name="color" />
-          <command_interface name="display" />
+          <command_interface name="state" />
         </gpio>
       </ros2_control>
       <ros2_control name="battery_management" type="sensor">

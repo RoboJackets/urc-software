@@ -19,6 +19,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("map_frame", "map");
   declare_parameter("goal_tolerance", 0.1);
   declare_parameter("cmd_vel_stamped", false);
+  declare_parameter("lethal_cost_threshold", 50);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -226,7 +227,7 @@ void FollowerActionServer::execute(
       break;
     } else if (getCost(
         current_costmap_, output.lookahead_point.point.x,
-        output.lookahead_point.point.y) > 0)
+        output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
     {
       result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
       goal_handle->abort(result);
