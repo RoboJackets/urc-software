@@ -16,7 +16,6 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
@@ -112,11 +111,11 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
     )
 
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
-    )
+    # teleop_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
+    #     )
+    # )
 
     # ekf_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
@@ -125,11 +124,11 @@ def generate_launch_description():
     #     )
     # )
 
-    bt_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
-        )
-    )
+    # bt_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+    #     )
+    # )
 
     path_planning_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
