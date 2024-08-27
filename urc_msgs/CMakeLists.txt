@@ -20,6 +20,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BatteryInfo.msg"
   "msg/Waypoint.msg"
   "msg/NavigationStatus.msg"
+  "msg/StatusLightCommand.msg"
   "msg/GridLocation.msg"
   "srv/GeneratePlan.srv"
   "action/FollowPath.action"
