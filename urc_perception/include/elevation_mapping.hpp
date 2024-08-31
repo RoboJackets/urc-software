@@ -9,7 +9,7 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 
-namespace mapping
+namespace urc_perception
 {
 
 class ElevationMapping : public rclcpp::Node
@@ -58,6 +58,6 @@ private:
   std::string camera_frame_;
 };
 
-} // namespace mapping
+} // namespace urc_perception
 
 #endif // ELEVATION_MAPPING_HPP_

@@ -16,7 +16,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    # pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
@@ -29,8 +29,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
-        get_package_share_directory("urc_hw_description"),
-        "urdf/walli.xacro"
+        get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
@@ -148,13 +147,13 @@ def generate_launch_description():
     )
 
     elevation_mapping_node = Node(
-        package="mapping",
-        executable="mapping_ElevationMapping",
+        package="urc_perception",
+        executable="urc_perception_ElevationMapping",
         output="screen",
         parameters=[
             PathJoinSubstitution(
                 [
-                    FindPackageShare("mapping"),
+                    FindPackageShare("urc_perception"),
                     "config",
                     "mapping_params.yaml",
                 ]

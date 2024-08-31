@@ -11,8 +11,6 @@ find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(diagnostic_updater REQUIRED)
-find_package(OpenCV 4 REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
@@ -35,10 +33,8 @@ set(dependencies
   urc_msgs
   std_msgs
   sensor_msgs
-  diagnostic_updater
   cv_bridge
   image_transport
-  OpenCV
   nav_msgs
 )
 
@@ -57,7 +53,6 @@ rclcpp_components_register_node(
 install(
   DIRECTORY
   launch
-  config
   DESTINATION share/${PROJECT_NAME}/
 )
 
