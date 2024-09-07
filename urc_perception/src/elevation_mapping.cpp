@@ -126,18 +126,32 @@ namespace urc_perception
     map_.info.origin.position.z = 0.0;
     map_.info.origin.orientation.w = 1.0;
 
-    int max_gradient = 0;                      // TODO: This is a hack to scale the gradients to a reasonable range.
-    std::vector<int> gradients(cloud->size()); // TODO:can collapse later into a single loop.
-    int neighborhood_size = 3;
+    std::vector<int> relative_heights(map._data.size());
+
     for (unsigned int i = 0; i < cloud->size(); i++)
     {
-      auto &current_point = cloud->points[i];
+      auto &point = cloud->points[i];
+      std::pair<int, int> map_coord;
+      if (!worldToMap(point.x, point.y, map_.info, map_coord))
+      {
+        continue;
+      }
+      int j = map_coord.first + map_coord.second * map_.info.width;
+      relative_heights[j] = point.z - pos.z();
+    }
+
+    int max_gradient = 0;                                // TODO: This is a hack to scale the gradients to a reasonable range.
+    std::vector<int> gradients(relative_heights.size()); // TODO:can collapse later into a single loop.
+    int neighborhood_size = 3;
+
+    for (unsigned int i = 0; i < relative_heights.size(); i++)
+    {
       for (int dx = -neighborhood_size; dx <= neighborhood_size; dx++)
       {
         for (int dy = -neighborhood_size; dy <= neighborhood_size; dy++)
         {
-          int x = i % cloud->row_step;
-          int y = i / cloud->row_step;
+          int x = i % map_.info.width;
+          int y = i / map_.info.width;
 
           int nx = x + dx;
           int ny = y + dy;
@@ -148,8 +162,7 @@ namespace urc_perception
           }
 
           int ni = nx + ny * map_.info.width;
-          auto &neighbor_point = cloud->points[ni];
-          int current_gradient = std::abs(current_point.z - neighbor_point.z);
+          int current_gradient = std::abs(relative_heights[i] - relative_heights[ni]);
           gradients[i] = std::max(gradients[i], current_gradient);
         }
       }
