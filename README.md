@@ -34,8 +34,6 @@ Welcome to the RoboJackets/RoboNav software repo for the [University Rover Chall
   _Custom ROS messages used in various packages_
 - **urc_platform**
   _Manages our nanopb protocol buffers_
-- **urc_nav2**
-  _Launch scripts and configs for Nav2 packages_
 - **urc_navigation**
   _Collection of nodes that form our navigation stack_
 - **urc_perception**
