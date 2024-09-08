@@ -13,14 +13,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/base_link.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/base_link.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/base_link_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/base_link_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -34,14 +34,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightrocker.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/rightrocker.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightrocker_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/rightrocker_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -65,7 +65,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_rear_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/right_rear_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -76,7 +76,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
@@ -106,14 +106,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightbogie.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/rightbogie.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightbogie_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/rightbogie_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -135,7 +135,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_front_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/right_front_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -146,7 +146,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/right_rear_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
@@ -185,7 +185,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/right_center_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/right_center_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -196,7 +196,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/right_center_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/right_center_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
@@ -226,14 +226,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftrocker.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/leftrocker.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftrocker_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/leftrocker_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -255,7 +255,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_rear_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/left_rear_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -266,7 +266,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_rear_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/left_rear_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
@@ -296,14 +296,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftbogie.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/leftbogie.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftbogie_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/leftbogie_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -325,7 +325,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_front_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/left_front_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -336,7 +336,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_front_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/left_front_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
@@ -367,7 +367,7 @@
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/visual/left_center_wheel.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/visual/left_center_wheel.STL" />
                 </geometry>
             </visual>
             <collision>
@@ -378,7 +378,7 @@
                     </xacro:if>
                     <xacro:if value="${not approximate}">
                         <mesh
-                            filename="file://$(find urc_gazebo)/urdf/meshes/collision/left_center_wheel_collision.STL" />
+                            filename="file://$(find urc_hw_description)/urdf/meshes/collision/left_center_wheel_collision.STL" />
                     </xacro:if>
                 </geometry>
             </collision>
