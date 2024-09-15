@@ -93,56 +93,10 @@ colcon build --symlink-install
 ```
 
 ---
-## Drone
-### 1. Create drone colcon environment
-
-```bash
-cd ..
-```
-You should now be in the `/urc` directory
-```bash
-mkdir -p drone-colcon/src
-```
-
-### 2. Clone the drone repository into the drone-colcon environment
-```bash
-cd drone-colcon
-```
-```bash
-git clone https://github.com/RoboJackets/urc-drone.git src --recursive
-```
-
-### 3. Run rosdep
- Make sure to call `rosdep install` from the colcon workspace directory (`/drone-colcon`)!
-```bash
-sudo rosdep init
-rosdep update
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-### 4. Build your drone workspace
-Any time you call `colcon build`, make sure you are in the colcon directory (`/drone-colcon`)!
-```bash
-colcon build --symlink-install
-```
-
-### 5. Source the drone environment
-
-```bash
-. install/setup.bash
-```
-
----
 ## Recap
 You should now have a file structure that looks like 
 ```
  urc
- ├── drone-colcon
- │   ├── build
- │   ├── install
- │   ├── log
- │   └── src
- │       └── urc-drone
  └── rover-colcon
      ├── build
      ├── install
