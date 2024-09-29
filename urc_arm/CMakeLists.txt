@@ -56,7 +56,7 @@ rclcpp_components_register_node(
 
 # Install launch files.
 install(
-  DIRECTORY
+  DIRECTORY model
   DESTINATION share/${PROJECT_NAME}/
 )
 
