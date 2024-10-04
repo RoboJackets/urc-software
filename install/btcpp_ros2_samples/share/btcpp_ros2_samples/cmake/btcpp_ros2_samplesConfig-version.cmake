@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/btcpp_ros2_samples/ament_cmake_core/btcpp_ros2_samplesConfig-version.cmake

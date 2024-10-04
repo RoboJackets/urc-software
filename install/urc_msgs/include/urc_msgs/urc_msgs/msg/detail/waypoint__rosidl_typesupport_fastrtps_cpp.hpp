@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_typesupport_fastrtps_cpp/urc_msgs/msg/detail/waypoint__rosidl_typesupport_fastrtps_cpp.hpp

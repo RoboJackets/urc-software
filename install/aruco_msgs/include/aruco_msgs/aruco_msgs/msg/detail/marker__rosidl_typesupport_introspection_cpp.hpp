@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/aruco_msgs/rosidl_typesupport_introspection_cpp/aruco_msgs/msg/detail/marker__rosidl_typesupport_introspection_cpp.hpp

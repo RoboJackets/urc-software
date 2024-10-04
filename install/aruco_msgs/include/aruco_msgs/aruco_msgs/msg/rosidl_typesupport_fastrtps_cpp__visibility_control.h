@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/aruco_msgs/rosidl_typesupport_fastrtps_cpp/aruco_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h

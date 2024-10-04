@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_typesupport_introspection_cpp/urc_msgs/msg/detail/battery_info__rosidl_typesupport_introspection_cpp.hpp

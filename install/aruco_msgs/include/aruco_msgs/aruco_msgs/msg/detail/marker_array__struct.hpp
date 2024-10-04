@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/aruco_msgs/rosidl_generator_cpp/aruco_msgs/msg/detail/marker_array__struct.hpp

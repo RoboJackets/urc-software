@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_hw_description/ament_cmake_core/urc_hw_descriptionConfig-version.cmake

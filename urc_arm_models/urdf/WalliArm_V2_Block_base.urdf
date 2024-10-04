@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="WalliArm_V2_Block_base">
+  <joint name="base_yaw_joint" type="revolute">
+    <origin xyz="0. 0. 0.5" rpy="0. 0. 0." />
+    <parent link="World" />
+    <child link="WalliArm_V2_Block_base_rotator" />
+    <axis xyz="0. 0. 1." />
+    <limit lower="-3.1415927" upper="3.1415927" effort="200." velocity="10." />
+  </joint>
+  <joint name="ee_pitch_joint" type="revolute">
+    <origin xyz="0.005 0. 0.0225" rpy="-3.1415927 1.5707963 0. " />
+    <parent link="WalliArm_V2_Block_ee_rotary" />
+    <child link="WalliArm_V2_Block_ee_rod" />
+    <axis xyz="0. 0. 1." />
+    <limit lower="-1.5707963" upper="1.5707963" effort="200." velocity="30." />
+  </joint>
+  <joint name="ee_roll_jont" type="continuous">
+    <origin xyz="-0.425 0. 0.025" rpy="-3.1415927 1.5707963 0. " />
+    <parent link="WalliArm_V2_Block_fore_arm" />
+    <child link="WalliArm_V2_Block_ee_rotary" />
+    <axis xyz="0. 0. 1." />
+    <limit effort="200." velocity="50." />
+  </joint>
+  <joint name="fore_arm_joint" type="revolute">
+    <origin xyz="-0.45 0. 0. " rpy="3.1415927 0. 0. " />
+    <parent link="WalliArm_V2_Block_upper_arm" />
+    <child link="WalliArm_V2_Block_fore_arm" />
+    <axis xyz="0. 0. 1." />
+    <limit lower="-3.1415927" upper="3.1415927" effort="200." velocity="20." />
+  </joint>
+  <joint name="upper_arm_joint" type="revolute">
+    <origin xyz="0. 0.025 0.055" rpy="-1.5707964 0. 0. " />
+    <parent link="WalliArm_V2_Block_base_rotator" />
+    <child link="WalliArm_V2_Block_upper_arm" />
+    <axis xyz="0. 0. 1." />
+    <limit lower="-1.225" upper="3.830" effort="200." velocity="20." />
+  </joint>
+  <link name="WalliArm_V2_Block_base_rotator">
+    <visual>
+      <origin xyz="0. 0. -0.5" rpy="0. 0. 0." />
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_base_rotator_base_rotator.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_base_rotator_base_rotator.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+  <link name="WalliArm_V2_Block_ee_rod">
+    <visual>
+      <origin xyz="0.8975 -0.555 0.005 " rpy="-1.5707964 0. 0. " />
+      <geometry>
+        <mesh filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_ee_rod_ee_rod.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_ee_rod_ee_rod.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+  <link name="WalliArm_V2_Block_ee_rotary">
+    <visual>
+      <origin xyz="0. 0.555 -0.875" rpy="1.5707964 1.5707964 0. " />
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_ee_rotary_ee_rotary.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_ee_rotary_ee_rotary.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+  <link name="WalliArm_V2_Block_fore_arm">
+    <visual>
+      <origin xyz="0.45 -0.555 0.025" rpy="-1.5707964 0. 0. " />
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_fore_arm_fore_arm.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_fore_arm_fore_arm.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+  <link name="WalliArm_V2_Block_upper_arm">
+    <visual>
+      <origin xyz="0. 0.555 -0.025" rpy="1.5707964 0. 0. " />
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_upper_arm_upper_arm.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh
+          filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_upper_arm_upper_arm.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+  <link name="World">
+    <visual>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0." />
+      <geometry>
+        <mesh filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_spine_spine.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://urc_arm_models/urdf/meshes/WalliArm_V2_Block_spine_spine.obj"
+          scale="1. 1. 1." />
+      </geometry>
+    </collision>
+  </link>
+</robot>

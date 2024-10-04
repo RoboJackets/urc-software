@@ -1,0 +1,8 @@
+source;share/articubot_one/hook/cmake_prefix_path.ps1
+source;share/articubot_one/hook/cmake_prefix_path.dsv
+source;share/articubot_one/hook/cmake_prefix_path.sh
+source;share/articubot_one/local_setup.bash
+source;share/articubot_one/local_setup.dsv
+source;share/articubot_one/local_setup.ps1
+source;share/articubot_one/local_setup.sh
+source;share/articubot_one/local_setup.zsh

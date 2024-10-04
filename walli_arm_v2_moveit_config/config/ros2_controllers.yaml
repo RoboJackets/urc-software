@@ -1,0 +1,28 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    walli_arm_v2_block_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+walli_arm_v2_block_controller:
+  ros__parameters:
+    joints:
+      - base_yaw_joint
+      - upper_arm_joint
+      - fore_arm_joint
+      - ee_roll_jont
+      - ee_pitch_joint
+    command_interfaces:
+      - position
+      - velocity
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+      - effort

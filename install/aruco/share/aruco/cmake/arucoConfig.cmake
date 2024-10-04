@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/aruco/ament_cmake_core/arucoConfig.cmake

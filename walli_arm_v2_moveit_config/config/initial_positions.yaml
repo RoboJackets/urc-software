@@ -1,0 +1,8 @@
+# Default initial positions for WalliArm_V2_Block_base's ros2_control fake system
+
+initial_positions:
+  base_yaw_joint: 0
+  ee_pitch_joint: 0
+  ee_roll_jont: 0
+  fore_arm_joint: 0
+  upper_arm_joint: 0

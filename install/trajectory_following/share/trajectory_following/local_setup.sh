@@ -1,0 +1,1 @@
+/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/trajectory_following/ament_cmake_environment_hooks/local_setup.sh

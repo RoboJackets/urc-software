@@ -1,0 +1,11 @@
+source;share/urc_tf/hook/cmake_prefix_path.ps1
+source;share/urc_tf/hook/cmake_prefix_path.dsv
+source;share/urc_tf/hook/cmake_prefix_path.sh
+source;share/urc_tf/hook/ld_library_path_lib.ps1
+source;share/urc_tf/hook/ld_library_path_lib.dsv
+source;share/urc_tf/hook/ld_library_path_lib.sh
+source;share/urc_tf/local_setup.bash
+source;share/urc_tf/local_setup.dsv
+source;share/urc_tf/local_setup.ps1
+source;share/urc_tf/local_setup.sh
+source;share/urc_tf/local_setup.zsh

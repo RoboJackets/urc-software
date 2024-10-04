@@ -1,0 +1,9 @@
+source;share/urc_scripts/hook/pythonpath.ps1
+source;share/urc_scripts/hook/pythonpath.dsv
+source;share/urc_scripts/hook/pythonpath.sh
+source;share/urc_scripts/hook/ament_prefix_path.ps1
+source;share/urc_scripts/hook/ament_prefix_path.dsv
+source;share/urc_scripts/hook/ament_prefix_path.sh
+source;../../build/urc_scripts/share/urc_scripts/hook/pythonpath_develop.ps1
+source;../../build/urc_scripts/share/urc_scripts/hook/pythonpath_develop.dsv
+source;../../build/urc_scripts/share/urc_scripts/hook/pythonpath_develop.sh

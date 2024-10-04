@@ -20,13 +20,13 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="spine.STL" />
+                <mesh filename="package://urc_arm_models/urdf/spine.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="spine_collision.STL" />
+                <mesh filename="package://urc_arm_models/urdf/spine_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -46,14 +46,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="shoulder.STL" />
+                <mesh filename="package://urc_arm_models/urdf/shoulder.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="shoulder_collision.STL" />
+                    filename="package://urc_arm_models/urdf/shoulder_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -75,14 +75,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="bicep.STL" />
+                <mesh filename="package://urc_arm_models/urdf/bicep.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="bicep_collision.STL" />
+                    filename="package://urc_arm_models/urdf/bicep_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -104,14 +104,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="elbow.STL" />
+                <mesh filename="package://urc_arm_models/urdf/elbow.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="elbow_collision.STL" />
+                    filename="package://urc_arm_models/urdf/elbow_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -133,14 +133,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="wrist.STL" />
+                <mesh filename="package://urc_arm_models/urdf/wrist.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="wrist_collision.STL" />
+                    filename="package://urc_arm_models/urdf/wrist_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -162,14 +162,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="claw.STL" />
+                <mesh filename="package://urc_arm_models/urdf/claw.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="claw_collision.STL" />
+                    filename="package://urc_arm_models/urdf/claw_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -191,14 +191,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="rightgripper.STL" />
+                <mesh filename="package://urc_arm_models/urdf/rightgripper.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="rightgripper_collision.STL" />
+                    filename="package://urc_arm_models/urdf/rightgripper_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -220,14 +220,14 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="leftgripper.STL" />
+                <mesh filename="package://urc_arm_models/urdf/leftgripper.STL" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh
-                    filename="leftgripper_collision.STL" />
+                    filename="package://urc_arm_models/urdf/leftgripper_collision.STL" />
             </geometry>
         </collision>
     </link>
@@ -241,7 +241,7 @@
         <mimic joint="rightgripperjoint" multiplier="1" offset="0" />
     </joint>
 
-    <link name="end_effector"/>
+    <link name="end_effector" />
     <joint name="claw_to_ee" type="fixed">
         <origin xyz="0.15 0.0 0.0" rpy="0 0 0" />
         <parent link="claw" />
