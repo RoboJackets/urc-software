@@ -13,14 +13,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/base_link.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/base_link.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/base_link_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/base_link_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -38,14 +38,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightrocker.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/rightrocker.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightrocker_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/rightrocker_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -70,14 +70,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftrocker.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/leftrocker.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftrocker_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/leftrocker_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -102,14 +102,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightbogie.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/rightbogie.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightbogie_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/rightbogie_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -132,14 +132,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftbogie.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/leftbogie.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftbogie_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/leftbogie_collision.STL" />
                 </geometry>
             </collision>
         </link>

@@ -1,4 +1,0 @@
-scan_to_pointcloud:
-  ros__parameters:
-    min_dist: 0.1
-    neighbor_dist: 0.2
