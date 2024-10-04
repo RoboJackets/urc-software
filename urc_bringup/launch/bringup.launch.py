@@ -118,7 +118,6 @@ def generate_launch_description():
         output='screen',
         parameters=[gps_config])
 
-
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
