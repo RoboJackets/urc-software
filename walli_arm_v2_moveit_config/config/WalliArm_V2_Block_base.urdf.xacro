@@ -9,6 +9,7 @@
     <xacro:include filename="WalliArm_V2_Block_base.ros2_control.xacro" />
 
 
-    <xacro:WalliArm_V2_Block_base_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+    <xacro:WalliArm_V2_Block_base_ros2_control name="FakeSystem"
+        initial_positions_file="$(arg initial_positions_file)" />
 
 </robot>
