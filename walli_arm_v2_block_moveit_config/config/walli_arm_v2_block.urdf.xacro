@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="walli_arm_v2_block">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import walli_arm_v2_block urdf file -->
+    <xacro:include filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/robot.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="walli_arm_v2_block.ros2_control.xacro" />
+
+    <xacro:walli_arm_v2_block_ros2_control name="WalliArm"
+        initial_positions_file="$(arg initial_positions_file)" />
+
+</robot>

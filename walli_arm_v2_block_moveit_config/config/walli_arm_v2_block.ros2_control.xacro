@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="walli_arm_v2_block_ros2_control" params="name initial_positions_file">
+    <xacro:property name="initial_positions"
+      value="${load_yaml(initial_positions_file)['initial_positions']}" />
+
+    <ros2_control name="${name}" type="system">
+      <hardware>
+        <!-- By default, set up controllers for simulation. This won't work on real hardware -->
+        <!-- <plugin>mock_components/GenericSystem</plugin> -->
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <joint name="base_yaw_joint">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['base_yaw_joint']}</param>
+        </state_interface>
+        <state_interface name="velocity" />
+      </joint>
+      <joint name="upper_arm_joint">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['upper_arm_joint']}</param>
+        </state_interface>
+        <state_interface name="velocity" />
+      </joint>
+      <joint name="fore_arm_joint">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['fore_arm_joint']}</param>
+        </state_interface>
+        <state_interface name="velocity" />
+      </joint>
+      <joint name="ee_roll_jont">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['ee_roll_jont']}</param>
+        </state_interface>
+        <state_interface name="velocity" />
+      </joint>
+      <joint name="ee_pitch_joint">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">${initial_positions['ee_pitch_joint']}</param>
+        </state_interface>
+        <state_interface name="velocity" />
+      </joint>
+
+    </ros2_control>
+
+    <gazebo>
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <parameters>$(find walli_arm_v2_block_moveit_config)/config/ros2_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>
