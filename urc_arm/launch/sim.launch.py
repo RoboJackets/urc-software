@@ -33,7 +33,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
+        launch_arguments={
+            "use_sim_time": "true",
+            "verbose": "true",
+        }.items(),  # "world": world_path
     )
     robot_state_publisher_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -86,6 +89,6 @@ def generate_launch_description():
             robot_state_publisher_launch,
             # movegroup_launch,
             gazebo,
-            # spawn_robot,
+            spawn_robot,
         ]
     )

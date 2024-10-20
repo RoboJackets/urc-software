@@ -1,9 +1,18 @@
 <robot name="walli_arm_v2_block">
+
+  <link name="base_link" />
+
+  <joint name="base_connection" type="fixed">
+    <parent link="base_link" />
+    <child link="spine" />
+  </joint>
+
   <link name="spine">
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/spine_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/spine_visual.stl" />
       </geometry>
       <material name="spine_material">
         <color rgba="0.61568627450980395466 0.81176470588235294379 0.92941176470588238168 1.0" />
@@ -12,7 +21,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/spine_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/spine_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -28,7 +38,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/base_rotator_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/base_rotator_visual.stl" />
       </geometry>
       <material name="base_rotator_material">
         <color rgba="0.64705882352941179736 0.64705882352941179736 0.64705882352941179736 1.0" />
@@ -37,7 +48,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/base_rotator_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/base_rotator_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -54,7 +66,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/upper_arm_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/upper_arm_visual.stl" />
       </geometry>
       <material name="upper_arm_material">
         <color rgba="0.2313725490196078538 0.38039215686274507888 0.7058823529411765163 1.0" />
@@ -63,7 +76,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/upper_arm_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/upper_arm_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -80,7 +94,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/fore_arm_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/fore_arm_visual.stl" />
       </geometry>
       <material name="fore_arm_material">
         <color rgba="0.91764705882352937127 0.91764705882352937127 0.91764705882352937127 1.0" />
@@ -89,7 +104,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/fore_arm_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/fore_arm_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -105,7 +121,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/ee_rotary_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/ee_rotary_visual.stl" />
       </geometry>
       <material name="ee_rotary_material">
         <color rgba="0.76862745098039220171 0.88627450980392152857 0.95294117647058818044 1.0" />
@@ -114,7 +131,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/ee_rotary_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/ee_rotary_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -131,7 +149,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/ee_rod_visual.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/ee_rod_visual.stl" />
       </geometry>
       <material name="ee_rod_material">
         <color rgba="0.76862745098039220171 0.88627450980392152857 0.95294117647058829146 1.0" />
@@ -140,7 +159,8 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 -0 0" />
       <geometry>
-        <mesh filename="package://urc_arm_models/urdf/walli_arm_v2_block/ee_rod_collision.stl" />
+        <mesh
+          filename="$(find urc_arm_models)/urdf/walli_arm_v2_block/ee_rod_collision.stl" />
       </geometry>
     </collision>
     <inertial>
@@ -162,7 +182,7 @@
   </link>
   <joint name="ee_frame" type="fixed">
     <origin xyz="1.0191999999999998838 -0.55394356076261075383 -0.0050000000000001111264"
-      rpy="-1.570796326794896558 8.3605634952174458232e-7 -1.2325951644084604355e-7" />
+      rpy="-1.570796326794896558 8.3605634952174458232e-7 -1.2325951644084604355e-7" />g
     <parent link="ee_rod" />
     <child link="ee" />
     <axis xyz="0 0 0" />
@@ -178,7 +198,7 @@
     <joint_properties friction="0.0" />
   </joint>
 
-  <joint name="ee_roll_jont" type="revolute">
+  <joint name="ee_roll_jont" type="continuous">
     <origin xyz="-0.48539999999999505764 2.664535259100375697e-7 -0.025399999999999842842"
       rpy="-3.141592653589793116 -1.5707963267948961139 0" />
     <parent link="fore_arm" />
