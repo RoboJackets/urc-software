@@ -13,14 +13,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/spine.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/spine.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/spine_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/spine_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -40,14 +40,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/shoulder.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/shoulder.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/shoulder_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/shoulder_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -69,14 +69,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/bicep.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/bicep.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/bicep_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/bicep_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -98,14 +98,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/elbow.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/elbow.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/elbow_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/elbow_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -127,14 +127,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/wrist.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/wrist.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/wrist_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/wrist_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -156,14 +156,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/claw.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/claw.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/claw_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/claw_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -185,14 +185,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/rightgripper.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/rightgripper.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/rightgripper_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/rightgripper_collision.STL" />
                 </geometry>
             </collision>
         </link>
@@ -214,14 +214,14 @@
             <visual>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="file://$(find urc_gazebo)/urdf/meshes/visual/leftgripper.STL" />
+                    <mesh filename="file://$(find urc_hw_description)/urdf/meshes/visual/leftgripper.STL" />
                 </geometry>
             </visual>
             <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
                     <mesh
-                        filename="file://$(find urc_gazebo)/urdf/meshes/collision/leftgripper_collision.STL" />
+                        filename="file://$(find urc_hw_description)/urdf/meshes/collision/leftgripper_collision.STL" />
                 </geometry>
             </collision>
         </link>

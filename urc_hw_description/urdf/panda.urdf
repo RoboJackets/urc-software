@@ -13,7 +13,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link0.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link0.obj"/>
       </geometry>
       <material name="panda_white">
     		<color rgba="1. 1. 1. 1."/>
@@ -21,7 +21,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link0.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link0.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -39,13 +39,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link1.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link1.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link1.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link1.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -66,13 +66,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link2.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link2.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link2.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link2.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -93,7 +93,7 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link3.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link3.obj"/>
       </geometry>
       <material name="panda_red">
     		<color rgba="1. 1. 1. 1."/>
@@ -101,7 +101,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link3.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link3.obj"/>
       </geometry>
     </collision>
   </link>
@@ -121,13 +121,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link4.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link4.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link4.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link4.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -148,13 +148,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link5.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link5.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link5.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link5.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -175,13 +175,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/link6.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/link6.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link6.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link6.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -202,13 +202,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link7.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link7.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/link7.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/link7.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -247,13 +247,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/hand.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/hand.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/hand.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/hand.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -273,13 +273,13 @@
     </inertial>
     <visual>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/finger.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/finger.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/finger.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/finger.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -301,14 +301,14 @@
     <visual>
       <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/visual/finger.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/visual/finger.obj"/>
       </geometry>
       <material name="panda_white"/>
     </visual>
     <collision>
       <origin rpy="0 0 3.14159265359" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="$(find urc_gazebo)/urdf/meshes/collision/finger.obj"/>
+        <mesh filename="$(find urc_hw_description)/urdf/meshes/collision/finger.obj"/>
       </geometry>
       <material name="panda_white"/>
     </collision>
@@ -422,7 +422,7 @@
   <gazebo>
     <plugin name ="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
       <!-- problematic: yaml parse crashes simulation-->
-      <parameters>$(find urc_gazebo)/urdf/config/Panda_params.yaml</parameters>
+      <parameters>$(find urc_hw_description)/urdf/config/Panda_params.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>
