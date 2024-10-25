@@ -12,7 +12,7 @@ IMUParser::IMUParser(const rclcpp::NodeOptions & options)
     [this](const vectornav_msgs::msg::CommonGroup msg) {VectornavCallback(msg);});
 
     imu_publisher = create_publisher<sensor_msgs::msg::Imu>(
-    "/imu", rclcpp::SystemDefaultsQoS());
+    "/imu/data", rclcpp::SystemDefaultsQoS());
 }
 
 void IMUParser::VectornavCallback(const vectornav_msgs::msg::CommonGroup & msg)
