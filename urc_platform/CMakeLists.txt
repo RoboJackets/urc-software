@@ -11,6 +11,7 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(usb_cam REQUIRED)
+find_package(vectornav_msgs REQUIRED)
 
 include_directories(
   include
@@ -19,6 +20,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
+  src/imu_parser.cpp
 )
 
 set(dependencies
@@ -28,6 +30,7 @@ set(dependencies
   sensor_msgs
   diagnostic_updater
   usb_cam
+  vectornav_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -39,6 +42,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "imu_parser::IMUParser"
+  EXECUTABLE ${PROJECT_NAME}_IMUParser
 )
 
 # Install launch files.

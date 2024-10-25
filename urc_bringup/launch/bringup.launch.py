@@ -81,6 +81,16 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "status_light_controller"],
     )
 
+    vectornav_node = Node(
+        package="vectornav",
+        executable="vectornav"
+    )
+
+    imu_parser_node = Node(
+        package="urc_platform",
+        executable="urc_platform_IMUParser"
+    )
+
     # load_arm_controller = Node(
     #     package="controller_manager",
     #     executable="spawner",
@@ -160,6 +170,8 @@ def generate_launch_description():
             launch_gps,
             launch_imu,
             rosbridge_server_node,
-            odom_frame_node
+            odom_frame_node,
+            vectornav_node,
+            imu_parser_node
         ]
     )
