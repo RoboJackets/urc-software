@@ -1,0 +1,27 @@
+ekf_filter_node:
+  ros_parameters:
+    #Frequency the filter outputs a position estimate
+    frequency: 30.0
+    #Period in seconds after which we consider a sensor to have timed out
+    sensor_timeout: 0.1
+
+    # 2D vs 3D data
+    two_d_mode: False
+
+    #Transform time offset
+    transform_time_offset: 0.0
+
+    #How long tf-listener waits for transform to become available
+    transform_timeout: 0.0
+
+    publish_acceleration: True
+
+    #Publish transformation over tf topic
+    publish_tf: True
+
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: map
+
+
