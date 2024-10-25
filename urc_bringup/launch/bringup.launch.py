@@ -27,7 +27,6 @@ def generate_launch_description():
     pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
         "nmea_navsat_driver"
     )
-    pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -119,12 +118,6 @@ def generate_launch_description():
         output='screen',
         parameters=[gps_config])
 
-    launch_imu = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_imu_driver, "launch", "imu_serial_driver.launch.py")
-        )
-    )
-
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -158,7 +151,6 @@ def generate_launch_description():
             # load_gripper_controller_right,
             teleop_launch,
             launch_gps,
-            launch_imu,
             rosbridge_server_node,
             odom_frame_node
         ]
