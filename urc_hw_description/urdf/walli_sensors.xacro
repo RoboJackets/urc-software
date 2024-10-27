@@ -124,10 +124,10 @@
   </gazebo>
 
   <!-- LIDAR -->
-  <!-- <link name="lidar_link">
+  <link name="lidar_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <mass value="0.125" />
+      <mass value="0.025" />
       <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001" />
     </inertial>
     <collision>
@@ -162,6 +162,12 @@
             <min_angle>0.000000</min_angle>
             <max_angle>6.280000</max_angle>
           </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1.000000</resolution>
+            <min_angle>0.000000</min_angle>
+            <max_angle>0.5000</max_angle>
+          </vertical>
         </scan>
         <range>
           <min>0.12</min>
@@ -178,11 +184,11 @@
         <ros>
           <remapping>~/out:=scan</remapping>
         </ros>
-        <output_type>sensor_msgs/LaserScan</output_type>
+        <output_type>sensor_msgs/PointCloud2</output_type>
         <frame_name>lidar_link</frame_name>
       </plugin>
     </sensor>
-  </gazebo> -->
+  </gazebo>
 
   <!-- May want to change this to a depth camera -->
   <xacro:macro name="camera" params="orientation origin_x origin_y origin_z yaw">
