@@ -161,22 +161,6 @@ def generate_launch_description():
         ],
     )
 
-    map_to_odom_transform_node = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=["10", "10", "0", "0", "0", "0", "map", "odom"],
-    )
-
-    map_to_odom_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_urc_test,
-                "launch",
-                "odom_to_map_pose.launch.py",
-            )
-        )
-    )
-
     return LaunchDescription(
         [
             RegisterEventHandler(
@@ -186,7 +170,6 @@ def generate_launch_description():
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
                         teleop_launch,
-                        map_to_odom_launch,
                     ],
                 )
             ),
@@ -210,6 +193,5 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
-            map_to_odom_transform_node,
         ]
     )
