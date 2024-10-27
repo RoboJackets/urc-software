@@ -12,6 +12,7 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def load_yaml(package_name, file_path):
+    port_number = "ttyUSB0"
     package_path = get_package_share_directory(package_name)
     absolute_file_path = os.path.join(package_path, file_path)
 
@@ -28,6 +29,10 @@ def generate_launch_description():
         "nmea_navsat_driver"
     )
     pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
+
+    pkg_vectornav = get_package_share_directory("vectornav")
+    
+    
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -81,15 +86,12 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "status_light_controller"],
     )
 
-    vectornav_node = Node(
-        package="vectornav",
-        executable="vectornav"
-    )
 
     imu_parser_node = Node(
         package="urc_platform",
         executable="urc_platform_IMUParser"
     )
+
 
     # load_arm_controller = Node(
     #     package="controller_manager",
@@ -135,6 +137,13 @@ def generate_launch_description():
         )
     )
 
+    # change here
+    launch_vectornav = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
+        )
+    )
+
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -171,7 +180,7 @@ def generate_launch_description():
             launch_imu,
             rosbridge_server_node,
             odom_frame_node,
-            vectornav_node,
+            launch_vectornav,
             imu_parser_node
         ]
     )
