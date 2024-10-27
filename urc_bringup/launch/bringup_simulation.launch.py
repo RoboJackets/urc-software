@@ -16,7 +16,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    # pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
@@ -25,7 +25,7 @@ def generate_launch_description():
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
@@ -41,7 +41,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
+        launch_arguments={"use_sim_time": "true",  "world": world_path}.items(),  
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")

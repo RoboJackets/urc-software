@@ -126,7 +126,7 @@ namespace urc_perception
     map_.info.origin.position.z = 0.0;
     map_.info.origin.orientation.w = 1.0;
 
-    std::vector<int> relative_heights(map_.data.size());
+    std::vector<int> relative_heights(map_.data.size(), 0);
 
     for (unsigned int i = 0; i < cloud->size(); i++)
     {
@@ -140,8 +140,10 @@ namespace urc_perception
       relative_heights[j] = point.z - pos.z();
     }
 
-    int max_gradient = 0;                                // TODO: This is a hack to scale the gradients to a reasonable range.
-    std::vector<int> gradients(relative_heights.size()); // TODO:can collapse later into a single loop.
+    
+
+    int max_gradient = 1;                                // TODO: This is a hack to scale the gradients to a reasonable range.
+    std::vector<int> gradients(relative_heights.size(), 0); // TODO:can collapse later into a single loop.
     int neighborhood_size = 3;
 
     for (unsigned int i = 0; i < relative_heights.size(); i++)
@@ -194,7 +196,8 @@ namespace urc_perception
 
       int costmap_index = map_coord.first + map_coord.second * map_.info.width;
 
-      double cost = gradients[i] / max_gradient * max_cost_;
+      double cost = gradients[costmap_index] / max_gradient * max_cost_;
+      // double cost = 0;
       if (cost > map_.data[costmap_index])
       {
         map_.data[costmap_index] = cost;
