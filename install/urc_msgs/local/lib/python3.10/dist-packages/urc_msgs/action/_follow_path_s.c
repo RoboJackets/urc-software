@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_generator_py/urc_msgs/action/_follow_path_s.c

@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/aruco_msgs/ament_cmake_core/aruco_msgsConfig-version.cmake

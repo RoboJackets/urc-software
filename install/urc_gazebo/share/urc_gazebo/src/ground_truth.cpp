@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/urc_gazebo/src/ground_truth.cpp

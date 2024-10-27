@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/external/aruco_ros/aruco/include/aruco/debug.h

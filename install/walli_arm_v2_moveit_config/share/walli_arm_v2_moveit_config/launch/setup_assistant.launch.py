@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/walli_arm_v2_moveit_config/launch/setup_assistant.launch.py

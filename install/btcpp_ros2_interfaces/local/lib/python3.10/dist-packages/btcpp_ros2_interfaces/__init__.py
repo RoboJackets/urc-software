@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/btcpp_ros2_interfaces/rosidl_generator_py/btcpp_ros2_interfaces/__init__.py

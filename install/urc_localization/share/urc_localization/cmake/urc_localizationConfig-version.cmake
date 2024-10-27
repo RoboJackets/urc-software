@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_localization/ament_cmake_core/urc_localizationConfig-version.cmake

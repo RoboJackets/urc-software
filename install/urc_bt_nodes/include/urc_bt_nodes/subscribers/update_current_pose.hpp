@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/urc_bt_nodes/include/urc_bt_nodes/subscribers/update_current_pose.hpp

@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/walli_arm_moveit_config/launch/demo.launch.py

@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_typesupport_introspection_c/urc_msgs/msg/detail/grid_location__rosidl_typesupport_introspection_c.h

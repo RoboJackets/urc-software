@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_nanopb/CMakeFiles/Export/share/urc_nanopb/cmake/urc_nanopbExport.cmake

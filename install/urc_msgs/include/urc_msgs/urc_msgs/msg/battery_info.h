@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_generator_c/urc_msgs/msg/battery_info.h

@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_generator_py/urc_msgs/_urc_msgs_s.ep.rosidl_typesupport_fastrtps_c.c

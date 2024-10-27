@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_manipulation/ament_cmake_environment_hooks/local_setup.bash

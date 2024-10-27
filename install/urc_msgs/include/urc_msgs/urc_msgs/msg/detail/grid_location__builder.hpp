@@ -1,1 +1,0 @@
-/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/build/urc_msgs/rosidl_generator_cpp/urc_msgs/msg/detail/grid_location__builder.hpp
