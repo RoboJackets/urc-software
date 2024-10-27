@@ -126,7 +126,7 @@ namespace urc_perception
     map_.info.origin.position.z = 0.0;
     map_.info.origin.orientation.w = 1.0;
 
-    std::vector<int> relative_heights(map._data.size());
+    std::vector<int> relative_heights(map_.data.size());
 
     for (unsigned int i = 0; i < cloud->size(); i++)
     {
