@@ -40,17 +40,22 @@ def rpy_to_quaternion(roll, pitch, yaw):
 
 # Example usage
 
+
 class TestJoint(Node):
     def __init__(self):
         super().__init__("ff")
         self.joy_subscriber: Subscription = self.create_subscription(
-            Joy, "/joy", self.pub, 10)
+            Joy, "/joy", self.pub, 10
+        )
         self.cmd_twist_publisher: Publisher = self.create_publisher(
-            Twist, "/cmd_twist", 10)
+            Twist, "/cmd_twist", 10
+        )
         self.start_servo_service_request: Client = self.create_client(
-            Trigger, "/arm_rt_pinocchio/start_servo")
+            Trigger, "/arm_rt_pinocchio/start_servo"
+        )
         self.stop_servo_service_request: Client = self.create_client(
-            Trigger, "/arm_rt_pinocchio/stop_servo")
+            Trigger, "/arm_rt_pinocchio/stop_servo"
+        )
         self.left_gripper_action_client: ActionClient = ActionClient(
             self, GripperCommand, "/gripper_controller_left/gripper_cmd"
         )

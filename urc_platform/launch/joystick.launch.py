@@ -10,26 +10,25 @@ def generate_launch_description():
         executable="joy_node",
         remappings=(
             ("/joy", "/driver/joy"),
-            ("/joy/set_feedback", "/driver/joy/set_feedback")
-        )
+            ("/joy/set_feedback", "/driver/joy/set_feedback"),
+        ),
     )
 
     joystick_driver_node = Node(
-        package='urc_platform',
-        executable='urc_platform_JoystickDriver',
-        output='screen',
+        package="urc_platform",
+        executable="urc_platform_JoystickDriver",
+        output="screen",
         parameters=[
             PathJoinSubstitution(
-                [FindPackageShare('urc_platform'),
-                 'config'
-                 'joystick_driver_params.yaml'])
+                [
+                    FindPackageShare("urc_platform"),
+                    "config/" "joystick_driver_params.yaml",
+                ]
+            )
         ],
         remappings=[
             ("/joystick_driver/joy", "/driver/joy"),
-        ]
+        ],
     )
 
-    return LaunchDescription([
-        driver_joy_node,
-        joystick_driver_node
-    ])
+    return LaunchDescription([driver_joy_node, joystick_driver_node])

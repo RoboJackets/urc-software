@@ -48,7 +48,7 @@ private:
   // basic info
   const std::string hardware_interface_name;
   double publish_encoder_ticks_frequency_;
-  static constexpr int ENCODER_CPR = 2048;
+  static constexpr int ENCODER_CPR = 42 * 4;
   static constexpr float WHEEL_RADIUS = 0.170;
   static constexpr float VEL_TO_COUNTS_FACTOR = ENCODER_CPR / (2 * M_PI * WHEEL_RADIUS);
   static constexpr int QPPR = 15562;
@@ -74,7 +74,7 @@ private:
   std::string udp_port;
 
   // nanopb
-  uint8_t buffer[DriveEncodersMessage_size];
+  uint8_t buffer[TeensyMessage_size];
   size_t message_length;
 };
 

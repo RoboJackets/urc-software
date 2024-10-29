@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="URC_Strategies">
+    <include path="bt_test.xml"/>
+    <include path="status_light.xml"/>
+    <include path="test_strategy.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <SubTree ID="ArmStrategies" editable="true">
+            <input_port name="arm_teleop"/>
+        </SubTree>
+        <Action ID="CallGeneratePlan" editable="true">
+            <input_port name="start_pose"/>
+            <input_port name="goal_pose"/>
+            <output_port name="path"/>
+            <input_port name="service_name"/>
+        </Action>
+        <Action ID="CallTrigger" editable="true">
+            <input_port name="service_name" default="&quot;&quot;">Service name.</input_port>
+        </Action>
+        <Condition ID="Enabled" editable="true"/>
+        <Action ID="FollowArmTrajectory" editable="true">
+            <input_port name="trajectory"/>
+        </Action>
+        <Action ID="FollowPath" editable="true">
+            <input_port name="path"/>
+            <input_port name="action_name"/>
+        </Action>
+        <Action ID="LogInfo" editable="true">
+            <input_port name="logger" default="&quot;urc_bt&quot;">Logger to use.</input_port>
+            <input_port name="message" default="&quot;Replace this with the true message.&quot;">Message to log.</input_port>
+        </Action>
+        <Action ID="PlanArmTrajectory" editable="true">
+            <input_port name="target_ee_pose"/>
+            <output_port name="trajectory"/>
+        </Action>
+        <Action ID="RecoverFromSingularity" editable="true"/>
+        <Action ID="ServoArm" editable="true"/>
+        <Action ID="StatusLightPublisher" editable="true">
+            <input_port name="topic_name" default="/command/status_light"/>
+            <input_port name="color"/>
+            <input_port name="state"/>
+        </Action>
+        <Action ID="UpdateCurrentPose" editable="true">
+            <input_port name="topic_name"/>
+            <output_port name="pose"/>
+        </Action>
+        <Action ID="UpdateStatus" editable="true"/>
+    </TreeNodesModel>
+</root>

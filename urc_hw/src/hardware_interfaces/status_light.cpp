@@ -54,7 +54,8 @@ hardware_interface::CallbackReturn StatusLight::on_init(
   if (info.gpios.size() == 0) {
     RCLCPP_ERROR(
       rclcpp::get_logger(
-        hardware_interface_name), "Should have at least one gpio to be the Status Light.");
+        hardware_interface_name),
+      "Should have at least one gpio to be the Status Light.");
     return CallbackReturn::ERROR;
   }
 
@@ -69,9 +70,14 @@ hardware_interface::CallbackReturn StatusLight::on_init(
   if (!find_light) {
     RCLCPP_ERROR(
       rclcpp::get_logger(
-        hardware_interface_name), "Not able to find sensor named 'status_light'.");
+        hardware_interface_name),
+      "Not able to find sensor named 'status_light'.");
     return CallbackReturn::ERROR;
   }
+
+  RCLCPP_INFO(
+    rclcpp::get_logger(hardware_interface_name),
+    "Status light HW interface initialized!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -85,7 +91,7 @@ std::vector<hardware_interface::CommandInterface> StatusLight::export_command_in
 {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   command_interfaces.emplace_back("status_light", "color", &this->signals[0]);
-  command_interfaces.emplace_back("status_light", "display", &this->signals[1]);
+  command_interfaces.emplace_back("status_light", "state", &this->signals[1]);
   return command_interfaces;
 }
 
@@ -99,33 +105,59 @@ hardware_interface::CallbackReturn StatusLight::on_activate(const rclcpp_lifecyc
 {
   udp_ = std::make_shared<UDPSocket<128>>(true);
   udp_->Connect(udp_address, std::stoi(udp_port));
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight activated!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status light activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifecycle::State &)
 {
   udp_->Close();
-  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "StatusLight deactivated!");
+  RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Status light deactivated!");
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
 hardware_interface::return_type StatusLight::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
+  RCLCPP_INFO(
+    rclcpp::get_logger(
+      hardware_interface_name), "Red: %s, Green: %s, Blue: %s", num_to_state(
+      lightStates[0]).c_str(), num_to_state(lightStates[1]).c_str(), num_to_state(
+      lightStates[2]).c_str());
+
   return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  StatusLightCommand message = StatusLightCommand_init_zero;
+
+  TeensyMessage message = TeensyMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.color = signals[0];
-  message.has_color = true;
-  message.display = signals[1];
-  message.has_display = true;
+  uint8_t selected_color = static_cast<uint8_t>(signals[0]);
+  uint8_t selected_state = static_cast<uint8_t>(signals[1]);
+  if (selected_color >= 0 && selected_color <= 2 && selected_state >= 0 && selected_state <= 2) {
+    lightStates[selected_color] = selected_state;
+  }
 
-  bool status = pb_encode(&stream, StatusLightCommand_fields, &message);
+  message.redEnabled = (lightStates[0] != 0);
+  message.redBlink = (lightStates[0] == 2);
+  message.greenEnabled = (lightStates[1] != 0);
+  message.greenBlink = (lightStates[1] == 2);
+  message.blueEnabled = (lightStates[2] != 0);
+  message.blueBlink = (lightStates[2] == 2);
+
+  // Fill Required Fields
+  message.m1Setpoint = 0;
+  message.m2Setpoint = 0;
+  message.m3Setpoint = 0;
+  message.m4Setpoint = 0;
+  message.m5Setpoint = 0;
+  message.m6Setpoint = 0;
+
+  // Set message id to status light
+  message.messageID = 1;
+
+  bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;
 
   if (!status) {
@@ -135,4 +167,4 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   return hardware_interface::return_type::OK;
 }
 
-}  // namespace urc_hardware::hardware_interfaces
+} // namespace urc_hardware::hardware_interfaces

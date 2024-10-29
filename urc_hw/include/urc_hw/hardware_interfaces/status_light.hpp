@@ -18,6 +18,19 @@
 
 namespace urc_hardware::hardware_interfaces
 {
+std::string num_to_state(uint8_t num)
+{
+  switch (num) {
+    case 0:
+      return "off";
+    case 1:
+      return "on";
+    case 2:
+      return "blinking";
+    default:
+      return "unknown";
+  }
+}
 
 class StatusLight : public hardware_interface::SystemInterface
 {
@@ -46,7 +59,7 @@ private:
   // basic info
   const std::string hardware_interface_name;
   // states
-  std::vector<double> signals;  // [0]: color choice, [1]: display mode(e.g. flashing / idle / double flashing)
+  std::vector<double> signals;   // [0]: color selection, [1]: state (on, off, blinking)
 
   // hardware resources
   std::shared_ptr<UDPSocket<128>> udp_;
@@ -54,10 +67,12 @@ private:
   std::string udp_port;
 
   // nanopb
-  uint8_t buffer[StatusLightCommand_size];
+  uint8_t buffer[TeensyMessage_size];
   size_t message_length;
+
+  uint8_t lightStates[3];   // current state of each light (red, green, blue).
 };
 
-}  // namespace urc_hardware::hardware_interfaces
+} // namespace urc_hardware::hardware_interfaces
 
-#endif  // URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP
+#endif // URC_HW__STATUS_LIGHT_HW_INTERFACE_HPP

@@ -13,8 +13,8 @@
   <depend>std_msgs</depend>
   <depend>twist_mux</depend>
   <depend>rosbridge_server</depend>
+  <depend>nmea_navsat_driver</depend>
   
-
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

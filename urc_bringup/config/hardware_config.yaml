@@ -1,3 +1,0 @@
-hardware_config:
-  use_simulation: false
-  use_simplified_model: true

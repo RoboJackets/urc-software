@@ -10,3 +10,14 @@
 	path = external/aruco_ros
 	url = https://github.com/yambati03/aruco_ros.git
 	branch = humble-devel
+[submodule "external/BehaviorTree.ROS2"]
+	path = external/BehaviorTree.ROS2
+	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
+[submodule "external/articubot_one"]
+	path = external/articubot_one
+	url = https://github.com/joshnewans/articubot_one.git
+	branch = humble
+[submodule "external/articubot_one"]
+	path = external/articubot_one
+	url = https://github.com/joshnewans/articubot_one.git
+	branch = humble
