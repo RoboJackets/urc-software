@@ -1,0 +1,2 @@
+source;share/behaviortree_ros2/environment/ament_prefix_path.sh
+source;share/behaviortree_ros2/environment/path.sh

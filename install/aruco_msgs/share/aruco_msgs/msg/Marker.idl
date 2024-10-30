@@ -1,0 +1,20 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from aruco_msgs/msg/Marker.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/PoseWithCovariance.idl"
+#include "std_msgs/msg/Header.idl"
+
+module aruco_msgs {
+  module msg {
+    struct Marker {
+      std_msgs::msg::Header header;
+
+      uint32 id;
+
+      geometry_msgs::msg::PoseWithCovariance pose;
+
+      double confidence;
+    };
+  };
+};

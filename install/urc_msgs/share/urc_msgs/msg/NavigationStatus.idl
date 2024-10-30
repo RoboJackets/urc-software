@@ -1,0 +1,12 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from urc_msgs/msg/NavigationStatus.msg
+// generated code does not contain a copyright notice
+
+
+module urc_msgs {
+  module msg {
+    struct NavigationStatus {
+      string message;
+    };
+  };
+};

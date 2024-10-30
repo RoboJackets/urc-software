@@ -1,0 +1,3 @@
+source;share/urc_arm/environment/ament_prefix_path.sh
+source;share/urc_arm/environment/library_path.sh
+source;share/urc_arm/environment/path.sh

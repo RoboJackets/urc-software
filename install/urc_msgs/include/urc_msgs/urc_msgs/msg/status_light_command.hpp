@@ -1,0 +1,11 @@
+// generated from rosidl_generator_cpp/resource/idl.hpp.em
+// generated code does not contain a copyright notice
+
+#ifndef URC_MSGS__MSG__STATUS_LIGHT_COMMAND_HPP_
+#define URC_MSGS__MSG__STATUS_LIGHT_COMMAND_HPP_
+
+#include "urc_msgs/msg/detail/status_light_command__struct.hpp"
+#include "urc_msgs/msg/detail/status_light_command__builder.hpp"
+#include "urc_msgs/msg/detail/status_light_command__traits.hpp"
+
+#endif  // URC_MSGS__MSG__STATUS_LIGHT_COMMAND_HPP_

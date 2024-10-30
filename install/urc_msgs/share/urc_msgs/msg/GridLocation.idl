@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from urc_msgs/msg/GridLocation.msg
+// generated code does not contain a copyright notice
+
+
+module urc_msgs {
+  module msg {
+    struct GridLocation {
+      uint16 x;
+
+      uint16 y;
+    };
+  };
+};

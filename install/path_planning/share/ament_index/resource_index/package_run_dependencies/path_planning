@@ -1,0 +1,1 @@
+rclcpp;rclcpp_components;urc_msgs;cv_bridge;libopencv-dev;image_transport;std_msgs;nav_msgs;tf2;tf2_geometry_msgs;sensor_msgs;diagnostic_updater;librealsense2;ament_lint_auto;ament_lint_common;ament_cmake_gtest

@@ -1,0 +1,10 @@
+# Default initial positions for walli_arm's ros2_control system
+
+initial_positions:
+  bicepjoint: 0
+  clawjoint: 0
+  elbowjoint: 0
+  forearmjoint: 0
+  leftgripperjoint: 0
+  shoulderjoint: 0
+  wristjoint: 0

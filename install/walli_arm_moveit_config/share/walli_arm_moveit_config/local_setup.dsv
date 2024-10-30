@@ -1,0 +1,2 @@
+source;share/walli_arm_moveit_config/environment/ament_prefix_path.sh
+source;share/walli_arm_moveit_config/environment/path.sh

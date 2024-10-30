@@ -1,0 +1,6 @@
+
+uint16 SUCCESS=0
+uint16 FAILURE=1
+# Response definition
+nav_msgs/Path path
+uint16 error_code

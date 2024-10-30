@@ -1,0 +1,11 @@
+source;share/urc_arm/hook/cmake_prefix_path.ps1
+source;share/urc_arm/hook/cmake_prefix_path.dsv
+source;share/urc_arm/hook/cmake_prefix_path.sh
+source;share/urc_arm/hook/ld_library_path_lib.ps1
+source;share/urc_arm/hook/ld_library_path_lib.dsv
+source;share/urc_arm/hook/ld_library_path_lib.sh
+source;share/urc_arm/local_setup.bash
+source;share/urc_arm/local_setup.dsv
+source;share/urc_arm/local_setup.ps1
+source;share/urc_arm/local_setup.sh
+source;share/urc_arm/local_setup.zsh

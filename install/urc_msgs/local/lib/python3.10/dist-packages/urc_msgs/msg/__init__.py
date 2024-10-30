@@ -1,0 +1,9 @@
+from urc_msgs.msg._aruco_detection import ArucoDetection  # noqa: F401
+from urc_msgs.msg._aruco_location import ArucoLocation  # noqa: F401
+from urc_msgs.msg._battery_info import BatteryInfo  # noqa: F401
+from urc_msgs.msg._grid_location import GridLocation  # noqa: F401
+from urc_msgs.msg._landing_locations import LandingLocations  # noqa: F401
+from urc_msgs.msg._navigation_status import NavigationStatus  # noqa: F401
+from urc_msgs.msg._status_light_command import StatusLightCommand  # noqa: F401
+from urc_msgs.msg._velocity_pair import VelocityPair  # noqa: F401
+from urc_msgs.msg._waypoint import Waypoint  # noqa: F401

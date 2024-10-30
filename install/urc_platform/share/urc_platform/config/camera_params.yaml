@@ -1,0 +1,11 @@
+camera:
+  ros__parameters:
+    video_device: "/dev/cam"
+    image_width: 640
+    image_height: 480
+    pixel_format: "mjepg"
+    io_method: "mmap"
+    camera_frame_id: "camera"
+    framerate: 30
+    camera_info_url: ""
+    camera_name: ""
