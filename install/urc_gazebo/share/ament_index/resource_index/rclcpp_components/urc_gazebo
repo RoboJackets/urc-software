@@ -1,3 +1,0 @@
-scan_to_pointcloud::ScanToPointCloud;lib/liburc_gazebo.so
-control::Control;lib/liburc_gazebo.so
-ground_truth::GroundTruth;lib/liburc_gazebo.so
