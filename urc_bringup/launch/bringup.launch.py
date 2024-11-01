@@ -12,7 +12,6 @@ from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def load_yaml(package_name, file_path):
-    port_number = "ttyUSB0"
     package_path = get_package_share_directory(package_name)
     absolute_file_path = os.path.join(package_path, file_path)
 
