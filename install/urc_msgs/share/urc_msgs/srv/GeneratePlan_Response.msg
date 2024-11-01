@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_cmake/srv/GeneratePlan_Response.msg

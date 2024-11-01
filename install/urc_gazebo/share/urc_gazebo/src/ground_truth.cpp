@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/urc_gazebo/src/ground_truth.cpp

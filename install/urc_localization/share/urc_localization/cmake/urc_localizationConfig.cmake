@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_localization/ament_cmake_core/urc_localizationConfig.cmake

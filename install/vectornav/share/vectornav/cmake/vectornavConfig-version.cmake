@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/vectornav/ament_cmake_core/vectornavConfig-version.cmake

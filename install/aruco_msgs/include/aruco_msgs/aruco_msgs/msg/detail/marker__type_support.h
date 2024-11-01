@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/aruco_msgs/rosidl_generator_c/aruco_msgs/msg/detail/marker__type_support.h

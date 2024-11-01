@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_generator_py/urc_msgs/msg/_grid_location_s.c

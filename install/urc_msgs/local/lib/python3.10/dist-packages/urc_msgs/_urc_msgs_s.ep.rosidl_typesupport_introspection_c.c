@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_generator_py/urc_msgs/_urc_msgs_s.ep.rosidl_typesupport_introspection_c.c

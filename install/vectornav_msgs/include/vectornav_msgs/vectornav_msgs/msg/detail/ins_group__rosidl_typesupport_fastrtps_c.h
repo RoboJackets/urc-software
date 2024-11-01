@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/vectornav_msgs/rosidl_typesupport_fastrtps_c/vectornav_msgs/msg/detail/ins_group__rosidl_typesupport_fastrtps_c.h

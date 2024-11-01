@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/nanopb/generator/nanopb_generator.py

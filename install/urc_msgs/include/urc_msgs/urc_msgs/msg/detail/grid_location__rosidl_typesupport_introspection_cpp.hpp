@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_typesupport_introspection_cpp/urc_msgs/msg/detail/grid_location__rosidl_typesupport_introspection_cpp.hpp

@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/btcpp_ros2_samples/ament_cmake_core/btcpp_ros2_samplesConfig-version.cmake

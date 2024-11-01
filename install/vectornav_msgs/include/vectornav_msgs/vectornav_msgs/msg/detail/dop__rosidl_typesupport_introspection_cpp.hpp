@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/vectornav_msgs/rosidl_typesupport_introspection_cpp/vectornav_msgs/msg/detail/dop__rosidl_typesupport_introspection_cpp.hpp

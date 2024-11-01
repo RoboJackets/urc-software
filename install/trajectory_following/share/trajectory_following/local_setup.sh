@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/trajectory_following/ament_cmake_environment_hooks/local_setup.sh

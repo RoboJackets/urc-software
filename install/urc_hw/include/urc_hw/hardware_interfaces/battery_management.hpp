@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/urc_hw/include/urc_hw/hardware_interfaces/battery_management.hpp

@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/vectornav_msgs/rosidl_generator_py/vectornav_msgs/msg/_dop_s.c

@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_typesupport_fastrtps_cpp/urc_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h

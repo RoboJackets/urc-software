@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/external/aruco_ros/aruco_ros/launch/double.launch.py

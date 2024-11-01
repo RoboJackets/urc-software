@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/vectornav_msgs/rosidl_typesupport_introspection_c/vectornav_msgs/msg/detail/time_utc__rosidl_typesupport_introspection_c.h

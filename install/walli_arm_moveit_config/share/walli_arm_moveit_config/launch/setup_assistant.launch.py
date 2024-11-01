@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/walli_arm_moveit_config/launch/setup_assistant.launch.py

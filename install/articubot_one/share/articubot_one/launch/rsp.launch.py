@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/external/articubot_one/launch/rsp.launch.py

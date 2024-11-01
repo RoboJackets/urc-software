@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/urc_platform/launch/motor_controller.launch.py

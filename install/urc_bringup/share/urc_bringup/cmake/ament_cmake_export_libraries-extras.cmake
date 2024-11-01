@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_bringup/ament_cmake_export_libraries/ament_cmake_export_libraries-extras.cmake

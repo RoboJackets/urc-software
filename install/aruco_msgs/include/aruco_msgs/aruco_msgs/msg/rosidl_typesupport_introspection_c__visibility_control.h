@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/aruco_msgs/rosidl_typesupport_introspection_c/aruco_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h

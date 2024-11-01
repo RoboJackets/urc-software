@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/CMakeFiles/3.22.1/CMakeCCompiler.cmake

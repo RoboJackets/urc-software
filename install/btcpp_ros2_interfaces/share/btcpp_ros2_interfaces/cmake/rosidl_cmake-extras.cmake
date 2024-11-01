@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/btcpp_ros2_interfaces/rosidl_cmake/rosidl_cmake-extras.cmake

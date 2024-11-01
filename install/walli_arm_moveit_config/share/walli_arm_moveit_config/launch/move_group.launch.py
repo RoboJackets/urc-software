@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/walli_arm_moveit_config/launch/move_group.launch.py

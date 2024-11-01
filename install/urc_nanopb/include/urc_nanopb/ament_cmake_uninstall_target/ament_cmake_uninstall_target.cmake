@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake

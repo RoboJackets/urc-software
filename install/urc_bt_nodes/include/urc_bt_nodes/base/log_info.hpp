@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/urc_bt_nodes/include/urc_bt_nodes/base/log_info.hpp

@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_orchestrator/ament_cmake_core/urc_orchestratorConfig.cmake

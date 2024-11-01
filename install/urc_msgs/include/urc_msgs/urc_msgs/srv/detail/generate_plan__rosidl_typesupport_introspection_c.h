@@ -1,1 +1,0 @@
-/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_typesupport_introspection_c/urc_msgs/srv/detail/generate_plan__rosidl_typesupport_introspection_c.h
