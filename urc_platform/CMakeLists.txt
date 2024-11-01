@@ -19,6 +19,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
+  src/zero_cmd_vel_node.cpp
 )
 
 set(dependencies
@@ -39,6 +40,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "zero_cmd_vel_node::ZeroCmdVelNode"
+  EXECUTABLE ${PROJECT_NAME}_ZeroCmdVelNode
 )
 
 # Install launch files.
