@@ -16,20 +16,21 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    # pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    pkg_leo_rover = get_package_share_directory("leo_description")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_test = get_package_share_directory("urc_test")
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
+        pkg_urc_bringup, "config", "ros2_control_leo.yaml"
     )
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
-        get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
+        pkg_leo_rover, "urdf/leo_sim.urdf.xacro"
     )
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
@@ -41,7 +42,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
+        launch_arguments={"use_sim_time": "true", "world": world_path}.items(),  # "world": world_path
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
@@ -57,7 +58,7 @@ def generate_launch_description():
             "-y",
             "0",
             "-z",
-            "5",
+            "10",
             "-R",
             "0",
             "-P",
