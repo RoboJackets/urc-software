@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/aruco_msgs/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake

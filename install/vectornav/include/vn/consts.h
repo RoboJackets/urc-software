@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/external/vectornav/vectornav/vnproglib-1.2.0.0/cpp/include/vn/consts.h

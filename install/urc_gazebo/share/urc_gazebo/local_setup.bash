@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_gazebo/ament_cmake_environment_hooks/local_setup.bash

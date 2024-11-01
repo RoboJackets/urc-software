@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/external/vectornav/vectornav_msgs/msg/CommonGroup.msg

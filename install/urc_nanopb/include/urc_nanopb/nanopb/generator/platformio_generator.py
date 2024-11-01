@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/nanopb/generator/platformio_generator.py

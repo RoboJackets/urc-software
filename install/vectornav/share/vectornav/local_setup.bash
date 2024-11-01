@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/vectornav/ament_cmake_environment_hooks/local_setup.bash

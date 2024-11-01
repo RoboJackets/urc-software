@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/vectornav_msgs/rosidl_generator_cpp/vectornav_msgs/msg/detail/dop__traits.hpp

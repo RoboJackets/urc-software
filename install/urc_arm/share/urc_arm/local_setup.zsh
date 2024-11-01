@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_arm/ament_cmake_environment_hooks/local_setup.zsh

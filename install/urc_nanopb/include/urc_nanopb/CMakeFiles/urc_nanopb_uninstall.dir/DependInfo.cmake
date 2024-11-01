@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/CMakeFiles/urc_nanopb_uninstall.dir/DependInfo.cmake

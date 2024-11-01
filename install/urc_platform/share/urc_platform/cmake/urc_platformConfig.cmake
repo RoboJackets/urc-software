@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_platform/ament_cmake_core/urc_platformConfig.cmake

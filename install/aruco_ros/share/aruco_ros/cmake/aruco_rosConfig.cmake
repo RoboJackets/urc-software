@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/aruco_ros/ament_cmake_core/aruco_rosConfig.cmake

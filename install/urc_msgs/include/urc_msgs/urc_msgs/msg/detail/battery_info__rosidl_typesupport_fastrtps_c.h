@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_typesupport_fastrtps_c/urc_msgs/msg/detail/battery_info__rosidl_typesupport_fastrtps_c.h

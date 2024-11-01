@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_nanopb/CMakeFiles/Export/share/urc_nanopb/cmake/urc_nanopbExport.cmake

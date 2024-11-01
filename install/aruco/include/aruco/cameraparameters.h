@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/external/aruco_ros/aruco/include/aruco/cameraparameters.h

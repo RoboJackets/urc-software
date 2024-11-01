@@ -1,0 +1,11 @@
+source;share/vectornav/hook/cmake_prefix_path.ps1
+source;share/vectornav/hook/cmake_prefix_path.dsv
+source;share/vectornav/hook/cmake_prefix_path.sh
+source;share/vectornav/hook/ld_library_path_lib.ps1
+source;share/vectornav/hook/ld_library_path_lib.dsv
+source;share/vectornav/hook/ld_library_path_lib.sh
+source;share/vectornav/local_setup.bash
+source;share/vectornav/local_setup.dsv
+source;share/vectornav/local_setup.ps1
+source;share/vectornav/local_setup.sh
+source;share/vectornav/local_setup.zsh

@@ -1,0 +1,1 @@
+/home/hamd/Documents/urc/rover-colcon/src/build/urc_msgs/rosidl_generator_py/urc_msgs/msg/_aruco_detection.py
