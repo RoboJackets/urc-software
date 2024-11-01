@@ -23,22 +23,20 @@ ekf_filter_node:
     map_frame: map
     odom_frame: odom
     base_link_frame: base_link
-    world_frame: map
+    world_frame: odom
 
     
     odom0: /odometry/gps
     odom0_config: [true, true, false,
-                  false, false, false,
-                  false, false, false,
-                  false, false, false,
-                  false, false, false]
+                 false, false, false,
+                 false, false, false,
+                 false, false, false,
+                 false, false, false]
     odom0_covariance: [1.0, 0.0, 0.0,
-                    0.0, 1.0, 0.0,
-                    0.0, 0.0, 2.0]
+                   0.0, 1.0, 0.0,
+                   0.0, 0.0, 2.0]
 
     imu0: /imu/data
-  
-    
     imu0_config: [false, false, false,
                       true,  true,  true,
                       false, false, false,
@@ -72,6 +70,11 @@ ekf_filter_node:
                                    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
 
     #Initial only - if we make square, then there will be rapid convergence for initial measurements of the variable in question
+    initial_state:  [0.0,  0.0,  0.0,
+                 0.0,  0.0,  0,
+                 0.0,  0.0,  0.0,
+                 0.0,  0.0,  0.0,
+                 0.0,  0.0,  0.0]
     initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9, 1e-9]
     use_control: false
 
