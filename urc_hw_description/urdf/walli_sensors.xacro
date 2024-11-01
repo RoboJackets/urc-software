@@ -116,7 +116,7 @@
           <namespace>/gps</namespace>
           <remapping>~/out:=data</remapping>
         </ros>
-        <frame_name>gps</frame_name>
+        <frame_name>map</frame_name>
       </plugin>
       <always_on>true</always_on>
       <updateRate>30</updateRate>
