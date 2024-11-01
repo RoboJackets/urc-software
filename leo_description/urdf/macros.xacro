@@ -4,7 +4,7 @@
   <xacro:macro name="leo" 
                params="default_antenna:=true
                        rockers_fixed:=false
-                       footprint_link:=false
+                       footprint_link:=true
                        link_prefix:=''
                        joint_prefix:=''
                        imu_translation:='0.0628 -0.0314 -0.0393'
@@ -494,7 +494,7 @@
     <gazebo>
       <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
         <jointA>rocker_L_joint</jointA>
-        <jointB>rgazeboocker_R_joint</jointB>
+        <jointB>rocker_R_joint</jointB>
         <forceConstant>100.0</forceConstant>
       </plugin>
     </gazebo>
