@@ -10,16 +10,34 @@ from launch.event_handlers import OnProcessStart
 
 def generate_launch_description():
     
-    ekf = launch_ros.actions.Node(
+    ekf_map = launch_ros.actions.Node(
                 package="robot_localization",
-                executable="navsat_transform_node",
-                name="navsat_transform_node",
+                executable="ekf_node",
+                name="ekf_filter_node_map",
                 output="screen",
                 parameters=[
                     os.path.join(
                         get_package_share_directory("robot_localization"),
                         "params",
-                        "navsat_transform.yaml",
+                        "ekf.yaml",
+                    )
+                ],
+                remappings=[
+                    ("gps/fix", "/gps/data"),
+                    ("/imu", "/imu/data"),
+                ],
+            )
+    
+    ekf_odom = launch_ros.actions.Node(
+                package="robot_localization",
+                executable="ekf_node",
+                name="ekf_filter_node_odoom",
+                output="screen",
+                parameters=[
+                    os.path.join(
+                        get_package_share_directory("robot_localization"),
+                        "params",
+                        "ekf.yaml",
                     )
                 ],
                 remappings=[
@@ -30,8 +48,8 @@ def generate_launch_description():
 
     navsat = launch_ros.actions.Node(
                 package="robot_localization",
-                executable="ekf_node",
-                name="ekf_filter_node",
+                executable="navsat_transform_node",
+                name="navsat_transform",
                 output="screen",
                 parameters=[
                     os.path.join(
@@ -47,7 +65,7 @@ def generate_launch_description():
           RegisterEventHandler(
               event_handler = OnProcessStart(
                     target_action = navsat,
-                    on_start=[ekf]
+                    on_start=[ekf_map,ekf_odom]
 
               )
           ),

@@ -83,7 +83,7 @@ ekf_filter_node_map:
 
 
 
-navsat_transform_node:
+navsat_transform:
     ros__parameters:
         # Frequency of the main run loop
         frequency: 30.0
