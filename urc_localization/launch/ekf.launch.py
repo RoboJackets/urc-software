@@ -25,6 +25,7 @@ def generate_launch_description():
                 remappings=[
                     ("gps/fix", "/gps/data"),
                     ("/imu", "/imu/data"),
+                    ("/odometry/filtered","/odometry/filtered/map")
                 ],
             )
     
@@ -43,6 +44,7 @@ def generate_launch_description():
                 remappings=[
                     ("gps/fix", "/gps/data"),
                     ("/imu", "/imu/data"),
+                    ("/odometry/filtered","odometry/filtered/twist")
                 ],
             )
 
