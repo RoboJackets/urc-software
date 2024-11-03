@@ -26,6 +26,7 @@ add_definitions(${PCL_DEFINITIONS})
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/elevation_mapping.cpp
+  src/traversability_mapping.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -43,6 +44,9 @@ set(dependencies
   tf2_geometry_msgs
   nav_msgs
   pcl_conversions
+  # grid_map_core
+  # grid_map_ros
+  # grid_map_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -53,6 +57,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "urc_perception::ElevationMapping"
   EXECUTABLE ${PROJECT_NAME}_ElevationMapping
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_perception::TraversabilityMapping"
+  EXECUTABLE ${PROJECT_NAME}_TraversabilityMapping
 )
 
 # Install launch files.
