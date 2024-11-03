@@ -1,0 +1,18 @@
+material Gazebo/Desert
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.8 0.8 0.8 1.0
+      diffuse 0.8 0.8 0.8 1.0
+      specular 0.01 0.01 0.01 1.0 2.0
+      texture_unit
+      {
+        texture mars_texture.jpg
+        filtering trilinear
+        scale 0.02 0.02
+      }
+    }
+  }
+}
