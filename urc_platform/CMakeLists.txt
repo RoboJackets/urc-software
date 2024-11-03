@@ -20,7 +20,6 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
-  src/imu_parser.cpp
 )
 
 set(dependencies
@@ -42,12 +41,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "joystick_driver::JoystickDriver"
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "imu_parser::IMUParser"
-  EXECUTABLE ${PROJECT_NAME}_IMUParser
 )
 
 # Install launch files.
