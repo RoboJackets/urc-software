@@ -1,5 +1,5 @@
 ekf_filter_node_odom:
-  ros_parameters:
+  ros__parameters:
     frequency: 30.0
     sensor_timeout: 0.1
     two_d_mode: false
@@ -29,7 +29,7 @@ ekf_filter_node_odom:
     initial_estimate_covariance: [1.0,1.0,1e-9,1.0,1.0,1e-9,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
 
 ekf_filter_node_map:
-  ros_parameters:
+  ros__parameters:
     #Frequency the filter outputs a position estimate
     frequency: 30.0
     #Period in seconds after which we consider a sensor to have timed out

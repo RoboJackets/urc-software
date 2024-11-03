@@ -17,15 +17,13 @@ def generate_launch_description():
                 output="screen",
                 parameters=[
                     os.path.join(
-                        get_package_share_directory("robot_localization"),
-                        "params",
+                        get_package_share_directory("urc_localization"),
+                        "config",
                         "ekf.yaml",
                     )
                 ],
                 remappings=[
-                    ("/gps/data", "/odometry/gps"),
-                    ("/imu", "/imu/data"),
-                    #("/odometry/filtered","/odometry/filtered_map")
+                    ("/odometry/filtered","/odometry/filtered_map")
                 ],
             )
     
@@ -36,15 +34,14 @@ def generate_launch_description():
                 output="screen",
                 parameters=[
                     os.path.join(
-                        get_package_share_directory("robot_localization"),
-                        "params",
+                        get_package_share_directory("urc_localization"),
+                        "config",
                         "ekf.yaml",
                     )
                 ],
                 remappings=[
-                    ("gps/fix", "/gps/data"),
-                    ("/imu", "/imu/data"),
-                    #("/odometry/filtered","odometry/filtered_twist")
+                    
+                    ("/odometry/filtered","odometry/filtered_twist")
                 ],
             )
 
@@ -55,15 +52,14 @@ def generate_launch_description():
                 output="screen",
                 parameters=[
                     os.path.join(
-                        get_package_share_directory("robot_localization"),
+                        get_package_share_directory("urc_localization"),
                         "config",
                         "ekf.yaml",
                     )
                 ],
                 remappings=[
-                    #("/odometry/filtered","/odometry/filtered_twist"),
-                    #("/odometry/filtered","/odometry/filtered_map"),
-                    #("/imu","/imu/data"),
+                    ("/imu","/imu/data"),
+                    ("/odometry/filtered","/odometry/filtered_map"),
                     ("/gps/fix","/gps/data")
                 ]
             )
