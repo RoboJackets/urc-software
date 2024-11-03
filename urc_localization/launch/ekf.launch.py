@@ -23,16 +23,16 @@ def generate_launch_description():
                     )
                 ],
                 remappings=[
-                    ("gps/fix", "/gps/data"),
+                    ("/gps/data", "/odometry/gps"),
                     ("/imu", "/imu/data"),
-                    ("/odometry/filtered","/odometry/filtered/map")
+                    #("/odometry/filtered","/odometry/filtered_map")
                 ],
             )
     
     ekf_odom = launch_ros.actions.Node(
                 package="robot_localization",
                 executable="ekf_node",
-                name="ekf_filter_node_odoom",
+                name="ekf_filter_node_odom",
                 output="screen",
                 parameters=[
                     os.path.join(
@@ -44,7 +44,7 @@ def generate_launch_description():
                 remappings=[
                     ("gps/fix", "/gps/data"),
                     ("/imu", "/imu/data"),
-                    ("/odometry/filtered","odometry/filtered/twist")
+                    #("/odometry/filtered","odometry/filtered_twist")
                 ],
             )
 
@@ -60,6 +60,12 @@ def generate_launch_description():
                         "ekf.yaml",
                     )
                 ],
+                remappings=[
+                    #("/odometry/filtered","/odometry/filtered_twist"),
+                    #("/odometry/filtered","/odometry/filtered_map"),
+                    #("/imu","/imu/data"),
+                    ("/gps/fix","/gps/data")
+                ]
             )
     
     return LaunchDescription(
