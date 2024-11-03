@@ -21,10 +21,13 @@ def generate_launch_description():
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_test = get_package_share_directory("urc_test")
+    pkg_urc_platform = get_package_share_directory("urc_platform")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
+    twist_mux_config = os.path.join(pkg_urc_platform, "config", "twist_mux.yaml")
+
     # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
@@ -117,6 +120,15 @@ def generate_launch_description():
         )
     )
 
+    twist_mux_node = Node(
+        package="twist_mux",
+        executable="twist_mux",
+        name="twist_mux",
+        output="screen",
+        parameters=[twist_mux_config],
+        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
+    )
+
     # ekf_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
     #         [FindPackageShare("urc_localization"),
@@ -193,7 +205,7 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_drivetrain_controller,
-                    on_exit=[elevation_mapping_node],
+                    on_exit=[elevation_mapping_node, twist_mux_node],
                 )
             ),
             RegisterEventHandler(
