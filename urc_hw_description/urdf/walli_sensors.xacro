@@ -139,7 +139,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <cylinder radius="0.0508" length="0.055" />
+        <cylinder radius="0.05" length="0.0985" />
       </geometry>
     </visual>
   </link>
@@ -152,7 +152,7 @@
   <gazebo reference="lidar_link">
     <sensor name="lidar" type="ray">
       <always_on>true</always_on>
-      <visualize>true</visualize>
+      <visualize>false</visualize>
       <update_rate>5</update_rate>
       <ray>
         <scan>
