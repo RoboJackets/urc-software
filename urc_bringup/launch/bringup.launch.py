@@ -27,10 +27,12 @@ def generate_launch_description():
     pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
         "nmea_navsat_driver"
     )
+    pkg_urc_platform = get_package_share_directory("urc_platform")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
     )
+    twist_mux_config = os.path.join(pkg_urc_platform, "config", "twist_mux.yaml")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
@@ -125,10 +127,13 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
-    twist_mux = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("twist_mux"), "/launch/twist_mux_launch.py"]
-        )
+    twist_mux_node = Node(
+        package="twist_mux",
+        executable="twist_mux",
+        name="twist_mux",
+        output="screen",
+        parameters=[twist_mux_config],
+        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
     odom_frame_node = Node(
@@ -152,13 +157,13 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_status_light_controller,
+            twist_mux_node,
             # load_arm_controller,
             # load_gripper_controller_left,
             # load_gripper_controller_right,
             teleop_launch,
             launch_gps,
             rosbridge_server_node,
-            twist_mux,
             odom_frame_node
         ]
     )
