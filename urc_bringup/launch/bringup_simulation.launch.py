@@ -129,12 +129,6 @@ def generate_launch_description():
         remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
-    zero_cmd_vel_node = Node(
-        package="urc_platform",
-        executable="urc_platform_ZeroCmdVelNode",
-        output="screen",
-    )
-
     # ekf_launch = IncludeLaunchDescription(
     #     PythonLaunchDescriptionSource(
     #         [FindPackageShare("urc_localization"),
@@ -224,7 +218,6 @@ def generate_launch_description():
                     ],
                 )
             ),
-            zero_cmd_vel_node,
             enable_color,
             gazebo,
             load_robot_state_publisher,
