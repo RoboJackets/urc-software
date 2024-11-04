@@ -9,7 +9,6 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosbridge_server REQUIRED)
-find_package(twist_mux REQUIRED)
 
 include_directories(
   include
@@ -24,7 +23,6 @@ set(dependencies
   rclcpp
   rclcpp_components
   std_msgs
-  twist_mux
   rosbridge_server
 )
 

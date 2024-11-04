@@ -1,24 +1,21 @@
 twist_mux:
   ros__parameters:
     topics:
-      input1:
-        name: autonomous_navigation
+      autonomous_navigation:
         topic: /cmd_vel_autonomous
-        timeout: 0.0
+        timeout: 10.0
         priority: 1
-      input2:
-        name: teleoperation
+      teleoperation:
         topic: /cmd_vel_teleop
-        timeout: 0.0
+        timeout: 0.5
         priority: 3
 
     locks:
+      autonomous_navigation:
+        topic: /autonomous_disabled
+        timeout: 0.0
+        priority: 2
       e_stop:
         topic: /e_stop
         timeout: 0.0
         priority: 255
-
-      teleoperation:
-        topic: /teleop_enabled
-        timeout: 0.0
-        priority: 2

@@ -21,3 +21,7 @@
 	path = external/articubot_one
 	url = https://github.com/joshnewans/articubot_one.git
 	branch = humble
+[submodule "external/twist_mux"]
+	path = external/twist_mux
+	url = git@github.com:mrinalTheCoder/twist_mux.git
+	branch = humble

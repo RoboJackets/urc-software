@@ -4,7 +4,7 @@ namespace zero_cmd_vel_node {
 
 ZeroCmdVelNode::ZeroCmdVelNode(const rclcpp::NodeOptions &options)
     : rclcpp::Node("zero_cmd_vel_node", options) {
-  declare_parameter("zero_cmd_vel_topic", "/zero_cmd_vel");
+  declare_parameter("zero_cmd_vel_topic", "/cmd_vel_zero");
   drivetrain_cmd_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
       get_parameter("zero_cmd_vel_topic").as_string(),
       rclcpp::SystemDefaultsQoS());
