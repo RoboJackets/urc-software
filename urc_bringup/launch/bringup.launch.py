@@ -43,15 +43,15 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
-    gps_config = os.path.join(get_package_share_directory("urc_bringup"),
-                              "config", "nmea_serial_driver.yaml")
+    gps_config = os.path.join(
+        get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
+    )
 
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir,
-                    {"robot_description": robot_desc}],
-        output="both"
+        parameters=[controller_config_file_dir, {"robot_description": robot_desc}],
+        output="both",
     )
 
     load_robot_state_publisher = Node(
@@ -100,6 +100,12 @@ def generate_launch_description():
     #     arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
     # )
 
+    twist_mux_node = Node(
+        package="urc_platform",
+        executable="urc_platform_TwistMux",
+        name="twist_mux",
+    )
+
     teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
@@ -115,10 +121,11 @@ def generate_launch_description():
     )
 
     launch_gps = Node(
-        package='nmea_navsat_driver',
-        executable='nmea_serial_driver',
-        output='screen',
-        parameters=[gps_config])
+        package="nmea_navsat_driver",
+        executable="nmea_serial_driver",
+        output="screen",
+        parameters=[gps_config],
+    )
 
     rosbridge_server_node = Node(
         package="rosbridge_server",
@@ -164,6 +171,6 @@ def generate_launch_description():
             teleop_launch,
             launch_gps,
             rosbridge_server_node,
-            odom_frame_node
+            odom_frame_node,
         ]
     )
