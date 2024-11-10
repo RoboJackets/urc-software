@@ -30,8 +30,6 @@ def generate_launch_description():
     pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
 
     pkg_vectornav = get_package_share_directory("vectornav")
-    
-    
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -41,7 +39,8 @@ def generate_launch_description():
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
+    + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "false"}
     )
@@ -70,7 +69,7 @@ def generate_launch_description():
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"]
     )
 
     load_drivetrain_controller = Node(
@@ -82,33 +81,13 @@ def generate_launch_description():
     load_status_light_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "status_light_controller"],
+        arguments=["-p", controller_config_file_dir, "status_light_controller"]
     )
-
 
     imu_parser_node = Node(
         package="urc_platform",
         executable="urc_platform_IMUParser"
     )
-
-
-    # load_arm_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
-    # )
-
-    # load_gripper_controller_left = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
-    # )
-
-    # load_gripper_controller_right = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
-    # )
 
     teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -119,7 +98,8 @@ def generate_launch_description():
     launch_gps = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py"
+                pkg_nmea_navsat_driver,
+                "launch", "nmea_serial_driver.launch.py"
             )
         )
     )
@@ -132,7 +112,8 @@ def generate_launch_description():
 
     launch_imu = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_imu_driver, "launch", "imu_serial_driver.launch.py")
+            os.path.join(pkg_imu_driver,
+                         "launch", "imu_serial_driver.launch.py")
         )
     )
 
@@ -151,7 +132,8 @@ def generate_launch_description():
     )
 
     odom_frame_node = Node(
-        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
+        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster",
+        output="screen"
     )
 
     return LaunchDescription(
@@ -171,9 +153,6 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_status_light_controller,
-            # load_arm_controller,
-            # load_gripper_controller_left,
-            # load_gripper_controller_right,
             teleop_launch,
             launch_gps,
             launch_imu,
