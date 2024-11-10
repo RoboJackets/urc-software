@@ -25,7 +25,7 @@ ekf_filter_node_odom:
     imu_remove_gravitational_acceleration: true
     
     use_control: false
-    process_noise_covariance: [1e-6,1e-6,1e-3,1e-6,1e-6,0.01,0.5,0.5,0.1,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6]
+    process_noise_covariance: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4e-8,4e-8,4e-8,0.00028900000000000003,0.00028900000000000003,0.00028900000000000003]
     initial_estimate_covariance: [1e-6,1e-6,1e-9,1e-6,1e-6,1e-9,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6]
 
 ekf_filter_node_map:
@@ -78,7 +78,7 @@ ekf_filter_node_map:
     imu_remove_gravitational_acceleration: true
 
     use_control: false
-    process_noise_covariance: [1e-6,1e-6,1e-3,1e-6,1e-6,0.01,0.5,0.5,0.1,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6]
+    process_noise_covariance: [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,4e-8,4e-8,4e-8,0.00028900000000000003,0.00028900000000000003,0.00028900000000000003]
     initial_estimate_covariance: [1e-6,1e-6,1e-9,1e-6,1e-6,1e-9,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6,1e-6]
 
 
@@ -87,8 +87,6 @@ navsat_transform:
     ros__parameters:
         # Frequency of the main run loop
         frequency: 30.0
-
-        imu0: "/imu/data"
         # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
         delay: 3.0
         magnetic_declination_radians: 0.0
