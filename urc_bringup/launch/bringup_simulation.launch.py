@@ -121,12 +121,9 @@ def generate_launch_description():
     )
 
     twist_mux_node = Node(
-        package="twist_mux",
-        executable="twist_mux",
+        package="urc_platform",
+        executable="urc_platform_TwistMux",
         name="twist_mux",
-        output="screen",
-        parameters=[twist_mux_config],
-        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
     # ekf_launch = IncludeLaunchDescription(
