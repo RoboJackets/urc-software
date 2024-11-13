@@ -1,0 +1,3 @@
+arm_mj_sim:
+  ros__parameters:
+    model_dir: "/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/urc_arm_models/urdf/walli_arm_v2_block_mjcf/walli_arm_v2_block.xml"

@@ -20,7 +20,11 @@ controller_config_file_dir = os.path.join(
 
 def generate_launch_description():
     # mujoco simulator
-    mjsim = Node(package="urc_arm_py", executable="arm_sim_mj")
+    mjsim = Node(
+        package="urc_arm_py",
+        executable="arm_sim_mj",
+        parameters=[controller_config_file_dir],
+    )
 
     control_node = Node(
         package="controller_manager",

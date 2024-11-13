@@ -10,10 +10,11 @@ class MjSimNode(Node):
     def __init__(self):
         super().__init__("arm_mj_sim")
 
+        self.declare_parameter("model_dir", "")
+        model_dir = self.get_parameter("model_dir").get_parameter_value().string_value
+        self.get_logger().warn(f"Loading model from: {model_dir}")
         # Load the MuJoCo model
-        self.model = mujoco.MjModel.from_xml_path(
-            "/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/urc_arm_models/urdf/walli_arm_v2_block_mjcf/walli_arm_v2_block.xml"
-        )
+        self.model = mujoco.MjModel.from_xml_path(model_dir)
         self.data = mujoco.MjData(self.model)
 
         # Initialize GLFW
