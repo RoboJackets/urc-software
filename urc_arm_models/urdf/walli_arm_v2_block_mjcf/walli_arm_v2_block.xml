@@ -1,0 +1,85 @@
+<mujoco model="walli_arm_v2_block">
+  <compiler angle="radian" />
+
+  <asset>
+    <mesh name="spine_collision" file="spine_collision.stl" />
+    <mesh name="base_rotator_collision" file="base_rotator_collision.stl" />
+    <mesh name="upper_arm_collision" file="upper_arm_collision.stl" />
+    <mesh name="fore_arm_collision" file="fore_arm_collision.stl" />
+    <mesh name="ee_rotary_collision" file="ee_rotary_collision.stl" />
+    <mesh name="ee_rod_collision" file="ee_rod_collision.stl" />
+
+    <!-- Checkerboard Texture and Material for Ground Plane -->
+    <texture name="ground_texture" type="2d" builtin="checker" width="512" height="512"
+      rgb1="0.2 0.2 0.2" rgb2="0.8 0.8 0.8" />
+    <material name="ground_material" texture="ground_texture" texrepeat="10 10" reflectance="0.3" />
+  </asset>
+
+  <worldbody>
+    <!-- Ground Plane with Checkerboard Pattern -->
+    <geom name="ground" type="plane" pos="0 0 0" size="10 10 0.1" material="ground_material"
+      rgba="1 1 1 1" />
+
+    <!-- Lighting -->
+    <light name="main_light" pos="0 0 5" dir="0 0 -1" diffuse="1 1 1" specular="0.1 0.1 0.1"
+      directional="true" castshadow="true" />
+    <light name="fill_light" pos="0 -5 5" dir="0 1 -1" diffuse="0.6 0.6 0.6"
+      specular="0.05 0.05 0.05" directional="true" />
+
+    <!-- Robot Structure -->
+    <geom type="mesh" rgba="0.615686 0.811765 0.929412 1" mesh="spine_collision" />
+    <body name="base_rotator" pos="8.27839e-07 -1.10998e-07 0.5"
+      quat="0 -1 -7.24506e-08 -1.60237e-07">
+      <inertial pos="-9.98997e-07 -0.00296095 -0.0350996"
+        quat="0.673904 -0.0875256 0.0923609 0.727779" mass="0.226675"
+        diaginertia="0.000137219 0.000133678 6.96195e-05" />
+      <joint name="base_yaw_joint" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"
+        frictionloss="0.05" />
+      <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="base_rotator_collision" />
+
+      <body name="upper_arm" pos="-5.34451e-07 -0.0254 -0.0554"
+        quat="0.707107 -0.707107 1.76034e-08 -9.6108e-08">
+        <inertial pos="-0.256892 -0.000276099 -0.0246228" quat="0.507352 0.493162 0.506727 0.492557"
+          mass="1.72635" diaginertia="0.0424748 0.042462 0.000557886" />
+        <joint name="upper_arm_joint" pos="0 0 0" axis="0 0 1" range="-3.83972 1.22173"
+          frictionloss="0.05" />
+        <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="upper_arm_collision" />
+
+        <body name="fore_arm" pos="-0.5108 1.11022e-07 1.00614e-07"
+          quat="0 1 3.33067e-07 -3.50654e-07">
+          <inertial pos="-0.23543 0 -0.024986" quat="0.411169 0.574597 0.409192 0.577357"
+            mass="1.62113" diaginertia="0.0340428 0.0340406 0.000524687" />
+          <joint name="fore_arm_joint" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"
+            frictionloss="0.05" />
+          <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="fore_arm_collision" />
+
+          <body name="ee_rotary" pos="-0.4854 2.66454e-07 -0.0254" quat="0 -0.707107 0 -0.707107">
+            <inertial pos="1.66594e-09 -4.30298e-09 -0.0122305" quat="0.5 0.5 0.5 0.5"
+              mass="0.0153135" diaginertia="2e-06 1.3e-06 1e-06" />
+            <joint name="ee_roll_joint" pos="0 0 0" axis="0 0 1" frictionloss="0.05" />
+            <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="ee_rotary_collision" />
+
+            <body name="ee_rod" pos="-0.005 -1.11022e-07 -0.0225"
+              quat="0.707107 4.30994e-08 -0.707107 4.30994e-08">
+              <inertial pos="-0.197918 0.00145644 -0.005"
+                quat="-0.00787732 0.707032 -0.00793779 0.707093" mass="0.150461"
+                diaginertia="0.00211985 0.00211453 7.81927e-06" />
+              <joint name="ee_pitch_joint" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708"
+                frictionloss="0.05" />
+              <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="ee_rod_collision" />
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- Actuators for each joint -->
+  <actuator>
+    <motor name="base_yaw_motor" joint="base_yaw_joint" ctrlrange="-10 10" gear="1" />
+    <motor name="upper_arm_motor" joint="upper_arm_joint" ctrlrange="-10 10" gear="1" />
+    <motor name="fore_arm_motor" joint="fore_arm_joint" ctrlrange="-10 10" gear="1" />
+    <motor name="ee_roll_motor" joint="ee_roll_joint" ctrlrange="-10 10" gear="1" />
+    <motor name="ee_pitch_motor" joint="ee_pitch_joint" ctrlrange="-10 10" gear="1" />
+  </actuator>
+</mujoco>

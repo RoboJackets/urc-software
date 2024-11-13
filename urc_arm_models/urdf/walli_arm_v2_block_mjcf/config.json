@@ -1,0 +1,10 @@
+{
+    "robotName": "walli_arm_v2_block",
+    "documentId": "e8a82d08862cc1d66b265cd2",
+    "outputFormat": "urdf",
+    "jointMaxEffort": 60,
+    "jointMaxVelocity": 20,
+    "mergeSTLs": "all",
+    "simplifySTLs" : "all",
+    "packageName": "urc_arm_models/urdf/walli_arm_v2_block"
+}

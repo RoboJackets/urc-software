@@ -8,7 +8,11 @@
       <hardware>
         <!-- By default, set up controllers for simulation. This won't work on real hardware -->
         <!-- <plugin>mock_components/GenericSystem</plugin> -->
-        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        <plugin>topic_based_ros2_control/TopicBasedSystem</plugin>
+        <param name="joint_commands_topic">/arm_joint_commands</param>
+        <param name="joint_states_topic">/arm_joint_states</param>
+        <param name="sum_wrapped_joint_states">true</param>
+        <!-- <plugin>gazebo_ros2_control/GazeboSystem</plugin> -->
       </hardware>
       <joint name="base_yaw_joint">
         <command_interface name="position" />

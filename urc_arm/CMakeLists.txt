@@ -56,7 +56,7 @@ rclcpp_components_register_node(
 
 # Install launch files.
 install(
-  DIRECTORY launch
+  DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -67,14 +67,6 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
-
-# # Install Python modules
-# ament_python_install_package(${PROJECT_NAME})
-# # Install Python executables
-# install(PROGRAMS
-#   scripts/armjoy.py
-#   DESTINATION lib/${PROJECT_NAME}
-# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

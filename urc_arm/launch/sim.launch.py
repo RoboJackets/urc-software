@@ -88,7 +88,7 @@ def generate_launch_description():
             # ),
             robot_state_publisher_launch,
             # movegroup_launch,
-            gazebo,
-            spawn_robot,
+            # gazebo,
+            # spawn_robot,
         ]
     )

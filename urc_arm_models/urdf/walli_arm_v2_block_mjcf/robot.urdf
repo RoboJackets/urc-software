@@ -1,0 +1,222 @@
+<robot name="walli_arm_v2_block">
+  <link name="spine">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="spine_visual.stl" />
+      </geometry>
+      <material name="spine_material">
+        <color rgba="0.61568627450980395466 0.81176470588235294379 0.92941176470588238168 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="spine_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-1.330888273577617195e-7 -5.5486658295274850429e-7 0.24999999999999997224"
+        rpy="0 0 0" />
+      <mass value="1.6214639331119933274" />
+      <inertia ixx="0.034042024524271491392" ixy="0" ixz="0" iyy="0.034042024524271463637"
+        iyz="5.5529950765765466971e-7" izz="0.00052305183554326659112" />
+    </inertial>
+  </link>
+
+  <link name="base_rotator">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="base_rotator_visual.stl" />
+      </geometry>
+      <material name="base_rotator_material">
+        <color rgba="0.64705882352941179736 0.64705882352941179736 0.64705882352941179736 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="base_rotator_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-9.9899738559926605748e-7 -0.0029609471937182443683 -0.035099557125059188678"
+        rpy="0 0 0" />
+      <mass value="0.22667490716698604492" />
+      <inertia ixx="0.00013369789091196960878" ixy="-2.1387000637817082066e-7"
+        ixz="2.4875525770932625011e-7" iyy="0.00013289289864452238986"
+        iyz="-1.6505592785310325315e-05" izz="7.3925783821373577996e-05" />
+    </inertial>
+  </link>
+
+  <link name="upper_arm">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="upper_arm_visual.stl" />
+      </geometry>
+      <material name="upper_arm_material">
+        <color rgba="0.2313725490196078538 0.38039215686274507888 0.7058823529411765163 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="upper_arm_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.25689153967076888696 -0.00027609927457239447079 -0.024622788442265588355"
+        rpy="0 0 0" />
+      <mass value="1.7263516600886652519" />
+      <inertia ixx="0.00055794942568172616309" ixy="5.1576587736523914142e-05"
+        ixz="-1.5480980676617979869e-06" iyy="0.042474690467664659443"
+        iyz="-3.5931774854711848681e-07" izz="0.042462031054011709075" />
+    </inertial>
+  </link>
+
+  <link name="fore_arm">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="fore_arm_visual.stl" />
+      </geometry>
+      <material name="fore_arm_material">
+        <color rgba="0.91764705882352937127 0.91764705882352937127 0.91764705882352937127 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="fore_arm_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.23542985086179346599 0 -0.024985985812430180908" rpy="0 0 0" />
+      <mass value="1.6211338896432998524" />
+      <inertia ixx="0.00052545979360403528239" ixy="4.3953937265002133034e-7"
+        ixz="-0.00016089452036475483405" iyy="0.034042572926454593707"
+        iyz="6.8690227468871433261e-7" izz="0.034040058502971697052" />
+    </inertial>
+  </link>
+
+  <link name="ee_rotary">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="ee_rotary_visual.stl" />
+      </geometry>
+      <material name="ee_rotary_material">
+        <color rgba="0.76862745098039220171 0.88627450980392152857 0.95294117647058818044 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="ee_rotary_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="1.6659429256252546994e-09 -4.302978640069454741e-09 -0.01223053512568728074"
+        rpy="0 0 0" />
+      <mass value="0.015313520957102715395" />
+      <inertia ixx="1.0e-06" ixy="0.0e-7"
+        ixz="0.0e-7" iyy="2.0e-06"
+        iyz="0.0e-7" izz="1.3e-06" />
+    </inertial>
+  </link>
+
+  <link name="ee_rod">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="ee_rod_visual.stl" />
+      </geometry>
+      <material name="ee_rod_material">
+        <color rgba="0.76862745098039220171 0.88627450980392152857 0.95294117647058829146 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -0 0" />
+      <geometry>
+        <mesh filename="ee_rod_collision.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="-0.19791750955863873784 0.0014564392373894730071 -0.0050000000000000001041"
+        rpy="0 0 0" />
+      <mass value="0.15046122663868877201" />
+      <inertia ixx="7.8189932130317085324e-06" ixy="1.8148134513505674458e-7"
+        ixz="-1.778843404383153901e-7" iyy="0.0021145294059918199985"
+        iyz="-1.1886571152007033413e-7" izz="0.0021198407120942065231" />
+    </inertial>
+  </link>
+
+  <link name="ee">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1e-9" />
+      <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0" />
+    </inertial>
+  </link>
+  <joint name="ee_frame" type="fixed">
+    <origin xyz="1.0191999999999998838 -0.55394356076261075383 -0.0050000000000001111264"
+      rpy="-1.570796326794896558 8.3605634952174458232e-7 -1.2325951644084604355e-7" />
+    <parent link="ee_rod" />
+    <child link="ee" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <joint name="ee_pitch_joint" type="revolute">
+    <origin xyz="-0.0049999999999999940326 -1.1102230246251565404e-7 -0.022499999999999409361"
+      rpy="1.2190357131458368901e-7 -1.570796326794896336 0" />
+    <parent link="ee_rotary" />
+    <child link="ee_rod" />
+    <axis xyz="0 0 1" />
+    <limit effort="60" velocity="20" lower="-1.570796326794896558" upper="1.570796326794896558" />
+    <joint_properties friction="0.0" />
+  </joint>
+
+  <joint name="ee_roll_jont" type="revolute">
+    <origin xyz="-0.48539999999999505764 2.664535259100375697e-7 -0.025399999999999842842"
+      rpy="-3.141592653589793116 -1.5707963267948961139 0" />
+    <parent link="fore_arm" />
+    <child link="ee_rotary" />
+    <axis xyz="0 0 1" />
+    <limit effort="60" velocity="20" />
+    <joint_properties friction="0.0" />
+  </joint>
+
+  <joint name="fore_arm_joint" type="revolute">
+    <origin xyz="-0.51080000000000091998 1.1102230246251565404e-7 1.0061396160665481148e-7"
+      rpy="3.1415926535897926719 7.0130752066470031592e-7 6.6613381477508840223e-7" />
+    <parent link="upper_arm" />
+    <child link="fore_arm" />
+    <axis xyz="0 0 1" />
+    <limit effort="60" velocity="20" lower="-3.141592653589793116" upper="3.141592653589793116" />
+    <joint_properties friction="0.0" />
+  </joint>
+
+  <joint name="upper_arm_joint" type="revolute">
+    <origin xyz="-5.3445147205013017124e-7 -0.02539999999999998162 -0.055399999999999671729"
+      rpy="-1.570796326794896336 -1.1102230246251629499e-7 -1.6081226496766935464e-7" />
+    <parent link="base_rotator" />
+    <child link="upper_arm" />
+    <axis xyz="0 0 1" />
+    <limit effort="60" velocity="20" lower="-3.8397243543875250182" upper="1.2217304763960306069" />
+    <joint_properties friction="0.0" />
+  </joint>
+
+  <joint name="base_yaw_joint" type="revolute">
+    <origin xyz="8.2783883572361213404e-7 -1.1099780952653262815e-7 0.49999999999999994449"
+      rpy="-3.1415926535897922278 -3.2047474274603604595e-7 1.4490111207388140385e-7" />
+    <parent link="spine" />
+    <child link="base_rotator" />
+    <axis xyz="0 0 1" />
+    <limit effort="60" velocity="20" lower="-3.141592653589793116" upper="3.141592653589793116" />
+    <joint_properties friction="0.0" />
+  </joint>
+
+
+</robot>

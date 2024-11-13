@@ -1,0 +1,17 @@
+arm_qp_control_parameters:
+  robot_config:
+    end_effector_frame_name:
+      type: string
+      default_value: "ee"
+      description: "end effector name."
+
+  control_config:
+    rate_hz:
+      type: int
+      default_value: 120
+      description: "Control frequency. Default to 120Hz."
+
+    enable_manipulability_constraint:
+      type: bool
+      default_value: false
+      description: "Whether use manipulability constraint on kinmatics solver."
