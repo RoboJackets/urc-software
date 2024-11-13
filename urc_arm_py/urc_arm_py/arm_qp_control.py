@@ -16,6 +16,7 @@ class ArmQPController(Node):
         self.initialized = False
         self.control_activated = False
 
+        self.param_listener = arm_qp_control_parameters.ParamListener(self)
         latching_qos = rclpy.qos.QoSProfile(
             depth=1,
             durability=rclpy.qos.QoSDurabilityPolicy.TRANSIENT_LOCAL,
@@ -26,7 +27,12 @@ class ArmQPController(Node):
         )
         self.previous_feedback_time = self.get_clock().now()
 
-        self.pos_ctrl_pub = self.create_publisher(Float64MultiArray, "~/pos_ctrl", 10)
+        print(self.param_listener.get_params().control_config.control_topic)
+        self.pos_ctrl_pub = self.create_publisher(
+            Float64MultiArray,
+            self.param_listener.get_params().control_config.control_topic,
+            10,
+        )
         self.pos_ctrl_command = Float64MultiArray()
 
         self.robot_description_sub = self.create_subscription(
@@ -56,7 +62,6 @@ class ArmQPController(Node):
 
         # invalidate the subscription
         self.robot_description_sub = None
-        self.param_listener = arm_qp_control_parameters.ParamListener(self)
 
         # setup tasks
         self.setup_tasks()
@@ -67,10 +72,12 @@ class ArmQPController(Node):
             1.0 / self.param_listener.get_params().control_config.rate_hz,
             self.control_loop,
         )
+        self.robot_description_sub = None
 
     def setup_tasks(self):
         self.solver = placo.KinematicsSolver(self.robot)
         self.solver.mask_fbase(True)
+        self.solver.dt = 1.0 / self.param_listener.get_params().control_config.rate_hz
 
         param = self.param_listener.get_params()
         self.ee_name = param.robot_config.end_effector_frame_name
@@ -92,6 +99,9 @@ class ArmQPController(Node):
         self.control_activated = True
         response.success = True
         self.se3_ee_target = self.robot.get_T_world_frame(self.ee_name)
+        self.se3_ee_target[0][3] = 0.5
+        self.se3_ee_target[1][3] = 0.5
+        self.se3_ee_target[2][3] = 0.5
         self.get_logger().info("Activated control!")
         return response
 

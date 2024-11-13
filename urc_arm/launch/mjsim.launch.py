@@ -25,7 +25,6 @@ def generate_launch_description():
         executable="arm_sim_mj",
         parameters=[controller_config_file_dir],
     )
-
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -46,18 +45,19 @@ def generate_launch_description():
         ],
         remappings=[("/joint_states", "/arm_joint_states")],
     )
-
-    # spawn_controller = IncludeLaunchDescription(
-    #     # PythonLaunchDescriptionSource(
-    #     #     str(moveit_config.package_path / "launch/spawn_controllers.launch.py")
-    #     # ),
-    # )
+    spawn_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["arm_position_controller"],
+        output="screen",
+    )
+    qp_controller = Node(
+        package="urc_arm_py",
+        executable="arm_qp_control",
+        parameters=[controller_config_file_dir],
+        output="screen",
+    )
 
     return LaunchDescription(
-        [
-            rsp_node,
-            control_node,
-            mjsim,
-            # spawn_controller,
-        ]
+        [rsp_node, control_node, mjsim, spawn_controller, qp_controller]
     )

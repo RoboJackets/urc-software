@@ -1,3 +1,27 @@
 arm_mj_sim:
   ros__parameters:
     model_dir: "/home/keseterg/Documents/RoboJackets/urc_ws/src/urc-software/urc_arm_models/urdf/walli_arm_v2_block_mjcf/walli_arm_v2_block.xml"
+
+arm_qp_controller:
+  ros__parameters:
+    control_config:
+      control_topic: arm_position_controller/commands
+
+controller_manager:
+  ros__parameters:
+    update_rate: 300 # Hz
+
+    arm_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+arm_position_controller:
+  ros__parameters:
+    joints:
+      - base_yaw_joint
+      - upper_arm_joint
+      - fore_arm_joint
+      - ee_roll_jont
+      - ee_pitch_joint

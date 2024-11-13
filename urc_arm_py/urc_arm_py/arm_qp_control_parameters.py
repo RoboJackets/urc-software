@@ -10,6 +10,7 @@ from rclpy.exceptions import InvalidParameterValueException
 from rclpy.time import Time
 import copy
 import rclpy
+import rclpy.parameter
 from generate_parameter_library_py.python_validators import ParameterValidators
 
 
@@ -24,6 +25,7 @@ class arm_qp_control_parameters:
             end_effector_frame_name = "ee"
         robot_config = __RobotConfig()
         class __ControlConfig:
+            control_topic = "~/pos_ctrl"
             rate_hz = 120
             enable_manipulability_constraint = False
         control_config = __ControlConfig()
@@ -53,6 +55,31 @@ class arm_qp_control_parameters:
         def is_old(self, other_param):
             return self.params_.stamp_ != other_param.stamp_
 
+        def unpack_parameter_dict(self, namespace: str, parameter_dict: dict):
+            """
+            Flatten a parameter dictionary recursively.
+
+            :param namespace: The namespace to prepend to the parameter names.
+            :param parameter_dict: A dictionary of parameters keyed by the parameter names
+            :return: A list of rclpy Parameter objects
+            """
+            parameters = []
+            for param_name, param_value in parameter_dict.items():
+                full_param_name = namespace + param_name
+                # Unroll nested parameters
+                if isinstance(param_value, dict):
+                    nested_params = self.unpack_parameter_dict(
+                            namespace=full_param_name + rclpy.parameter.PARAMETER_SEPARATOR_STRING,
+                            parameter_dict=param_value)
+                    parameters.extend(nested_params)
+                else:
+                    parameters.append(rclpy.parameter.Parameter(full_param_name, value=param_value))
+            return parameters
+
+        def set_params_from_dict(self, param_dict):
+            params_to_set = self.unpack_parameter_dict('', param_dict)
+            self.update(params_to_set)
+
         def refresh_dynamic_parameters(self):
             updated_params = self.get_params()
             # TODO remove any destroyed dynamic parameters
@@ -66,6 +93,10 @@ class arm_qp_control_parameters:
             for param in parameters:
                 if param.name == self.prefix_ + "robot_config.end_effector_frame_name":
                     updated_params.robot_config.end_effector_frame_name = param.value
+                    self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+                if param.name == self.prefix_ + "control_config.control_topic":
+                    updated_params.control_config.control_topic = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
                 if param.name == self.prefix_ + "control_config.rate_hz":
@@ -93,6 +124,11 @@ class arm_qp_control_parameters:
                 parameter = updated_params.robot_config.end_effector_frame_name
                 self.node_.declare_parameter(self.prefix_ + "robot_config.end_effector_frame_name", parameter, descriptor)
 
+            if not self.node_.has_parameter(self.prefix_ + "control_config.control_topic"):
+                descriptor = ParameterDescriptor(description="Destination of control commands from the controller.", read_only = False)
+                parameter = updated_params.control_config.control_topic
+                self.node_.declare_parameter(self.prefix_ + "control_config.control_topic", parameter, descriptor)
+
             if not self.node_.has_parameter(self.prefix_ + "control_config.rate_hz"):
                 descriptor = ParameterDescriptor(description="Control frequency. Default to 120Hz.", read_only = False)
                 parameter = updated_params.control_config.rate_hz
@@ -108,6 +144,9 @@ class arm_qp_control_parameters:
             param = self.node_.get_parameter(self.prefix_ + "robot_config.end_effector_frame_name")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.robot_config.end_effector_frame_name = param.value
+            param = self.node_.get_parameter(self.prefix_ + "control_config.control_topic")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.control_config.control_topic = param.value
             param = self.node_.get_parameter(self.prefix_ + "control_config.rate_hz")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.control_config.rate_hz = param.value

@@ -6,6 +6,10 @@ arm_qp_control_parameters:
       description: "end effector name."
 
   control_config:
+    control_topic:
+      type: string
+      default_value: "~/pos_ctrl"
+      description: "Destination of control commands from the controller."
     rate_hz:
       type: int
       default_value: 120

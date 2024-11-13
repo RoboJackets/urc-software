@@ -11,11 +11,16 @@ class MjSimNode(Node):
         super().__init__("arm_mj_sim")
 
         self.declare_parameter("model_dir", "")
+        self.declare_parameter("kp", 10.0)
+        self.declare_parameter("kd", 0)
         model_dir = self.get_parameter("model_dir").get_parameter_value().string_value
+        self.kp = self.get_parameter("kp").get_parameter_value().double_value
+        self.kd = self.get_parameter("kd").get_parameter_value().double_value
         self.get_logger().warn(f"Loading model from: {model_dir}")
         # Load the MuJoCo model
         self.model = mujoco.MjModel.from_xml_path(model_dir)
         self.data = mujoco.MjData(self.model)
+        self.joint_target_positions = np.zeros(self.model.nu)
 
         # Initialize GLFW
         if not glfw.init():
@@ -61,10 +66,29 @@ class MjSimNode(Node):
             for i in range(self.model.njnt)
         ]
 
+        # Joint command subscriber
+        self.joint_command_sub = self.create_subscription(
+            JointState, "/arm_joint_commands", self.accept_position_command, 10
+        )
+
         # Interaction state
         self.is_paused = False
         self.mouse_last_x, self.mouse_last_y = None, None
         self.mouse_left_button = False
+
+    def accept_position_command(self, msg: JointState):
+        try:
+            for idx, name in enumerate(msg.name):
+                joint_id = self.joint_names.index(name)
+                self.joint_target_positions[joint_id] = msg.position[idx]
+        except ValueError as e:
+            # self.get_logger().error(f"Invalid joint name in torque command: {e}")
+            pass
+
+    def apply_position_command(self):
+        self.data.ctrl[:] = (
+            self.joint_target_positions - self.data.qpos
+        ) * self.kp + self.data.qvel * self.kd
 
     def key_callback(self, window, key, scancode, action, mods):
         """Handle keyboard input for simulation control."""
@@ -102,6 +126,7 @@ class MjSimNode(Node):
     def mj_update(self):
         if not glfw.window_should_close(self.window) and rclpy.ok():
             if not self.is_paused:
+                self.apply_position_command()
                 mujoco.mj_step(self.model, self.data)
 
             # Get the viewport dimensions
