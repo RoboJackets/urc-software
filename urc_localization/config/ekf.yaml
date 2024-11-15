@@ -1,7 +1,7 @@
 ekf_filter_node_odom:
   ros__parameters:
     frequency: 30.0
-    sensor_timeout: 0.1
+    sensor_timeout: 5.0
     two_d_mode: false
     transform_time_offset: 0.0
     transform_timeout: 0.0
@@ -33,7 +33,7 @@ ekf_filter_node_map:
     #Frequency the filter outputs a position estimate
     frequency: 30.0
     #Period in seconds after which we consider a sensor to have timed out
-    sensor_timeout: 0.1
+    sensor_timeout: 5.0
 
     # 2D vs 3D data
     two_d_mode: false
@@ -67,7 +67,7 @@ ekf_filter_node_map:
     odom0_relative: false
 
     imu0: /imu/data
-    imu0_config: [false, false, false,
+    imu0_config: [true, true, true,
                       true,  true,  true,
                       false, false, false,
                       true,  true,  true,
@@ -88,7 +88,7 @@ navsat_transform:
         # Frequency of the main run loop
         frequency: 30.0
         # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
-        delay: 3.0
+        delay: 5.0
         magnetic_declination_radians: 0.0
         yaw_offset: 0.0
         zero_altitude: false
