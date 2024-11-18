@@ -15,6 +15,10 @@ find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL 1.10 REQUIRED)
+find_package(grid_map_core)
+find_package(grid_map_ros)
+find_package(grid_map_msgs)
+find_package(Eigen3 REQUIRED)
 
 include_directories(
   include
@@ -43,6 +47,9 @@ set(dependencies
   tf2_geometry_msgs
   nav_msgs
   pcl_conversions
+  grid_map_core
+  grid_map_ros
+  grid_map_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -53,6 +60,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "urc_perception::ElevationMapping"
   EXECUTABLE ${PROJECT_NAME}_ElevationMapping
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_perception::TraversabilityMapping"
+  EXECUTABLE ${PROJECT_NAME}_TraversabilityMapping
 )
 
 # Install launch files.
