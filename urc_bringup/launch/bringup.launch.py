@@ -39,8 +39,7 @@ def generate_launch_description():
     xacro_file = os.path.join(
         get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
     )
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in "
-    + str(xacro_file)
+    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "false"}
     )
@@ -84,11 +83,6 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "status_light_controller"]
     )
 
-    imu_parser_node = Node(
-        package="urc_platform",
-        executable="urc_platform_IMUParser"
-    )
-
     teleop_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
@@ -117,7 +111,6 @@ def generate_launch_description():
         )
     )
 
-    # change here
     launch_vectornav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
@@ -159,6 +152,5 @@ def generate_launch_description():
             rosbridge_server_node,
             odom_frame_node,
             launch_vectornav,
-            imu_parser_node
         ]
     )
