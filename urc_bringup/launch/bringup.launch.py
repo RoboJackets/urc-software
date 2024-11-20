@@ -106,12 +106,6 @@ def generate_launch_description():
         name="twist_mux",
     )
 
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
-    )
-
     launch_gps = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
@@ -168,7 +162,6 @@ def generate_launch_description():
             # load_arm_controller,
             # load_gripper_controller_left,
             # load_gripper_controller_right,
-            teleop_launch,
             launch_gps,
             rosbridge_server_node,
             odom_frame_node,
