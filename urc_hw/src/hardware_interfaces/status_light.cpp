@@ -118,11 +118,11 @@ hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifec
 
 hardware_interface::return_type StatusLight::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  RCLCPP_INFO(
-    rclcpp::get_logger(
-      hardware_interface_name), "Red: %s, Green: %s, Blue: %s", num_to_state(
-      lightStates[0]).c_str(), num_to_state(lightStates[1]).c_str(), num_to_state(
-      lightStates[2]).c_str());
+  // RCLCPP_INFO(
+  //   rclcpp::get_logger(
+  //     hardware_interface_name), "Red: %s, Green: %s, Blue: %s", num_to_state(
+  //     lightStates[0]).c_str(), num_to_state(lightStates[1]).c_str(), num_to_state(
+  //     lightStates[2]).c_str());
 
   return hardware_interface::return_type::OK;
 }
