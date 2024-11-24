@@ -22,7 +22,7 @@ ekf_filter_node_odom:
     imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
-    imu_remove_gravitational_acceleration: true
+    imu_remove_gravitational_acceleration: false
     
     use_control: false
     process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
@@ -106,7 +106,7 @@ ekf_filter_node_map:
     imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
-    imu_remove_gravitational_acceleration: true
+    imu_remove_gravitational_acceleration: false
 
     use_control: false
     process_noise_covariance: [0.05, 0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
