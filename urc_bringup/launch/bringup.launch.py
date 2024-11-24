@@ -84,11 +84,6 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "status_light_controller"]
     )
 
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
-
     twist_mux_node = Node(
         package="urc_platform",
         executable="urc_platform_TwistMux",
