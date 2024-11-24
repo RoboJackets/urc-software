@@ -27,13 +27,14 @@ def generate_launch_description():
     pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
         "nmea_navsat_driver"
     )
-    pkg_imu_driver = FindPackageShare("imu_driver").find("imu_driver")
+    pkg_urc_platform = get_package_share_directory("urc_platform")
 
     pkg_vectornav = get_package_share_directory("vectornav")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
     )
+    twist_mux_config = os.path.join(pkg_urc_platform, "config", "twist_mux.yaml")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
     xacro_file = os.path.join(
@@ -44,15 +45,15 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
-    gps_config = os.path.join(get_package_share_directory("urc_bringup"),
-                              "config", "nmea_serial_driver.yaml")
+    gps_config = os.path.join(
+        get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
+    )
 
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_config_file_dir,
-                    {"robot_description": robot_desc}],
-        output="both"
+        parameters=[controller_config_file_dir, {"robot_description": robot_desc}],
+        output="both",
     )
 
     load_robot_state_publisher = Node(
@@ -87,6 +88,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
         )
+
+    twist_mux_node = Node(
+        package="urc_platform",
+        executable="urc_platform_TwistMux",
+        name="twist_mux",
     )
 
     launch_gps = IncludeLaunchDescription(
@@ -104,13 +110,6 @@ def generate_launch_description():
         output='screen',
         parameters=[gps_config])
 
-    launch_imu = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_imu_driver,
-                         "launch", "imu_serial_driver.launch.py")
-        )
-    )
-
     launch_vectornav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
@@ -122,6 +121,15 @@ def generate_launch_description():
         name="rosbridge_server",
         executable="rosbridge_websocket.py",
         parameters=[{"port": 9090}],
+    )
+
+    twist_mux_node = Node(
+        package="twist_mux",
+        executable="twist_mux",
+        name="twist_mux",
+        output="screen",
+        parameters=[twist_mux_config],
+        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
     odom_frame_node = Node(
@@ -146,9 +154,8 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_status_light_controller,
-            teleop_launch,
+            twist_mux_node,
             launch_gps,
-            launch_imu,
             rosbridge_server_node,
             odom_frame_node,
             launch_vectornav,
