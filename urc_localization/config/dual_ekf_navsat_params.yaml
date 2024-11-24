@@ -59,7 +59,7 @@ ekf_filter_node_odom:
     imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
-    imu0_remove_gravitational_acceleration: true
+    imu0_remove_gravitational_acceleration: false
 
     use_control: false
 
@@ -183,7 +183,7 @@ ekf_filter_node_map:
     imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
-    imu0_remove_gravitational_acceleration: true
+    imu0_remove_gravitational_acceleration: false
 
     use_control: false
 
