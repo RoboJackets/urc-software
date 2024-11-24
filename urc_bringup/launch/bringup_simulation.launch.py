@@ -26,6 +26,7 @@ def generate_launch_description():
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
+
     # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
@@ -118,6 +119,19 @@ def generate_launch_description():
         )
     )
 
+    twist_mux_node = Node(
+        package="urc_platform",
+        executable="urc_platform_TwistMux",
+        name="twist_mux",
+    )
+
+    # ekf_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         [FindPackageShare("urc_localization"),
+    #          "/launch/dual_ekf_navsat.launch.py"]
+    #     )
+    # )
+
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
@@ -180,7 +194,7 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_drivetrain_controller,
-                    on_exit=[elevation_mapping_node],
+                    on_exit=[elevation_mapping_node, twist_mux_node],
                 )
             ),
             RegisterEventHandler(

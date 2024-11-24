@@ -125,7 +125,7 @@ joy_drive:
     max_linear_velocity_ms: 3.0
     max_angular_velocity_radians: 5.0
     joy_command_topic: /driver/joy
-    cmd_vel_topic: /rover_drivetrain_controller/cmd_vel
+    cmd_vel_topic: /cmd_vel_teleop
     target_axes: [1, 3]
     invert_linear_velocity: false
     invert_angular_velocity: false
