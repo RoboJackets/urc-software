@@ -88,6 +88,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
         )
+    )
 
     twist_mux_node = Node(
         package="urc_platform",
