@@ -171,10 +171,10 @@ navsat_transform:
         # Frequency of the main run loop
         frequency: 30.0
         # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
-        delay: 5.0
+        delay: 2.0
         magnetic_declination_radians: -0.06736971
         yaw_offset: 1.57079632679
-        zero_altitude: false
+        zero_altitude: true
         broadcast_utm_transform: true
         publish_filtered_gps: true
         use_odometry_yaw: true
