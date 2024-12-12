@@ -10,7 +10,7 @@ from launch.event_handlers import OnProcessStart
 
 def generate_launch_description():
     
-    ekf_map = launch_ros.actions.Node(
+    ekf_global = launch_ros.actions.Node(
                 package="robot_localization",
                 executable="ekf_node",
                 name="ekf_filter_node_map",
@@ -23,11 +23,11 @@ def generate_launch_description():
                     )
                 ],
                 remappings=[
-                    ("/odometry/filtered","/odometry/filtered_map")
+                    ("/odometry/filtered","/odometry/filtered_global")
                 ],
             )
     
-    ekf_odom = launch_ros.actions.Node(
+    ekf_local = launch_ros.actions.Node(
                 package="robot_localization",
                 executable="ekf_node",
                 name="ekf_filter_node_odom",
@@ -41,7 +41,7 @@ def generate_launch_description():
                 ],
                 remappings=[
                     
-                    ("/odometry/filtered","odometry/filtered_twist")
+                    ("/odometry/filtered","odometry/filtered_local")
                 ],
             )
 
@@ -59,22 +59,26 @@ def generate_launch_description():
                 ],
                 remappings=[
                     ("/imu","/imu/data"),
-                    ("/odometry/filtered","/odometry/filtered_twist"),
+                    ("/odometry/filtered","/odometry/filtered_global"),
                     ("/gps/fix","/gps/data")
                 ]
             )
     
     return LaunchDescription(
+        # [
+        #   RegisterEventHandler(
+        #       event_handler = OnProcessStart(
+        #             target_action = navsat,
+        #             on_start=[ekf_map,ekf_odom]
+        #       )
+        #   ),
+        #   #ekf,
+        #   navsat  
+        #     
+        # ]
         [
-          RegisterEventHandler(
-              event_handler = OnProcessStart(
-                    target_action = navsat,
-                    on_start=[ekf_map,ekf_odom]
-
-              )
-          ),
-          #ekf,
-          navsat  
-            
+            navsat,
+            ekf_local,
+            ekf_global
         ]
     )
