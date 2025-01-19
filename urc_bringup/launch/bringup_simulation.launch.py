@@ -21,7 +21,6 @@ def generate_launch_description():
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_localization = get_package_share_directory("urc_localization")
-    pkg_urc_test = get_package_share_directory("urc_test")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
