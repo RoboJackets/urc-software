@@ -125,12 +125,11 @@ def generate_launch_description():
         name="twist_mux",
     )
 
-    # ekf_launch = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         [FindPackageShare("urc_localization"),
-    #          "/launch/dual_ekf_navsat.launch.py"]
-    #     )
-    # )
+    sim_gps_handler_node = Node(
+        package="urc_platform",
+        executable="urc_platform_SimGpsHandler",
+        name="sim_gps_handler",
+    )
 
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -156,11 +155,7 @@ def generate_launch_description():
 
     ekf_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_urc_localization,
-                "launch",
-                "ekf.launch.py"
-            )
+            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
         )
     )
 
@@ -209,8 +204,9 @@ def generate_launch_description():
             ),
             enable_color,
             gazebo,
+            sim_gps_handler_node,
             load_robot_state_publisher,
             spawn_robot,
-            ekf_launch
+            ekf_launch,
         ]
     )

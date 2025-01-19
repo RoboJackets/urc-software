@@ -114,7 +114,7 @@
       <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
         <ros>
           <namespace>/gps</namespace>
-          <remapping>~/out:=data</remapping>
+          <remapping>~/out:=data_raw</remapping>
         </ros>
         <frame_name>map</frame_name>
       </plugin>
