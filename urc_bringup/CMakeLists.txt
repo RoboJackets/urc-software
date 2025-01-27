@@ -9,6 +9,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosbridge_server REQUIRED)
+find_package(ublox REQUIRED)
 
 include_directories(
   include
@@ -24,6 +25,7 @@ set(dependencies
   rclcpp_components
   std_msgs
   rosbridge_server
+  ublox
 )
 
 ament_target_dependencies(${PROJECT_NAME}

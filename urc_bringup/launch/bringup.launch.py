@@ -45,8 +45,11 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
+    # gps_config = os.path.join(
+    #     get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
+    # )
     gps_config = os.path.join(
-        get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
+        get_package_share_directory("urc_localization"), "config", "rover_gps.yaml"
     )
 
     control_node = Node(
@@ -69,7 +72,7 @@ def generate_launch_description():
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"]
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
     load_drivetrain_controller = Node(
@@ -81,7 +84,7 @@ def generate_launch_description():
     load_status_light_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "status_light_controller"]
+        arguments=["-p", controller_config_file_dir, "status_light_controller"],
     )
 
     twist_mux_node = Node(
@@ -90,20 +93,19 @@ def generate_launch_description():
         name="twist_mux",
     )
 
-    launch_gps = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_nmea_navsat_driver,
-                "launch", "nmea_serial_driver.launch.py"
-            )
-        )
-    )
-
+    # launch_gps = Node(
+    #     package="nmea_navsat_driver",
+    #     executable="nmea_serial_driver",
+    #     output="screen",
+    #     parameters=[gps_config],
+    # )
     launch_gps = Node(
-        package='nmea_navsat_driver',
-        executable='nmea_serial_driver',
-        output='screen',
-        parameters=[gps_config])
+        package="ublox_gps",
+        executable="ublox_gps_node",
+        name="ublox_gps_node_rover",
+        output="screen",
+        parameters=[gps_config, {"device": "/dev/ttyACM0"}],  # DEBUG
+    )
 
     launch_vectornav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -128,8 +130,7 @@ def generate_launch_description():
     )
 
     odom_frame_node = Node(
-        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster",
-        output="screen"
+        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
 
     return LaunchDescription(
@@ -153,6 +154,6 @@ def generate_launch_description():
             launch_gps,
             rosbridge_server_node,
             odom_frame_node,
-            launch_vectornav,
+            # launch_vectornav,
         ]
     )
