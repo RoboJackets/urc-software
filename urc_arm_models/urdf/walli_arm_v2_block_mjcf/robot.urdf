@@ -178,7 +178,7 @@
     <joint_properties friction="0.0" />
   </joint>
 
-  <joint name="ee_roll_jont" type="revolute">
+  <joint name="ee_roll_joint" type="revolute">
     <origin xyz="-0.48539999999999505764 2.664535259100375697e-7 -0.025399999999999842842"
       rpy="-3.141592653589793116 -1.5707963267948961139 0" />
     <parent link="fore_arm" />

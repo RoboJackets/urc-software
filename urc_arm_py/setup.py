@@ -17,7 +17,8 @@ setup(
     version="0.0.0",
     packages=find_packages(exclude=["test"]),
     data_files=[
-        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
+        ("share/ament_index/resource_index/packages",
+         ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
     ],
     install_requires=["setuptools"],
@@ -30,7 +31,6 @@ setup(
     entry_points={
         "console_scripts": [
             "arm_qp_control = urc_arm_py.arm_qp_control:main",
-            "arm_sim_mj = urc_arm_py.arm_sim_mj:main",
         ],
     },
 )

@@ -1,21 +1,36 @@
 arm_qp_control_parameters:
   robot_config:
+    model_path:
+      type: string
+      read_only: true
+      description: "Model path to urdf."
     end_effector_frame_name:
       type: string
       default_value: "ee"
       description: "end effector name."
 
   control_config:
-    control_topic:
-      type: string
-      default_value: "~/pos_ctrl"
-      description: "Destination of control commands from the controller."
     rate_hz:
       type: int
       default_value: 120
       description: "Control frequency. Default to 120Hz."
-
     enable_manipulability_constraint:
       type: bool
       default_value: false
       description: "Whether use manipulability constraint on kinmatics solver."
+
+  # ------- PD Controller Related Settings -------
+  joints:
+    type: string_array
+    default_value: ["default_joint"]
+    description: "Specifies which joints will be used."
+  gains:
+    __map_joints: # create a map with joints as keys
+      kp:
+        type: double
+      kd:
+        type: double
+      torque_limit:
+        type: double_array
+        validation:
+          fixed_size<>: [2]

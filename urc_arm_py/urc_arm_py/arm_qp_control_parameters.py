@@ -21,14 +21,28 @@ class arm_qp_control_parameters:
         # for detecting if the parameter struct has been updated
         stamp_ = Time()
 
+        joints = ["default_joint"]
         class __RobotConfig:
+            model_path = None
             end_effector_frame_name = "ee"
         robot_config = __RobotConfig()
         class __ControlConfig:
-            control_topic = "~/pos_ctrl"
             rate_hz = 120
             enable_manipulability_constraint = False
         control_config = __ControlConfig()
+        class __Gains:
+            class __MapJoints:
+                kp = None
+                kd = None
+                torque_limit = None
+            __map_type = __MapJoints
+            def add_entry(self, name):
+                if not hasattr(self, name):
+                    setattr(self, name, self.__map_type())
+                return getattr(self, name)
+            def get_entry(self, name):
+                return getattr(self, name)
+        gains = __Gains()
 
 
 
@@ -86,17 +100,58 @@ class arm_qp_control_parameters:
 
             # declare any new dynamic parameters
 
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.kp"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                entry.kp = param.value
+
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.kd"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                entry.kd = param.value
+
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.torque_limit"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE_ARRAY
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                validation_result = ParameterValidators.fixed_size(param, 2)
+                if validation_result:
+                    raise InvalidParameterValueException('gains.__map_joints.torque_limit',param.value, 'Invalid value set during initialization for parameter gains.__map_joints.torque_limit: ' + validation_result)
+                entry.torque_limit = param.value
 
         def update(self, parameters):
             updated_params = self.get_params()
 
             for param in parameters:
-                if param.name == self.prefix_ + "robot_config.end_effector_frame_name":
-                    updated_params.robot_config.end_effector_frame_name = param.value
+                if param.name == self.prefix_ + "robot_config.model_path":
+                    updated_params.robot_config.model_path = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                if param.name == self.prefix_ + "control_config.control_topic":
-                    updated_params.control_config.control_topic = param.value
+                if param.name == self.prefix_ + "robot_config.end_effector_frame_name":
+                    updated_params.robot_config.end_effector_frame_name = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
                 if param.name == self.prefix_ + "control_config.rate_hz":
@@ -107,6 +162,42 @@ class arm_qp_control_parameters:
                     updated_params.control_config.enable_manipulability_constraint = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
+                if param.name == self.prefix_ + "joints":
+                    updated_params.joints = param.value
+                    self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+
+            # update dynamic parameters
+            for param in parameters:
+
+                    for value_1 in updated_params.joints:
+
+                        param_name = f"{self.prefix_}gains.{value_1}.kp"
+                        if param.name == param_name:
+
+                            updated_params.gains.get_entry(value_1).kp = param.value
+                            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+
+                    for value_1 in updated_params.joints:
+
+                        param_name = f"{self.prefix_}gains.{value_1}.kd"
+                        if param.name == param_name:
+
+                            updated_params.gains.get_entry(value_1).kd = param.value
+                            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+
+                    for value_1 in updated_params.joints:
+
+                        param_name = f"{self.prefix_}gains.{value_1}.torque_limit"
+                        if param.name == param_name:
+                            validation_result = ParameterValidators.fixed_size(param, 2)
+                            if validation_result:
+                                return SetParametersResult(successful=False, reason=validation_result)
+
+                            updated_params.gains.get_entry(value_1).torque_limit = param.value
+                            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
 
             updated_params.stamp_ = self.clock_.now()
@@ -119,15 +210,15 @@ class arm_qp_control_parameters:
         def declare_params(self):
             updated_params = self.get_params()
             # declare all parameters and give default values to non-required ones
+            if not self.node_.has_parameter(self.prefix_ + "robot_config.model_path"):
+                descriptor = ParameterDescriptor(description="Model path to urdf.", read_only = True)
+                parameter = rclpy.Parameter.Type.STRING
+                self.node_.declare_parameter(self.prefix_ + "robot_config.model_path", parameter, descriptor)
+
             if not self.node_.has_parameter(self.prefix_ + "robot_config.end_effector_frame_name"):
                 descriptor = ParameterDescriptor(description="end effector name.", read_only = False)
                 parameter = updated_params.robot_config.end_effector_frame_name
                 self.node_.declare_parameter(self.prefix_ + "robot_config.end_effector_frame_name", parameter, descriptor)
-
-            if not self.node_.has_parameter(self.prefix_ + "control_config.control_topic"):
-                descriptor = ParameterDescriptor(description="Destination of control commands from the controller.", read_only = False)
-                parameter = updated_params.control_config.control_topic
-                self.node_.declare_parameter(self.prefix_ + "control_config.control_topic", parameter, descriptor)
 
             if not self.node_.has_parameter(self.prefix_ + "control_config.rate_hz"):
                 descriptor = ParameterDescriptor(description="Control frequency. Default to 120Hz.", read_only = False)
@@ -139,20 +230,72 @@ class arm_qp_control_parameters:
                 parameter = updated_params.control_config.enable_manipulability_constraint
                 self.node_.declare_parameter(self.prefix_ + "control_config.enable_manipulability_constraint", parameter, descriptor)
 
+            if not self.node_.has_parameter(self.prefix_ + "joints"):
+                descriptor = ParameterDescriptor(description="Specifies which joints will be used.", read_only = False)
+                parameter = updated_params.joints
+                self.node_.declare_parameter(self.prefix_ + "joints", parameter, descriptor)
+
             # TODO: need validation
             # get parameters and fill struct fields
+            param = self.node_.get_parameter(self.prefix_ + "robot_config.model_path")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.robot_config.model_path = param.value
             param = self.node_.get_parameter(self.prefix_ + "robot_config.end_effector_frame_name")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.robot_config.end_effector_frame_name = param.value
-            param = self.node_.get_parameter(self.prefix_ + "control_config.control_topic")
-            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
-            updated_params.control_config.control_topic = param.value
             param = self.node_.get_parameter(self.prefix_ + "control_config.rate_hz")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.control_config.rate_hz = param.value
             param = self.node_.get_parameter(self.prefix_ + "control_config.enable_manipulability_constraint")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.control_config.enable_manipulability_constraint = param.value
+            param = self.node_.get_parameter(self.prefix_ + "joints")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.joints = param.value
 
+
+            # declare and set all dynamic parameters
+
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.kp"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                entry.kp = param.value
+
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.kd"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                entry.kd = param.value
+
+            for value_1 in updated_params.joints:
+
+                updated_params.gains.add_entry(value_1)
+                entry = updated_params.gains.get_entry(value_1)
+                param_name = f"{self.prefix_}gains.{value_1}.torque_limit"
+                if not self.node_.has_parameter(self.prefix_ + param_name):
+                    descriptor = ParameterDescriptor(description="", read_only = False)
+                    parameter = rclpy.Parameter.Type.DOUBLE_ARRAY
+                    self.node_.declare_parameter(param_name, parameter, descriptor)
+                param = self.node_.get_parameter(param_name)
+                self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+                validation_result = ParameterValidators.fixed_size(param, 2)
+                if validation_result:
+                    raise InvalidParameterValueException('gains.__map_joints.torque_limit',param.value, 'Invalid value set during initialization for parameter gains.__map_joints.torque_limit: ' + validation_result)
+                entry.torque_limit = param.value
 
             self.update_internal_params(updated_params)

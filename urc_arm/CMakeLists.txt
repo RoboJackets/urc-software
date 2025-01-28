@@ -10,62 +10,45 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(eigen3_cmake_module REQUIRED)
-find_package(Eigen3)
-find_package(pinocchio REQUIRED)
-find_package(realtime_tools REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(glfw3 REQUIRED)
 
-
-include_directories(
-  include
+# Build and install simulator
+add_executable(
+  arm_mjsim
+  src/arm_mjsim.cpp
 )
+ament_target_dependencies(
+  arm_mjsim
 
-# Library creation
-add_library(${PROJECT_NAME} SHARED
-  src/arm_rt.cpp
-)
-
-set(dependencies
   rclcpp
-  rclcpp_components
-  std_msgs
-  std_srvs
-  geometry_msgs
   sensor_msgs
-  realtime_tools
-  pinocchio
-  Eigen3
+  std_msgs
+  geometry_msgs
+  std_srvs
 )
-
-ament_target_dependencies(${PROJECT_NAME}
-  ${dependencies}
+target_link_libraries(
+  arm_mjsim
+  ${CMAKE_SOURCE_DIR}/lib/mujoco/libmujoco.so.3.2.2
+  glfw
 )
-# target_link_libraries(${PROJECT_NAME} pinocchio)
-
-# Node Registration
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "urc_arm::ArmRT"
-  EXECUTABLE arm_rt_pinocchio
+target_include_directories(
+  arm_mjsim
+  PUBLIC
+  ${CMAKE_SOURCE_DIR}/lib/mujoco
+)
+install(
+  TARGETS arm_mjsim
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # Install launch files.
 install(
   DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}/
-)
-
-# Install library
-install(TARGETS
-  ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

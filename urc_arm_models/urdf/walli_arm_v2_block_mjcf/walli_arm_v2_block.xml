@@ -1,5 +1,6 @@
 <mujoco model="walli_arm_v2_block">
   <compiler angle="radian" />
+  <option timestep="0.005" />
 
   <asset>
     <mesh name="spine_collision" file="spine_collision.stl" />
