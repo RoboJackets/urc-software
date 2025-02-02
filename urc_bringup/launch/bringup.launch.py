@@ -29,6 +29,8 @@ def generate_launch_description():
     )
     pkg_urc_platform = get_package_share_directory("urc_platform")
 
+    pkg_vectornav = get_package_share_directory("vectornav")
+
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
     )
@@ -45,6 +47,12 @@ def generate_launch_description():
     robot_desc = robot_description_config.toxml()
     gps_config = os.path.join(
         get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
+    )
+
+    heartbeat_node = Node(
+        package="urc_bringup",
+        executable="urc_bringup_HeartbeatPublisher",
+        parameters=[{"heartbeatInterval": 1000}],
     )
 
     control_node = Node(
@@ -82,34 +90,10 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "status_light_controller"],
     )
 
-    # load_arm_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
-    # )
-
-    # load_gripper_controller_left = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "gripper_controller_left"],
-    # )
-
-    # load_gripper_controller_right = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "gripper_controller_right"],
-    # )
-
     twist_mux_node = Node(
         package="urc_platform",
         executable="urc_platform_TwistMux",
         name="twist_mux",
-    )
-
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
     )
 
     launch_gps = IncludeLaunchDescription(
@@ -125,6 +109,12 @@ def generate_launch_description():
         executable="nmea_serial_driver",
         output="screen",
         parameters=[gps_config],
+    )
+
+    launch_vectornav = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
+        )
     )
 
     rosbridge_server_node = Node(
@@ -165,12 +155,10 @@ def generate_launch_description():
             load_drivetrain_controller,
             load_status_light_controller,
             twist_mux_node,
-            # load_arm_controller,
-            # load_gripper_controller_left,
-            # load_gripper_controller_right,
-            teleop_launch,
             launch_gps,
             rosbridge_server_node,
             odom_frame_node,
+            launch_vectornav,
+            heartbeat_node,
         ]
     )
