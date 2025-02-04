@@ -85,11 +85,11 @@ std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_in
   state_interfaces.emplace_back("left_wheel", "velocity", &this->velocity_rps_states[0]);
   state_interfaces.emplace_back("right_wheel", "velocity", &this->velocity_rps_states[1]);
   state_interfaces.emplace_back("left_wheel", "velocity.front", &this->velocity_rps_breakdown[0]);
-  state_interfaces.emplace_back("left_wheel", "velocity.mid", &this->velocity_rps_breakdown[1]);
-  state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[2]);
-  state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[3]);
-  state_interfaces.emplace_back("right_wheel", "velocity.mid", &this->velocity_rps_breakdown[4]);
-  state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[5]);
+  // state_interfaces.emplace_back("left_wheel", "velocity.mid", &this->velocity_rps_breakdown[1]);
+  state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[1]);
+  state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[2]);
+  // state_interfaces.emplace_back("right_wheel", "velocity.mid", &this->velocity_rps_breakdown[4]);
+  state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[3]);
   return state_interfaces;
 }
 
