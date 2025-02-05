@@ -34,4 +34,13 @@
       Battery management.
     </description>
   </class>
+
+  <class name="urc_hw/ArmControl"
+    type="urc_hardware::hardware_interfaces::ArmControl"
+    base_class_type="hardware_interface::SystemInterface"
+  >
+    <description>
+      Arm controller system interface.
+    </description>
+
 </library>
