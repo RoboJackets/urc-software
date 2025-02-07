@@ -24,7 +24,6 @@ set(dependencies
   rclcpp_components
   std_msgs
   rosbridge_server
-  ublox_dgnss
 )
 
 ament_target_dependencies(${PROJECT_NAME}
