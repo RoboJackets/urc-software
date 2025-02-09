@@ -53,6 +53,21 @@ message RequestMessage {
     required int32 timestamp            = 6;
 }
 
+message DrivetrainResponse {  
+    required int32 m1Feedback           = 1;  
+    required uint32 m1Current           = 2;
+    required int32 m2Feedback           = 3;
+    required uint32 m2Current           = 4;
+    required int32 m3Feedback           = 5;
+    required uint32 m3Current           = 6;
+    required int32 m4Feedback           = 7;
+    required uint32 m4Current           = 8;
+    required int32 m5Feedback           = 9;
+    required uint32 m5Current           = 10;  
+    required int32 m6Feedback           = 11;    
+    required uint32 m6Current           = 12;   
+}
+
 message IMUMessage {
     required int32 timestamp = 1;
 
