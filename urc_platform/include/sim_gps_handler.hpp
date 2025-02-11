@@ -7,10 +7,12 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 
-namespace sim_gps_handler {
-class SimGpsHandler : public rclcpp::Node {
+namespace sim_gps_handler
+{
+class SimGpsHandler : public rclcpp::Node
+{
 public:
-  explicit SimGpsHandler(const rclcpp::NodeOptions &options);
+  explicit SimGpsHandler(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber;

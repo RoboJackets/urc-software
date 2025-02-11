@@ -2,10 +2,10 @@ import os
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetRemap
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
@@ -24,9 +24,7 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
-        "nmea_navsat_driver"
-    )
+    pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
     pkg_urc_platform = get_package_share_directory("urc_platform")
 
     pkg_vectornav = get_package_share_directory("vectornav")
@@ -45,9 +43,6 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
-    gps_config = os.path.join(
-        get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
-    )
 
     control_node = Node(
         package="controller_manager",
@@ -69,7 +64,7 @@ def generate_launch_description():
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"]
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
     load_drivetrain_controller = Node(
@@ -81,7 +76,7 @@ def generate_launch_description():
     load_status_light_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "status_light_controller"]
+        arguments=["-p", controller_config_file_dir, "status_light_controller"],
     )
 
     twist_mux_node = Node(
@@ -90,20 +85,19 @@ def generate_launch_description():
         name="twist_mux",
     )
 
-    launch_gps = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_nmea_navsat_driver,
-                "launch", "nmea_serial_driver.launch.py"
-            )
-        )
+    launch_gps = GroupAction(
+        actions=[
+            SetRemap(src="/rover/fix", dst="/gps/data"),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
+                    )
+                ),
+                launch_arguments={"device_serial_string": "rover"}.items(),
+            ),
+        ]
     )
-
-    launch_gps = Node(
-        package='nmea_navsat_driver',
-        executable='nmea_serial_driver',
-        output='screen',
-        parameters=[gps_config])
 
     launch_vectornav = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -128,8 +122,7 @@ def generate_launch_description():
     )
 
     odom_frame_node = Node(
-        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster",
-        output="screen"
+        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
 
     return LaunchDescription(
