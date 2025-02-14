@@ -28,7 +28,7 @@ RoverDrivetrain::RoverDrivetrain()
 : hardware_interface_name("Rover Drivetrain")
   , velocity_rps_commands(2, 0)
   , velocity_rps_states(2, 0)
-  , velocity_rps_breakdown(6, 0)
+  , velocity_rps_breakdown(4, 0)
 {
 }
 RoverDrivetrain::~RoverDrivetrain() = default;
@@ -59,6 +59,7 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
 
   udp_address = info_.hardware_parameters["udp_address"];
   udp_port = info_.hardware_parameters["udp_port"];
+  // RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "UDP Address %s:%s", udp_address.c_str(), udp_port.c_str());
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -134,7 +135,7 @@ hardware_interface::return_type RoverDrivetrain::write(
   message.m1Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
   message.m2Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
 
-  message.m3Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
+  message.m3Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
   message.m4Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
 
 
