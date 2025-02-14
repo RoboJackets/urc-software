@@ -133,11 +133,9 @@ hardware_interface::return_type RoverDrivetrain::write(
 
   message.m1Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
   message.m2Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
-  message.m3Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
 
+  message.m3Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
   message.m4Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.m5Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.m6Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
 
 
   // Fill Required Fields
