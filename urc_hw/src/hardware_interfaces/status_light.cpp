@@ -145,8 +145,6 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   message.m2Setpoint = 0;
   message.m3Setpoint = 0;
   message.m4Setpoint = 0;
-  message.m5Setpoint = 0;
-  message.m6Setpoint = 0;
 
   // Set message id to status light
   message.messageID = 1;
