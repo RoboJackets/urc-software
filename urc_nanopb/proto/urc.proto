@@ -80,15 +80,13 @@ message NewStatusLightCommand {
 // }
 
 message StatusLightMessage {
-  required int32 lightCommand = 1;
-  /*
+  // required int32 lightCommand = 1;
   required int32 redEnabled = 1;
   required int32 blueEnabled = 2;
   required int32 greenEnabled = 3;
   required int32 redBlink = 4;
   required int32 blueBlink = 5;
   required int32 greenBlink = 6;
-  */
 }
 
 message SetpointMessage {
@@ -103,6 +101,45 @@ message SetpointMessage {
   required int32 m6Setpoint = 6;
   */
 }
+
+message BatteryMessage {
+  // cell voltages
+  optional float mainVoltage = 1;
+
+  optional float cell1Voltage = 2;
+  optional float cell2Voltage = 3;
+  optional float cell3Voltage = 4;
+  optional float cell4Voltage = 5;
+  optional float cell5Voltage = 6;
+  optional float cell6Voltage = 7;
+  optional float cell7Voltage = 8;
+  optional float cell8Voltage = 9;
+
+  // charge state
+  optional float chargePercentage = 10;
+
+  // discharge state
+  optional float dischargeCurrent = 11;
+}
+
+message IMUMessage {
+  required int32 timestamp = 1;
+
+  optional float quaternionX = 2;
+  optional float quaternionY = 3;
+  optional float quaternionZ = 4;
+  optional float quaternionW = 5;
+
+  optional float linearAccelX = 6;
+  optional float linearAccelY = 7;
+  optional float linearAccelZ = 8;
+
+  optional float angularVelocityX = 9;
+  optional float angularVelocityY = 10;
+  optional float angularVelocityZ = 11;
+}
+
+message ScienceModuleCommand { required int32 rotateTurntable = 1; }
 
 message TeensyMessage {
   // 0 = drivetrain
