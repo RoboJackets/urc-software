@@ -94,6 +94,7 @@ def generate_launch_description():
         package="urc_platform",
         executable="urc_platform_TwistMux",
         name="twist_mux",
+        parameters=[twist_mux_config],
     )
 
     launch_gps = IncludeLaunchDescription(
@@ -122,15 +123,6 @@ def generate_launch_description():
         name="rosbridge_server",
         executable="rosbridge_websocket.py",
         parameters=[{"port": 9090}],
-    )
-
-    twist_mux_node = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        name="twist_mux",
-        output="screen",
-        parameters=[twist_mux_config],
-        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
     odom_frame_node = Node(
