@@ -132,6 +132,7 @@ hardware_interface::return_type RoverDrivetrain::write(
   // DrivetrainRequest drivetrainRequest = DrivetrainRequest_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
+  message.which_messageType = TeensyMessage_setpointMessage_tag;
   message.messageType.setpointMessage.leftSetpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
   message.messageType.setpointMessage.rightSetpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
 
