@@ -94,6 +94,7 @@ def generate_launch_description():
         package="urc_platform",
         executable="urc_platform_TwistMux",
         name="twist_mux",
+        parameters=[twist_mux_config],
     )
 
     launch_gps = IncludeLaunchDescription(
