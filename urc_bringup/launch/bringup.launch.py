@@ -124,15 +124,6 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
-    twist_mux_node = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        name="twist_mux",
-        output="screen",
-        parameters=[twist_mux_config],
-        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
-    )
-
     odom_frame_node = Node(
         package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
