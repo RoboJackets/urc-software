@@ -10,32 +10,84 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 
+#include "grid_map_pcl/GridMapPclLoader.hpp"
+
 namespace urc_perception
 {
 
     TraversabilityMapping::TraversabilityMapping(const rclcpp::NodeOptions &options)
         : Node("traversability_mapping", options)
     {
+        if (!readParameters())
+        {
+            RCLCPP_ERROR(this->get_logger(), "Could not read parameters. Shutting down node.");
+            return;
+        }
+
         RCLCPP_INFO(this->get_logger(), "Traversability mapping node has been started.");
 
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+
+        grid_map_publisher_ = create_publisher<grid_map_msgs::msg::GridMap>("/gridmap", 10);
+
+        if (filter_chain_.configure(
+                filter_chain_parameter_name_, this->get_node_logging_interface(),
+                this->get_node_parameters_interface()))
+        {
+            RCLCPP_INFO(this->get_logger(), "Filter chain configured.");
+        }
+        else
+        {
+            RCLCPP_ERROR(this->get_logger(), "Could not configure the filter chain!");
+            return;
+        }
     }
 
     TraversabilityMapping::~TraversabilityMapping() = default;
 
     void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
     {
-        // This function should be called whenever a new point cloud message is received.
-        // The point cloud message is transformed to the map frame and then processed.
-        // The resulting traversability map should be published.
+        // Convert the transformed point cloud to a PCL point cloud
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::fromROSMsg(*msg, *cloud);
+
+        // Construct a GridMapPclLoader object and set the input cloud
+        grid_map::GridMapPclLoader gridMapPclLoader(node->get_logger());
+        gridMapPclLoader.setInputCloud(cloud);
+
+        gridMapPclLoader.preProcessInputCloud();
+        gridMapPclLoader.initializeGridMapGeometryFromInputCloud();
+        gridMapPclLoader.addLayerFromInputCloud(std::string("elevation"));
+
+        grid_map::GridMap output_map;
+        if (!filter_chain_.update(gridMapPclLoader.getGridMap(), output_map))
+        {
+            RCLCPP_ERROR(this->get_logger(), "Could not update the grid map filter chain!");
+            return;
+        }
+
+        auto msg = grid_map::GridMapRosConverter::toMessage(output_map);
+        grid_map_publisher_->publish(std::move(msg));
     }
 
-    void TraversabilityMapping::initializeMap()
+    bool FiltersDemo::readParameters()
     {
-        // Initialize the map_ object.
-    }
+        this->declare_parameter<std::string>("pointcloud_topic");
+        this->declare_parameter("output_map_topic", std::string("traversability_map"));
+        this->declare_parameter("filter_chain_parameter_name", std::string("filters"));
 
+        if (!this->get_parameter("pointcloud_topic", pointcloud_topic_))
+        {
+            RCLCPP_ERROR(this->get_logger(), "Could not read parameter pointcloud_topic.");
+            return false;
+        }
+
+        this->get_parameter("output_map_topic", output_map_topic_);
+        this->get_parameter("filter_chain_parameter_name", filter_chain_parameter_name_);
+
+        return true;
+    }
 } // namespace urc_perception
 
 #include <rclcpp_components/register_node_macro.hpp>

@@ -11,31 +11,37 @@
 namespace urc_perception
 {
 
-    class TraversabilityMapping : public rclcpp::Node
-    {
-    public:
-        explicit TraversabilityMapping(const rclcpp::NodeOptions &options);
-        ~TraversabilityMapping();
+class TraversabilityMapping : public rclcpp::Node
+{
+public:
+  explicit TraversabilityMapping(const rclcpp::NodeOptions & options);
+  ~TraversabilityMapping();
 
-    private:
-        void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
-        void initializeMap();
+  bool readParameters();
 
-        rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_subscriber_;
-        rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr grid_map_publisher_;
+private:
+  void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+  void initializeMap();
 
-        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
-        std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_subscriber_;
+  rclcpp::Publisher<grid_map_msgs::msg::GridMap>::SharedPtr grid_map_publisher_;
 
-        grid_map::GridMap map_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-        double resolution_;
-        double min_z_;
-        double max_z_;
-        unsigned int width_;
+  grid_map::GridMap map_;
+  filters::FilterChain<grid_map::GridMap> filter_chain_;
 
-        std::string map_frame_;
-    };
+  double resolution_;
+  double min_z_;
+  double max_z_;
+  unsigned int width_;
+
+  std::string map_frame_;
+  std::string pointcloud_topic_;
+  std::string output_map_topic_;
+  std::string filter_chain_parameter_name_;
+};
 
 } // namespace urc_perception
 
