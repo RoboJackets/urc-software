@@ -29,9 +29,7 @@ def generate_launch_description():
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
-    xacro_file = os.path.join(
-        pkg_leo_rover, "urdf/leo_sim.urdf.xacro"
-    )
+    xacro_file = os.path.join(pkg_leo_rover, "urdf/leo_sim.urdf.xacro")
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "true"}
@@ -42,7 +40,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
+        launch_arguments={
+            "use_sim_time": "true",
+            "world": world_path,
+        }.items(),  # "world": world_path
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
@@ -197,16 +198,16 @@ def generate_launch_description():
                     on_exit=[elevation_mapping_node],
                 )
             ),
-            RegisterEventHandler(
-                event_handler=OnProcessStart(
-                    target_action=elevation_mapping_node,
-                    on_start=[
-                        path_planning_launch,
-                        trajectory_following_launch,
-                        bt_launch,
-                    ],
-                )
-            ),
+            # RegisterEventHandler(
+            #     event_handler=OnProcessStart(
+            #         target_action=elevation_mapping_node,
+            #         on_start=[
+            #             path_planning_launch,
+            #             trajectory_following_launch,
+            #             bt_launch,
+            #         ],
+            #     )
+            # ),
             enable_color,
             gazebo,
             load_robot_state_publisher,
