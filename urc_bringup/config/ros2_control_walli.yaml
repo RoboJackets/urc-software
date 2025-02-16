@@ -45,18 +45,8 @@ status_light_controller:
 
 rover_drivetrain_controller:
   ros__parameters:
-    left_wheel_names:
-      [
-        "left_front_wheel_joint",
-        "left_center_wheel_joint",
-        "left_rear_wheel_joint",
-      ]
-    right_wheel_names:
-      [
-        "right_front_wheel_joint",
-        "right_center_wheel_joint",
-        "right_rear_wheel_joint",
-      ]
+    left_wheel_names: ["left_front_wheel_joint", "left_rear_wheel_joint"]
+    right_wheel_names: ["right_front_wheel_joint", "right_rear_wheel_joint"]
 
     wheel_separation: 0.70
     wheels_per_side: 3
