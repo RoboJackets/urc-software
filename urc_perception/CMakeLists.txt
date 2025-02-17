@@ -15,10 +15,12 @@ find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL 1.10 REQUIRED)
-find_package(grid_map_core)
-find_package(grid_map_ros)
-find_package(grid_map_msgs)
+find_package(grid_map_core REQUIRED)
+find_package(grid_map_ros REQUIRED)
+find_package(grid_map_msgs REQUIRED)
+find_package(grid_map_pcl REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(filters REQUIRED)
 
 include_directories(
   include
@@ -30,6 +32,7 @@ add_definitions(${PCL_DEFINITIONS})
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/elevation_mapping.cpp
+  src/traversability_mapping.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -50,6 +53,8 @@ set(dependencies
   grid_map_core
   grid_map_ros
   grid_map_msgs
+  grid_map_pcl
+  filters
 )
 
 ament_target_dependencies(${PROJECT_NAME}
