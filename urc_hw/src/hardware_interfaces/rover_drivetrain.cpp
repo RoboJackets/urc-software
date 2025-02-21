@@ -56,7 +56,6 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
   udp_address = info_.hardware_parameters["udp_address"];
   udp_self_address = info_.hardware_parameters["udp_self_address"];
   udp_port = info_.hardware_parameters["udp_port"];
-  // RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "UDP Address %s:%s", udp_address.c_str(), udp_port.c_str());
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -83,10 +82,8 @@ std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_in
   state_interfaces.emplace_back("left_wheel", "velocity", &this->velocity_rps_states[0]);
   state_interfaces.emplace_back("right_wheel", "velocity", &this->velocity_rps_states[1]);
   state_interfaces.emplace_back("left_wheel", "velocity.front", &this->velocity_rps_breakdown[0]);
-  // state_interfaces.emplace_back("left_wheel", "velocity.mid", &this->velocity_rps_breakdown[1]);
   state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[1]);
   state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[2]);
-  // state_interfaces.emplace_back("right_wheel", "velocity.mid", &this->velocity_rps_breakdown[4]);
   state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[3]);
   return state_interfaces;
 }
@@ -95,9 +92,24 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lif
 {
   udp_ = std::make_shared<UDPServer<128>>();
   udp_->Bind(udp_self_address.c_str(), std::stoi(udp_port));
-  udp_->onMessageReceived = [this](std::string message, std::string ip, std::uint16_t port) {
-    RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Received %s from %s:%d.", message.c_str(), ip.c_str(), port);
+  udp_->onRawMessageReceived = [this](const char* buf, ssize_t size, std::string, std::uint16_t) {
+    DrivetrainResponse message = DrivetrainResponse_init_zero;
+
+    pb_istream_t stream = pb_istream_from_buffer((unsigned char *) buf, size);
+    bool status = pb_decode(&stream, DrivetrainResponse_fields, &message);
+
+    if (!status) {
+      RCLCPP_ERROR(
+        rclcpp::get_logger(hardware_interface_name),
+        "Error while decoding wheel encoder feedback message.");
+      return;
+    }
+    double left_speed_rpm = (double) (std::min(message.m1SpeedFeedback, message.m2SpeedFeedback));
+    double right_speed_rpm = (double) (std::min(message.m3SpeedFeedback, message.m4SpeedFeedback));
+    this->velocity_rps_states[0] =  left_speed_rpm * (2*M_PI / 60);
+    this->velocity_rps_states[1] = right_speed_rpm * (2*M_PI / 60);
   };
+
   udp_->Connect(udp_address, std::stoi(udp_port));
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Rover Drivetrain activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -114,15 +126,11 @@ hardware_interface::return_type RoverDrivetrain::read(
   const rclcpp::Time &,
   const rclcpp::Duration &)
 {
-
-  // RCLCPP_INFO(rclcpp::get_logger("test"),
-  //   "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
-
   return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type RoverDrivetrain::write(
-  const rclcpp::Time & time,
+  const rclcpp::Time &,
   const rclcpp::Duration & duration)
 {
   if (duration.seconds() < 0.001) {
@@ -130,7 +138,6 @@ hardware_interface::return_type RoverDrivetrain::write(
   }
 
   TeensyMessage message = TeensyMessage_init_zero;
-  // DrivetrainRequest drivetrainRequest = DrivetrainRequest_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
   message.which_messageType = TeensyMessage_setpointMessage_tag;
