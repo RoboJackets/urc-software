@@ -1,12 +1,8 @@
 #include "urc_hw/hardware_interfaces/rover_drivetrain.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
-#include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <iostream>
-#include <iterator>
-#include <ostream>
 #include <pb.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
@@ -58,6 +54,7 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
   }
 
   udp_address = info_.hardware_parameters["udp_address"];
+  udp_self_address = info_.hardware_parameters["udp_self_address"];
   udp_port = info_.hardware_parameters["udp_port"];
   // RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "UDP Address %s:%s", udp_address.c_str(), udp_port.c_str());
 
@@ -96,7 +93,11 @@ std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_in
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lifecycle::State &)
 {
-  udp_ = std::make_shared<UDPSocket<128>>(true);
+  udp_ = std::make_shared<UDPServer<128>>(true);
+  udp_->Bind(udp_self_address.c_str(), std::stoi(udp_port));
+  udp_->onMessageReceived = [this](std::string message, std::string ip, std::uint16_t port) {
+    RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Received %s from %s:%d.", message.c_str(), ip.c_str(), port);
+  };
   udp_->Connect(udp_address, std::stoi(udp_port));
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Rover Drivetrain activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
