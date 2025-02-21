@@ -3,6 +3,7 @@
 #include "pluginlib/class_list_macros.hpp"
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <pb.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
@@ -104,10 +105,17 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lif
         "Error while decoding wheel encoder feedback message.");
       return;
     }
-    double left_speed_rpm = (double) (std::min(message.m1SpeedFeedback, message.m2SpeedFeedback));
-    double right_speed_rpm = (double) (std::min(message.m3SpeedFeedback, message.m4SpeedFeedback));
-    this->velocity_rps_states[0] =  left_speed_rpm * (2*M_PI / 60);
-    this->velocity_rps_states[1] = right_speed_rpm * (2*M_PI / 60);
+    message.m3SpeedFeedback *= -1; // feedback is reversed
+    if (std::abs(message.m1SpeedFeedback) < std::abs(message.m2SpeedFeedback)) {
+      this->velocity_rps_breakdown[0] = message.m1SpeedFeedback;
+    } else {
+      this->velocity_rps_breakdown[0] = message.m2SpeedFeedback;
+    }
+    if (std::abs(message.m3SpeedFeedback) < std::abs(message.m4SpeedFeedback)) {
+      this->velocity_rps_breakdown[1] = message.m3SpeedFeedback;
+    } else {
+      this->velocity_rps_breakdown[1] = message.m4SpeedFeedback;
+    }
   };
 
   udp_->Connect(udp_address, std::stoi(udp_port));
