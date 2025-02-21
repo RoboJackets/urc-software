@@ -190,7 +190,7 @@ def generate_launch_description():
             gazebo,
             load_robot_state_publisher,
             spawn_robot,
-            # map_to_odom_transform_node,
+            map_to_odom_transform_node,
             # rosbridge_server_node,
         ]
     )

@@ -19,6 +19,7 @@ find_package(grid_map_core REQUIRED)
 find_package(grid_map_ros REQUIRED)
 find_package(grid_map_msgs REQUIRED)
 find_package(grid_map_pcl REQUIRED)
+find_package(grid_map_cv REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(filters REQUIRED)
 
@@ -54,6 +55,7 @@ set(dependencies
   grid_map_ros
   grid_map_msgs
   grid_map_pcl
+  grid_map_cv
   filters
 )
 

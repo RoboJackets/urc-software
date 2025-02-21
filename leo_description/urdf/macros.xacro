@@ -465,9 +465,91 @@
       </collision>
     </gazebo>
 
+
+    <!-- lidar-->
+    <link name="lidar_link">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.7" />
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+      </inertial>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.0508" length="0.055" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.05" length="0.0985" />
+        </geometry>
+      </visual>
+    </link>
+    <joint name="lidar_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="lidar_link" />
+      <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0" />
+    </joint>
+
+    <gazebo reference="lidar_link">
+      <sensor name="lidar" type="ray">
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <update_rate>10</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>0.000000</min_angle>
+              <max_angle>6.280000</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>16</samples>
+              <resolution>1</resolution>
+              <min_angle>-.12566</min_angle>
+              <max_angle>0.59865</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.12</min>
+            <max>3.5</max>
+            <resolution>0.015</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <remapping>~/out:=scan</remapping>
+          </ros>
+          <output_type>sensor_msgs/PointCloud2</output_type>
+          <frame_name>lidar_link</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+
     <!-- camera -->
     <gazebo reference="${link_prefix}camera_frame">
       <sensor name="camera" type="camera">
+        <plugin name="camera" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>/image</namespace>
+            <remapping>~/image_raw:=leo_image</remapping>
+            <remapping>~/camera_info:=leo_camera_info</remapping>
+          </ros>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+          <camera_name>camera</camera_name>
+          <frame_name>${link_prefix}camera_frame</frame_name>
+          <hack_baseline>0.07</hack_baseline>
+        </plugin>
+        <always_on>true</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
         <camera name="leo_camera">
           <horizontal_fov>1.9</horizontal_fov>
           <image>
@@ -493,11 +575,6 @@
             <center>0.5 0.5</center>
           </distortion>
         </camera>
-        <always_on>1</always_on>
-        <update_rate>30</update_rate>
-        <visualize>true</visualize>
-        <topic>${link_prefix}camera/image_raw</topic>
-        <ignition_frame_id>${link_prefix}camera_frame</ignition_frame_id>
       </sensor>
     </gazebo>
 
