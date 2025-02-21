@@ -93,7 +93,7 @@ std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_in
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lifecycle::State &)
 {
-  udp_ = std::make_shared<UDPServer<128>>(true);
+  udp_ = std::make_shared<UDPServer<128>>();
   udp_->Bind(udp_self_address.c_str(), std::stoi(udp_port));
   udp_->onMessageReceived = [this](std::string message, std::string ip, std::uint16_t port) {
     RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Received %s from %s:%d.", message.c_str(), ip.c_str(), port);
