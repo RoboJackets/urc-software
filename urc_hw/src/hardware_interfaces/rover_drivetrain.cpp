@@ -105,17 +105,21 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lif
         "Error while decoding wheel encoder feedback message.");
       return;
     }
-    message.m3SpeedFeedback *= -1; // feedback is reversed
+    message.m4SpeedFeedback *= -1; // feedback is reversed
+    message.m2SpeedFeedback *= -1; // feedback is reversed
+    // RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "%d %d %d %d", message.m1SpeedFeedback, message.m2SpeedFeedback, message.m3SpeedFeedback, message.m4SpeedFeedback);
     if (std::abs(message.m1SpeedFeedback) < std::abs(message.m2SpeedFeedback)) {
-      this->velocity_rps_breakdown[0] = message.m1SpeedFeedback;
+      this->velocity_rps_states[0] = message.m1SpeedFeedback;
     } else {
-      this->velocity_rps_breakdown[0] = message.m2SpeedFeedback;
+      this->velocity_rps_states[0] = message.m2SpeedFeedback;
     }
     if (std::abs(message.m3SpeedFeedback) < std::abs(message.m4SpeedFeedback)) {
-      this->velocity_rps_breakdown[1] = message.m3SpeedFeedback;
+      this->velocity_rps_states[1] = message.m3SpeedFeedback;
     } else {
-      this->velocity_rps_breakdown[1] = message.m4SpeedFeedback;
+      this->velocity_rps_states[1] = message.m4SpeedFeedback;
     }
+    this->velocity_rps_states[0] *= (2*M_PI/ENCODER_CPR);
+    this->velocity_rps_states[1] *= (2*M_PI/ENCODER_CPR);
   };
 
   udp_->Connect(udp_address, std::stoi(udp_port));
