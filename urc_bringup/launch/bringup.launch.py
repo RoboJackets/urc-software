@@ -112,10 +112,20 @@ def generate_launch_description():
         parameters=[gps_config],
     )
 
-    launch_vectornav = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
-        )
+    vectornav_node = Node(
+        package='vectornav', 
+        executable='vectornav',
+        output='screen',
+        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')],
+        remappings=[("/vectornav/imu", "/imu/data")]
+    )
+    
+    vectornav_sensor_msg_node = Node(
+        package='vectornav', 
+        executable='vn_sensor_msgs',
+        output='screen',
+        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')],
+        remappings=[("/vectornav/imu", "/imu/data")]
     )
 
     rosbridge_server_node = Node(
@@ -150,7 +160,8 @@ def generate_launch_description():
             launch_gps,
             rosbridge_server_node,
             odom_frame_node,
-            launch_vectornav,
+            vectornav_node,
+            vectornav_sensor_msg_node,
             heartbeat_node,
         ]
     )
