@@ -108,3 +108,4 @@ traversability_mapping:
           input_layer: traversability
           output_layer: traversability_inflated
           radius: 0.5
+          gaussian_coeff: 4.0

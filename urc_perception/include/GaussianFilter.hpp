@@ -26,6 +26,7 @@ namespace urc_perception
 
     private:
         double radius_;
+        double gaussian_coeff_;
 
         std::string inputLayer_;
         std::string outputLayer_;

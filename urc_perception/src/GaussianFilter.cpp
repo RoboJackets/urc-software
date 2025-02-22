@@ -45,6 +45,21 @@ namespace urc_perception
 
         RCLCPP_DEBUG(this->logging_interface_->get_logger(), "Radius = %f.", radius_);
 
+        if (!param_reader.get(std::string("gaussian_coeff"), gaussian_coeff_))
+        {
+            RCLCPP_ERROR(
+                this->logging_interface_->get_logger(), "Gaussian filter did not find param gaussian_coeff.");
+            return false;
+        }
+
+        if (gaussian_coeff_ < 0.0)
+        {
+            RCLCPP_ERROR(this->logging_interface_->get_logger(), "Gaussian coefficient must be greater than zero.");
+            return false;
+        }
+
+        RCLCPP_DEBUG(this->logging_interface_->get_logger(), "Gaussian coefficient = %f.", gaussian_coeff_);
+
         if (!param_reader.get(std::string("input_layer"), inputLayer_))
         {
             RCLCPP_ERROR(
@@ -96,7 +111,7 @@ namespace urc_perception
                 mapOut.getPosition(*submapIterator, pos);
 
                 double distance = (center - pos).norm();
-                value = std::exp(-4.0 * distance * distance / radius_) * center_cost;
+                value = std::exp(-gaussian_coeff_ * distance * distance / radius_) * center_cost;
 
                 if (value > mapOut.at(outputLayer_, *submapIterator))
                 {
