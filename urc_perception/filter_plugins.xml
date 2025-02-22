@@ -1,0 +1,11 @@
+<class_libraries>
+    <library path="gaussian_filter">
+        <class name="urcPerception/GaussianFilter"
+            type="urc_perception::GaussianFilter&lt;grid_map::GridMap&gt;"
+            base_class_type="filters::FilterBase&lt;grid_map::GridMap&gt;">
+            <description>
+                Apply a gaussian filter to inflate the obstacles in the grid map.
+            </description>
+        </class>
+    </library>
+</class_libraries>
