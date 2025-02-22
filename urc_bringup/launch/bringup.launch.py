@@ -116,7 +116,9 @@ def generate_launch_description():
         package='vectornav', 
         executable='vectornav',
         output='screen',
-        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')])
+        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')],
+        remappings=[("/vectornav/imu", "/imu/data")]
+    )
     
     vectornav_sensor_msg_node = Node(
         package='vectornav', 
