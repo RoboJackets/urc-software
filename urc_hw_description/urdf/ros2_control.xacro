@@ -149,8 +149,9 @@
       <ros2_control name="rover_drivetrain" type="system">
         <hardware>
           <plugin>urc_hw/RoverDrivetrain</plugin>
-          <param name="udp_address">192.168.1.206</param>
+          <param name="udp_address">192.168.1.119</param>
           <param name="udp_port">8443</param>
+          <param name="udp_self_address">192.168.1.150</param>
         </hardware>
         <joint name="left_wheel">
           <command_interface name="velocity" />

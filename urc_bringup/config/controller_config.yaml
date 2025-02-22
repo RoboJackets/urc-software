@@ -48,8 +48,8 @@ rover_drivetrain_controller:
     left_wheel_names: ["left_wheel"]
     right_wheel_names: ["right_wheel"]
 
-    wheel_separation: 0.78
-    #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
+    wheel_separation: 0.73025
+    # wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
     wheel_radius: 0.12
 
     wheel_separation_multiplier: 1.0
@@ -62,8 +62,8 @@ rover_drivetrain_controller:
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
 
-    open_loop: true
-    enable_odom_tf: true
+    open_loop: false
+    enable_odom_tf: false
     position_feedback: false
 
     cmd_vel_timeout: 0.5
