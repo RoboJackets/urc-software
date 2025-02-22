@@ -24,8 +24,11 @@
   <depend>pcl_conversions</depend>
   <depend>pcl_1.10</depend>
   <depend>filters</depend>
+  <depend>pluginlib</depend>
+  <depend>rcl_interfaces</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <filters plugin="${prefix}/filter_plugins.xml" />
   </export>
 </package>

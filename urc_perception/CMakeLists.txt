@@ -22,11 +22,14 @@ find_package(grid_map_pcl REQUIRED)
 find_package(grid_map_cv REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(filters REQUIRED)
+find_package(pluginlib REQUIRED)
 
 include_directories(
   include
   ${PCL_INCLUDE_DIRS}
+  ${filters_INCLUDE_DIRS}
 )
+
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
@@ -34,6 +37,10 @@ add_definitions(${PCL_DEFINITIONS})
 add_library(${PROJECT_NAME} SHARED
   src/elevation_mapping.cpp
   src/traversability_mapping.cpp
+)
+
+add_library(gaussian_filter SHARED
+  src/GaussianFilter.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -57,9 +64,14 @@ set(dependencies
   grid_map_pcl
   grid_map_cv
   filters
+  pluginlib
 )
 
 ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+ament_target_dependencies(gaussian_filter
   ${dependencies}
 )
 
@@ -75,12 +87,22 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_TraversabilityMapping
 )
 
+install(
+  TARGETS gaussian_filter
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
 # Install launch files.
 install(
-  DIRECTORY
-  config
-  launch
+  DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install (
+  FILES filter_plugins.xml
+  DESTINATION share/${PROJECT_NAME}
 )
 
 # Install library
@@ -103,4 +125,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_libraries(gaussian_filter)
+ament_export_dependencies(${dependencies})
+pluginlib_export_plugin_description_file(filters filter_plugins.xml)
 ament_package()

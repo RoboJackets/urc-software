@@ -1,5 +1,7 @@
 #include "traversability_mapping.hpp"
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
+
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -54,9 +56,12 @@ namespace urc_perception
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*msg, *cloud);
 
+        std::string filePath = ament_index_cpp::get_package_share_directory("urc_perception") + "/config/pcl_grid_map_params.yaml";
+
         // Construct a GridMapPclLoader object and set the input cloud
         grid_map::GridMapPclLoader gridMapPclLoader(this->get_logger());
         gridMapPclLoader.setInputCloud(cloud);
+        gridMapPclLoader.loadParameters(filePath);
 
         gridMapPclLoader.preProcessInputCloud();
         gridMapPclLoader.initializeGridMapGeometryFromInputCloud();

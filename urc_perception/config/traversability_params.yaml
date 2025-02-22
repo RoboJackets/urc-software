@@ -2,12 +2,12 @@ grid_map_visualization:
   ros__parameters:
     grid_map_topic: /costmap
     grid_map_visualizations:
-      [elevation_points, elevation_grid, surface_normals, traversability]
-
-    elevation_points:
-      type: point_cloud
-      params:
-        layer: elevation
+      [
+        elevation_grid,
+        elevation_smooth,
+        traversability,
+        traversability_inflated,
+      ]
 
     elevation_grid:
       type: occupancy_grid
@@ -16,19 +16,24 @@ grid_map_visualization:
         data_min: -0.16
         data_max: 0.08
 
-    surface_normals:
-      type: vectors
+    elevation_smooth:
+      type: occupancy_grid
       params:
-        layer_prefix: normal_vectors_
-        position_layer: elevation
-        scale: 0.06
-        line_width: 0.005
-        color: 15600153 # red
+        layer: elevation_smooth
+        data_min: -0.16
+        data_max: 0.08
 
     traversability:
       type: occupancy_grid
       params:
         layer: traversability
+        data_min: 0.0
+        data_max: 1.0
+
+    traversability_inflated:
+      type: occupancy_grid
+      params:
+        layer: traversability_inflated
         data_min: 0.0
         data_max: 1.0
 
@@ -42,21 +47,13 @@ traversability_mapping:
         name: buffer_normalizer
         type: gridMapFilters/BufferNormalizerFilter
 
-      # filter2: # Fill holes in the map with inpainting.
-      #   name: inpaint
-      #   type: gridMapCv/InpaintFilter
-      #   params:
-      #     input_layer: elevation
-      #     output_layer: elevation_inpainted
-      #     radius: 0.05
-
       filter2: # Reduce noise with a radial blurring filter.
         name: mean_in_radius
         type: gridMapFilters/MeanInRadiusFilter
         params:
           input_layer: elevation
           output_layer: elevation_smooth
-          radius: 0.06
+          radius: 0.1
 
       filter3: # Compute surface normals.
         name: surface_normals
@@ -67,35 +64,28 @@ traversability_mapping:
           radius: 0.1
           normal_vector_positive_axis: z
 
-      filter4: # Add a color layer for visualization based on the surface normal.
-        name: normal_color_map
-        type: gridMapFilters/NormalColorMapFilter
-        params:
-          input_layers_prefix: normal_vectors_
-          output_layer: normal_color
-
-      filter5: # Compute slope from surface normal.
+      filter4: # Compute slope from surface normal.
         name: slope
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: slope
           expression: acos(normal_vectors_z)
 
-      filter6: # Compute roughness as absolute difference from map to smoothened map.
+      filter5: # Compute roughness as absolute difference from map to smoothened map.
         name: roughness
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: roughness
           expression: abs(elevation - elevation_smooth)
 
-      filter7: # Compute traversability as normalized weighted sum of slope and roughness.
+      filter6: # Compute traversability as normalized weighted sum of slope and roughness.
         name: traversability
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: traversability
           expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.1))
 
-      filter8: # Set lower threshold on traversability.
+      filter7: # Set lower threshold on traversability.
         name: traversability_lower_threshold
         type: gridMapFilters/ThresholdFilter
         params:
@@ -103,10 +93,18 @@ traversability_mapping:
           lower_threshold: 0.0
           set_to: 0.0
 
-      filter9: # Set upper threshold on traversability.
+      filter8: # Set upper threshold on traversability.
         name: traversability_upper_threshold
         type: gridMapFilters/ThresholdFilter
         params:
           layer: traversability
           upper_threshold: 1.0
-          set_to: 1.0 # Other uses: .nan, .inf
+          set_to: 1.0
+
+      filter9:
+        name: gaussian_kernel
+        type: urcPerception/GaussianFilter
+        params:
+          input_layer: traversability
+          output_layer: traversability_inflated
+          radius: 0.5
