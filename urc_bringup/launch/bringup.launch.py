@@ -122,7 +122,9 @@ def generate_launch_description():
         package='vectornav', 
         executable='vn_sensor_msgs',
         output='screen',
-        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')])
+        parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')],
+        remappings=[("/vectornav/imu", "/imu/data")]
+    )
 
     rosbridge_server_node = Node(
         package="rosbridge_server",
