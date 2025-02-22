@@ -96,7 +96,7 @@ namespace urc_perception
                 mapOut.getPosition(*submapIterator, pos);
 
                 double distance = (center - pos).norm();
-                value = std::exp(-0.5 * distance * distance / radius_) * center_cost;
+                value = std::exp(-4.0 * distance * distance / radius_) * center_cost;
 
                 if (value > mapOut.at(outputLayer_, *submapIterator))
                 {
