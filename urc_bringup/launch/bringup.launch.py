@@ -127,6 +127,13 @@ def generate_launch_description():
         parameters=[os.path.join(pkg_urc_bringup, 'config', 'vectornav_imu.yaml')],
         remappings=[("/vectornav/imu", "/imu/data")]
     )
+    
+    sick_scan_multiscan_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory("sick_scan"), "launch", "sick_scan_multiscan.launch.py")
+        ),
+        launch_arguments={'publish_frame_id': 'lidar_link'}.items()
+    )
 
     rosbridge_server_node = Node(
         package="rosbridge_server",
@@ -163,5 +170,6 @@ def generate_launch_description():
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
+            sick_scan_multiscan_launch
         ]
     )
