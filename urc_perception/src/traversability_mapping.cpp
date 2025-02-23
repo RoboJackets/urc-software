@@ -52,6 +52,11 @@ namespace urc_perception
 
     void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
     {
+        // Transform the point cloud from lidar_link to map frame
+        auto lidar_to_map = lookup_transform("map", msg->header.frame_id, msg->header.stamp);
+        sensor_msgs::msg::PointCloud2 cloud_global_;
+        tf2::doTransform(*msg, cloud_global_, lidar_to_map);
+
         // Convert the transformed point cloud to a PCL point cloud
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*msg, *cloud);
