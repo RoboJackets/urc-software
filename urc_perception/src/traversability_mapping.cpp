@@ -9,8 +9,8 @@
 #include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose.hpp>
-
 #include <grid_map_pcl/GridMapPclLoader.hpp>
+
 
 namespace urc_perception
 {
@@ -45,6 +45,22 @@ namespace urc_perception
             return;
         }
     }
+
+    geometry_msgs::msg::TransformStamped TraversabilityMapping::lookup_transform(
+        std::string target_frame,
+        std::string source_frame,
+        rclcpp::Time time)
+    {
+        geometry_msgs::msg::TransformStamped transform;
+
+        try {
+            transform = tf_buffer_->lookupTransform(target_frame, source_frame, time);
+        } catch (tf2::TransformException & ex) {
+            RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
+        }
+        return transform;
+    }
+
 
     TraversabilityMapping::~TraversabilityMapping() = default;
 
