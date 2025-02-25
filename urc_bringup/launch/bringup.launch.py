@@ -24,9 +24,10 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
     pkg_urc_platform = get_package_share_directory("urc_platform")
+    pkg_urc_localization = get_package_share_directory("urc_lozalization")
 
+    pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
     pkg_vectornav = get_package_share_directory("vectornav")
 
     controller_config_file_dir = os.path.join(
@@ -105,6 +106,12 @@ def generate_launch_description():
         )
     )
 
+    launch_ekf = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
+        )
+    )
+
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -119,10 +126,6 @@ def generate_launch_description():
         output="screen",
         parameters=[twist_mux_config],
         remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
-    )
-
-    odom_frame_node = Node(
-        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
 
     return LaunchDescription(
@@ -145,7 +148,7 @@ def generate_launch_description():
             twist_mux_node,
             launch_gps,
             rosbridge_server_node,
-            odom_frame_node,
+            launch_ekf,
             launch_vectornav,
         ]
     )
