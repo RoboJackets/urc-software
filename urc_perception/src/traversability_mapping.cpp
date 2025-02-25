@@ -3,8 +3,6 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
 #include <pcl/filters/filter.h>
 #include <pcl/PCLPointCloud2.h>
 
@@ -50,6 +48,24 @@ namespace urc_perception
 
     TraversabilityMapping::~TraversabilityMapping() = default;
 
+    void TraversabilityMapping::filterSphere(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius)
+    {
+        double radiusSquared = radius * radius;
+        pcl::PointCloud<pcl::PointXYZ>::Ptr filteredCloud(new pcl::PointCloud<pcl::PointXYZ>());
+        filteredCloud->points.reserve(cloud->points.size());
+
+        for (const auto &point : cloud->points)
+        {
+            float distSquared = point.x * point.x + point.y * point.y + point.z * point.z;
+            if (distSquared <= radiusSquared && distSquared >= 0.5)
+            {
+                filteredCloud->points.push_back(point);
+            }
+        }
+
+        *cloud = std::move(*filteredCloud);
+    }
+
     void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
     {
         // Transform the point cloud from lidar_link to map frame
@@ -60,6 +76,9 @@ namespace urc_perception
         // Convert the transformed point cloud to a PCL point cloud
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*msg, *cloud);
+
+        // Filter the point cloud
+        filterSphere(cloud, 5.0);
 
         std::string filePath = ament_index_cpp::get_package_share_directory("urc_perception") + "/config/pcl_grid_map_params.yaml";
 
