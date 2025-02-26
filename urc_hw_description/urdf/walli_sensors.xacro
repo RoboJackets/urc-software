@@ -16,7 +16,7 @@
   </link>
   <joint name="imu_joint" type="fixed">
     <axis xyz="1 0 0" />
-    <origin xyz="0.05 0.1 0.2" rpy="0 -0.095 0"/>
+    <origin xyz="-0.32 -0.09 0.0" />
     <parent link="base_link" />
     <child link="imu_link" />
   </joint>
@@ -90,7 +90,7 @@
   </gazebo>
 
   <!-- GPS -->
-  <link name="gps">
+  <link name="gps_link">
     <visual>
       <geometry>
         <box size="0.05 0.05 0.05" />
@@ -105,9 +105,9 @@
   </link>
   <joint name="gps_joint" type="fixed">
     <axis xyz="1 0 0" />
-    <origin xyz="0.05 -0.1 0.2" />
+    <origin xyz="-0.39 -0.27 0.34" />
     <parent link="base_link" />
-    <child link="gps" />
+    <child link="gps_link" />
   </joint>
   <gazebo reference="gps">
     <sensor name="gps" type="gps">
@@ -116,7 +116,7 @@
           <namespace>/gps</namespace>
           <remapping>~/out:=data_raw</remapping>
         </ros>
-        <frame_name>map</frame_name>
+        <frame_name>gps_link</frame_name>
       </plugin>
       <always_on>true</always_on>
       <updateRate>30</updateRate>

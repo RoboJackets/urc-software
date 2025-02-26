@@ -45,6 +45,12 @@ def generate_launch_description():
     )
     robot_desc = robot_description_config.toxml()
 
+    heartbeat_node = Node(
+        package="urc_bringup",
+        executable="urc_bringup_HeartbeatPublisher",
+        parameters=[{"heartbeatInterval": 1000}],
+    )
+
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
@@ -84,6 +90,7 @@ def generate_launch_description():
         package="urc_platform",
         executable="urc_platform_TwistMux",
         name="twist_mux",
+        parameters=[twist_mux_config],
     )
 
     launch_gps = GroupAction(
@@ -100,10 +107,20 @@ def generate_launch_description():
         ]
     )
 
-    launch_vectornav = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_vectornav, "launch", "vectornav.launch.py")
-        )
+    vectornav_node = Node(
+        package="vectornav",
+        executable="vectornav",
+        output="screen",
+        parameters=[os.path.join(pkg_urc_bringup, "config", "vectornav_imu.yaml")],
+        remappings=[("/vectornav/imu", "/imu/data")],
+    )
+
+    vectornav_sensor_msg_node = Node(
+        package="vectornav",
+        executable="vn_sensor_msgs",
+        output="screen",
+        parameters=[os.path.join(pkg_urc_bringup, "config", "vectornav_imu.yaml")],
+        remappings=[("/vectornav/imu", "/imu/data")],
     )
 
     launch_ekf = IncludeLaunchDescription(
@@ -149,6 +166,8 @@ def generate_launch_description():
             launch_gps,
             rosbridge_server_node,
             launch_ekf,
-            launch_vectornav,
+            vectornav_node,
+            vectornav_sensor_msg_node,
+            heartbeat_node,
         ]
     )

@@ -16,22 +16,20 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
-    # pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
+    pkg_leo_rover = get_package_share_directory("leo_description")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
+        pkg_urc_bringup, "config", "ros2_control_leo.yaml"
     )
-
-    # world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
-    xacro_file = os.path.join(
-        get_package_share_directory("urc_hw_description"), "urdf/walli.xacro"
-    )
+    xacro_file = os.path.join(pkg_leo_rover, "urdf/leo_sim.urdf.xacro")
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "true"}
@@ -42,7 +40,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),  # "world": world_path
+        launch_arguments={
+            "use_sim_time": "true",
+            "world": world_path,
+        }.items(),
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
@@ -58,7 +59,7 @@ def generate_launch_description():
             "-y",
             "0",
             "-z",
-            "5",
+            "10",
             "-R",
             "0",
             "-P",
@@ -68,6 +69,13 @@ def generate_launch_description():
             "-topic",
             "robot_description",
         ],
+    )
+
+    rosbridge_server_node = Node(
+        package="rosbridge_server",
+        name="rosbridge_server",
+        executable="rosbridge_websocket.py",
+        parameters=[{"port": 9090}],
     )
 
     load_robot_state_publisher = Node(
@@ -85,26 +93,6 @@ def generate_launch_description():
         executable="spawner",
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
-
-    # load_arm_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "arm_controller"],
-    # )
-
-    # load_gripper_controller_left = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir,
-    #                "gripper_controller_left"],
-    # )
-
-    # load_gripper_controller_right = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir,
-    #                "gripper_controller_right"],
-    # )
 
     load_drivetrain_controller = Node(
         package="controller_manager",
@@ -195,19 +183,19 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_drivetrain_controller,
-                    on_exit=[elevation_mapping_node, twist_mux_node],
+                    on_exit=[twist_mux_node],
                 )
             ),
-            RegisterEventHandler(
-                event_handler=OnProcessStart(
-                    target_action=elevation_mapping_node,
-                    on_start=[
-                        path_planning_launch,
-                        trajectory_following_launch,
-                        bt_launch,
-                    ],
-                )
-            ),
+            # RegisterEventHandler(
+            #     event_handler=OnProcessStart(
+            #         target_action=elevation_mapping_node,
+            #         on_start=[
+            #             path_planning_launch,
+            #             trajectory_following_launch,
+            #             bt_launch,
+            #         ],
+            #     )
+            # ),
             enable_color,
             gazebo,
             sim_gps_handler_node,
