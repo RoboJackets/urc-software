@@ -25,7 +25,7 @@ def load_yaml(package_name, file_path):
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_urc_platform = get_package_share_directory("urc_platform")
-    pkg_urc_localization = get_package_share_directory("urc_lozalization")
+    pkg_urc_localization = get_package_share_directory("urc_localization")
 
     pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
     pkg_vectornav = get_package_share_directory("vectornav")
