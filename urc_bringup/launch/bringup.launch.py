@@ -28,7 +28,6 @@ def generate_launch_description():
     pkg_urc_localization = get_package_share_directory("urc_localization")
 
     pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
-    pkg_vectornav = get_package_share_directory("vectornav")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -134,15 +133,6 @@ def generate_launch_description():
         name="rosbridge_server",
         executable="rosbridge_websocket.py",
         parameters=[{"port": 9090}],
-    )
-
-    twist_mux_node = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        name="twist_mux",
-        output="screen",
-        parameters=[twist_mux_config],
-        remappings=[("/cmd_vel_out", "/rover_drivetrain_controller/cmd_vel")],
     )
 
     return LaunchDescription(
