@@ -186,16 +186,16 @@ def generate_launch_description():
                     on_exit=[twist_mux_node],
                 )
             ),
-            # RegisterEventHandler(
-            #     event_handler=OnProcessStart(
-            #         target_action=elevation_mapping_node,
-            #         on_start=[
-            #             path_planning_launch,
-            #             trajectory_following_launch,
-            #             bt_launch,
-            #         ],
-            #     )
-            # ),
+            RegisterEventHandler(
+                event_handler=OnProcessStart(
+                    target_action=elevation_mapping_node,
+                    on_start=[
+                        path_planning_launch,
+                        trajectory_following_launch,
+                        bt_launch,
+                    ],
+                )
+            ),
             enable_color,
             gazebo,
             sim_gps_handler_node,
