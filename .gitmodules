@@ -25,3 +25,7 @@
 	path = external/vectornav
 	url = https://github.com/dawonn/vectornav.git
 	branch = ros2
+[submodule "external/ublox_dgnss"]
+	path = external/ublox_dgnss
+	url = git@github.com:aussierobots/ublox_dgnss.git
+	branch = main
