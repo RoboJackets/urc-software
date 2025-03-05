@@ -11,26 +11,27 @@
 namespace behavior::base
 {
 
-using namespace BT;
+  using namespace BT;
 
-NodeStatus LogInfo::tick()
-{
-  Expected<std::shared_ptr<rclcpp::Logger>> logger = getInput<std::shared_ptr<rclcpp::Logger>>(
-    "logger");
-  Expected<std::string> msg = getInput<std::string>("message");
+  NodeStatus LogInfo::tick()
+  {
+    Expected<std::shared_ptr<rclcpp::Logger>> logger = getInput<std::shared_ptr<rclcpp::Logger>>("logger");
+    Expected<std::string> msg = getInput<std::string>("message");
 
-  if (!logger) {
-    throw RuntimeError("Logging node does not have logger input.", logger.error());
+    if (!logger)
+    {
+      throw RuntimeError("Logging node does not have logger input.", logger.error());
+    }
+    if (!msg)
+    {
+      throw RuntimeError("Message not get.", msg.error());
+    }
+
+    RCLCPP_INFO(*logger->get(), "%s", msg->c_str());
+    return NodeStatus::SUCCESS;
   }
-  if (!msg) {
-    throw RuntimeError("Message not get.", msg.error());
-  }
 
-  RCLCPP_INFO(*logger->get(), "%s", msg->c_str());
-  return NodeStatus::SUCCESS;
-}
-
-}  // namespace behavior::base
+} // namespace behavior::base
 
 BT_REGISTER_NODES(factory)
 {

@@ -5,6 +5,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 #include <behaviortree_ros2/tree_execution_server.hpp>
+#include <behaviortree_cpp/loggers/bt_cout_logger.h>
 
 namespace urc_behavior
 {
@@ -12,7 +13,10 @@ namespace urc_behavior
     {
     public:
         BTExecutor(const rclcpp::NodeOptions &options);
-        ~BTExecutor() = default;
+        ~BTExecutor();
+
+        void onTreeCreated(BT::Tree &tree) override;
+        std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status, bool was_cancelled) override;
 
     private:
         std::shared_ptr<BT::StdCoutLogger> logger_cout_;
