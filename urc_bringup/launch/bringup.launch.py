@@ -101,7 +101,10 @@ def generate_launch_description():
                         pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
                     )
                 ),
-                launch_arguments={"device_serial_string": "rover"}.items(),
+                launch_arguments={
+                    "device_serial_string": "rover",
+                    "frame_id": "gps_link",
+                }.items(),
             ),
         ]
     )
