@@ -1,31 +1,58 @@
-import os
-from xacro import process_file
 from launch import LaunchDescription
-from launch.actions import (
-    IncludeLaunchDescription,
-    SetEnvironmentVariable,
-    RegisterEventHandler,
-)
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch.event_handlers import OnProcessExit, OnProcessStart
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    joystick_launch = PathJoinSubstitution([
-        FindPackageShare('urc_platform'),
-        'launch', 
-        'joystick.launch.py',
-    ])
+    driver_joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        remappings=(
+            ("/joy", "/driver/joy"),
+            ("/joy/set_feedback", "/driver/joy/set_feedback"),
+        ),
+    )
 
-    joy_drive_launch = PathJoinSubstitution([
-        FindPackageShare('urc_platform'),
-        'launch', 
-        'joy_drive.launch.py',
-    ])
+    joystick_driver_node = Node(
+        package="urc_platform",
+        executable="urc_platform_JoystickDriver",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_platform"),
+                    "config/",
+                    "joystick_driver_params.yaml",
+                ]
+            )
+        ],
+        remappings=[
+            ("/joystick_driver/joy", "/driver/joy"),
+        ],
+    )
 
-    base_station_gps_launch = PathJoinSubstitution([
-        Fid
+    joy_drive_node = Node(
+        package="urc_platform",
+        executable="urc_platform_JoyDrive",
+        name="joy_drive",
+        output="screen",
+        parameters=[
+            {"max_linear_velocity_ms": 1.0},
+            {"max_angular_velocity_radians": 1.57},
+            {"joy_command_topic": "/joy"},
+            {"cmd_vel_topic": "/cmd_vel"},
+            {"target_axes": [1, 3]},
+            {"invert_linear_velocity": False},
+            {"invert_angular_velocity": False},
+        ],
+    )
+
+    base_station_gps_node = Node(
+        package="urc_platform",
+        executable="urc_platform_SimGpsHandler",
+        output="screen",
+    )
+
+    return LaunchDescription([
+        driver_joy_node, joystick_driver_node, joy_drive_node, base_station_gps_node
     ])
