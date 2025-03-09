@@ -9,7 +9,6 @@ import os
 
 
 def generate_launch_description():
-
     pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
 
     driver_joy_node = Node(
