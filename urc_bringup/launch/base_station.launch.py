@@ -60,9 +60,9 @@ def generate_launch_description():
 
     base_station_gps_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py")
+            os.path.join(pkg_ublox_dgnss, "launch", "ublox_fb+r_base.launch.py")
         ),
-        launch_arguments={"device_serial_string": "rover"}.items(),
+        launch_arguments={"device_serial_string": "base"}.items(),
     )
     return LaunchDescription(
         [driver_joy_node, joystick_driver_node, base_station_gps_launch]
