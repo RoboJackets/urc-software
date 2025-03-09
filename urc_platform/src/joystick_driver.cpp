@@ -46,9 +46,13 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
   drive_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
 
   drive_velocity.twist.linear.x =
-    PreProcessing::preprocess(msg.axes[velocity_axis.first] * max_linear_velocity, max_linear_velocity, invert_pair.first);
+    PreProcessing::preprocess(
+    msg.axes[velocity_axis.first] * max_linear_velocity,
+    max_linear_velocity, invert_pair.first);
   drive_velocity.twist.angular.z =
-    PreProcessing::preprocess(msg.axes[velocity_axis.second] * max_angular_velocity, max_angular_velocity, invert_pair.second);
+    PreProcessing::preprocess(
+    msg.axes[velocity_axis.second] * max_angular_velocity,
+    max_angular_velocity, invert_pair.second);
   drivetrain_cmd_publisher->publish(drive_velocity);
 }
 
