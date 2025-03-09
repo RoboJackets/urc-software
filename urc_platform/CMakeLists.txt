@@ -23,7 +23,6 @@ add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
   src/twist_mux.cpp
   src/sim_gps_handler.cpp
-  src/joy_drive.cpp
 )
 
 set(dependencies
@@ -58,12 +57,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "sim_gps_handler::SimGpsHandler"
   EXECUTABLE ${PROJECT_NAME}_SimGpsHandler
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "joy_drive::JoyDrive"
-  EXECUTABLE ${PROJECT_NAME}_JoyDrive
 )
 
 # Install launch files.

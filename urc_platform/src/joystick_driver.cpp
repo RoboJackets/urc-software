@@ -20,7 +20,7 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
   declare_parameter("driver_velocity_z_axis", 3);
   declare_parameter("driver_left_invert", false);
   declare_parameter("driver_right_invert", false);
-  declare_parameter("drivetrain_topic", "/rover_drivetrain_controller/cmd_vel");
+  declare_parameter("drivetrain_topic", "/cmd_vel_teleop");
 
   joy_subscriber = create_subscription<sensor_msgs::msg::Joy>(
     get_parameter("driver_joystick_topic").as_string(), rclcpp::SystemDefaultsQoS(),
