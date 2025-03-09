@@ -24,11 +24,14 @@ class arm_qp_control_parameters:
         joints = ["default_joint"]
         class __RobotConfig:
             model_path = None
-            end_effector_frame_name = "ee"
+            use_visualization = True
         robot_config = __RobotConfig()
         class __ControlConfig:
-            rate_hz = 120
-            enable_manipulability_constraint = False
+            rate_hz = 200
+            pos_threshold = 1e-05
+            ori_threshold = 1e-05
+            max_iters = 20
+            solver = "osqp"
         control_config = __ControlConfig()
         class __Gains:
             class __MapJoints:
@@ -150,16 +153,28 @@ class arm_qp_control_parameters:
                     updated_params.robot_config.model_path = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                if param.name == self.prefix_ + "robot_config.end_effector_frame_name":
-                    updated_params.robot_config.end_effector_frame_name = param.value
+                if param.name == self.prefix_ + "robot_config.use_visualization":
+                    updated_params.robot_config.use_visualization = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
                 if param.name == self.prefix_ + "control_config.rate_hz":
                     updated_params.control_config.rate_hz = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
-                if param.name == self.prefix_ + "control_config.enable_manipulability_constraint":
-                    updated_params.control_config.enable_manipulability_constraint = param.value
+                if param.name == self.prefix_ + "control_config.pos_threshold":
+                    updated_params.control_config.pos_threshold = param.value
+                    self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+                if param.name == self.prefix_ + "control_config.ori_threshold":
+                    updated_params.control_config.ori_threshold = param.value
+                    self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+                if param.name == self.prefix_ + "control_config.max_iters":
+                    updated_params.control_config.max_iters = param.value
+                    self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+
+                if param.name == self.prefix_ + "control_config.solver":
+                    updated_params.control_config.solver = param.value
                     self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
 
                 if param.name == self.prefix_ + "joints":
@@ -215,20 +230,35 @@ class arm_qp_control_parameters:
                 parameter = rclpy.Parameter.Type.STRING
                 self.node_.declare_parameter(self.prefix_ + "robot_config.model_path", parameter, descriptor)
 
-            if not self.node_.has_parameter(self.prefix_ + "robot_config.end_effector_frame_name"):
-                descriptor = ParameterDescriptor(description="end effector name.", read_only = False)
-                parameter = updated_params.robot_config.end_effector_frame_name
-                self.node_.declare_parameter(self.prefix_ + "robot_config.end_effector_frame_name", parameter, descriptor)
+            if not self.node_.has_parameter(self.prefix_ + "robot_config.use_visualization"):
+                descriptor = ParameterDescriptor(description="Whether start visualization.", read_only = False)
+                parameter = updated_params.robot_config.use_visualization
+                self.node_.declare_parameter(self.prefix_ + "robot_config.use_visualization", parameter, descriptor)
 
             if not self.node_.has_parameter(self.prefix_ + "control_config.rate_hz"):
                 descriptor = ParameterDescriptor(description="Control frequency. Default to 120Hz.", read_only = False)
                 parameter = updated_params.control_config.rate_hz
                 self.node_.declare_parameter(self.prefix_ + "control_config.rate_hz", parameter, descriptor)
 
-            if not self.node_.has_parameter(self.prefix_ + "control_config.enable_manipulability_constraint"):
-                descriptor = ParameterDescriptor(description="Whether use manipulability constraint on kinmatics solver.", read_only = False)
-                parameter = updated_params.control_config.enable_manipulability_constraint
-                self.node_.declare_parameter(self.prefix_ + "control_config.enable_manipulability_constraint", parameter, descriptor)
+            if not self.node_.has_parameter(self.prefix_ + "control_config.pos_threshold"):
+                descriptor = ParameterDescriptor(description="", read_only = False)
+                parameter = updated_params.control_config.pos_threshold
+                self.node_.declare_parameter(self.prefix_ + "control_config.pos_threshold", parameter, descriptor)
+
+            if not self.node_.has_parameter(self.prefix_ + "control_config.ori_threshold"):
+                descriptor = ParameterDescriptor(description="", read_only = False)
+                parameter = updated_params.control_config.ori_threshold
+                self.node_.declare_parameter(self.prefix_ + "control_config.ori_threshold", parameter, descriptor)
+
+            if not self.node_.has_parameter(self.prefix_ + "control_config.max_iters"):
+                descriptor = ParameterDescriptor(description="", read_only = False)
+                parameter = updated_params.control_config.max_iters
+                self.node_.declare_parameter(self.prefix_ + "control_config.max_iters", parameter, descriptor)
+
+            if not self.node_.has_parameter(self.prefix_ + "control_config.solver"):
+                descriptor = ParameterDescriptor(description="", read_only = False)
+                parameter = updated_params.control_config.solver
+                self.node_.declare_parameter(self.prefix_ + "control_config.solver", parameter, descriptor)
 
             if not self.node_.has_parameter(self.prefix_ + "joints"):
                 descriptor = ParameterDescriptor(description="Specifies which joints will be used.", read_only = False)
@@ -240,15 +270,24 @@ class arm_qp_control_parameters:
             param = self.node_.get_parameter(self.prefix_ + "robot_config.model_path")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.robot_config.model_path = param.value
-            param = self.node_.get_parameter(self.prefix_ + "robot_config.end_effector_frame_name")
+            param = self.node_.get_parameter(self.prefix_ + "robot_config.use_visualization")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
-            updated_params.robot_config.end_effector_frame_name = param.value
+            updated_params.robot_config.use_visualization = param.value
             param = self.node_.get_parameter(self.prefix_ + "control_config.rate_hz")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.control_config.rate_hz = param.value
-            param = self.node_.get_parameter(self.prefix_ + "control_config.enable_manipulability_constraint")
+            param = self.node_.get_parameter(self.prefix_ + "control_config.pos_threshold")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
-            updated_params.control_config.enable_manipulability_constraint = param.value
+            updated_params.control_config.pos_threshold = param.value
+            param = self.node_.get_parameter(self.prefix_ + "control_config.ori_threshold")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.control_config.ori_threshold = param.value
+            param = self.node_.get_parameter(self.prefix_ + "control_config.max_iters")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.control_config.max_iters = param.value
+            param = self.node_.get_parameter(self.prefix_ + "control_config.solver")
+            self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
+            updated_params.control_config.solver = param.value
             param = self.node_.get_parameter(self.prefix_ + "joints")
             self.logger_.debug(param.name + ": " + param.type_.name + " = " + str(param.value))
             updated_params.joints = param.value

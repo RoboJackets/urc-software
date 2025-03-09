@@ -4,20 +4,28 @@ arm_qp_control_parameters:
       type: string
       read_only: true
       description: "Model path to urdf."
-    end_effector_frame_name:
-      type: string
-      default_value: "ee"
-      description: "end effector name."
+    use_visualization:
+      type: bool
+      default_value: true
+      description: "Whether start visualization."
 
   control_config:
     rate_hz:
       type: int
-      default_value: 120
+      default_value: 200
       description: "Control frequency. Default to 120Hz."
-    enable_manipulability_constraint:
-      type: bool
-      default_value: false
-      description: "Whether use manipulability constraint on kinmatics solver."
+    pos_threshold:
+      type: double
+      default_value: 1.0e-5
+    ori_threshold:
+      type: double
+      default_value: 1.0e-5
+    max_iters:
+      type: int
+      default_value: 20
+    solver:
+      type: string
+      default_value: "osqp"
 
   # ------- PD Controller Related Settings -------
   joints:

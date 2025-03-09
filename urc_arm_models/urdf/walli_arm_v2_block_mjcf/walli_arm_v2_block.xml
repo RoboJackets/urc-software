@@ -35,7 +35,7 @@
         quat="0.673904 -0.0875256 0.0923609 0.727779" mass="0.226675"
         diaginertia="0.000137219 0.000133678 6.96195e-05" />
       <joint name="base_yaw_joint" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"
-        frictionloss="0.05" />
+        frictionloss="0.05" damping="0.1" />
       <geom type="mesh" rgba="0.647059 0.647059 0.647059 1" mesh="base_rotator_collision" />
 
       <body name="upper_arm" pos="-5.34451e-07 -0.0254 -0.0554"
@@ -43,7 +43,7 @@
         <inertial pos="-0.256892 -0.000276099 -0.0246228" quat="0.507352 0.493162 0.506727 0.492557"
           mass="1.72635" diaginertia="0.0424748 0.042462 0.000557886" />
         <joint name="upper_arm_joint" pos="0 0 0" axis="0 0 1" range="-3.83972 1.22173"
-          frictionloss="0.05" />
+          frictionloss="0.05" damping="0.1" />
         <geom type="mesh" rgba="0.231373 0.380392 0.705882 1" mesh="upper_arm_collision" />
 
         <body name="fore_arm" pos="-0.5108 1.11022e-07 1.00614e-07"
@@ -51,13 +51,13 @@
           <inertial pos="-0.23543 0 -0.024986" quat="0.411169 0.574597 0.409192 0.577357"
             mass="1.62113" diaginertia="0.0340428 0.0340406 0.000524687" />
           <joint name="fore_arm_joint" pos="0 0 0" axis="0 0 1" range="-3.14159 3.14159"
-            frictionloss="0.05" />
+            frictionloss="0.05" damping="0.1" />
           <geom type="mesh" rgba="0.917647 0.917647 0.917647 1" mesh="fore_arm_collision" />
 
           <body name="ee_rotary" pos="-0.4854 2.66454e-07 -0.0254" quat="0 -0.707107 0 -0.707107">
             <inertial pos="1.66594e-09 -4.30298e-09 -0.0122305" quat="0.5 0.5 0.5 0.5"
               mass="0.0153135" diaginertia="2e-06 1.3e-06 1e-06" />
-            <joint name="ee_roll_joint" pos="0 0 0" axis="0 0 1" frictionloss="0.05" />
+            <joint name="ee_roll_joint" pos="0 0 0" axis="0 0 1" frictionloss="0.05" damping="0.1" />
             <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="ee_rotary_collision" />
 
             <body name="ee_rod" pos="-0.005 -1.11022e-07 -0.0225"
@@ -66,7 +66,7 @@
                 quat="-0.00787732 0.707032 -0.00793779 0.707093" mass="0.150461"
                 diaginertia="0.00211985 0.00211453 7.81927e-06" />
               <joint name="ee_pitch_joint" pos="0 0 0" axis="0 0 1" range="-1.5708 1.5708"
-                frictionloss="0.05" />
+                frictionloss="0.05" damping="0.1" />
               <geom type="mesh" rgba="0.768627 0.886275 0.952941 1" mesh="ee_rod_collision" />
             </body>
           </body>
