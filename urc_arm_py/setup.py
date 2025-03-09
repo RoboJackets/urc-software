@@ -35,6 +35,7 @@ setup(
     entry_points={
         "console_scripts": [
             "arm_qp_control = urc_arm_py.arm_qp_control:main",
+            "twist_sender = urc_arm_py.twist_sender:main",
         ],
     },
 )

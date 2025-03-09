@@ -2865,13 +2865,14 @@
         <material name="endeffector_moving_1_0_material" rgba="0.796078 0.823529 0.937255 1" />
     </asset>
     <actuator>
-        <position class="walli_arm_v2" name="spine" joint="spine" kp="20000" kv="100"
+        <position class="walli_arm_v2" name="spine" joint="spine" kp="50000" kv="100"
             ctrlrange="-3.14 3.14" />
-        <position class="walli_arm_v2" name="shoulder" joint="shoulder" kp="10000" kv="100"
+        <position class="walli_arm_v2" name="shoulder" joint="shoulder" kp="10000" kv="50"
             ctrlrange="-3.14 3.14" />
-        <position class="walli_arm_v2" name="elbow" joint="elbow" kp="1000" kv="10"
+        <position class="walli_arm_v2" name="elbow" joint="elbow" kp="500" kv="5"
             ctrlrange="-3.14 3.14" />
-        <position class="walli_arm_v2" name="wrist_pitch" joint="wrist_pitch" ctrlrange="-3.14 3.14" />
+        <position class="walli_arm_v2" name="wrist_pitch" joint="wrist_pitch" kp="100" kv="2"
+            ctrlrange="-3.14 3.14" />
         <position class="walli_arm_v2" name="wrist_roll_wheel" joint="wrist_roll_wheel" />
         <position class="walli_arm_v2" name="grabber" joint="grabber"
             ctrlrange="-1.6653345369377348e-16 0.06299999999999983" />

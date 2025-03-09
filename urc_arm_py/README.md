@@ -29,3 +29,10 @@ And you will see the simulation window popping up.
 Publishing a twist command to `/qp_ctrl/cmd_twist` willl change the end-effector mocap location, updating the IK solution.
 The position output from IK is sent to `/qp_ctrl/pos_ctrl`.
 
+A quick test script is to run `twist_sender` in a seperate terminal:
+
+```bash
+ros2 run urc_arm_py twist_sender
+```
+
+You should be able to control the arm's movement using keyboard.

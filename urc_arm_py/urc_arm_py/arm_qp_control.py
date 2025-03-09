@@ -23,8 +23,8 @@ def hat_se3(xi):
     """
     Convert a 6x1 twist vector into a 4x4 se(3) matrix.
     """
-    omega = xi[:3]  # Angular velocity
-    v = xi[3:]      # Linear velocity
+    v = xi[:3]      # Linear velocity
+    omega = xi[3:]  # Angular velocity
     omega_hat = np.array([[0, -omega[2], omega[1]],
                           [omega[2], 0, -omega[0]],
                           [-omega[1], omega[0], 0]])
@@ -39,7 +39,7 @@ def transform_se3(T, xi, delta_t):
     Transform an SE(3) matrix T by a twist xi over a small time delta_t.
     """
     xi_hat = hat_se3(xi)
-    T_new = expm(xi_hat * delta_t) @ T
+    T_new = T @ expm(xi_hat * delta_t)
     return T_new
 
 
@@ -72,7 +72,34 @@ class ArmQPController(Node):
             lm_damping=1.0,
         )
         self.tasks = [self.task_ee]
-        self.limits = [mink.ConfigurationLimit(self.model, 0.95, 0.01)]
+        ee_grabber_genoms = mink.get_body_geom_ids(
+            self.model, self.model.body("end_effector_grabber").id
+        )
+        ee_genoms = mink.get_body_geom_ids(
+            self.model, self.model.body("end_effector").id
+        )
+        diff_wrist_genoms = mink.get_body_geom_ids(
+            self.model, self.model.body("diffwrist").id
+        )
+        lowerarm_genoms = mink.get_body_geom_ids(
+            self.model, self.model.body("lowerarm").id
+        )
+        collision_pairs = [
+            (ee_grabber_genoms, ["floor"]),
+            (ee_genoms, ["floor"]),
+            (diff_wrist_genoms, ["floor"]),
+            (lowerarm_genoms, ["floor"])
+        ]
+
+        self.limits = [
+            mink.ConfigurationLimit(self.model, 0.95, 0.01),
+            mink.CollisionAvoidanceLimit(
+                self.model, collision_pairs,
+                minimum_distance_from_collisions=0.02,
+                collision_detection_distance=0.05
+            )
+        ]
+
         self.get_logger().info("Model and controller initialization successful!")
 
         # ros publishers and subscribers
@@ -137,16 +164,16 @@ class ArmQPController(Node):
             msg.angular.x, msg.angular.y, msg.angular.z
         ])
         with self.sim_lock:
-            # Get current transform of the "target" mocap
+            # Get the current mocap pose
             T_current = mink.SE3.from_mocap_name(
                 self.model, self.data_sim, "target"
             ).as_matrix()
+            # Apply the twist in the world frame
             T_new = transform_se3(T_current, self.twist_target, dt)
 
-            # Update the simulation mocap position and orientation
+            # Update mocap position and orientation using the new pose
             self.data_sim.mocap_pos[0] = T_new[:3, 3]
             quat = Rotation.from_matrix(T_new[:3, :3]).as_quat()
-            # convert from [x, y, z, w] to [w, x, y, z]
             quat = np.roll(quat, 1)
             self.data_sim.mocap_quat[0] = quat
 
