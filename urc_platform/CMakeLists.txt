@@ -12,6 +12,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(usb_cam REQUIRED)
 find_package(vectornav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(
   include
@@ -32,6 +33,7 @@ set(dependencies
   diagnostic_updater
   usb_cam
   vectornav_msgs
+  geometry_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
