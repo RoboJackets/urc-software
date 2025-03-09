@@ -42,6 +42,9 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
 {
   geometry_msgs::msg::TwistStamped drive_velocity;
+  drive_velocity.header.stamp.sec = msg.header.stamp.sec;
+  drive_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+
   drive_velocity.twist.linear.x =
     PreProcessing::preprocess(msg.axes[velocity_axis.first] * max_linear_velocity, max_linear_velocity, invert_pair.first);
   drive_velocity.twist.angular.z =
