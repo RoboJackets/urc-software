@@ -31,6 +31,7 @@ def generate_launch_description():
         ],
     )
 
+    """
     joy_drive_node = Node(
         package="urc_platform",
         executable="urc_platform_JoyDrive",
@@ -39,13 +40,14 @@ def generate_launch_description():
         parameters=[
             {"max_linear_velocity_ms": 1.0},
             {"max_angular_velocity_radians": 1.57},
-            {"joy_command_topic": "/joy"},
+            {"joy_command_topic": "/driver/joy"},
             {"cmd_vel_topic": "/cmd_vel"},
             {"target_axes": [1, 3]},
             {"invert_linear_velocity": False},
             {"invert_angular_velocity": False},
         ],
     )
+    """
 
     base_station_gps_node = Node(
         package="urc_platform",
@@ -54,5 +56,5 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        driver_joy_node, joystick_driver_node, joy_drive_node, base_station_gps_node
+        driver_joy_node, joystick_driver_node, base_station_gps_node
     ])
