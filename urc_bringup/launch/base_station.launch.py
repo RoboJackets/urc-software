@@ -14,15 +14,16 @@ def generate_launch_description():
     )
 
     joystick_driver_node = Node(
+        name="joy_drive",
         package="urc_platform",
         executable="urc_platform_JoystickDriver",
         output="screen",
         parameters=[
             PathJoinSubstitution(
                 [
-                    FindPackageShare("urc_platform"),
+                    FindPackageShare("urc_bringup"),
                     "config/",
-                    "joystick_driver_params.yaml",
+                    "controller_config.yaml",
                 ]
             )
         ],

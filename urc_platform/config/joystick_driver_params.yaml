@@ -1,9 +1,0 @@
-joystick_driver:
-  ros__parameters:
-    absoluteMaxVel: 1.0
-    maxVel: 0.3
-    maxVelIncr: 0.01
-    leftJoyAxis: 1
-    rightJoyAxis: 3
-    leftInverted: false
-    rightInverted: false
