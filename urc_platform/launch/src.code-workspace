@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"ros.distro": "humble",
+		"python.autoComplete.extraPaths": [
+			"/home/ricklee2487/urc/rover-colcon/install/vectornav_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_test/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_scripts/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ublox_ubx_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ublox_ubx_interfaces/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/btcpp_ros2_interfaces/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/aruco_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ament_cmake_google_benchmark/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ament_cmake_test/lib/python3.10/site-packages",
+			"/opt/ros/humble/lib/python3.10/site-packages",
+			"/opt/ros/humble/local/lib/python3.10/dist-packages"
+		],
+		"python.analysis.extraPaths": [
+			"/home/ricklee2487/urc/rover-colcon/install/vectornav_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_test/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_scripts/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/urc_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ublox_ubx_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ublox_ubx_interfaces/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/btcpp_ros2_interfaces/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/aruco_msgs/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ament_cmake_google_benchmark/lib/python3.10/site-packages",
+			"/home/ricklee2487/urc/rover-colcon/install/ament_cmake_test/lib/python3.10/site-packages",
+			"/opt/ros/humble/lib/python3.10/site-packages",
+			"/opt/ros/humble/local/lib/python3.10/dist-packages"
+		]
+	}
+}
