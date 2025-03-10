@@ -2,10 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import (
-    IncludeLaunchDescription,
-    SetEnvironmentVariable
-)
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
 from launch_ros.actions import Node
 
 
@@ -14,7 +11,8 @@ arm_models_dir = get_package_share_directory("urc_arm_models")
 robot_description_dir = os.path.join(
     arm_models_dir, "urdf", "walli_arm_v2_block_mjcf", "robot.urdf"
 )
-with open(robot_description_dir, 'r+') as urdf_file:
+model_path = os.path.join(arm_models_dir, "urdf", "walli_arm_v2", "scene.xml")
+with open(robot_description_dir, "r+") as urdf_file:
     robot_description = urdf_file.read()
 controller_config_file_dir = os.path.join(
     urc_arm_dir, "config", "controller_config.yaml"
@@ -26,7 +24,10 @@ def generate_launch_description():
         package="urc_arm_py",
         executable="arm_qp_control",
         name="qp_ctrl",
-        parameters=[controller_config_file_dir],
+        parameters=[
+            controller_config_file_dir,
+            {"robot_config": {"model_path": model_path}},
+        ],
         output="screen",
     )
 
@@ -40,19 +41,11 @@ def generate_launch_description():
                 "robot_description": robot_description,
                 "publish_frequency": 100.0,
             },
-        ]
+        ],
     )
 
     foxglove_bridge = Node(
-        package="foxglove_bridge",
-        executable="foxglove_bridge",
-        output="log"
+        package="foxglove_bridge", executable="foxglove_bridge", output="log"
     )
 
-    return LaunchDescription(
-        [
-            rsp_node,
-            qp_controller,
-            foxglove_bridge
-        ]
-    )
+    return LaunchDescription([rsp_node, qp_controller, foxglove_bridge])

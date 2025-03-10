@@ -12,6 +12,8 @@ Then, run
 pip install mujoco      # mujoco engine
 pip install mink        # mink library
 pip install numpy scipy # for numericals and spatial transformation
+pip install "qpsolvers[osqp]"
+pip install loop_rate_limiters
 ```
 
 This should installed all the required dependencies for the controller.
