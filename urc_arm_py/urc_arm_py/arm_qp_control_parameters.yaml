@@ -1,0 +1,44 @@
+arm_qp_control_parameters:
+  robot_config:
+    model_path:
+      type: string
+      read_only: true
+      description: "Model path to urdf."
+    use_visualization:
+      type: bool
+      default_value: true
+      description: "Whether start visualization."
+
+  control_config:
+    rate_hz:
+      type: int
+      default_value: 200
+      description: "Control frequency. Default to 120Hz."
+    pos_threshold:
+      type: double
+      default_value: 1.0e-5
+    ori_threshold:
+      type: double
+      default_value: 1.0e-5
+    max_iters:
+      type: int
+      default_value: 20
+    solver:
+      type: string
+      default_value: "osqp"
+
+  # ------- PD Controller Related Settings -------
+  joints:
+    type: string_array
+    default_value: ["default_joint"]
+    description: "Specifies which joints will be used."
+  gains:
+    __map_joints: # create a map with joints as keys
+      kp:
+        type: double
+      kd:
+        type: double
+      torque_limit:
+        type: double_array
+        validation:
+          fixed_size<>: [2]

@@ -1,0 +1,28 @@
+{
+    "robotName": "walli_arm_v2",
+    "documentId": "dd7117a6637b4c2dc6c0f40e",
+    "outputFormat": "urdf",
+    "jointMaxEffort": 50,
+    "jointMaxVelocity": 20,
+    "mergeSTLs": "all",
+    "simplifySTLs": "all",
+    "packageName": "urc_arm_models/urdf/walli_arm_v2",
+    "ignoreDynamics": true,
+    "assemblyName": "WalliArmV2",
+    "draw_frames": true,
+    "ignore": [
+        "4390n115_10mm_input_bearing",
+        "5972k214_center_disc_bearing",
+        "5395t311_set_screw_shaft_coupling_25_mm",
+        "5972k215_eccentric_shaft_bearing",
+        "57155k498_8mm_flanged_bearing",
+        "60355k691_output_carrier_bearing",
+        "57155K498 8mm Flanged Bearing",
+        "92949A257_18-8 Stainless Steel Button Head Hex Drive Screw",
+        "shaft_spacers",
+        "6383k234_ball_bearing",
+        "eccentric_shaft",
+        "5972K215 Eccentric Shaft Bearing",
+        "6483K61_Flange-Mounted Linear Ball Bearing"
+    ]
+}

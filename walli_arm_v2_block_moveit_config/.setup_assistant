@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: urc_arm_models
+    relative_path: urdf/walli_arm_v2_block/robot.urdf
+  srdf:
+    relative_path: config/walli_arm_v2_block.srdf
+  package_settings:
+    author_name: Zimeng Chai
+    author_email: zimeng.chai@gatech.edu
+    generated_timestamp: 1728253506
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
