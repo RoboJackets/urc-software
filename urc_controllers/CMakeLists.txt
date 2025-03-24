@@ -24,11 +24,9 @@ add_library(
   ${PROJECT_NAME}
   SHARED
   src/test_hardware_controller.cpp
-  src/imu_broadcaster.cpp
   src/status_light_controller.cpp
   src/bms_broadcaster.cpp
   include/urc_controllers/test_hardware_controller.hpp
-  include/urc_controllers/imu_broadcaster.hpp
   include/urc_controllers/status_light_controller.hpp
   include/urc_controllers/bms_broadcaster.hpp
 )
