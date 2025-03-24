@@ -10,7 +10,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>hardware_interface</depend>
-  <depend>urc_util</depend>
   <depend>urc_nanopb</depend>
   <depend>nanopb</depend>
   <depend>rclcpp</depend>

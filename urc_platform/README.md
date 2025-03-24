@@ -10,6 +10,5 @@ Deals with the manual control of the rover. Takes in joystick messages (sensor_m
 
 Directs the operation of the motors. Takes in velocity messages (urc_msgs::msg::VelocityPair) and publishes what they mean to the motor encoders over the rover's on-board LAN.
 
-- [More info on how the transmission works](../urc_util/src/ethernet_socket.cpp)
 - [More info on how the info is encapsulated](../urc_nanopb/)
 - [Actual hardware implementation of messages can be seen in the firmware repo](https://github.com/RoboJackets/urc-firmware)
