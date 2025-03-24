@@ -13,7 +13,6 @@ find_package(hardware_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(nanopb REQUIRED)
-find_package(urc_util REQUIRED)
 find_package(urc_nanopb REQUIRED)
 
 add_library(
@@ -45,7 +44,6 @@ ament_target_dependencies(
     "hardware_interface"
     "rclcpp"
     "nanopb"
-    "urc_util"
     "urc_nanopb"
     "pluginlib"
 )

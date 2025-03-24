@@ -14,7 +14,6 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(urc_hw REQUIRED)
-find_package(urc_util REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
 find_package(joint_trajectory_controller REQUIRED)
@@ -45,7 +44,6 @@ ament_target_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
-  urc_util
   urc_nanopb
   urc_msgs
 )
@@ -79,7 +77,6 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
-  urc_util
 )
 
 ament_export_targets(
