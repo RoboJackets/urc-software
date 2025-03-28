@@ -120,7 +120,7 @@ gripper_controller_right:
     stall_velocity_threshold: 0.001
     joint: rightgripperjoint
 
-joy_drive:
+joystick_driver:
   ros__parameters:
     max_linear_velocity_ms: 3.0
     max_angular_velocity_radians: 5.0
