@@ -65,7 +65,7 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
       arm_velocity.twist.linear.x = 
         PreProcessing::preprocess(
         msg.axes[7] * max_linear_velocity * 0.5,
-        max_linear_velocity, False);
+        max_linear_velocity, false);
       arm_velocity.twist.angular.z = 
         PreProcessing::preprocess(
         msg.axes[6] * max_angular_velocity * 0.5,
@@ -79,7 +79,7 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
       science_velocity.twist.linear.x = 
         PreProcessing::preprocess(
         msg.axes[7] * max_linear_velocity * 0.5,
-        max_linear_velocity, False);
+        max_linear_velocity, false);
       science_velocity.twist.angular.z = 
         PreProcessing::preprocess(
         msg.axes[6] * max_angular_velocity * 0.5,
