@@ -38,14 +38,14 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     get_parameter("driver_left_invert").as_bool(),
     get_parameter("driver_right_invert").as_bool());
 
-    mode = "drivetrain";
+    mode = 0;
 
 }
 
 void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
 {
   switch(mode) {
-      case "drivetrain":
+      case 0:
           geometry_msgs::msg::TwistStamped drive_velocity;
           drive_velocity.header.stamp.sec = msg.header.stamp.sec;
           drive_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
@@ -60,7 +60,7 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
             max_angular_velocity, invert_pair.second);
           cmd_vel_publisher->publish(drive_velocity);
           break;
-      case "arm":
+      case 1:
           geometry_msgs::msg::TwistStamped arm_velocity;
           arm_velocity.header.stamp.sec = msg.header.stamp.sec;
           arm_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
@@ -74,7 +74,7 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
             max_angular_velocity, False);
           cmd_vel_publisher->publish(arm_velocity);
           break;
-      case "science":
+      case 2:
           geometry_msgs::msg::TwistStamped science_velocity;
           science_velocity.header.stamp.sec = msg.header.stamp.sec;
           science_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;

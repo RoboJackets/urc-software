@@ -16,7 +16,7 @@ namespace joystick_driver
 class JoystickDriver : public rclcpp::Node
 {
 public:
-  explicit JoystickDriver(const rclcpp::NodeOptions & options, JoystickMode mode = JoystickMode::DRIVER);
+  explicit JoystickDriver(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subscriber;
@@ -29,7 +29,7 @@ private:
   std::pair<int, int> velocity_axis;
   std::pair<bool, bool> invert_pair;
 
-  std::string mode;
+  int mode;
   };
 }  // namespace joystick_driver
 
