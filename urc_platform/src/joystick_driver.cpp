@@ -28,6 +28,12 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 
   cmd_vel_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
     get_parameter("drivetrain_topic").as_string(), rclcpp::SystemDefaultsQoS());
+
+  // Initialize the mode service
+  mode_service = create_service<urc_platform::srv::SetMode>(
+    "set_joystick_mode",
+    std::bind(&JoystickDriver::ModeCallback, this, std::placeholders::_1, std::placeholders::_2));
+
   max_linear_velocity = get_parameter("max_linear_velocity").as_double();
   max_angular_velocity = get_parameter("max_angular_velocity").as_double();
   velocity_axis = std::make_pair(
@@ -38,8 +44,21 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     get_parameter("driver_left_invert").as_bool(),
     get_parameter("driver_right_invert").as_bool());
 
-    mode = 0;
+  mode = 0;
+}
 
+void JoystickDriver::ModeCallback(
+  const std::shared_ptr<urc_platform::srv::SetMode::Request> request,
+  std::shared_ptr<urc_platform::srv::SetMode::Response> response)
+{
+  if (request->mode >= 0 && request->mode <= 2) {
+    mode = request->mode;
+    response->success = true;
+    response->message = "Mode set successfully to " + std::to_string(mode);
+  } else {
+    response->success = false;
+    response->message = "Invalid mode. Must be 0 (drive), 1 (arm), or 2 (science)";
+  }
 }
 
 void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
