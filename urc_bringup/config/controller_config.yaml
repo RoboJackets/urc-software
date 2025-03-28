@@ -129,3 +129,9 @@ joy_drive:
     target_axes: [1, 3]
     invert_linear_velocity: false
     invert_angular_velocity: false
+    mode_topic: /cmd_vel_mode
+    mode_switch_button: 4  # Y button
+    modes: ["drive", "arm"]
+    arm_control_topic: /arm_controller/commands
+    arm_joints: ["shoulderjoint", "bicepjoint", "elbowjoint", "wristjoint", "clawjoint"]
+    arm_velocity_scale: 0.5  # Maximum velocity for arm joints

@@ -26,7 +26,7 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     get_parameter("driver_joystick_topic").as_string(), rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Joy msg) {JoyCallback(msg);});
 
-  drivetrain_cmd_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
+  cmd_vel_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
     get_parameter("drivetrain_topic").as_string(), rclcpp::SystemDefaultsQoS());
   max_linear_velocity = get_parameter("max_linear_velocity").as_double();
   max_angular_velocity = get_parameter("max_angular_velocity").as_double();
@@ -37,23 +37,60 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     std::make_pair(
     get_parameter("driver_left_invert").as_bool(),
     get_parameter("driver_right_invert").as_bool());
+
+    mode = "drivetrain";
+
 }
 
 void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
 {
-  geometry_msgs::msg::TwistStamped drive_velocity;
-  drive_velocity.header.stamp.sec = msg.header.stamp.sec;
-  drive_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+  switch(mode) {
+      case "drivetrain":
+          geometry_msgs::msg::TwistStamped drive_velocity;
+          drive_velocity.header.stamp.sec = msg.header.stamp.sec;
+          drive_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
 
-  drive_velocity.twist.linear.x =
-    PreProcessing::preprocess(
-    msg.axes[velocity_axis.first] * max_linear_velocity,
-    max_linear_velocity, invert_pair.first);
-  drive_velocity.twist.angular.z =
-    PreProcessing::preprocess(
-    msg.axes[velocity_axis.second] * max_angular_velocity,
-    max_angular_velocity, invert_pair.second);
-  drivetrain_cmd_publisher->publish(drive_velocity);
+          drive_velocity.twist.linear.x =
+            PreProcessing::preprocess(
+            msg.axes[velocity_axis.first] * max_linear_velocity,
+            max_linear_velocity, invert_pair.first);
+          drive_velocity.twist.angular.z =
+            PreProcessing::preprocess(
+            msg.axes[velocity_axis.second] * max_angular_velocity,
+            max_angular_velocity, invert_pair.second);
+          cmd_vel_publisher->publish(drive_velocity);
+          break;
+      case "arm":
+          geometry_msgs::msg::TwistStamped arm_velocity;
+          arm_velocity.header.stamp.sec = msg.header.stamp.sec;
+          arm_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+          arm_velocity.twist.linear.x = 
+            PreProcessing::preprocess(
+            msg.axes[7] * max_linear_velocity * 0.5,
+            max_linear_velocity, False);
+          arm_velocity.twist.angular.z = 
+            PreProcessing::preprocess(
+            msg.axes[6] * max_angular_velocity * 0.5,
+            max_angular_velocity, False);
+          cmd_vel_publisher->publish(arm_velocity);
+          break;
+      case "science":
+          geometry_msgs::msg::TwistStamped science_velocity;
+          science_velocity.header.stamp.sec = msg.header.stamp.sec;
+          science_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+          science_velocity.twist.linear.x = 
+            PreProcessing::preprocess(
+            msg.axes[7] * max_linear_velocity * 0.5,
+            max_linear_velocity, False);
+          science_velocity.twist.angular.z = 
+            PreProcessing::preprocess(
+            msg.axes[6] * max_angular_velocity * 0.5,
+            max_angular_velocity, False);
+          cmd_vel_publisher->publish(science_velocity);
+          break;
+      default:
+          break;
+  }
 }
 
 }  // namespace joystick_driver
