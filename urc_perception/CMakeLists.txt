@@ -100,7 +100,7 @@ install(
   DESTINATION share/${PROJECT_NAME}/
 )
 
-install (
+install(
   FILES filter_plugins.xml
   DESTINATION share/${PROJECT_NAME}
 )

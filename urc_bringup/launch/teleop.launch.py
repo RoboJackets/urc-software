@@ -24,7 +24,7 @@ def generate_launch_description():
 
     joy_drive = Node(
         package="urc_platform",
-        executable="joytick_driver",
+        executable="urc_platform_JoystickDriver",
         name="joystick_driver",
         parameters=[controller_config_file_dir],
     )
