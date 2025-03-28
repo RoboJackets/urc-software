@@ -23,7 +23,7 @@ private:
   void JoyCallback(const sensor_msgs::msg::Joy & msg);
 
   // drivetrain
-  std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> drivetrain_cmd_publisher;
+  std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> cmd_vel_publisher;
   double max_linear_velocity;
   double max_angular_velocity;
   std::pair<int, int> velocity_axis;
