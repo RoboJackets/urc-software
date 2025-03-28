@@ -1,0 +1,4 @@
+int8 mode  # 0: drive mode, 1: arm mode, 2: science mode
+---
+bool success
+string message 

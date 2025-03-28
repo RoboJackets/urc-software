@@ -9,7 +9,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <std_msgs/msg/detail/int8__struct.hpp>
 #include <utility>
-#include "urc_platform/srv/set_mode.hpp"
+#include <urc_msgs/srv/set_teleop_mode.hpp>
 
 namespace joystick_driver
 {
@@ -22,12 +22,12 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr joy_subscriber;
   void JoyCallback(const sensor_msgs::msg::Joy & msg);
-  
+
   // Service server for mode control
-  rclcpp::Service<urc_platform::srv::SetMode>::SharedPtr mode_service;
+  rclcpp::Service<urc_msgs::srv::SetTeleopMode>::SharedPtr mode_service;
   void ModeCallback(
-    const std::shared_ptr<urc_platform::srv::SetMode::Request> request,
-    std::shared_ptr<urc_platform::srv::SetMode::Response> response);
+    const std::shared_ptr<urc_msgs::srv::SetTeleopMode::Request> request,
+    std::shared_ptr<urc_msgs::srv::SetTeleopMode::Response> response);
 
   // drivetrain
   std::shared_ptr<rclcpp::Publisher<geometry_msgs::msg::TwistStamped>> cmd_vel_publisher;

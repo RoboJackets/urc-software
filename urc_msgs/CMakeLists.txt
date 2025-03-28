@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GeneratePlan.srv"
   "action/FollowPath.action"
   "srv/UpdateBehaviorTree.srv"
+  "srv/SetTeleopMode.srv"
 
   DEPENDENCIES
   std_msgs

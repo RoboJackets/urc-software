@@ -30,7 +30,7 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
     get_parameter("drivetrain_topic").as_string(), rclcpp::SystemDefaultsQoS());
 
   // Initialize the mode service
-  mode_service = create_service<urc_platform::srv::SetMode>(
+  mode_service = create_service<urc_msgs::srv::SetTeleopMode>(
     "set_joystick_mode",
     std::bind(&JoystickDriver::ModeCallback, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -48,8 +48,8 @@ JoystickDriver::JoystickDriver(const rclcpp::NodeOptions & options)
 }
 
 void JoystickDriver::ModeCallback(
-  const std::shared_ptr<urc_platform::srv::SetMode::Request> request,
-  std::shared_ptr<urc_platform::srv::SetMode::Response> response)
+  const std::shared_ptr<urc_msgs::srv::SetTeleopMode::Request> request,
+  std::shared_ptr<urc_msgs::srv::SetTeleopMode::Response> response)
 {
   if (request->mode >= 0 && request->mode <= 2) {
     mode = request->mode;
@@ -76,34 +76,32 @@ void JoystickDriver::JoyCallback(const sensor_msgs::msg::Joy & msg)
       msg.axes[velocity_axis.second] * max_angular_velocity,
       max_angular_velocity, invert_pair.second);
     cmd_vel_publisher->publish(drive_velocity);
-  }
-  else if (mode == 1) {
-      geometry_msgs::msg::TwistStamped arm_velocity;
-      arm_velocity.header.stamp.sec = msg.header.stamp.sec;
-      arm_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
-      arm_velocity.twist.linear.x = 
-        PreProcessing::preprocess(
-        msg.axes[7] * max_linear_velocity * 0.5,
-        max_linear_velocity, false);
-      arm_velocity.twist.angular.z = 
-        PreProcessing::preprocess(
-        msg.axes[6] * max_angular_velocity * 0.5,
-        max_angular_velocity, false);
-      cmd_vel_publisher->publish(arm_velocity);
-  }
-  else {
-      geometry_msgs::msg::TwistStamped science_velocity;
-      science_velocity.header.stamp.sec = msg.header.stamp.sec;
-      science_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
-      science_velocity.twist.linear.x = 
-        PreProcessing::preprocess(
-        msg.axes[7] * max_linear_velocity * 0.5,
-        max_linear_velocity, false);
-      science_velocity.twist.angular.z = 
-        PreProcessing::preprocess(
-        msg.axes[6] * max_angular_velocity * 0.5,
-        max_angular_velocity, false);
-      cmd_vel_publisher->publish(science_velocity);
+  } else if (mode == 1) {
+    geometry_msgs::msg::TwistStamped arm_velocity;
+    arm_velocity.header.stamp.sec = msg.header.stamp.sec;
+    arm_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+    arm_velocity.twist.linear.x =
+      PreProcessing::preprocess(
+      msg.axes[7] * max_linear_velocity * 0.5,
+      max_linear_velocity, false);
+    arm_velocity.twist.angular.z =
+      PreProcessing::preprocess(
+      msg.axes[6] * max_angular_velocity * 0.5,
+      max_angular_velocity, false);
+    cmd_vel_publisher->publish(arm_velocity);
+  } else {
+    geometry_msgs::msg::TwistStamped science_velocity;
+    science_velocity.header.stamp.sec = msg.header.stamp.sec;
+    science_velocity.header.stamp.nanosec = msg.header.stamp.nanosec;
+    science_velocity.twist.linear.x =
+      PreProcessing::preprocess(
+      msg.axes[7] * max_linear_velocity * 0.5,
+      max_linear_velocity, false);
+    science_velocity.twist.angular.z =
+      PreProcessing::preprocess(
+      msg.axes[6] * max_angular_velocity * 0.5,
+      max_angular_velocity, false);
+    cmd_vel_publisher->publish(science_velocity);
   }
 }
 

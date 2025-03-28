@@ -10,18 +10,11 @@ find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
-find_package(usb_cam REQUIRED)
-find_package(vectornav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
+find_package(urc_msgs REQUIRED)
 
 include_directories(
   include
-)
-
-# Generate service messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "srv/SetMode.srv"
 )
 
 # Library creation
@@ -37,10 +30,8 @@ set(dependencies
   std_msgs
   sensor_msgs
   diagnostic_updater
-  usb_cam
-  vectornav_msgs
   geometry_msgs
-  ${PROJECT_NAME}  # Add our own package as a dependency for the service
+  urc_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
