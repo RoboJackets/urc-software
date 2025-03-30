@@ -3,5 +3,10 @@
     <include path="main_tree.xml"/>
     <include path="navigation_subtree.xml"/>
     <!-- Description of Node Models (used by Groot) -->
-    <TreeNodesModel/>
+    <TreeNodesModel>
+        <Action ID="FollowTrajectory" editable="true"/>
+        <Action ID="PathPlan" editable="true">
+            <input_port name="goal_pos"/>
+        </Action>
+    </TreeNodesModel>
 </root>
