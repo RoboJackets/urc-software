@@ -24,12 +24,11 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
+    pkg_urc_platform = get_package_share_directory("urc_platform")
+    pkg_sick_scan = get_package_share_directory("sick_scan_xd")
     pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
         "nmea_navsat_driver"
     )
-    pkg_urc_platform = get_package_share_directory("urc_platform")
-
-    pkg_vectornav = get_package_share_directory("vectornav")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -128,18 +127,16 @@ def generate_launch_description():
         remappings=[("/vectornav/imu", "/imu/data")],
     )
 
-    sick_scan_multiscan_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                get_package_share_directory("sick_scan_xd"),
-                "launch",
-                "sick_multiscan.launch.py",
-            )
-        ),
-        launch_arguments={
-            "publish_frame_id": "lidar_link",
-            "hostname": "192.168.1.10",
-        }.items(),
+    sick_launch_path = os.path.join(pkg_sick_scan, "launch/sick_multiscan.launch")
+    sick_scan_node = Node(
+        package="sick_scan_xd",
+        executable="sick_generic_caller",
+        output="screen",
+        arguments=[
+            sick_launch_path,
+            "hostname:=192.168.1.10",
+            "publish_frame_id:=lidar_link",
+        ],
     )
 
     rosbridge_server_node = Node(
@@ -177,6 +174,6 @@ def generate_launch_description():
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
-            sick_scan_multiscan_launch,
+            sick_scan_node,
         ]
     )
