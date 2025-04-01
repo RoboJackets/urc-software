@@ -61,4 +61,4 @@ inline geometry_msgs::msg::Pose convertFromString(StringView str)
 }
 } // namespace BT
 
-CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "CallGeneratePlan");
+CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "PathPlan");
