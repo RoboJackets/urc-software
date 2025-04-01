@@ -11,7 +11,6 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <grid_map_pcl/GridMapPclLoader.hpp>
 
-
 namespace urc_perception
 {
 
@@ -53,14 +52,16 @@ namespace urc_perception
     {
         geometry_msgs::msg::TransformStamped transform;
 
-        try {
+        try
+        {
             transform = tf_buffer_->lookupTransform(target_frame, source_frame, time);
-        } catch (tf2::TransformException & ex) {
+        }
+        catch (tf2::TransformException &ex)
+        {
             RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
         }
         return transform;
     }
-
 
     TraversabilityMapping::~TraversabilityMapping() = default;
 
@@ -94,7 +95,7 @@ namespace urc_perception
         pcl::fromROSMsg(*msg, *cloud);
 
         // Filter the point cloud
-        filterSphere(cloud, 5.0);
+        filterSphere(cloud, filter_radius_);
 
         std::string filePath = ament_index_cpp::get_package_share_directory("urc_perception") + "/config/pcl_grid_map_params.yaml";
 
@@ -127,6 +128,7 @@ namespace urc_perception
         this->declare_parameter("pointcloud_topic", std::string("pointcloud"));
         this->declare_parameter("output_map_topic", std::string("costmap"));
         this->declare_parameter("filter_chain_parameter_name", std::string("filters"));
+        this->declare_parameter("filter_radius", 5.0);
 
         if (!this->get_parameter("pointcloud_topic", pointcloud_topic_))
         {
@@ -136,6 +138,7 @@ namespace urc_perception
 
         this->get_parameter("output_map_topic", output_map_topic_);
         this->get_parameter("filter_chain_parameter_name", filter_chain_parameter_name_);
+        this->get_parameter("filter_radius", filter_radius_);
 
         return true;
     }

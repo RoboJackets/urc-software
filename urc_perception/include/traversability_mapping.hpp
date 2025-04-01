@@ -24,11 +24,10 @@ namespace urc_perception
 
   private:
     geometry_msgs::msg::TransformStamped lookup_transform(
-      std::string target_frame,
-      std::string source_frame,
-      rclcpp::Time time);
+        std::string target_frame,
+        std::string source_frame,
+        rclcpp::Time time);
 
-    
     void handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
     void filterSphere(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius);
 
@@ -41,6 +40,7 @@ namespace urc_perception
     grid_map::GridMap map_;
     filters::FilterChain<grid_map::GridMap> filter_chain_;
 
+    double filter_radius_;
     double resolution_;
     double min_z_;
     double max_z_;
