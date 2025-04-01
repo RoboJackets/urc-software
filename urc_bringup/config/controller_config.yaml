@@ -75,8 +75,8 @@ rover_drivetrain_controller:
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true
     linear.x.has_jerk_limits: false
-    linear.x.max_velocity: 1.0
-    linear.x.min_velocity: -1.0
+    linear.x.max_velocity: 3.0
+    linear.x.min_velocity: -3.0
     linear.x.max_acceleration: 2.5
     linear.x.max_jerk: 0.0
     linear.x.min_jerk: 0.0
@@ -84,10 +84,10 @@ rover_drivetrain_controller:
     angular.z.has_velocity_limits: true
     angular.z.has_acceleration_limits: true
     angular.z.has_jerk_limits: false
-    angular.z.max_velocity: 2.0
-    angular.z.min_velocity: -2.0
-    angular.z.max_acceleration: 1.0
-    angular.z.min_acceleration: -1.0
+    angular.z.max_velocity: 5.0
+    angular.z.min_velocity: -5.0
+    angular.z.max_acceleration: 3.0
+    angular.z.min_acceleration: -3.0
     angular.z.max_jerk: 0.0
     angular.z.min_jerk: 0.0
 
@@ -120,7 +120,7 @@ gripper_controller_right:
     stall_velocity_threshold: 0.001
     joint: rightgripperjoint
 
-joy_drive:
+joystick_driver:
   ros__parameters:
     max_linear_velocity_ms: 3.0
     max_angular_velocity_radians: 5.0
