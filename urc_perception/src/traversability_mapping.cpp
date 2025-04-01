@@ -124,20 +124,12 @@ namespace urc_perception
         grid_map_publisher_->publish(std::move(outputMessage));
     }
 
-<<<<<<< HEAD
     bool TraversabilityMapping::readParameters()
     {
         this->declare_parameter("pointcloud_topic", std::string("pointcloud"));
         this->declare_parameter("output_map_topic", std::string("costmap"));
         this->declare_parameter("filter_chain_parameter_name", std::string("filters"));
         this->declare_parameter("filter_radius", 5.0);
-=======
-    bool TraversabilityMapping::readParameters()
-    {
-        this->declare_parameter("pointcloud_topic", std::string("pointcloud"));
-        this->declare_parameter("output_map_topic", std::string("costmap"));
-        this->declare_parameter("filter_chain_parameter_name", std::string("filters"));
->>>>>>> master
 
         if (!this->get_parameter("pointcloud_topic", pointcloud_topic_))
         {
@@ -145,14 +137,9 @@ namespace urc_perception
             return false;
         }
 
-<<<<<<< HEAD
         this->get_parameter("output_map_topic", output_map_topic_);
         this->get_parameter("filter_chain_parameter_name", filter_chain_parameter_name_);
         this->get_parameter("filter_radius", filter_radius_);
-=======
-        this->get_parameter("output_map_topic", output_map_topic_);
-        this->get_parameter("filter_chain_parameter_name", filter_chain_parameter_name_);
->>>>>>> master
 
         return true;
     }
