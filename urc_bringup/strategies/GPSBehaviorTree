@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="MainBehavior">
+  <BehaviorTree ID="MainBehavior">
+    <Sequence>
+      <RetryUntilSuccessful num_attempts="">
+        <GetCurrentGoal/>
+      </RetryUntilSuccessful>
+      <SetBlackboard value="GoalType"
+                     output_key=""/>
+      <ScriptCondition code="GoalType == &quot;GPS&quot;"/>
+      <IfThenElse>
+        <Sequence>
+          <CallNavigationSubtree/>
+          <SearchRadius/>
+          <CallNavigationSubtree/>
+          <RemoveGoal/>
+        </Sequence>
+        <Sequence>
+          <CallNavigationSubtree/>
+          <RemoveGoal/>
+        </Sequence>
+      </IfThenElse>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="CallNavigationSubtree"
+            editable="true"/>
+    <Action ID="GetCurrentGoal"
+            editable="true"/>
+    <Action ID="RemoveGoal"
+            editable="true"/>
+    <Action ID="SearchRadius"
+            editable="true"/>
+  </TreeNodesModel>
+
+</root>
