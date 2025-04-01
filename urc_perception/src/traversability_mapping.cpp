@@ -3,15 +3,12 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
 #include <pcl/filters/filter.h>
 #include <pcl/PCLPointCloud2.h>
 
 #include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose.hpp>
-
 #include <grid_map_pcl/GridMapPclLoader.hpp>
 
 namespace urc_perception
@@ -46,13 +43,52 @@ TraversabilityMapping::TraversabilityMapping(const rclcpp::NodeOptions & options
   }
 }
 
+geometry_msgs::msg::TransformStamped TraversabilityMapping::lookup_transform(
+  std::string target_frame,
+  std::string source_frame,
+  rclcpp::Time time)
+{
+  geometry_msgs::msg::TransformStamped transform;
+
+  try {
+    transform = tf_buffer_->lookupTransform(target_frame, source_frame, time);
+  } catch (tf2::TransformException & ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
+  }
+  return transform;
+}
+
 TraversabilityMapping::~TraversabilityMapping() = default;
+
+void TraversabilityMapping::filterSphere(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float radius)
+{
+  double radiusSquared = radius * radius;
+  pcl::PointCloud<pcl::PointXYZ>::Ptr filteredCloud(new pcl::PointCloud<pcl::PointXYZ>());
+  filteredCloud->points.reserve(cloud->points.size());
+
+  for (const auto & point : cloud->points) {
+    float distSquared = point.x * point.x + point.y * point.y + point.z * point.z;
+    if (distSquared <= radiusSquared && distSquared >= 0.5) {
+      filteredCloud->points.push_back(point);
+    }
+  }
+
+  *cloud = std::move(*filteredCloud);
+}
 
 void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
+  // Transform the point cloud from lidar_link to map frame
+  auto lidar_to_map = lookup_transform("map", msg->header.frame_id, msg->header.stamp);
+  sensor_msgs::msg::PointCloud2 cloud_global_;
+  tf2::doTransform(*msg, cloud_global_, lidar_to_map);
+
   // Convert the transformed point cloud to a PCL point cloud
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromROSMsg(*msg, *cloud);
+
+  // Filter the point cloud
+  filterSphere(cloud, filter_radius_);
 
   std::string filePath = ament_index_cpp::get_package_share_directory("urc_perception") +
     "/config/pcl_grid_map_params.yaml";
@@ -85,6 +121,7 @@ bool TraversabilityMapping::readParameters()
   this->declare_parameter("pointcloud_topic", std::string("pointcloud"));
   this->declare_parameter("output_map_topic", std::string("costmap"));
   this->declare_parameter("filter_chain_parameter_name", std::string("filters"));
+  this->declare_parameter("filter_radius", 5.0);
 
   if (!this->get_parameter("pointcloud_topic", pointcloud_topic_)) {
     RCLCPP_ERROR(this->get_logger(), "Could not read parameter pointcloud_topic.");
@@ -93,6 +130,7 @@ bool TraversabilityMapping::readParameters()
 
   this->get_parameter("output_map_topic", output_map_topic_);
   this->get_parameter("filter_chain_parameter_name", filter_chain_parameter_name_);
+  this->get_parameter("filter_radius", filter_radius_);
 
   return true;
 }
