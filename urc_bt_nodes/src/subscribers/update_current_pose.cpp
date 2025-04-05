@@ -4,8 +4,7 @@ using namespace BT;
 
 namespace behavior::subscribers
 {
-  NodeStatus UpdateCurrentPose::onTick(
-      const std::shared_ptr<geometry_msgs::msg::PoseStamped> &last_msg)
+  NodeStatus UpdateCurrentPose::onTick(const std::shared_ptr<nav_msgs::msg::Odometry> &last_msg)
   {
     if (last_msg)
     {

@@ -7,7 +7,7 @@ from launch.actions import (
     RegisterEventHandler,
 )
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch.event_handlers import OnProcessExit, OnProcessStart
+from launch.event_handlers import OnProcessStart, OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -23,6 +23,7 @@ def generate_launch_description():
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_test = get_package_share_directory("urc_test")
     pkg_urc_behavior = get_package_share_directory("urc_behavior")
+    pkg_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_leo.yaml"
@@ -113,7 +114,13 @@ def generate_launch_description():
         name="twist_mux",
     )
 
-    behavior_launch = IncludeLaunchDescription(
+    sim_gps_handler_node = Node(
+        package="urc_platform",
+        executable="urc_platform_SimGpsHandler",
+        name="sim_gps_handler",
+    )
+
+    bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_urc_behavior, "launch", "behavior.launch.py")
         )
@@ -135,20 +142,32 @@ def generate_launch_description():
         )
     )
 
-    map_to_odom_transform_node = Node(
-        package="tf2_ros",
-        executable="static_transform_publisher",
-        arguments=["10", "10", "0", "0", "0", "0", "map", "odom"],
+    ekf_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
+        )
     )
 
-    map_to_odom_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_urc_test,
-                "launch",
-                "odom_to_map_pose.launch.py",
+    elevation_mapping_node = Node(
+        package="urc_perception",
+        executable="urc_perception_ElevationMapping",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_perception"),
+                    "config",
+                    "mapping_params.yaml",
+                ]
             )
-        )
+        ],
+    )
+
+    rosbridge_server_node = Node(
+        package="rosbridge_server",
+        name="rosbridge_server",
+        executable="rosbridge_websocket.py",
+        parameters=[{"port": 9090}],
     )
 
     elevation_mapping_node = Node(
@@ -175,7 +194,6 @@ def generate_launch_description():
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
                         teleop_launch,
-                        map_to_odom_launch,
                         elevation_mapping_node,
                     ],
                 )
@@ -192,15 +210,16 @@ def generate_launch_description():
                     on_start=[
                         path_planning_launch,
                         trajectory_following_launch,
-                        behavior_launch,
+                        bt_launch,
                     ],
                 )
             ),
             enable_color,
             gazebo,
+            sim_gps_handler_node,
             load_robot_state_publisher,
             spawn_robot,
-            map_to_odom_transform_node,
+            ekf_launch,
             rosbridge_server_node,
         ]
     )

@@ -1,29 +1,14 @@
 grid_map_visualization:
   ros__parameters:
     grid_map_topic: /costmap
-    grid_map_visualizations:
-      [
-        elevation_grid,
-        elevation_smooth,
-        traversability,
-        traversability_inflated,
-        surface_normals,
-        slope,
-      ]
+    grid_map_visualizations: [slope, traversability, traversability_inflated]
 
-    elevation_grid:
+    slope:
       type: occupancy_grid
       params:
-        layer: elevation
-        data_min: -0.16
-        data_max: 0.08
-
-    elevation_smooth:
-      type: occupancy_grid
-      params:
-        layer: elevation_smooth
-        data_min: -0.16
-        data_max: 0.08
+        layer: slope
+        data_min: 0.0
+        data_max: 1.57
 
     traversability:
       type: occupancy_grid
@@ -59,6 +44,7 @@ traversability_mapping:
   ros__parameters:
     pointcloud_topic: /cloud_unstructured_fullframe
     output_map_topic: /costmap
+    filter_radius: 5.0
 
     filters:
       filter1:
@@ -89,7 +75,7 @@ traversability_mapping:
           output_layer: slope
           expression: acos(normal_vectors_z)
 
-      filter5:
+      filter5: # Zero out slope values below a threshold.
         name: slope_lower_threshold
         type: gridMapFilters/ThresholdFilter
         params:
@@ -111,23 +97,7 @@ traversability_mapping:
           output_layer: traversability
           expression: slope / 1.57
 
-      # filter7: # Set lower threshold on traversability.
-      #   name: traversability_lower_threshold
-      #   type: gridMapFilters/ThresholdFilter
-      #   params:
-      #     layer: traversability
-      #     lower_threshold: 0.0
-      #     set_to: 0.0
-
-      # filter8: # Set upper threshold on traversability.
-      #   name: traversability_upper_threshold
-      #   type: gridMapFilters/ThresholdFilter
-      #   params:
-      #     layer: traversability
-      #     upper_threshold: 1.0
-      #     set_to: 1.0
-
-      filter8:
+      filter8: # Apply a gaussian kernel with a given radius and coefficient.
         name: gaussian_kernel
         type: urcPerception/GaussianFilter
         params:

@@ -2,10 +2,10 @@ import os
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import GroupAction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetRemap
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
@@ -24,12 +24,9 @@ def load_yaml(package_name, file_path):
 
 def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
-    pkg_nmea_navsat_driver = FindPackageShare("nmea_navsat_driver").find(
-        "nmea_navsat_driver"
-    )
     pkg_urc_platform = get_package_share_directory("urc_platform")
-
-    pkg_vectornav = get_package_share_directory("vectornav")
+    pkg_urc_localization = get_package_share_directory("urc_localization")
+    pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -45,9 +42,6 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
-    gps_config = os.path.join(
-        get_package_share_directory("urc_bringup"), "config", "nmea_serial_driver.yaml"
-    )
 
     heartbeat_node = Node(
         package="urc_bringup",
@@ -97,19 +91,18 @@ def generate_launch_description():
         parameters=[twist_mux_config],
     )
 
-    launch_gps = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_nmea_navsat_driver, "launch", "nmea_serial_driver.launch.py"
-            )
-        )
-    )
-
-    launch_gps = Node(
-        package="nmea_navsat_driver",
-        executable="nmea_serial_driver",
-        output="screen",
-        parameters=[gps_config],
+    launch_gps = GroupAction(
+        actions=[
+            SetRemap(src="/rover/fix", dst="/gps/data"),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(
+                        pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
+                    )
+                ),
+                launch_arguments={"device_serial_string": "rover"}.items(),
+            ),
+        ]
     )
 
     vectornav_node = Node(
@@ -128,15 +121,35 @@ def generate_launch_description():
         remappings=[("/vectornav/imu", "/imu/data")],
     )
 
+    sick_node = Node(
+        package="sick_scan_xd",
+        executable="sick_generic_caller",
+        parameters=[
+            {
+                "hostname": "192.168.1.10",
+                "scanner_type": "sick_multiscan",
+                "publish_frame_id": "sick_frame",
+                "publish_laserscan_segment_topic": "scan_segment",
+                "publish_laserscan_fullframe_topic": "scan_fullframe",
+                "custom_pointclouds": "cloud_unstructured_fullframe",
+                "verbose_level": 0,
+                "cloud_unstructured_fullframe": "coordinateNotation=0 updateMethod=0 echos=0,1,2 layers=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 reflectors=0,1 infringed=0,1 rangeFilter=0.05,999,1 topic=/cloud_unstructured_fullframe frameid=lidar_link publish=1",
+            }
+        ],
+        output="screen",
+    )
+
+    launch_ekf = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
+        )
+    )
+
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
         executable="rosbridge_websocket.py",
         parameters=[{"port": 9090}],
-    )
-
-    odom_frame_node = Node(
-        package="urc_tf", executable="urc_tf_WorldFrameBroadcaster", output="screen"
     )
 
     return LaunchDescription(
@@ -159,9 +172,10 @@ def generate_launch_description():
             twist_mux_node,
             launch_gps,
             rosbridge_server_node,
-            odom_frame_node,
+            launch_ekf,
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
+            sick_node,
         ]
     )

@@ -40,10 +40,9 @@ Welcome to the RoboJackets/RoboNav software repo for the [University Rover Chall
   _Collection of nodes that form our perception stack_
 - **urc_platform**
   _Nodes that are platform specific and used to communicate with the hardware, ie. IMU, joystick and motor controller_
-- **urc_util**
-  _A collection of utility nodes and classes_
 
 ## Installation Instructions
+
 **Essential** <br />
 You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
 
@@ -51,33 +50,38 @@ You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished wit
 - [NoVNC Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Less viable, use for Apple Silicon**
 
 **Specific Features**
+
 - [XBox Controller Setup](documents/installation/controller_setup.md)
 - [Depth Camera Setup](documents/installation/camera_setup.md)
 - [ROS2 Control Gazebo Setup](documents/installation/ros2_control.md)
 - [Radio Communication Between Rover and Ground Station](documents/installation/radio_setup.md)
 
-
 ## Helpful Resources
+
 - [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
 - [Design Presentation Requirements](documents/design/README.md)
 - [Drone Repository](https://github.com/RoboJackets/urc-drone)
 - [Firmware Repository](https://github.com/RoboJackets/urc-firmware/tree/master)
 
-
 ## Team-Related Links
-* [Slack](https://robojackets.slack.com/)
-* [Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)  
-* [Software Training](https://github.com/RoboJackets/software-training-old)  
+
+- [Slack](https://robojackets.slack.com/)
+- [Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)
+- [Software Training](https://github.com/RoboJackets/software-training-old)
 
 ## External Documentation and Background Reading
-* [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)  
-* [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)  
-* [Nav2 Documentation](https://navigation.ros.org/)  
-* [ROS2 Control Documentation](https://control.ros.org/master/index.html)  
+
+- [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)
+- [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)
+- [Nav2 Documentation](https://navigation.ros.org/)
+- [ROS2 Control Documentation](https://control.ros.org/master/index.html)
 
 ## Common Issues
-#### NanoPB Not Building 
+
+#### NanoPB Not Building
+
 Fix (will only build after the last time):
+
 ```
 colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/protoc-gen-nanopb
 colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/nanopb_generator.py
