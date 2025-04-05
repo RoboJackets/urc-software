@@ -24,22 +24,6 @@ grid_map_visualization:
         data_min: 0.0
         data_max: 1.0
 
-    surface_normals:
-      type: vectors
-      params:
-        layer_prefix: normal_vectors_
-        position_layer: elevation
-        scale: 0.06
-        line_width: 0.005
-        color: 15600153 # red
-
-    slope:
-      type: occupancy_grid
-      params:
-        layer: slope
-        data_min: 0.0
-        data_max: 1.57
-
 traversability_mapping:
   ros__parameters:
     pointcloud_topic: /cloud_unstructured_fullframe
