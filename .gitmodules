@@ -18,10 +18,6 @@
 	path = external/articubot_one
 	url = https://github.com/joshnewans/articubot_one.git
 	branch = humble
-[submodule "external/articubot_one"]
-	path = external/articubot_one
-	url = https://github.com/joshnewans/articubot_one.git
-	branch = humble
 [submodule "external/vectornav"]
 	path = external/vectornav
 	url = https://github.com/dawonn/vectornav.git
