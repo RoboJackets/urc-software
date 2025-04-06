@@ -21,6 +21,8 @@ def generate_launch_description():
     pkg_leo_rover = get_package_share_directory("leo_description")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
+    pkg_urc_test = get_package_share_directory("urc_test")
+    pkg_urc_behavior = get_package_share_directory("urc_behavior")
     pkg_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
@@ -42,8 +44,8 @@ def generate_launch_description():
         ),
         launch_arguments={
             "use_sim_time": "true",
-            "world": world_path,
         }.items(),
+        # "world": world_path,
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
@@ -120,7 +122,7 @@ def generate_launch_description():
 
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+            os.path.join(pkg_urc_behavior, "launch", "behavior.launch.py")
         )
     )
 
@@ -168,6 +170,21 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
+    elevation_mapping_node = Node(
+        package="urc_perception",
+        executable="urc_perception_ElevationMapping",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_perception"),
+                    "config",
+                    "mapping_params.yaml",
+                ]
+            )
+        ],
+    )
+
     return LaunchDescription(
         [
             RegisterEventHandler(
@@ -177,6 +194,7 @@ def generate_launch_description():
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
                         teleop_launch,
+                        elevation_mapping_node,
                     ],
                 )
             ),

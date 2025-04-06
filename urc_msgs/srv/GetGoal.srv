@@ -1,0 +1,4 @@
+# Request definition
+---
+urc_msgs/Goal goal
+bool success
