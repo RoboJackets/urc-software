@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 200
+    update_rate: 30
 
     rover_drivetrain_controller:
       type: diff_drive_controller/DiffDriveController
