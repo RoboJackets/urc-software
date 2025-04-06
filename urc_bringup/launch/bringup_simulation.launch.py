@@ -18,18 +18,19 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-    pkg_leo_rover = get_package_share_directory("leo_description")
+    # pkg_leo_rover = get_package_share_directory("leo_description")
+    pkg_urc_hw_description = get_package_share_directory("urc_hw_description")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_leo.yaml"
+        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
     use_sim_time = LaunchConfiguration("use_sim_time", default="true")
 
-    xacro_file = os.path.join(pkg_leo_rover, "urdf/leo_sim.urdf.xacro")
+    xacro_file = os.path.join(pkg_urc_hw_description, "urdf/wallii.xacro")
     assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
     robot_description_config = process_file(
         xacro_file, mappings={"use_simulation": "true"}
@@ -53,7 +54,7 @@ def generate_launch_description():
         executable="spawn_entity.py",
         arguments=[
             "-entity",
-            "walli",
+            "wallii",
             "-x",
             "0",
             "-y",
@@ -100,10 +101,32 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
     )
 
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
+    driver_joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        remappings=(
+            ("/joy", "/driver/joy"),
+            ("/joy/set_feedback", "/driver/joy/set_feedback"),
+        ),
+    )
+
+    joystick_driver_node = Node(
+        name="joy_drive",
+        package="urc_platform",
+        executable="urc_platform_JoystickDriver",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_bringup"),
+                    "config/",
+                    "controller_config.yaml",
+                ]
+            )
+        ],
+        remappings=[
+            ("/joystick_driver/joy", "/driver/joy"),
+        ],
     )
 
     twist_mux_node = Node(
@@ -176,7 +199,8 @@ def generate_launch_description():
                     on_exit=[
                         load_joint_state_broadcaster,
                         load_drivetrain_controller,
-                        teleop_launch,
+                        driver_joy_node,
+                        joystick_driver_node,
                     ],
                 )
             ),

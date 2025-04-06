@@ -23,8 +23,6 @@ find_package(xacro REQUIRED)
 install(
   DIRECTORY
     urdf
-    config
-    world
   DESTINATION share/${PROJECT_NAME}
 )
 
