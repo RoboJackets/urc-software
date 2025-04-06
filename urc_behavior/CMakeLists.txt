@@ -36,6 +36,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/bt_orchestrator.cpp
   src/bt_executor.cpp
+  src/dispatcher.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -53,6 +54,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "urc_behavior::BTExecutor"
   EXECUTABLE ${PROJECT_NAME}_BTExecutor
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_behavior::Dispatcher"
+  EXECUTABLE ${PROJECT_NAME}_Dispatcher
 )
 
 # Install launch files.
