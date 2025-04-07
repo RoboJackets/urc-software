@@ -5,12 +5,11 @@
 
    <xacro:include filename="$(find urc_hw_description)/urdf/inertials.xacro" />
    <xacro:include filename="$(find urc_hw_description)/urdf/wallii_drivebase.xacro" />
-   <xacro:include filename="$(find urc_hw_description)/urdf/walli_sensors.xacro" />
-   <xacro:include filename="$(find urc_hw_description)/urdf/ros2_control.xacro" />
+   <!-- <xacro:include filename="$(find urc_hw_description)/urdf/walli_sensors.xacro" /> -->
+   <!-- <xacro:include filename="$(find urc_hw_description)/urdf/ros2_control.xacro" /> -->
 
    <xacro:drivebase mu="1.0" mu2="0.25" />
-   <!-- <xacro:arm /> -->
-   <xacro:ros2_control use_simulation="$(arg use_simulation)"
-      config_file_path="$(find urc_bringup)/config/controller_config.yaml"
-      arm_initial_positions_file="$(find urc_hw_description)/config/initial_positions.yaml" />
+   <!-- <xacro:ros2_control use_simulation="$(arg use_simulation)" -->
+   <!--    config_file_path="$(find urc_bringup)/config/controller_config.yaml" -->
+   <!--    arm_initial_positions_file="$(find urc_hw_description)/config/initial_positions.yaml" /> -->
 </robot>
