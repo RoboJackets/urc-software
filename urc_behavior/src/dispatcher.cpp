@@ -7,7 +7,7 @@ namespace urc_behavior
         RCLCPP_INFO(get_logger(), "Dispatcher node started");
 
         get_goal_service_ = create_service<urc_msgs::srv::GetGoal>(
-            "~/get_goal",
+            "~/get_next_goal",
             std::bind(&Dispatcher::handleGetGoal, this, std::placeholders::_1, std::placeholders::_2));
 
         add_goal_service_ = create_service<urc_msgs::srv::AddGoal>(
