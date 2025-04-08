@@ -3,21 +3,24 @@
       main_tree_to_execute="MainBehavior">
   <BehaviorTree ID="MainBehavior">
     <Sequence>
-      <RetryUntilSuccessful num_attempts="">
+      <RetryUntilSuccessful num_attempts="5">
         <GetCurrentGoal/>
       </RetryUntilSuccessful>
       <SetBlackboard value="GoalType"
-                     output_key=""/>
-      <ScriptCondition code="GoalType == &quot;GPS&quot;"/>
+                     output_key="goal_type"/>
+      <ScriptCondition code='GoalType == "GPS"'/>
       <IfThenElse>
         <Sequence>
-          <CallNavigationSubtree/>
+          <SubTree ID="Navigation Subtree"
+                   _autoremap="true"/>
           <SearchRadius/>
-          <CallNavigationSubtree/>
+          <SubTree ID="Navigation Subtree"
+                   _autoremap="true"/>
           <RemoveGoal/>
         </Sequence>
         <Sequence>
-          <CallNavigationSubtree/>
+          <SubTree ID="Navigation Subtree"
+                   _autoremap="true"/>
           <RemoveGoal/>
         </Sequence>
       </IfThenElse>
@@ -26,8 +29,6 @@
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
-    <Action ID="CallNavigationSubtree"
-            editable="true"/>
     <Action ID="GetCurrentGoal"
             editable="true"/>
     <Action ID="RemoveGoal"
