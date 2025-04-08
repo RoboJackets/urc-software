@@ -12,10 +12,10 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <!-- <joint name="Differential_Bar"> -->
-        <!--   <state_interface name="velocity" /> -->
-        <!--   <state_interface name="position" /> -->
-        <!-- </joint> -->
+        <joint name="differential_bar_joint">
+          <state_interface name="velocity" />
+          <state_interface name="position" />
+        </joint>
         <joint name="right_rocker_joint">
           <state_interface name="velocity" />
           <state_interface name="position" />

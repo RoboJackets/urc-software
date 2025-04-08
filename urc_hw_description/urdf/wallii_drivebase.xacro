@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by
-Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="drivebase" params="mu mu2">
     <link
@@ -45,6 +41,7 @@ Stephen Brawner (brawner@gmail.com)
         </geometry>
       </collision>
     </link>
+
     <link
       name="left_rocker">
       <inertial>
@@ -63,7 +60,7 @@ Stephen Brawner (brawner@gmail.com)
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="0.26 0.128 -0.01"
           rpy="0 0 0" />
         <geometry>
           <mesh
@@ -77,7 +74,7 @@ Stephen Brawner (brawner@gmail.com)
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="0.26 0.128 -0.01"
           rpy="0 0 0" />
         <geometry>
           <mesh
@@ -89,21 +86,18 @@ Stephen Brawner (brawner@gmail.com)
       name="left_rocker_joint"
       type="revolute">
       <origin
-        xyz="0 0.01 0"
-        rpy="1.5791 0 0" />
+        xyz="-0.26 0.0 -0.128"
+        rpy="1.5708 0 0" />
       <parent
         link="base_link" />
       <child
         link="left_rocker" />
       <axis
-        xyz="0 1 0" />
-      <limit
-        lower="0"
-        upper="0"
-        effort="0"
-        velocity="0" />
-      <dynamics damping="0.01" friction="0.01" />
+        xyz="-1 0 0" />
+      <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
+      <dynamics friction="1.0" damping="0.1" />
     </joint>
+
     <link
       name="front_left_wheel">
       <inertial>
@@ -156,15 +150,16 @@ Stephen Brawner (brawner@gmail.com)
       name="front_left_wheel_joint"
       type="continuous">
       <origin
-        xyz="-0.35884 -0.36484 -0.34252"
-        rpy="0 -0.0083213 -1.5708" />
+        xyz="-0.1 -0.236 -0.352"
+        rpy="0.0 0.0 -1.5708" />
       <parent
         link="left_rocker" />
       <child
         link="front_left_wheel" />
       <axis
-        xyz="0 1 0" />
+        xyz="0 -1 0" />
     </joint>
+
     <link
       name="back_left_wheel">
       <inertial>
@@ -217,15 +212,16 @@ Stephen Brawner (brawner@gmail.com)
       name="back_left_wheel_joint"
       type="continuous">
       <origin
-        xyz="-0.35884 -0.35931 0.36866"
-        rpy="0 -1.3867 -1.5708" />
+        xyz="-0.1 -0.232 0.358"
+        rpy="0.0 -1.5708 -1.5708" />
       <parent
         link="left_rocker" />
       <child
         link="back_left_wheel" />
       <axis
-        xyz="0 1 0" />
+        xyz="0 -1 0" />
     </joint>
+
     <link
       name="differential_bar">
       <inertial>
@@ -285,6 +281,7 @@ Stephen Brawner (brawner@gmail.com)
         velocity="0" />
       <dynamics damping="0.01" friction="0.01" />
     </joint>
+
     <link
       name="right_rocker">
       <inertial>
@@ -303,7 +300,7 @@ Stephen Brawner (brawner@gmail.com)
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="-0.26 0.138 0"
           rpy="0 0 0" />
         <geometry>
           <mesh
@@ -317,7 +314,7 @@ Stephen Brawner (brawner@gmail.com)
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="-0.26 0.138 0"
           rpy="0 0 0" />
         <geometry>
           <mesh
@@ -329,21 +326,18 @@ Stephen Brawner (brawner@gmail.com)
       name="right_rocker_joint"
       type="revolute">
       <origin
-        xyz="0 -0.0011403 0.0099997"
-        rpy="1.5791 0 0" />
+        xyz="0.26 0.0 -0.128"
+        rpy="1.5708 0 0" />
       <parent
         link="base_link" />
       <child
         link="right_rocker" />
       <axis
-        xyz="0 1 0" />
-      <limit
-        lower="0"
-        upper="0"
-        effort="0"
-        velocity="0" />
-      <dynamics damping="0.01" friction="0.01" />
+        xyz="1 0 0" />
+      <limit effort="0.0" lower="-0.24" upper="0.24" velocity="100.0" />
+      <dynamics damping="0.1" friction="1.0" />
     </joint>
+
     <link
       name="front_right_wheel">
       <inertial>
@@ -396,8 +390,8 @@ Stephen Brawner (brawner@gmail.com)
       name="front_right_wheel_joint"
       type="continuous">
       <origin
-        xyz="0.35884 -0.37493 -0.35357"
-        rpy="0 0.0083213 1.5708" />
+        xyz="0.1 -0.2375 -0.35357"
+        rpy="0.0 0.0 1.5708" />
       <parent
         link="right_rocker" />
       <child
@@ -405,6 +399,7 @@ Stephen Brawner (brawner@gmail.com)
       <axis
         xyz="0 1 0" />
     </joint>
+
     <link
       name="back_right_wheel">
       <inertial>
@@ -457,8 +452,8 @@ Stephen Brawner (brawner@gmail.com)
       name="back_right_wheel_joint"
       type="continuous">
       <origin
-        xyz="0.358842224999926 -0.369400178446968 0.357603754666081"
-        rpy="0 0.0083213063996962 1.57079632679444" />
+        xyz="0.1 -0.232 0.357603754666081"
+        rpy="0.0 0.0 1.5708" />
       <parent
         link="right_rocker" />
       <child
