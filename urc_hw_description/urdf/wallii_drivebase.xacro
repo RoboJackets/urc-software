@@ -48,17 +48,17 @@
       name="Left_Leg">
       <inertial>
         <origin
-          xyz="-0.314720519412685 -0.267228491093624 0.0144844412176535"
+          xyz="0.0 0.0 0.12"
           rpy="0 0 0" />
         <mass
-          value="3.79806376070485" />
+          value="3.2" />
         <inertia
-          ixx="0.043186775358941"
-          ixy="4.87726122237115E-06"
-          ixz="6.9364125552553E-08"
-          iyy="0.041680020232445"
-          iyz="-0.000327399621635785"
-          izz="0.00335923174663188" />
+          ixx="0.0"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.62"
+          iyz="0.0"
+          izz="0.62" />
       </inertial>
       <visual>
         <origin
@@ -107,17 +107,17 @@
       name="Front_Left_Wheel">
       <inertial>
         <origin
-          xyz="-9.85643131612424E-07 -0.0424756514469604 1.28618891753751E-06"
+          xyz="-9.85790539753673E-07 -0.0424756522296364 1.28556895756526E-06"
           rpy="0 0 0" />
         <mass
-          value="2.84041525506088" />
+          value="2.8404147429667" />
         <inertia
-          ixx="0.0145900036421434"
-          ixy="-9.45347102237263E-09"
-          ixz="8.60530437378438E-08"
-          iyy="0.0271163806855128"
-          iyz="1.22933312839421E-08"
-          izz="0.0145900598876611" />
+          ixx="0.0145900092361804"
+          ixy="-9.4552077768867E-09"
+          ixz="8.60523625668408E-08"
+          iyy="0.0271163761346378"
+          iyz="1.22920397171907E-08"
+          izz="0.0145900654827055" />
       </inertial>
       <visual>
         <origin
@@ -168,17 +168,17 @@
       name="Back_Left_Wheel">
       <inertial>
         <origin
-          xyz="-9.85722509394549E-07 -0.0424756513980336 1.28528277876239E-06"
+          xyz="0.0 0.0 0.0"
           rpy="0 0 0" />
         <mass
-          value="2.8404152919431" />
+          value="1.4" />
         <inertia
-          ixx="0.0145900036497047"
-          ixy="-9.45325962807435E-09"
-          ixz="8.60521402621045E-08"
-          iyy="0.0271163806855975"
-          iyz="1.22915902433335E-08"
-          izz="0.0145900598960299" />
+          ixx="0.005"
+          ixy="0.0"
+          ixz="0"
+          iyy="0.01"
+          iyz="0.0"
+          izz="0.005" />
       </inertial>
       <visual>
         <origin
@@ -225,80 +225,80 @@
       <axis
         xyz="0 1 0" />
     </joint>
-    <link
-      name="Differential_Bar">
-      <inertial>
-        <origin
-          xyz="0.0001696304329344 0.0146364855896726 0.0184524262584146"
-          rpy="0 0 0" />
-        <mass
-          value="0.8870349519636" />
-        <inertia
-          ixx="0.00029545831305288"
-          ixy="6.25770619004021E-05"
-          ixz="4.35881163876293E-08"
-          iyy="0.00652074651602383"
-          iyz="-2.01385937443393E-07"
-          izz="0.00679287106362345" />
-      </inertial>
-      <visual>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" />
-        </geometry>
-        <material
-          name="">
-          <color
-            rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin
-          xyz="0 0 0"
-          rpy="0 0 0" />
-        <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint
-      name="Differential_Bar_Shaft"
-      type="revolute">
-      <origin
-        xyz="0 -0.37445 -0.070294"
-        rpy="1.5708 0 0" />
-      <parent
-        link="base_link" />
-      <child
-        link="Differential_Bar" />
-      <axis
-        xyz="0 0 1" />
-      <limit
-        lower="0"
-        upper="0"
-        effort="0"
-        velocity="0" />
-        <dynamics damping="0.01" friction="0.01" />
-    </joint>
+    <!-- <link -->
+    <!--   name="Differential_Bar"> -->
+    <!--   <inertial> -->
+    <!--     <origin -->
+    <!--       xyz="0.0001696304329344 0.0146364855896726 0.0184524262584146" -->
+    <!--       rpy="0 0 0" /> -->
+    <!--     <mass -->
+    <!--       value="0.8870349519636" /> -->
+    <!--     <inertia -->
+    <!--       ixx="0.00029545831305288" -->
+    <!--       ixy="6.25770619004021E-05" -->
+    <!--       ixz="4.35881163876293E-08" -->
+    <!--       iyy="0.00652074651602383" -->
+    <!--       iyz="-2.01385937443393E-07" -->
+    <!--       izz="0.00679287106362345" /> -->
+    <!--   </inertial> -->
+    <!--   <visual> -->
+    <!--     <origin -->
+    <!--       xyz="0 0 0" -->
+    <!--       rpy="0 0 0" /> -->
+    <!--     <geometry> -->
+    <!--       <mesh -->
+    <!--         filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" /> -->
+    <!--     </geometry> -->
+    <!--     <material -->
+    <!--       name=""> -->
+    <!--       <color -->
+    <!--         rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
+    <!--     </material> -->
+    <!--   </visual> -->
+    <!--   <collision> -->
+    <!--     <origin -->
+    <!--       xyz="0 0 0" -->
+    <!--       rpy="0 0 0" /> -->
+    <!--     <geometry> -->
+    <!--       <mesh -->
+    <!--         filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" /> -->
+    <!--     </geometry> -->
+    <!--   </collision> -->
+    <!-- </link> -->
+    <!-- <joint -->
+    <!--   name="Differential_Bar_Shaft" -->
+    <!--   type="revolute"> -->
+    <!--   <origin -->
+    <!--     xyz="0 -0.37445 -0.070294" -->
+    <!--     rpy="1.5708 0 0" /> -->
+    <!--   <parent -->
+    <!--     link="base_link" /> -->
+    <!--   <child -->
+    <!--     link="Differential_Bar" /> -->
+    <!--   <axis -->
+    <!--     xyz="0 0 1" /> -->
+    <!--   <limit -->
+    <!--     lower="0" -->
+    <!--     upper="0" -->
+    <!--     effort="0" -->
+    <!--     velocity="0" /> -->
+    <!--     <dynamics damping="0.01" friction="0.01" /> -->
+    <!-- </joint> -->
     <link
       name="Right_Leg">
       <inertial>
         <origin
-          xyz="0.314720537608315 -0.27732042463059 0.00342777397828535"
+          xyz="0.0 0.0 0.12"
           rpy="0 0 0" />
         <mass
-          value="3.79806008460103" />
+          value="3.2" />
         <inertia
-          ixx="0.043186774510173"
-          ixy="-4.87720713999662E-06"
-          ixz="-6.9228069739791E-08"
-          iyy="0.0416800197538075"
-          iyz="-0.000327399493281265"
-          izz="0.00335923122436863" />
+          ixx="0.0"
+          ixy="0.0"
+          ixz="0.0"
+          iyy="0.62"
+          iyz="0.0"
+          izz="0.62" />
       </inertial>
       <visual>
         <origin
@@ -347,17 +347,17 @@
       name="Front_Right_Wheel">
       <inertial>
         <origin
-          xyz="-9.8607342807755E-07 -0.0424756522332874 1.28600934945489E-06"
+          xyz="0.0 0.0 0.0"
           rpy="0 0 0" />
         <mass
-          value="2.84041474188708" />
+          value="1.4" />
         <inertia
-          ixx="0.0145900092368819"
-          ixy="-9.45447451911223E-09"
-          ixz="8.60519025479613E-08"
-          iyy="0.0271163761346353"
-          iyz="1.22923419163295E-08"
-          izz="0.0145900654816172" />
+          ixx="0.005"
+          ixy="0.0"
+          ixz="0"
+          iyy="0.01"
+          iyz="0.0"
+          izz="0.005" />
       </inertial>
       <visual>
         <origin
@@ -408,17 +408,17 @@
       name="Back_Right_Wheel">
       <inertial>
         <origin
-          xyz="-9.85790539753673E-07 -0.0424756522296364 1.28556895756526E-06"
+          xyz="-9.8607342807755E-07 -0.0424756522332874 1.28600934945489E-06"
           rpy="0 0 0" />
         <mass
-          value="2.8404147429667" />
+          value="2.84041474188708" />
         <inertia
-          ixx="0.0145900092361804"
-          ixy="-9.4552077768867E-09"
-          ixz="8.60523625668408E-08"
-          iyy="0.0271163761346378"
-          iyz="1.22920397171907E-08"
-          izz="0.0145900654827055" />
+          ixx="0.0145900092368819"
+          ixy="-9.45447451911223E-09"
+          ixz="8.60519025479613E-08"
+          iyy="0.0271163761346353"
+          iyz="1.22923419163295E-08"
+          izz="0.0145900654816172" />
       </inertial>
       <visual>
         <origin
