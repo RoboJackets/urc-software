@@ -8,7 +8,7 @@
         <hardware>
           <plugin>gazebo_ros2_control/GazeboSystem</plugin>
         </hardware>
-        <joint name="Left_Leg_Shaft">
+        <joint name="left_rocker_joint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
@@ -16,11 +16,11 @@
         <!--   <state_interface name="velocity" /> -->
         <!--   <state_interface name="position" /> -->
         <!-- </joint> -->
-        <joint name="Right_Leg_Shaft">
+        <joint name="right_rocker_joint">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Front_Left_Shaft">
+        <joint name="front_left_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -28,7 +28,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Back_Left_Shaft">
+        <joint name="back_left_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -36,7 +36,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Front_Right_Shaft">
+        <joint name="front_right_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -44,7 +44,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Back_Right_Shaft">
+        <joint name="back_right_wheel_joint">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>

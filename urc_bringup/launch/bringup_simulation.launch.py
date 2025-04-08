@@ -216,7 +216,7 @@ def generate_launch_description():
                     on_start=[
                         path_planning_launch,
                         trajectory_following_launch,
-                        bt_launch,
+                        # bt_launch,
                     ],
                 )
             ),

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by
+Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
@@ -45,7 +46,7 @@
       </collision>
     </link>
     <link
-      name="Left_Leg">
+      name="left_rocker">
       <inertial>
         <origin
           xyz="0.0 0.0 0.12"
@@ -85,7 +86,7 @@
       </collision>
     </link>
     <joint
-      name="Left_Leg_Shaft"
+      name="left_rocker_joint"
       type="revolute">
       <origin
         xyz="0 0.01 0"
@@ -93,7 +94,7 @@
       <parent
         link="base_link" />
       <child
-        link="Left_Leg" />
+        link="left_rocker" />
       <axis
         xyz="0 1 0" />
       <limit
@@ -104,7 +105,7 @@
       <dynamics damping="0.01" friction="0.01" />
     </joint>
     <link
-      name="Front_Left_Wheel">
+      name="front_left_wheel">
       <inertial>
         <origin
           xyz="-9.85790539753673E-07 -0.0424756522296364 1.28556895756526E-06"
@@ -152,20 +153,20 @@
       </surface>
     </link>
     <joint
-      name="Front_Left_Shaft"
+      name="front_left_wheel_joint"
       type="continuous">
       <origin
         xyz="-0.35884 -0.36484 -0.34252"
         rpy="0 -0.0083213 -1.5708" />
       <parent
-        link="Left_Leg" />
+        link="left_rocker" />
       <child
-        link="Front_Left_Wheel" />
+        link="front_left_wheel" />
       <axis
         xyz="0 1 0" />
     </joint>
     <link
-      name="Back_Left_Wheel">
+      name="back_left_wheel">
       <inertial>
         <origin
           xyz="0.0 0.0 0.0"
@@ -213,79 +214,79 @@
       </surface>
     </link>
     <joint
-      name="Back_Left_Shaft"
+      name="back_left_wheel_joint"
       type="continuous">
       <origin
         xyz="-0.35884 -0.35931 0.36866"
         rpy="0 -1.3867 -1.5708" />
       <parent
-        link="Left_Leg" />
+        link="left_rocker" />
       <child
-        link="Back_Left_Wheel" />
+        link="back_left_wheel" />
       <axis
         xyz="0 1 0" />
     </joint>
-    <!-- <link -->
-    <!--   name="Differential_Bar"> -->
-    <!--   <inertial> -->
-    <!--     <origin -->
-    <!--       xyz="0.0001696304329344 0.0146364855896726 0.0184524262584146" -->
-    <!--       rpy="0 0 0" /> -->
-    <!--     <mass -->
-    <!--       value="0.8870349519636" /> -->
-    <!--     <inertia -->
-    <!--       ixx="0.00029545831305288" -->
-    <!--       ixy="6.25770619004021E-05" -->
-    <!--       ixz="4.35881163876293E-08" -->
-    <!--       iyy="0.00652074651602383" -->
-    <!--       iyz="-2.01385937443393E-07" -->
-    <!--       izz="0.00679287106362345" /> -->
-    <!--   </inertial> -->
-    <!--   <visual> -->
-    <!--     <origin -->
-    <!--       xyz="0 0 0" -->
-    <!--       rpy="0 0 0" /> -->
-    <!--     <geometry> -->
-    <!--       <mesh -->
-    <!--         filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" /> -->
-    <!--     </geometry> -->
-    <!--     <material -->
-    <!--       name=""> -->
-    <!--       <color -->
-    <!--         rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" /> -->
-    <!--     </material> -->
-    <!--   </visual> -->
-    <!--   <collision> -->
-    <!--     <origin -->
-    <!--       xyz="0 0 0" -->
-    <!--       rpy="0 0 0" /> -->
-    <!--     <geometry> -->
-    <!--       <mesh -->
-    <!--         filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" /> -->
-    <!--     </geometry> -->
-    <!--   </collision> -->
-    <!-- </link> -->
-    <!-- <joint -->
-    <!--   name="Differential_Bar_Shaft" -->
-    <!--   type="revolute"> -->
-    <!--   <origin -->
-    <!--     xyz="0 -0.37445 -0.070294" -->
-    <!--     rpy="1.5708 0 0" /> -->
-    <!--   <parent -->
-    <!--     link="base_link" /> -->
-    <!--   <child -->
-    <!--     link="Differential_Bar" /> -->
-    <!--   <axis -->
-    <!--     xyz="0 0 1" /> -->
-    <!--   <limit -->
-    <!--     lower="0" -->
-    <!--     upper="0" -->
-    <!--     effort="0" -->
-    <!--     velocity="0" /> -->
-    <!--     <dynamics damping="0.01" friction="0.01" /> -->
-    <!-- </joint> -->
     <link
-      name="Right_Leg">
+      name="differential_bar">
+      <inertial>
+        <origin
+          xyz="0.0001696304329344 0.0146364855896726 0.0184524262584146"
+          rpy="0 0 0" />
+        <mass
+          value="0.8870349519636" />
+        <inertia
+          ixx="0.00029545831305288"
+          ixy="6.25770619004021E-05"
+          ixz="4.35881163876293E-08"
+          iyy="0.00652074651602383"
+          iyz="-2.01385937443393E-07"
+          izz="0.00679287106362345" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" />
+        </geometry>
+        <material
+          name="">
+          <color
+            rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 0" />
+        <geometry>
+          <mesh
+            filename="file://$(find urc_hw_description)/urdf/meshes/Differential_Bar.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint
+      name="differential_bar_joint"
+      type="revolute">
+      <origin
+        xyz="0 -0.37445 -0.070294"
+        rpy="1.5708 0 0" />
+      <parent
+        link="base_link" />
+      <child
+        link="differential_bar" />
+      <axis
+        xyz="0 0 1" />
+      <limit
+        lower="0"
+        upper="0"
+        effort="0"
+        velocity="0" />
+      <dynamics damping="0.01" friction="0.01" />
+    </joint>
+    <link
+      name="right_rocker">
       <inertial>
         <origin
           xyz="0.0 0.0 0.12"
@@ -325,7 +326,7 @@
       </collision>
     </link>
     <joint
-      name="Right_Leg_Shaft"
+      name="right_rocker_joint"
       type="revolute">
       <origin
         xyz="0 -0.0011403 0.0099997"
@@ -333,7 +334,7 @@
       <parent
         link="base_link" />
       <child
-        link="Right_Leg" />
+        link="right_rocker" />
       <axis
         xyz="0 1 0" />
       <limit
@@ -341,10 +342,10 @@
         upper="0"
         effort="0"
         velocity="0" />
-        <dynamics damping="0.01" friction="0.01" />
+      <dynamics damping="0.01" friction="0.01" />
     </joint>
     <link
-      name="Front_Right_Wheel">
+      name="front_right_wheel">
       <inertial>
         <origin
           xyz="0.0 0.0 0.0"
@@ -392,20 +393,20 @@
       </surface>
     </link>
     <joint
-      name="Front_Right_Shaft"
+      name="front_right_wheel_joint"
       type="continuous">
       <origin
         xyz="0.35884 -0.37493 -0.35357"
         rpy="0 0.0083213 1.5708" />
       <parent
-        link="Right_Leg" />
+        link="right_rocker" />
       <child
-        link="Front_Right_Wheel" />
+        link="front_right_wheel" />
       <axis
         xyz="0 1 0" />
     </joint>
     <link
-      name="Back_Right_Wheel">
+      name="back_right_wheel">
       <inertial>
         <origin
           xyz="-9.8607342807755E-07 -0.0424756522332874 1.28600934945489E-06"
@@ -453,15 +454,15 @@
       </surface>
     </link>
     <joint
-      name="Back_Right_Shaft"
+      name="back_right_wheel_joint"
       type="continuous">
       <origin
         xyz="0.358842224999926 -0.369400178446968 0.357603754666081"
         rpy="0 0.0083213063996962 1.57079632679444" />
       <parent
-        link="Right_Leg" />
+        link="right_rocker" />
       <child
-        link="Back_Right_Wheel" />
+        link="back_right_wheel" />
       <axis
         xyz="0 1 0" />
     </joint>
@@ -469,25 +470,25 @@
     <gazebo reference="base_link">
       <material>Gazebo/Grey</material>
     </gazebo>
-    <gazebo reference="Left_Leg">
+    <gazebo reference="left_rocker">
       <material>Gazebo/Grey</material>
     </gazebo>
-    <gazebo reference="Front_Left_Wheel">
+    <gazebo reference="front_left_wheel">
       <material>Gazebo/Black</material>
     </gazebo>
-    <gazebo reference="Back_Left_Wheel">
+    <gazebo reference="back_left_wheel">
       <material>Gazebo/Black</material>
     </gazebo>
-    <gazebo reference="Differential_Bar">
+    <gazebo reference="differential_bar">
       <material>Gazebo/Grey</material>
     </gazebo>
-    <gazebo reference="Right_Leg">
+    <gazebo reference="right_rocker">
       <material>Gazebo/Grey</material>
     </gazebo>
-    <gazebo reference="Front_Right_Wheel">
+    <gazebo reference="front_right_wheel">
       <material>Gazebo/Black</material>
     </gazebo>
-    <gazebo reference="Back_Right_Wheel">
+    <gazebo reference="back_right_wheel">
       <material>Gazebo/Black</material>
     </gazebo>
   </xacro:macro>
