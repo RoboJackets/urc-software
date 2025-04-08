@@ -1,28 +1,26 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="ros2_control"
-    params="use_simulation config_file_path arm_initial_positions_file">
-    <xacro:property name="initial_positions"
-      value="${load_yaml(arm_initial_positions_file)['initial_positions']}" />
+    params="use_simulation config_file_path">
 
     <xacro:if value="${use_simulation}">
       <ros2_control name="GazeboSystem" type="system">
         <hardware>
           <plugin>gazebo_ros2_control/GazeboSystem</plugin>
         </hardware>
-        <joint name="Left_Leg">
+        <joint name="Left_Leg_Shaft">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Differential_Bar">
+        <!-- <joint name="Differential_Bar"> -->
+        <!--   <state_interface name="velocity" /> -->
+        <!--   <state_interface name="position" /> -->
+        <!-- </joint> -->
+        <joint name="Right_Leg_Shaft">
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Right_Leg">
-          <state_interface name="velocity" />
-          <state_interface name="position" />
-        </joint>
-        <joint name="Front_Left_Wheel">
+        <joint name="Front_Left_Shaft">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -30,7 +28,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Back_Left_Wheel">
+        <joint name="Back_Left_Shaft">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -38,7 +36,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Front_Right_Wheel">
+        <joint name="Front_Right_Shaft">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>
@@ -46,7 +44,7 @@
           <state_interface name="velocity" />
           <state_interface name="position" />
         </joint>
-        <joint name="Back_Right_Wheel">
+        <joint name="Back_Right_Shaft">
           <command_interface name="velocity">
             <param name="min">-0.05</param>
             <param name="max">0.05</param>

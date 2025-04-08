@@ -14,8 +14,8 @@ joint_state_broadcaster:
 
 rover_drivetrain_controller:
   ros__parameters:
-    left_wheel_names: ["Front_Left_Wheel", "Back_Left_Wheel"]
-    right_wheel_names: ["Front_Right_Wheel", "Back_Right_Wheel"]
+    left_wheel_names: ["Front_Left_Shaft", "Back_Left_Shaft"]
+    right_wheel_names: ["Front_Right_Shaft", "Back_Right_Shaft"]
 
     wheel_separation: 0.73025
     wheels_per_side: 2

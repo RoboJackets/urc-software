@@ -5,7 +5,7 @@
       <pose>0 0 100 0 0 0.01</pose>
       <diffuse>1 1 1 1</diffuse>
       <specular>0.1 0.1 0.1 1</specular>
-      <cast_shadows>1</cast_shadows>
+      <cast_shadows>0</cast_shadows>
       <direction>-0.2 -1.0 -1.0</direction>
     </light>
 
