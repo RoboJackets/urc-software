@@ -1,7 +1,0 @@
-nmea_navsat_driver:
-  ros__parameters:
-    port: "/dev/ttyUSB0"
-    baud: 9600 # 115200
-    frame_id: "gps"
-    time_ref_source: "gps"
-    useRMC: False
