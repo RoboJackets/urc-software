@@ -8,8 +8,8 @@
 	branch = humble
 [submodule "external/aruco_ros"]
 	path = external/aruco_ros
-	url = https://github.com/Ampers8nd/aruco_ros_4x4
-	branch = humble-devel
+	url = https://github.com/Ampers8nd/ros2_aruco.git
+	branch = main
 [submodule "external/BehaviorTree.ROS2"]
 	path = external/BehaviorTree.ROS2
 	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
