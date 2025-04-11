@@ -8,18 +8,18 @@
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "string"
 #include <nav_msgs/msg/detail/path__struct.hpp>
-#include <urc_msgs/action/detail/follow_path__struct.hpp>
+#include <urc_msgs/action/detail/search_aruco__struct.hpp>
 
 namespace behavior::actions
 {
 
-class Search : public BT::RosActionNode<urc_msgs::action::Search>
+class Search : public BT::RosActionNode<urc_msgs::action::SearchAruco>
 {
 public:
   Search(
     const std::string & name, const BT::NodeConfig & conf,
     const BT::RosNodeParams & params)
-  : BT::RosActionNode<urc_msgs::action::Search>(name, conf, params) {}
+  : BT::RosActionNode<urc_msgs::action::SearchAruco>(name, conf, params) {}
   static BT::PortsList providedPorts()
   {
     return providedBasicPorts({BT::InputPort<nav_msgs::msg::Path>("path")});
@@ -34,4 +34,4 @@ public:
 
 }  // namespace behavior::actions
 
-#endif /* FOLLOW_PATH_CC276572_BA01_446A_BFE6_15052217C4BD_HPP__ */
+#endif /* SEARCH_HPP */

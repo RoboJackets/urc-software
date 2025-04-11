@@ -9,7 +9,7 @@ uint16 goal_type
 uint16 SUCCESS=0
 uint16 FAILURE=1
 
-std_msgs/Uint32 result
+std_msgs/UInt32 result
 uint16 error_code
 ---
 # feedback definition
