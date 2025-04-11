@@ -8,6 +8,7 @@ namespace behavior::actions
 
 bool FollowPath::setGoal(Goal & goal)
 {
+  std::string goal_type = getInput<std::string>("goal_type").value();
   RCLCPP_INFO(node_->get_logger(), "Setting Goal...");
   goal.path = getInput<nav_msgs::msg::Path>("path").value();
   return true;
