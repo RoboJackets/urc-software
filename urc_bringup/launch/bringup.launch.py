@@ -170,7 +170,7 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            foxglove_launch,
+            # foxglove_launch,
             control_node,
             load_robot_state_publisher,
             load_joint_state_broadcaster,
