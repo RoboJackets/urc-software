@@ -2,6 +2,7 @@
 uint16 ARUCO=0
 uint16 MALLET=1
 uint16 WATER_BOTTLE=2
+uint16 GPS=3
 uint16 goal_type
 ---
 # response definition
