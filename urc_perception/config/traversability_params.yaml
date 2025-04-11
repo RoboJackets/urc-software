@@ -1,27 +1,14 @@
 grid_map_visualization:
   ros__parameters:
     grid_map_topic: /costmap
-    grid_map_visualizations:
-      [
-        elevation_grid,
-        elevation_smooth,
-        traversability,
-        traversability_inflated,
-      ]
+    grid_map_visualizations: [slope, traversability, traversability_inflated]
 
-    elevation_grid:
+    slope:
       type: occupancy_grid
       params:
-        layer: elevation
-        data_min: -0.16
-        data_max: 0.08
-
-    elevation_smooth:
-      type: occupancy_grid
-      params:
-        layer: elevation_smooth
-        data_min: -0.16
-        data_max: 0.08
+        layer: slope
+        data_min: 0.0
+        data_max: 1.57
 
     traversability:
       type: occupancy_grid
@@ -41,6 +28,7 @@ traversability_mapping:
   ros__parameters:
     pointcloud_topic: /cloud_unstructured_fullframe
     output_map_topic: /costmap
+    filter_radius: 5.0
 
     filters:
       filter1:
@@ -61,7 +49,7 @@ traversability_mapping:
         params:
           input_layer: elevation
           output_layers_prefix: normal_vectors_
-          radius: 0.1
+          radius: 0.5
           normal_vector_positive_axis: z
 
       filter4: # Compute slope from surface normal.
@@ -71,37 +59,29 @@ traversability_mapping:
           output_layer: slope
           expression: acos(normal_vectors_z)
 
-      filter5: # Compute roughness as absolute difference from map to smoothened map.
+      filter5: # Zero out slope values below a threshold.
+        name: slope_lower_threshold
+        type: gridMapFilters/ThresholdFilter
+        params:
+          layer: slope
+          lower_threshold: 1.0
+          set_to: 0.0
+
+      filter6: # Compute roughness as absolute difference from map to smoothened map.
         name: roughness
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: roughness
           expression: abs(elevation - elevation_smooth)
 
-      filter6: # Compute traversability as normalized weighted sum of slope and roughness.
+      filter7: # Compute traversability as normalized weighted sum of slope and roughness.
         name: traversability
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: traversability
-          expression: 0.5 * (1.0 - (slope / 0.6)) + 0.5 * (1.0 - (roughness / 0.1))
+          expression: slope / 1.57
 
-      filter7: # Set lower threshold on traversability.
-        name: traversability_lower_threshold
-        type: gridMapFilters/ThresholdFilter
-        params:
-          layer: traversability
-          lower_threshold: 0.0
-          set_to: 0.0
-
-      filter8: # Set upper threshold on traversability.
-        name: traversability_upper_threshold
-        type: gridMapFilters/ThresholdFilter
-        params:
-          layer: traversability
-          upper_threshold: 1.0
-          set_to: 1.0
-
-      filter9:
+      filter8: # Apply a gaussian kernel with a given radius and coefficient.
         name: gaussian_kernel
         type: urcPerception/GaussianFilter
         params:

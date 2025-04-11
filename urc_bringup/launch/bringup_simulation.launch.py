@@ -1,74 +1,60 @@
 import os
 from xacro import process_file
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
+from launch.substitutions import PathJoinSubstitution
+from launch.event_handlers import OnProcessStart, OnProcessExit
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import (
     IncludeLaunchDescription,
     SetEnvironmentVariable,
     RegisterEventHandler,
 )
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch.event_handlers import OnProcessStart, OnProcessExit
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
-    pkg_leo_rover = get_package_share_directory("leo_description")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
     pkg_urc_localization = get_package_share_directory("urc_localization")
+    pkg_urc_hw_description = get_package_share_directory("urc_hw_description")
 
-    controller_config_file_dir = os.path.join(
-        pkg_urc_bringup, "config", "ros2_control_leo.yaml"
-    )
+    xacro_file = os.path.join(pkg_urc_hw_description, "urdf/walli.xacro")
     world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
-    use_sim_time = LaunchConfiguration("use_sim_time", default="true")
-
-    xacro_file = os.path.join(pkg_leo_rover, "urdf/leo_sim.urdf.xacro")
-    assert os.path.exists(xacro_file), "urdf path doesnt exist in " + str(xacro_file)
-    robot_description_config = process_file(
-        xacro_file, mappings={"use_simulation": "true"}
+    controller_config_file_dir = os.path.join(
+        pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
-    robot_desc = robot_description_config.toxml()
 
-    gazebo = IncludeLaunchDescription(
+    assert os.path.exists(xacro_file), f"URDF path doesnt exist in {xacro_file}"
+    assert os.path.exists(world_path), f"World path doesnt exist in {world_path}"
+
+    robot_desc = process_file(xacro_file, mappings={"use_simulation": "true"}).toxml()
+
+    USE_WORLD_PATH = False
+    gazebo_args = {"use_sim_time": "true"}
+    if USE_WORLD_PATH:
+        gazebo_args["world"] = world_path
+
+    gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
         ),
-        launch_arguments={
-            "use_sim_time": "true",
-            "world": world_path,
-        }.items(),
+        launch_arguments=gazebo_args.items(),
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
+    spawn_robot_args_str = (
+        "-entity walli -x 0 -y 0 -z 10 -R 0 -P 0 -Y 0 -topic robot_description"
+    )
     spawn_robot = Node(
         package="gazebo_ros",
         executable="spawn_entity.py",
-        arguments=[
-            "-entity",
-            "walli",
-            "-x",
-            "0",
-            "-y",
-            "0",
-            "-z",
-            "10",
-            "-R",
-            "0",
-            "-P",
-            "0",
-            "-Y",
-            "0",
-            "-topic",
-            "robot_description",
-        ],
+        arguments=spawn_robot_args_str.split(" "),
     )
 
     rosbridge_server_node = Node(
@@ -78,32 +64,26 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
-    load_robot_state_publisher = Node(
+    robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
         parameters=[
-            {"use_sim_time": use_sim_time, "robot_description": robot_desc},
+            {"use_sim_time": True, "robot_description": robot_desc},
         ],
         output="screen",
     )
 
-    load_joint_state_broadcaster = Node(
+    joint_state_broadcaster_node = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_drivetrain_controller = Node(
+    drivetrain_controller_node = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["-p", controller_config_file_dir, "rover_drivetrain_controller"],
-    )
-
-    teleop_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("urc_bringup"), "/launch/teleop.launch.py"]
-        )
     )
 
     twist_mux_node = Node(
@@ -161,11 +141,32 @@ def generate_launch_description():
         ],
     )
 
-    rosbridge_server_node = Node(
-        package="rosbridge_server",
-        name="rosbridge_server",
-        executable="rosbridge_websocket.py",
-        parameters=[{"port": 9090}],
+    driver_joy_node = Node(
+        package="joy",
+        executable="joy_node",
+        remappings=(
+            ("/joy", "/driver/joy"),
+            ("/joy/set_feedback", "/driver/joy/set_feedback"),
+        ),
+    )
+
+    joystick_driver_node = Node(
+        name="joy_drive",
+        package="urc_platform",
+        executable="urc_platform_JoystickDriver",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_bringup"),
+                    "config/",
+                    "controller_config.yaml",
+                ]
+            )
+        ],
+        remappings=[
+            ("/joystick_driver/joy", "/driver/joy"),
+        ],
     )
 
     return LaunchDescription(
@@ -174,15 +175,17 @@ def generate_launch_description():
                 event_handler=OnProcessExit(
                     target_action=spawn_robot,
                     on_exit=[
-                        load_joint_state_broadcaster,
-                        load_drivetrain_controller,
-                        teleop_launch,
+                        joint_state_broadcaster_node,
+                        drivetrain_controller_node,
+                        elevation_mapping_node,
+                        driver_joy_node,
+                        joystick_driver_node,
                     ],
                 )
             ),
             RegisterEventHandler(
                 event_handler=OnProcessExit(
-                    target_action=load_drivetrain_controller,
+                    target_action=drivetrain_controller_node,
                     on_exit=[twist_mux_node],
                 )
             ),
@@ -197,9 +200,9 @@ def generate_launch_description():
                 )
             ),
             enable_color,
-            gazebo,
+            gazebo_launch,
             sim_gps_handler_node,
-            load_robot_state_publisher,
+            robot_state_publisher_node,
             spawn_robot,
             ekf_launch,
             rosbridge_server_node,
