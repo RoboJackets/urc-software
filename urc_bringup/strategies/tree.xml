@@ -1,31 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="MainBehavior">
     <Sequence>
-      <RetryUntilSuccessful num_attempts="5">
-        <GetCurrentGoal/>
-      </RetryUntilSuccessful>
-      <SetBlackboard value="GoalType"
-                     output_key="goal_type"/>
-      <ScriptCondition code='GoalType == "GPS"'/>
-      <IfThenElse>
-        <Sequence>
-          <SubTree ID="Navigation Subtree"
-                   _autoremap="true"/>
-          <SearchRadius/>
-          <SubTree ID="Navigation Subtree"
-                   _autoremap="true"/>
-          <RemoveGoal/>
-        </Sequence>
-        <Sequence>
-          <SubTree ID="Navigation Subtree"
-                   _autoremap="true"/>
-          <RemoveGoal/>
-        </Sequence>
-      </IfThenElse>
+      <GetCurrentGoal coord="{path_goal}"
+                      type="{goal_type}"/>
+      <SubTree ID="NavigationSubtree"
+               goal_type="{goal_type}"
+               _autoremap="true"/>
+      <SearchRadius path_goal="{path_goal}"
+                    goal_type="{goal_type}"/>
+      <SubTree ID="NavigationSubtree"
+               goal_type="{goal_type}"
+               _autoremap="true"/>
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="Navigation Subtree">
+  <BehaviorTree ID="NavigationSubtree">
     <RetryUntilSuccessful num_attempts="">
       <Sequence>
         <PathPlan goal_pos="{path_goal}"/>
@@ -33,19 +23,4 @@
       </Sequence>
     </RetryUntilSuccessful>
   </BehaviorTree>
-
-  <TreeNodesModel>
-    <Action ID="GetCurrentGoal"
-            editable="true"/>
-    <Action ID="RemoveGoal"
-            editable="true"/>
-    <Action ID="SearchRadius"
-      editable="true"/>
-    <Action ID="FollowTrajectory"
-            editable="true"/>
-    <Action ID="PathPlan"
-            editable="true">
-      <input_port name="goal_pos"/>
-    </Action>
-  </TreeNodesModel>
 </root>
