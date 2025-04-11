@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root BTCPP_format="4"
-      main_tree_to_execute="MainBehavior">
+<root BTCPP_format="4">
   <BehaviorTree ID="MainBehavior">
     <Sequence>
       <RetryUntilSuccessful num_attempts="5">
@@ -27,14 +25,27 @@
     </Sequence>
   </BehaviorTree>
 
-  <!-- Description of Node Models (used by Groot) -->
+  <BehaviorTree ID="Navigation Subtree">
+    <RetryUntilSuccessful num_attempts="">
+      <Sequence>
+        <PathPlan goal_pos="{path_goal}"/>
+        <FollowTrajectory/>
+      </Sequence>
+    </RetryUntilSuccessful>
+  </BehaviorTree>
+
   <TreeNodesModel>
     <Action ID="GetCurrentGoal"
             editable="true"/>
     <Action ID="RemoveGoal"
             editable="true"/>
     <Action ID="SearchRadius"
+      editable="true"/>
+    <Action ID="FollowTrajectory"
             editable="true"/>
+    <Action ID="PathPlan"
+            editable="true">
+      <input_port name="goal_pos"/>
+    </Action>
   </TreeNodesModel>
-
 </root>
