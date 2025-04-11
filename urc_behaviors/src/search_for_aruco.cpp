@@ -35,6 +35,13 @@ void SearchForAruco::search()
   auto goal = FollowPath::Goal();
   goal.path = path;
 
+  // Handle the case where the goal type is GPS, so return success immediately
+  if (goal.goal_type == urc_msgs::action::SearchAruco::GPS) {
+    auto result = std::make_shared<urc_msgs::action::SearchAruco::Result>();
+    goal_handle->succeed(result);
+    RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+  }
+
   auto send_goal_options = rclcpp_action::Client<FollowPath>::SendGoalOptions();
   send_goal_options.goal_response_callback = std::bind(
     &SearchForAruco::goal_response_callback,
