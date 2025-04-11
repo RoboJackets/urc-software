@@ -6,10 +6,6 @@
 	path = external/gazebo_ros2_control
 	url = https://github.com/ros-controls/gazebo_ros2_control
 	branch = humble
-[submodule "external/aruco_ros"]
-	path = external/aruco_ros
-	url = https://github.com/Ampers8nd/ros2_aruco.git
-	branch = main
 [submodule "external/BehaviorTree.ROS2"]
 	path = external/BehaviorTree.ROS2
 	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
@@ -28,4 +24,8 @@
 [submodule "external/ublox_dgnss"]
 	path = external/ublox_dgnss
 	url = https://github.com/aussierobots/ublox_dgnss.git
+	branch = main
+[submodule "external/aruco2_ros"]
+	path = external/aruco2_ros
+	url = https://github.com/Ampers8nd/ros2_aruco.git
 	branch = main
