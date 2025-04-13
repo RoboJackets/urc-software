@@ -1,12 +1,9 @@
 #include "urc_hw/hardware_interfaces/rover_drivetrain.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "pluginlib/class_list_macros.hpp"
-#include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <iostream>
-#include <iterator>
-#include <ostream>
+#include <cstdlib>
 #include <pb.h>
 #include <pb_encode.h>
 #include <pb_decode.h>
@@ -28,7 +25,7 @@ RoverDrivetrain::RoverDrivetrain()
 : hardware_interface_name("Rover Drivetrain")
   , velocity_rps_commands(2, 0)
   , velocity_rps_states(2, 0)
-  , velocity_rps_breakdown(6, 0)
+  , velocity_rps_breakdown(4, 0)
 {
 }
 RoverDrivetrain::~RoverDrivetrain() = default;
@@ -58,6 +55,7 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_init(
   }
 
   udp_address = info_.hardware_parameters["udp_address"];
+  udp_self_address = info_.hardware_parameters["udp_self_address"];
   udp_port = info_.hardware_parameters["udp_port"];
 
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -85,17 +83,45 @@ std::vector<hardware_interface::StateInterface> RoverDrivetrain::export_state_in
   state_interfaces.emplace_back("left_wheel", "velocity", &this->velocity_rps_states[0]);
   state_interfaces.emplace_back("right_wheel", "velocity", &this->velocity_rps_states[1]);
   state_interfaces.emplace_back("left_wheel", "velocity.front", &this->velocity_rps_breakdown[0]);
-  state_interfaces.emplace_back("left_wheel", "velocity.mid", &this->velocity_rps_breakdown[1]);
-  state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[2]);
-  state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[3]);
-  state_interfaces.emplace_back("right_wheel", "velocity.mid", &this->velocity_rps_breakdown[4]);
-  state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[5]);
+  state_interfaces.emplace_back("left_wheel", "velocity.back", &this->velocity_rps_breakdown[1]);
+  state_interfaces.emplace_back("right_wheel", "velocity.front", &this->velocity_rps_breakdown[2]);
+  state_interfaces.emplace_back("right_wheel", "velocity.back", &this->velocity_rps_breakdown[3]);
   return state_interfaces;
 }
 
 hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lifecycle::State &)
 {
-  udp_ = std::make_shared<UDPSocket<128>>(true);
+  udp_ = std::make_shared<UDPServer<128>>();
+  udp_->Bind(udp_self_address.c_str(), std::stoi(udp_port));
+  udp_->onRawMessageReceived = [this](const char * buf, ssize_t size, std::string, std::uint16_t) {
+      DrivetrainResponse message = DrivetrainResponse_init_zero;
+
+      pb_istream_t stream = pb_istream_from_buffer((unsigned char *) buf, size);
+      bool status = pb_decode(&stream, DrivetrainResponse_fields, &message);
+
+      if (!status) {
+        RCLCPP_ERROR(
+          rclcpp::get_logger(hardware_interface_name),
+          "Error while decoding wheel encoder feedback message.");
+        return;
+      }
+      message.m4SpeedFeedback *= -1; // feedback is reversed
+      message.m2SpeedFeedback *= -1; // feedback is reversed
+      // RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "%d %d %d %d", message.m1SpeedFeedback, message.m2SpeedFeedback, message.m3SpeedFeedback, message.m4SpeedFeedback);
+      if (std::abs(message.m1SpeedFeedback) < std::abs(message.m2SpeedFeedback)) {
+        this->velocity_rps_states[0] = message.m1SpeedFeedback;
+      } else {
+        this->velocity_rps_states[0] = message.m2SpeedFeedback;
+      }
+      if (std::abs(message.m3SpeedFeedback) < std::abs(message.m4SpeedFeedback)) {
+        this->velocity_rps_states[1] = message.m3SpeedFeedback;
+      } else {
+        this->velocity_rps_states[1] = message.m4SpeedFeedback;
+      }
+      this->velocity_rps_states[0] /= ENCODER_CPR;
+      this->velocity_rps_states[1] /= ENCODER_CPR;
+    };
+
   udp_->Connect(udp_address, std::stoi(udp_port));
   RCLCPP_INFO(rclcpp::get_logger(hardware_interface_name), "Rover Drivetrain activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
@@ -112,15 +138,11 @@ hardware_interface::return_type RoverDrivetrain::read(
   const rclcpp::Time &,
   const rclcpp::Duration &)
 {
-
-  // RCLCPP_INFO(rclcpp::get_logger("test"),
-  //   "%.5f, %.5f", velocity_rps_commands[0], velocity_rps_commands[1]);
-
   return hardware_interface::return_type::OK;
 }
 
 hardware_interface::return_type RoverDrivetrain::write(
-  const rclcpp::Time & time,
+  const rclcpp::Time &,
   const rclcpp::Duration & duration)
 {
   if (duration.seconds() < 0.001) {
@@ -128,27 +150,11 @@ hardware_interface::return_type RoverDrivetrain::write(
   }
 
   TeensyMessage message = TeensyMessage_init_zero;
-  // DrivetrainRequest drivetrainRequest = DrivetrainRequest_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  message.m1Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
-  message.m2Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
-  message.m3Setpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
-
-  message.m4Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.m5Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
-  message.m6Setpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
-
-
-  // Fill Required Fields
-  message.redEnabled = 0;
-  message.blueEnabled = 0;
-  message.greenEnabled = 0;
-  message.redBlink = 0;
-  message.blueBlink = 0;
-  message.greenBlink = 0;
-
-  message.messageID = 0;
+  message.which_messageType = TeensyMessage_setpointMessage_tag;
+  message.messageType.setpointMessage.leftSetpoint = velocity_rps_commands[0] * ENCODER_CPR * -1;
+  message.messageType.setpointMessage.rightSetpoint = velocity_rps_commands[1] * ENCODER_CPR * -1;
 
   bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;

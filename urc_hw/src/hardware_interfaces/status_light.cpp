@@ -118,12 +118,6 @@ hardware_interface::CallbackReturn StatusLight::on_deactivate(const rclcpp_lifec
 
 hardware_interface::return_type StatusLight::read(const rclcpp::Time &, const rclcpp::Duration &)
 {
-  RCLCPP_INFO(
-    rclcpp::get_logger(
-      hardware_interface_name), "Red: %s, Green: %s, Blue: %s", num_to_state(
-      lightStates[0]).c_str(), num_to_state(lightStates[1]).c_str(), num_to_state(
-      lightStates[2]).c_str());
-
   return hardware_interface::return_type::OK;
 }
 
@@ -139,23 +133,12 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
     lightStates[selected_color] = selected_state;
   }
 
-  message.redEnabled = (lightStates[0] != 0);
-  message.redBlink = (lightStates[0] == 2);
-  message.greenEnabled = (lightStates[1] != 0);
-  message.greenBlink = (lightStates[1] == 2);
-  message.blueEnabled = (lightStates[2] != 0);
-  message.blueBlink = (lightStates[2] == 2);
-
-  // Fill Required Fields
-  message.m1Setpoint = 0;
-  message.m2Setpoint = 0;
-  message.m3Setpoint = 0;
-  message.m4Setpoint = 0;
-  message.m5Setpoint = 0;
-  message.m6Setpoint = 0;
-
-  // Set message id to status light
-  message.messageID = 1;
+  message.messageType.statusLightMessage.redEnabled = (lightStates[0] != 0);
+  message.messageType.statusLightMessage.redBlink = (lightStates[0] == 2);
+  message.messageType.statusLightMessage.greenEnabled = (lightStates[1] != 0);
+  message.messageType.statusLightMessage.greenBlink = (lightStates[1] == 2);
+  message.messageType.statusLightMessage.blueEnabled = (lightStates[2] != 0);
+  message.messageType.statusLightMessage.blueBlink = (lightStates[2] == 2);
 
   bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;

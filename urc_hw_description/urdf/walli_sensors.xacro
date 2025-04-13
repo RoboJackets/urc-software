@@ -16,7 +16,7 @@
   </link>
   <joint name="imu_joint" type="fixed">
     <axis xyz="1 0 0" />
-    <origin xyz="0.05 0.1 0.2" />
+    <origin xyz="-0.32 -0.09 0.0" />
     <parent link="base_link" />
     <child link="imu_link" />
   </joint>
@@ -38,24 +38,24 @@
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </x>
           <y>
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </y>
           <z>
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>2e-4</stddev>
-              <bias_mean>0.0000075</bias_mean>
-              <bias_stddev>0.0000008</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </z>
         </angular_velocity>
@@ -64,24 +64,24 @@
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </x>
           <y>
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </y>
           <z>
             <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>1.7e-2</stddev>
-              <bias_mean>0.1</bias_mean>
-              <bias_stddev>0.001</bias_stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.0</bias_stddev>
             </noise>
           </z>
         </linear_acceleration>
@@ -90,7 +90,7 @@
   </gazebo>
 
   <!-- GPS -->
-  <link name="gps">
+  <link name="gps_link">
     <visual>
       <geometry>
         <box size="0.05 0.05 0.05" />
@@ -105,18 +105,18 @@
   </link>
   <joint name="gps_joint" type="fixed">
     <axis xyz="1 0 0" />
-    <origin xyz="0.05 -0.1 0.2" />
+    <origin xyz="-0.39 -0.27 0.34" />
     <parent link="base_link" />
-    <child link="gps" />
+    <child link="gps_link" />
   </joint>
   <gazebo reference="gps">
     <sensor name="gps" type="gps">
       <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
         <ros>
           <namespace>/gps</namespace>
-          <remapping>~/out:=data</remapping>
+          <remapping>~/out:=data_raw</remapping>
         </ros>
-        <frame_name>gps</frame_name>
+        <frame_name>gps_link</frame_name>
       </plugin>
       <always_on>true</always_on>
       <updateRate>30</updateRate>
@@ -124,7 +124,7 @@
   </gazebo>
 
   <!-- LIDAR -->
-  <!-- <link name="lidar_link">
+  <link name="lidar_link">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <mass value="0.125" />
@@ -146,10 +146,10 @@
   <joint name="lidar_joint" type="fixed">
     <parent link="base_link" />
     <child link="lidar_link" />
-    <origin xyz="0.0 0.0 0.25" rpy="0.0 0.0 0.0" />
+    <origin xyz="0.1778 0.0 0.254" rpy="0 3.14159265358 0"/>
   </joint>
 
-  <gazebo reference="lidar_link">
+  <!--<gazebo reference="lidar_link">
     <sensor name="lidar" type="ray">
       <always_on>true</always_on>
       <visualize>true</visualize>

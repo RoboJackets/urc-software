@@ -25,13 +25,6 @@ include_directories(
   include
 )
 
-# Library creation
-add_library(${PROJECT_NAME} SHARED
-  src/scan_to_pointcloud.cpp
-  src/control.cpp
-  src/ground_truth.cpp
-)
-
 set(dependencies
   rclcpp
   rclcpp_components
@@ -47,75 +40,10 @@ set(dependencies
   xacro
 )
 
-ament_target_dependencies(${PROJECT_NAME}
-  ${dependencies}
-)
-
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-# Node registration
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "scan_to_pointcloud::ScanToPointCloud"
-  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "control::Control"
-  EXECUTABLE ${PROJECT_NAME}_Control
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "ground_truth::GroundTruth"
-  EXECUTABLE ${PROJECT_NAME}_GroundTruth
-)
-
-# Install robot spawn file.
-install(
-  PROGRAMS
-  launch/spawn_walli.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-# Install relevant directories
 install(
   DIRECTORY
-  launch
   urdf
-  config
-  src
   DESTINATION share/${PROJECT_NAME}/
 )
-
-# Install library
-install(TARGETS
-  ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  #Calls the CMake for the unit tests
-  add_subdirectory(test)
-  # the following line skips the copyright linker
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  set(ament_cmake_cpplint_FOUND TRUE)
-
-  ament_lint_auto_find_test_dependencies()
-endif()
-
-ament_export_include_directories(include)
-
-ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${dependencies})
 
 ament_package()

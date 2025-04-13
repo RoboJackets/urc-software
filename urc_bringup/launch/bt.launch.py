@@ -28,7 +28,7 @@ def generate_launch_description():
     ros_lib_paths = [
         os.path.join(node_lib_path_base, lib_name) for lib_name in ros_lib_names
     ]
-    bt_file_name = "status_light.xml"
+    bt_file_name = "bt_test.xml"
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 

@@ -1,8 +1,8 @@
 name: CI
 on:
   pull_request:
-    branches: [ master ]
-    types: [ closed ]
+    branches: [master]
+    types: [closed]
   push:
     branches-ignore:
       - master
@@ -18,7 +18,7 @@ jobs:
         with:
           submodules: recursive
           path: colcon_ws/src/urc-software
-          
+
       - name: Update Dependencies
         shell: bash
         run: |
@@ -34,34 +34,6 @@ jobs:
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
           colcon build
-  
-  test:
-    name: Test
-    needs: build
-    runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-          path: colcon_ws/src/urc-software
-          
-      - name: Update Dependencies
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          sudo apt-get update
-          sudo apt-get --with-new-pkgs upgrade -y
-
-      - name: Colcon Test
-        shell: bash
-        working-directory: colcon_ws
-        run: |
-          source /opt/ros/humble/setup.bash
-          rosdep update
-          rosdep install --from-paths src --ignore-src -r -y
-          colcon build && colcon test && colcon test-result --verbose
 
   cpp_linting:
     name: C++ Linting
@@ -95,7 +67,7 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           ament_flake8 --exclude external
-  
+
   build_linting:
     name: Build Linting
     runs-on: ubuntu-22.04

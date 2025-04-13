@@ -11,6 +11,8 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(usb_cam REQUIRED)
+find_package(vectornav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(
   include
@@ -19,6 +21,8 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
+  src/twist_mux.cpp
+  src/sim_gps_handler.cpp
 )
 
 set(dependencies
@@ -28,6 +32,8 @@ set(dependencies
   sensor_msgs
   diagnostic_updater
   usb_cam
+  vectornav_msgs
+  geometry_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -41,10 +47,21 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_JoystickDriver
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "twist_mux::TwistMux"
+  EXECUTABLE ${PROJECT_NAME}_TwistMux
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "sim_gps_handler::SimGpsHandler"
+  EXECUTABLE ${PROJECT_NAME}_SimGpsHandler
+)
+
 # Install launch files.
 install(
   DIRECTORY
-  launch
   config
   DESTINATION share/${PROJECT_NAME}/
 )

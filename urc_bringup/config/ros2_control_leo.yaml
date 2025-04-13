@@ -1,0 +1,64 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 200
+
+    rover_drivetrain_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+joint_state_broadcaster:
+  ros__parameters:
+    type: joint_state_broadcaster/JointStateBroadcaster
+
+rover_drivetrain_controller:
+  ros__parameters:
+    left_wheel_names: ["wheel_FL_joint", "wheel_RL_joint"]
+    right_wheel_names: ["wheel_FR_joint", "wheel_RR_joint"]
+
+    wheel_separation: 0.358
+    wheels_per_side: 2
+    wheel_radius: 0.0625
+
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    publish_rate: 50.0
+    odom_frame_id: odom
+    base_frame_id: base_link
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+
+    open_loop: false
+    enable_odom_tf: true
+    position_feedback: true
+
+    cmd_vel_timeout: 0.5
+
+    linear.x.has_velocity_limits: true
+    linear.x.has_acceleration_limits: true
+    linear.x.has_jerk_limits: false
+    linear.x.max_velocity: 1.0
+    linear.x.min_velocity: -1.0
+    linear.x.max_acceleration: 2.5
+    linear.x.min_acceleration: -2.5
+
+    angular.z.has_velocity_limits: true
+    angular.z.has_acceleration_limits: true
+    angular.z.has_jerk_limits: false
+    angular.z.max_velocity: 1.0
+    angular.z.min_velocity: -1.0
+    angular.z.max_acceleration: 3.0
+    angular.z.min_acceleration: -3.0
+
+joy_drive:
+  ros__parameters:
+    max_linear_velocity_ms: 1.0
+    max_angular_velocity_radians: 1.0
+    joy_command_topic: /driver/joy
+    cmd_vel_topic: /rover_drivetrain_controller/cmd_vel
+    target_axes: [1, 3]
+    invert_linear_velocity: false
+    invert_angular_velocity: false

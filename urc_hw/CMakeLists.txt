@@ -13,20 +13,17 @@ find_package(hardware_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(nanopb REQUIRED)
-find_package(urc_util REQUIRED)
 find_package(urc_nanopb REQUIRED)
 
 add_library(
     urc_hw
     SHARED
     src/hardware/serial.cpp
-    src/hardware_interfaces/imu.cpp
     src/hardware_interfaces/status_light.cpp
     src/hardware_interfaces/battery_management.cpp
     src/hardware_interfaces/rover_drivetrain.cpp
     src/hardware_interfaces/science_module.cpp
     include/urc_hw/hardware/serial.hpp
-    include/urc_hw/hardware_interfaces/imu.hpp
     include/urc_hw/hardware_interfaces/status_light.hpp
     include/urc_hw/hardware_interfaces/battery_management.hpp
     include/urc_hw/hardware_interfaces/rover_drivetrain.hpp
@@ -47,7 +44,6 @@ ament_target_dependencies(
     "hardware_interface"
     "rclcpp"
     "nanopb"
-    "urc_util"
     "urc_nanopb"
     "pluginlib"
 )
