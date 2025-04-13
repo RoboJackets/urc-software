@@ -152,18 +152,22 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
+    foxglove_launch = (
+        IncludeLaunchDescription(
+            XMLLaunchDescriptionSource(
+                [
+                    FindPackageShare("foxglove_bridge"),
+                    "/launch",
+                    "/foxglove_bridge_launch.xml",
+                ]
+            ),
+            launch_arguments={"port": "8765"}.items(),
+        ),
+    )
+
     return LaunchDescription(
         [
-            IncludeLaunchDescription(
-                XMLLaunchDescriptionSource(
-                    [
-                        FindPackageShare("foxglove_bridge"),
-                        "/launch",
-                        "/foxglove_bridge_launch.xml",
-                    ]
-                ),
-                launch_arguments={"port": "8765"}.items(),
-            ),
+            # foxglove_launch,
             control_node,
             load_robot_state_publisher,
             load_joint_state_broadcaster,
