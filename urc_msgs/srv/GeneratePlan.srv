@@ -1,6 +1,5 @@
 # Request definition
-geometry_msgs/PoseStamped goal
-geometry_msgs/PoseStamped start
+geometry_msgs/Pose goal
 ---
 uint16 SUCCESS=0
 uint16 FAILURE=1
