@@ -1,5 +1,6 @@
 #include "search_for_aruco.hpp"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include "urc_msgs/action/search_aruco.hpp"
 
 namespace urc_behaviors
 {
@@ -41,6 +42,15 @@ void SearchForAruco::search()
     goal_handle->succeed(result);
     RCLCPP_INFO(this->get_logger(), "Goal succeeded");
   }
+
+  aruco_seen_subscriber_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
+    "/aruco_poses", 10,
+    std::bind(&ArucoSeen::aruco_callback, this, std::placeholders::_1));
+
+  aruco_seen_publisher_ = this->create_publisher<std_msgs::msg::Bool>(
+    "/aruco_seen", 10);
+
+  RCLCPP_INFO(this->get_logger(), "Aruco seen node has been started.");
 
   auto send_goal_options = rclcpp_action::Client<FollowPath>::SendGoalOptions();
   send_goal_options.goal_response_callback = std::bind(
@@ -90,6 +100,20 @@ void SearchForAruco::feedback_callback(
   RCLCPP_INFO(this->get_logger(), "Received feedback: %f", feedback->distance_to_goal);
 }
 
+void aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg) {
+  bool aruco_seen = !msg->poses.empty();
+  std_msgs::msg::Bool aruco_seen_msg;
+  aruco_seen_msg.data = aruco_seen;
+
+  aruco_seen_publisher_->publish(aruco_seen_msg);
+  
+  if (aruco_seen) {
+    RCLCPP_INFO(this->get_logger(), "Aruco marker seen!");
+  } else {
+    RCLCPP_INFO(this->get_logger(), "Aruco marker not seen.");
+  }
+}
+
 nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 {
   rclcpp::Time now = this->now();
@@ -123,7 +147,12 @@ nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 
   return path;
 }
+
+rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr aruco_seen_subscriber_;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr aruco_seen_publisher_;
+
 } // namespace urc_behaviors
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(urc_behaviors::SearchForAruco)
+RCLCPP_COMPONENTS_REGISTER_NODE(urc_behaviors::ArucoSeen)
