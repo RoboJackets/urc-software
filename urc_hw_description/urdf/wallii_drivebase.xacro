@@ -119,8 +119,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Front_Left_Wheel.STL" />
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
         <material
           name="">
@@ -180,8 +179,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Back_Left_Wheel.STL" />
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
         <material
           name="">
@@ -381,8 +379,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Front_Right_Wheel.STL" />
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
         <material
           name="">
@@ -442,8 +439,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <mesh
-            filename="file://$(find urc_hw_description)/urdf/meshes/Back_Right_Wheel.STL" />
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
         <material
           name="">
