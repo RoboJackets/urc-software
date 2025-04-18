@@ -282,6 +282,30 @@
       <dynamics damping="0.01" friction="0.01" />
     </joint>
 
+    <joint
+      name="diff_bar_right_rocker"
+      type="fixed">
+      <origin
+        xyz="-0.26 -0.253 0.05"
+        rpy="" />
+      <parent
+        link="differential_bar" />
+      <child
+        link="right_rocker" />
+      </joint> 
+
+    <joint
+      name="diff_bar_left_rocker"
+      type="fixed">
+      <origin
+        xyz="0.26 -0.253 0.05"
+        rpy="" />
+      <parent
+        link="differential_bar" />
+      <child
+        link="left_rocker" />
+      </joint> 
+
     <link
       name="right_rocker">
       <inertial>
