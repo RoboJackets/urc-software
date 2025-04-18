@@ -133,7 +133,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <cylinder length="3.25" radius="4.75"/>
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
       </collision>
       <surface>
@@ -194,7 +194,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <cylinder length="3.25" radius="4.75"/>
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
       </collision>
       <surface>
@@ -395,7 +395,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-            <cylinder length="3.25" radius="4.75"/>
+            <cylinder length="0.083" radius="0.1207"/>
         </geometry>
       </collision>
       <surface>
@@ -456,7 +456,7 @@
           xyz="0 0 0"
           rpy="0 0 0" />
         <geometry>
-          <cylinder length="3.25" radius="4.75"/>
+          <cylinder length="0.083" radius="0.1207"/>
         </geometry>
       </collision>
       <surface>
