@@ -282,8 +282,7 @@
       name="diff_bar_right_rocker"
       type="fixed">
       <origin
-        xyz="-0.26 -0.253 0.05"
-        rpy="" />
+        xyz="-0.26 -0.253 0.05" />
       <parent
         link="differential_bar" />
       <child
@@ -294,8 +293,7 @@
       name="diff_bar_left_rocker"
       type="fixed">
       <origin
-        xyz="0.26 -0.253 0.05"
-        rpy="" />
+        xyz="0.26 -0.253 0.05" />
       <parent
         link="differential_bar" />
       <child
