@@ -108,6 +108,12 @@ def generate_launch_description():
         ]
     )
 
+    imu_ned2enu_node = Node(
+        package="urc_platform",
+        executable="urc_platform_ImuNED2ENU",
+        name="imu_ned2enu",
+    )
+
     vectornav_node = Node(
         package="vectornav",
         executable="vectornav",
@@ -121,7 +127,6 @@ def generate_launch_description():
         executable="vn_sensor_msgs",
         output="screen",
         parameters=[os.path.join(pkg_urc_bringup, "config", "vectornav_imu.yaml")],
-        remappings=[("/vectornav/imu", "/imu/data")],
     )
 
     sick_node = Node(
@@ -176,13 +181,14 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_status_light_controller,
+            imu_ned2enu_node,
             twist_mux_node,
-            launch_gps,
+            # launch_gps,
             rosbridge_server_node,
             launch_ekf,
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
-            sick_node,
+            # sick_node,
         ]
     )

@@ -2,16 +2,10 @@
 <robot name="walli_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- IMU -->
   <link name="imu_link"></link>
-  <link name="imu_link_raw"></link>
   <joint name="imu_joint" type="fixed">
     <origin xyz="0.14 0.0 0.22" />
     <parent link="base_link" />
     <child link="imu_link" />
-  </joint>
-  <joint name="imu_joint_raw" type="fixed">
-    <origin rpy="3.14159 0 1.5708" />
-    <parent link="imu_link" />
-    <child link="imu_link_raw" />
   </joint>
   <gazebo reference="imu_link">
     <sensor name="imu_sensor" type="imu">

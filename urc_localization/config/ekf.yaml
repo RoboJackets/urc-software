@@ -174,7 +174,7 @@ navsat_transform:
         # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
         delay: 2.0
         magnetic_declination_radians: -0.06736971
-        yaw_offset: 0
+        yaw_offset: 0.0
         zero_altitude: true
         broadcast_utm_transform: true
         publish_filtered_gps: true
