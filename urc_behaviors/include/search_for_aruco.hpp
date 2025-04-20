@@ -8,6 +8,7 @@
 #include <nav_msgs/msg/path.hpp>
 
 #include <urc_msgs/action/follow_path.hpp>
+#include <urc_msgs/action/search_aruco.hpp>
 
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
@@ -21,14 +22,16 @@ class SearchForAruco : public rclcpp::Node
 {
 public:
   using FollowPath = urc_msgs::action::FollowPath;
+  using SearchAruco = urc_msgs::action::SearchAruco;
   using GoalHandleFollowPath = rclcpp_action::ClientGoalHandle<FollowPath>;
+  using GoalHandleSearchAruco = rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>;
 
   explicit SearchForAruco(const rclcpp::NodeOptions & options);
 
   ~SearchForAruco() = default;
 
 private:
-  void search(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  void search(const std::shared_ptr<GoalHandleSearchAruco> goal_handle);
 
   nav_msgs::msg::Path generate_search_path(double spiral_coeff);
 
@@ -42,23 +45,21 @@ private:
 
   bool aruco_seen_;
   rclcpp::Time aruco_first_seen_time_;
+  void aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
+  void handle_accepted(const std::shared_ptr<GoalHandleSearchAruco> goal_handle);
+  rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const urc_msgs::action::SearchAruco::Goal> goal);
+  rclcpp_action::CancelResponse handle_cancel(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>> goal_handle);
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-};
-
-class ArucoSeen : public rclcpp::Node
-{
-public:
-  ArucoSeen(const rclcpp::NodeOptions & options);
-
-private:
-  void aruco_callback(const std_msgs::msg::Bool::SharedPtr msg);
-  bool aruco_seen_ = false;
-  
+  rclcpp_action::Server<urc_msgs::action::SearchAruco>::SharedPtr search_server_;
   rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr aruco_seen_subscriber_;
   rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr aruco_seen_publisher_;
 };
+
 } // namespace urc_behaviors
 
 #endif // SEARCH_FOR_ARUCO_HPP_

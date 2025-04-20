@@ -12,14 +12,26 @@ SearchForAruco::SearchForAruco(const rclcpp::NodeOptions & options)
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
+  search_server_ = rclcpp_action::create_server<urc_msgs::action::SearchAruco>(
+    this,
+    "search_for_aruco",
+    std::bind(
+      &SearchForAruco::handle_goal, this,
+      std::placeholders::_1, std::placeholders::_2),
+    std::bind(
+      &SearchForAruco::handle_cancel, this,
+      std::placeholders::_1),
+    std::bind(
+      &SearchForAruco::handle_accepted, this,
+      std::placeholders::_1)
+    );
+
   follow_path_client_ = rclcpp_action::create_client<urc_msgs::action::FollowPath>(
     this,
     "follow_path");
-
-  search();
 }
 
-void SearchForAruco::search(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
+void SearchForAruco::search(const std::shared_ptr<GoalHandleSearchAruco> goal_handle)
 {
   // Wait until base_link to map transform is available
   while (!tf_buffer_->canTransform("map", "base_link", tf2::TimePointZero)) {
@@ -37,15 +49,18 @@ void SearchForAruco::search(const std::shared_ptr<rclcpp_action::ServerGoalHandl
   goal.path = path;
 
   // Handle the case where the goal type is GPS, so return success immediately
-  if (goal.goal_type == urc_msgs::action::SearchAruco::GPS) {
+  if (goal_handle->get_goal()->goal_type == urc_msgs::action::SearchAruco::Goal::GPS) {
     auto result = std::make_shared<urc_msgs::action::SearchAruco::Result>();
     goal_handle->succeed(result);
-    RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+    RCLCPP_INFO(this->get_logger(), "Goal succeeded immediately");
+    return;
   }
 
   aruco_seen_subscriber_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
     "/aruco_poses", 10,
-    std::bind(&SearchForAruco::aruco_callback, this, std::placeholders::_1));
+    [this](geometry_msgs::msg::PoseArray::SharedPtr msg) {
+      this->aruco_callback(msg);
+    });
 
   aruco_seen_publisher_ = this->create_publisher<std_msgs::msg::Bool>(
     "/aruco_seen", 10);
@@ -147,6 +162,31 @@ nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 
   return path;
 }
+
+void SearchForAruco::handle_accepted(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>> goal_handle) {
+  std::thread{std::bind(
+    &SearchForAruco::search, this,
+    goal_handle)}.detach();
+}
+
+rclcpp_action::GoalResponse SearchForAruco::handle_goal(
+  const rclcpp_action::GoalUUID & uuid,
+  std::shared_ptr<const urc_msgs::action::SearchAruco::Goal> goal)
+{
+  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  (void)uuid;
+  (void)goal;
+  return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+}
+
+rclcpp_action::CancelResponse SearchForAruco::handle_cancel(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>> goal_handle)
+{
+  RCLCPP_INFO(this->get_logger(), "Received cancel request");
+  (void)goal_handle;
+  return rclcpp_action::CancelResponse::ACCEPT;
+}
+
 } // namespace urc_behaviors
 
 #include <rclcpp_components/register_node_macro.hpp>
