@@ -57,11 +57,11 @@ vectornav:
       attitudeField: 0x0000 # ATTITUDEGROUP_NONE
       insField: 0x0000 # INSGROUP_NONE
       gps2Field: 0x0000 # GPSGROUP_NONE
-    frame_id: "imu_link"
+    frame_id: "imu_link_raw"
 
 vn_sensor_msgs:
   ros__parameters:
-    use_enu: true
+    use_enu: false
     orientation_covariance: [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
     angular_velocity_covariance:
       [0.01, 0.0, 0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.01]
