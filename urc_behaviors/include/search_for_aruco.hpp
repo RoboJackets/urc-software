@@ -28,7 +28,7 @@ public:
   ~SearchForAruco() = default;
 
 private:
-  void search();
+  void search(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
 
   nav_msgs::msg::Path generate_search_path(double spiral_coeff);
 

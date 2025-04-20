@@ -19,7 +19,7 @@ SearchForAruco::SearchForAruco(const rclcpp::NodeOptions & options)
   search();
 }
 
-void SearchForAruco::search()
+void SearchForAruco::search(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
 {
   // Wait until base_link to map transform is available
   while (!tf_buffer_->canTransform("map", "base_link", tf2::TimePointZero)) {
@@ -45,7 +45,7 @@ void SearchForAruco::search()
 
   aruco_seen_subscriber_ = this->create_subscription<geometry_msgs::msg::PoseArray>(
     "/aruco_poses", 10,
-    std::bind(&ArucoSeen::aruco_callback, this, std::placeholders::_1));
+    std::bind(&SearchForAruco::aruco_callback, this, std::placeholders::_1));
 
   aruco_seen_publisher_ = this->create_publisher<std_msgs::msg::Bool>(
     "/aruco_seen", 10);
@@ -100,7 +100,7 @@ void SearchForAruco::feedback_callback(
   RCLCPP_INFO(this->get_logger(), "Received feedback: %f", feedback->distance_to_goal);
 }
 
-void aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg) {
+void SearchForAruco::aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg) {
   bool aruco_seen = !msg->poses.empty();
   std_msgs::msg::Bool aruco_seen_msg;
   aruco_seen_msg.data = aruco_seen;
@@ -147,12 +147,6 @@ nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
 
   return path;
 }
-
-rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr aruco_seen_subscriber_;
-rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr aruco_seen_publisher_;
-
 } // namespace urc_behaviors
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(urc_behaviors::SearchForAruco)
-RCLCPP_COMPONENTS_REGISTER_NODE(urc_behaviors::ArucoSeen)
