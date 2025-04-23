@@ -1,0 +1,16 @@
+# request definition
+uint16 ARUCO=0
+uint16 MALLET=1
+uint16 WATER_BOTTLE=2
+uint16 GPS=3
+uint16 goal_type
+---
+# response definition
+uint16 SUCCESS=0
+uint16 FAILURE=1
+
+std_msgs/UInt32 result
+uint16 error_code
+---
+# feedback definition
+float32 percentage_searched

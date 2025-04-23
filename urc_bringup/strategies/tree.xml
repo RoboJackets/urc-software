@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="MainBehavior">
+    <Sequence>
+      <GetCurrentGoal coord="{path_goal}"
+                      type="{goal_type}"/>
+      <SubTree ID="NavigationSubtree"
+               goal_type="{goal_type}"
+               _autoremap="true"/>
+      <SearchRadius path_goal="{path_goal}"
+                    goal_type="{goal_type}"/>
+      <SubTree ID="NavigationSubtree"
+               goal_type="{goal_type}"
+               _autoremap="true"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="NavigationSubtree">
+    <RetryUntilSuccessful num_attempts="">
+      <Sequence>
+        <PathPlan goal_pos="{path_goal}"/>
+        <FollowTrajectory/>
+      </Sequence>
+    </RetryUntilSuccessful>
+  </BehaviorTree>
+</root>
