@@ -18,7 +18,7 @@
 
 namespace urc_behaviors
 {
-class SearchForAruco : public rclcpp::Node
+class SearchForAruco : public rclcpp::Node, public std::enable_shared_from_this<SearchForAruco>
 {
 public:
   using FollowPath = urc_msgs::action::FollowPath;
@@ -43,7 +43,8 @@ private:
 
   rclcpp_action::Client<FollowPath>::SharedPtr follow_path_client_;
 
-  bool aruco_seen_;
+  bool aruco_seen_ = false;
+  bool cancel_requested_ = false;
   rclcpp::Time aruco_first_seen_time_;
   void aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg);
   void handle_accepted(const std::shared_ptr<GoalHandleSearchAruco> goal_handle);

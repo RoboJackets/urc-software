@@ -64,19 +64,6 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       current_pose_ = pose;
     });
 
-  aruco_sub = create_subscription<geometry_msgs::msg::PoseArray>(
-    get_parameter("aruco_topic").as_string(),  
-    10,                                        
-    [this](const geometry_msgs::msg::PoseArray::SharedPtr msg) {
-      if (msg->poses.empty()) {
-        return;
-      }
-      current_aruco_pose_.header = msg->header;
-      current_aruco_pose_.pose   = msg->poses.front();
-      aruco_detected_ = true;
-    }
-  ); 
-
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
     "/costmap",

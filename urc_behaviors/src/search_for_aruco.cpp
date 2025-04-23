@@ -63,7 +63,7 @@ void SearchForAruco::search(const std::shared_ptr<GoalHandleSearchAruco> goal_ha
     });
 
   aruco_seen_publisher_ = this->create_publisher<std_msgs::msg::Bool>(
-    "/aruco_seen", 10);
+    "/aruco_seen_", 10);
 
   RCLCPP_INFO(this->get_logger(), "Aruco seen node has been started.");
 
@@ -78,7 +78,57 @@ void SearchForAruco::search(const std::shared_ptr<GoalHandleSearchAruco> goal_ha
     &SearchForAruco::feedback_callback, this,
     std::placeholders::_1, std::placeholders::_2);
 
-  follow_path_client_->async_send_goal(goal, send_goal_options);
+  auto goal_handle_future = follow_path_client_->async_send_goal(
+    goal, send_goal_options);
+
+  if (rclcpp::spin_until_future_complete(std::enable_shared_from_this<SearchForAruco>::shared_from_this(), goal_handle_future) != 
+    rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to send goal to follow_path action server");
+    return;
+  }
+
+  rclcpp_action::ClientGoalHandle<FollowPath>::SharedPtr follow_path_goal_handle_ = goal_handle_future.get();
+  if (!goal_handle) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to receive goal handle");
+    return;
+  }
+
+  auto result_future = follow_path_client_->async_get_result(follow_path_goal_handle_);
+  auto wait_result = rclcpp::spin_until_future_complete(std::enable_shared_from_this<SearchForAruco>::shared_from_this(), result_future, std::chrono::seconds(3));
+  auto result = result_future.get();
+
+  if (rclcpp::FutureReturnCode::TIMEOUT == wait_result) {
+    RCLCPP_ERROR(this->get_logger(), "Timed out waiting for result");
+    auto cancel_result_future = follow_path_client_->async_cancel_goal(follow_path_goal_handle_);
+    if (rclcpp::spin_until_future_complete(std::enable_shared_from_this<SearchForAruco>::shared_from_this(), cancel_result_future) !=
+      rclcpp::FutureReturnCode::SUCCESS)
+    {
+      RCLCPP_ERROR(this->get_logger(), "Failed to cancel goal");
+      return;
+    }
+    RCLCPP_INFO(this->get_logger(), "Goal is being canceled");
+  } else if (rclcpp::FutureReturnCode::SUCCESS != wait_result) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to get result");
+    return;
+  }
+
+  if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
+    if (result.result->SUCCESS == urc_msgs::action::FollowPath::Result::SUCCESS) {
+      RCLCPP_INFO(this->get_logger(), "Aruco marker found, goal succeeded.");
+      follow_path_client_->async_cancel_goal(follow_path_goal_handle_);
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Goal completed but aruco marker not seen.");
+    }
+  } else if (result.code == rclcpp_action::ResultCode::ABORTED) {
+    RCLCPP_INFO(this->get_logger(), "Goal was aborted");
+    return;
+  } else if (result.code == rclcpp_action::ResultCode::CANCELED) {
+    RCLCPP_INFO(this->get_logger(), "Goal was canceled");
+    return;
+  }
+
+  auto result_msg = std::make_shared<urc_msgs::action::SearchAruco::Result>();
+  goal_handle->succeed(result_msg);
 }
 
 void SearchForAruco::goal_response_callback(const GoalHandleFollowPath::SharedPtr & goal_handle)
@@ -116,16 +166,17 @@ void SearchForAruco::feedback_callback(
 }
 
 void SearchForAruco::aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg) {
-  bool aruco_seen = !msg->poses.empty();
+  bool aruco_seen_ = !msg->poses.empty();
   std_msgs::msg::Bool aruco_seen_msg;
-  aruco_seen_msg.data = aruco_seen;
+  aruco_seen_msg.data = aruco_seen_;
 
   aruco_seen_publisher_->publish(aruco_seen_msg);
   
-  if (aruco_seen) {
-    RCLCPP_INFO(this->get_logger(), "Aruco marker seen!");
-  } else {
-    RCLCPP_INFO(this->get_logger(), "Aruco marker not seen.");
+  if (aruco_seen_ && !cancel_requested_) {
+    RCLCPP_INFO(this->get_logger(), "Aruco marker seen! Preempting follow_path.");
+    cancel_requested_ = true;
+    aruco_seen_ = true;
+    follow_path_client_->async_cancel_all_goals();
   }
 }
 
@@ -186,7 +237,6 @@ rclcpp_action::CancelResponse SearchForAruco::handle_cancel(
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
-
 } // namespace urc_behaviors
 
 #include <rclcpp_components/register_node_macro.hpp>

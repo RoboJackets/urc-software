@@ -13,6 +13,7 @@
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/follow_path.hpp"
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include "geometry_msgs/msg/pose_array.hpp"
 
 namespace follower_action_server
 {
