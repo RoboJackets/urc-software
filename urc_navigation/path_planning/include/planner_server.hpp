@@ -28,12 +28,6 @@ protected:
     std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response);
 
   /**
-   * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
-   * @param plan The plan to be published
-   */
-  void publishPlan(const nav_msgs::msg::Path & plan);
-
-  /**
    * @brief Wait for the costmap to be available
    */
   void waitForCostmap();
