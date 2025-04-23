@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(urc_bt)
+project(urc_behavior)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -11,6 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
+find_package(btcpp_ros2_interfaces REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -20,6 +21,7 @@ set(dependencies
   rclcpp
   behaviortree_cpp
   behaviortree_ros2
+  btcpp_ros2_interfaces
   pluginlib
   rclcpp_components
   urc_msgs
@@ -31,10 +33,10 @@ include_directories(
   include
 )
 
-add_library(
-  ${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
   src/bt_orchestrator.cpp
-  include/urc_bt/bt_orchestrator.hpp
+  src/bt_executor.cpp
+  src/dispatcher.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -44,8 +46,29 @@ ament_target_dependencies(${PROJECT_NAME}
 # Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "behavior::BehaviorTreeOrchestrator"
-  EXECUTABLE ${PROJECT_NAME}_orchestrator
+  PLUGIN "urc_behavior::BehaviorTreeOrchestrator"
+  EXECUTABLE ${PROJECT_NAME}_BehaviorTreeOrchestrator
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_behavior::BTExecutor"
+  EXECUTABLE ${PROJECT_NAME}_BTExecutor
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_behavior::Dispatcher"
+  EXECUTABLE ${PROJECT_NAME}_Dispatcher
+)
+
+# Install launch files.
+install(
+  DIRECTORY
+  config
+  launch
+  behavior_trees
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 # Install library
@@ -66,9 +89,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(include)
-
-ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 
 ament_package()

@@ -14,18 +14,19 @@ find_package(nav_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/VelocityPair.msg"
-  "msg/LandingLocations.msg"
   "msg/ArucoDetection.msg"
   "msg/ArucoLocation.msg"
   "msg/BatteryInfo.msg"
-  "msg/Waypoint.msg"
+  "msg/GNSSCoordinate.msg"
+  "msg/Goal.msg"
   "msg/NavigationStatus.msg"
   "msg/StatusLightCommand.msg"
-  "msg/GridLocation.msg"
   "srv/GeneratePlan.srv"
   "action/FollowPath.action"
   "action/SearchAruco.action"
   "srv/UpdateBehaviorTree.srv"
+  "srv/GetGoal.srv"
+  "srv/AddGoal.srv"
 
   DEPENDENCIES
   std_msgs

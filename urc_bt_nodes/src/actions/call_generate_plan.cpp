@@ -12,12 +12,11 @@ namespace behavior::actions
 
 bool CallGeneratePlan::setRequest(typename Request::SharedPtr & request)
 {
-  auto start_pose = getInput<geometry_msgs::msg::Pose>("start_pose").value();
   auto goal_pose = getInput<geometry_msgs::msg::Pose>("goal_pose").value();
 
   RCLCPP_INFO(
-    node_->get_logger(), "Calling service to generate plan from (%.2f, %.2f) to (%.2f, %.2f)",
-    start_pose.position.x, start_pose.position.y, goal_pose.position.x, goal_pose.position.y);
+    logger(), "Calling service to generate plan from (%.2f, %.2f)",
+    goal_pose.position.x, goal_pose.position.y);
 
   request->goal = goal_pose;
   return true;
@@ -29,7 +28,7 @@ BT::NodeStatus CallGeneratePlan::onResponseReceived(const typename Response::Sha
     setOutput("path", response->path);
     return BT::NodeStatus::SUCCESS;
   } else {
-    RCLCPP_WARN(node_->get_logger(), "Failed to plan path.");
+    RCLCPP_WARN(logger(), "Failed to plan path.");
     return BT::NodeStatus::FAILURE;
   }
 }
@@ -61,4 +60,4 @@ inline geometry_msgs::msg::Pose convertFromString(StringView str)
 }
 } // namespace BT
 
-CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "PathPlan");
+CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "CallGeneratePlan");

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="test_status_light">
+    <RunOnce then_skip="true">
+      <Sequence>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="red"
+                                state="blink"/>
+        </Delay>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="red"
+                                state="off"/>
+        </Delay>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="green"
+                                state="blink"/>
+        </Delay>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="green"
+                                state="off"/>
+        </Delay>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="blue"
+                                state="blink"/>
+        </Delay>
+        <Delay delay_msec="100">
+          <StatusLightPublisher topic_name="/command/status_light"
+                                color="blue"
+                                state="off"/>
+        </Delay>
+      </Sequence>
+    </RunOnce>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="StatusLightPublisher"
+            editable="true">
+      <input_port name="topic_name"
+                  default="/command/status_light"/>
+      <input_port name="color"/>
+      <input_port name="state"/>
+    </Action>
+  </TreeNodesModel>
+
+</root>

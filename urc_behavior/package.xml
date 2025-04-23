@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>urc_bt</name>
+  <name>urc_behavior</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="zhiwan13579@126.com">keseterg</maintainer>
+  <description>This package contains the behavior tree executor and goal dispatcher nodes.</description>
+  <maintainer email="yashas.amb@gmail.com">Yashas Ambati</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
