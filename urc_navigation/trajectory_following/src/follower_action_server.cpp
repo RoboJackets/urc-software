@@ -4,6 +4,8 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/exceptions.h"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
+
 
 namespace follower_action_server
 {
@@ -23,6 +25,8 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  
+  geometry_msgs::msg::PoseStamped current_aruco_pose_;
 
   stamped_ = get_parameter("cmd_vel_stamped").as_bool();
 
@@ -43,6 +47,11 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
+
+  // Create the publisher
+  plan_publisher_ = create_publisher<nav_msgs::msg::Path>(
+    "/path",
+    rclcpp::SystemDefaultsQoS());
 
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
     get_parameter("odom_topic").as_string(),
@@ -197,6 +206,8 @@ void FollowerActionServer::execute(
   auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
   auto & path = goal_handle->get_goal()->path;
 
+  publishPlan(path);
+
   // Create a PurePursuit object
   pure_pursuit::PurePursuitParams params;
   params.lookahead_distance = get_parameter("lookahead_distance").as_double();
@@ -213,7 +224,7 @@ void FollowerActionServer::execute(
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
-    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
+    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() || aruco_detected_) {
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
@@ -263,6 +274,14 @@ void FollowerActionServer::execute(
   }
 
   publishZeroVelocity();
+}
+
+void FollowerActionServer::publishPlan(const nav_msgs::msg::Path & plan)
+{
+  auto msg = std::make_unique<nav_msgs::msg::Path>(plan);
+  if (plan_publisher_->get_subscription_count() > 0) {
+    plan_publisher_->publish(std::move(msg));
+  }
 }
 
 } // namespace follower_node

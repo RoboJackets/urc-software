@@ -24,6 +24,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/GridLocation.msg"
   "srv/GeneratePlan.srv"
   "action/FollowPath.action"
+  "action/SearchAruco.action"
   "srv/UpdateBehaviorTree.srv"
 
   DEPENDENCIES
