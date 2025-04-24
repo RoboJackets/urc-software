@@ -1,5 +1,9 @@
 # request definition
 nav_msgs/Path path
+uint16 GPS=0
+uint16 ARUCO=1
+uint16 MALLET=2
+uint16 WATER_BOTTLE=3
 uint16 goal_type
 ---
 # response definition
