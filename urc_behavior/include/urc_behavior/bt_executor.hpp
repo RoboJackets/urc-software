@@ -9,19 +9,21 @@
 
 namespace urc_behavior
 {
-    class BTExecutor : public BT::TreeExecutionServer
-    {
-    public:
-        BTExecutor(const rclcpp::NodeOptions &options);
-        ~BTExecutor();
+class BTExecutor : public BT::TreeExecutionServer
+{
+public:
+  BTExecutor(const rclcpp::NodeOptions & options);
+  ~BTExecutor();
 
-        void onTreeCreated(BT::Tree &tree) override;
-        std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status, bool was_cancelled) override;
+  void onTreeCreated(BT::Tree & tree) override;
+  std::optional<std::string> onTreeExecutionCompleted(
+    BT::NodeStatus status,
+    bool was_cancelled) override;
 
-    private:
-        std::shared_ptr<BT::StdCoutLogger> logger_cout_;
-        rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
-    };
+private:
+  std::shared_ptr<BT::StdCoutLogger> logger_cout_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
+};
 
 } // namespace urc_behavior
 

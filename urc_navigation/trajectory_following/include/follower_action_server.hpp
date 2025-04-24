@@ -32,12 +32,12 @@ private:
   visualization_msgs::msg::Marker create_lookahead_circle(
     double x, double y, double radius,
     std::string frame_id);
-  
+
 
   geometry_msgs::msg::PoseStamped current_aruco_pose_;
   bool aruco_detected_{false};
 
-  
+
   void publishZeroVelocity();
 
   rclcpp_action::GoalResponse handle_goal(

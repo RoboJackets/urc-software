@@ -1,8 +1,6 @@
 #ifndef SEARCH_FOR_ARUCO_HPP_
 #define SEARCH_FOR_ARUCO_HPP_
 
-#include <future>
-
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <nav_msgs/msg/path.hpp>

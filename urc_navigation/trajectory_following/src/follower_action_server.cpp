@@ -25,7 +25,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-  
+
   stamped_ = get_parameter("cmd_vel_stamped").as_bool();
 
   if (stamped_) {
@@ -64,17 +64,17 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
     });
 
   aruco_sub_ = create_subscription<geometry_msgs::msg::PoseArray>(
-    get_parameter("aruco_topic").as_string(),  
-    10,                                        
+    get_parameter("aruco_topic").as_string(),
+    10,
     [this](const geometry_msgs::msg::PoseArray::SharedPtr msg) {
       if (msg->poses.empty()) {
         return;
       }
       current_aruco_pose_.header = msg->header;
-      current_aruco_pose_.pose   = msg->poses.front();
+      current_aruco_pose_.pose = msg->poses.front();
       aruco_detected_ = true;
     }
-  ); 
+  );
 
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
@@ -236,7 +236,9 @@ void FollowerActionServer::execute(
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
-    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() || aruco_detected_) {
+    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() ||
+      aruco_detected_)
+    {
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");

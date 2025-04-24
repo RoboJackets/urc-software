@@ -24,7 +24,7 @@ SearchForAruco::SearchForAruco(const rclcpp::NodeOptions & options)
     std::bind(
       &SearchForAruco::handle_accepted, this,
       std::placeholders::_1)
-    );
+  );
 
   follow_path_client_ = rclcpp_action::create_client<urc_msgs::action::FollowPath>(
     this,
@@ -115,13 +115,14 @@ void SearchForAruco::feedback_callback(
   RCLCPP_INFO(this->get_logger(), "Received feedback: %f", feedback->distance_to_goal);
 }
 
-void SearchForAruco::aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg) {
+void SearchForAruco::aruco_callback(const geometry_msgs::msg::PoseArray::SharedPtr msg)
+{
   bool aruco_seen = !msg->poses.empty();
   std_msgs::msg::Bool aruco_seen_msg;
   aruco_seen_msg.data = aruco_seen;
 
   aruco_seen_publisher_->publish(aruco_seen_msg);
-  
+
   if (aruco_seen) {
     RCLCPP_INFO(this->get_logger(), "Aruco marker seen!");
   } else {
@@ -163,10 +164,12 @@ nav_msgs::msg::Path SearchForAruco::generate_search_path(double spiral_coeff)
   return path;
 }
 
-void SearchForAruco::handle_accepted(const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>> goal_handle) {
+void SearchForAruco::handle_accepted(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::SearchAruco>> goal_handle)
+{
   std::thread{std::bind(
-    &SearchForAruco::search, this,
-    goal_handle)}.detach();
+      &SearchForAruco::search, this,
+      goal_handle)}.detach();
 }
 
 rclcpp_action::GoalResponse SearchForAruco::handle_goal(

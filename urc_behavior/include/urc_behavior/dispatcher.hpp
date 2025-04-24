@@ -10,25 +10,27 @@
 
 namespace urc_behavior
 {
-    class Dispatcher : public rclcpp::Node
-    {
-    public:
-        explicit Dispatcher(const rclcpp::NodeOptions &options);
-        ~Dispatcher();
+class Dispatcher : public rclcpp::Node
+{
+public:
+  explicit Dispatcher(const rclcpp::NodeOptions & options);
+  ~Dispatcher();
 
-    private:
-        void handleGetGoal(const std::shared_ptr<urc_msgs::srv::GetGoal::Request> request,
-                           const std::shared_ptr<urc_msgs::srv::GetGoal::Response> response);
+private:
+  void handleGetGoal(
+    const std::shared_ptr<urc_msgs::srv::GetGoal::Request> request,
+    const std::shared_ptr<urc_msgs::srv::GetGoal::Response> response);
 
-        void handleAddGoal(const std::shared_ptr<urc_msgs::srv::AddGoal::Request> request,
-                           const std::shared_ptr<urc_msgs::srv::AddGoal::Response> response);
+  void handleAddGoal(
+    const std::shared_ptr<urc_msgs::srv::AddGoal::Request> request,
+    const std::shared_ptr<urc_msgs::srv::AddGoal::Response> response);
 
-        rclcpp::Service<urc_msgs::srv::GetGoal>::SharedPtr get_goal_service_;
-        rclcpp::Service<urc_msgs::srv::AddGoal>::SharedPtr add_goal_service_;
+  rclcpp::Service<urc_msgs::srv::GetGoal>::SharedPtr get_goal_service_;
+  rclcpp::Service<urc_msgs::srv::AddGoal>::SharedPtr add_goal_service_;
 
-        std::queue<urc_msgs::msg::Goal> goal_queue_; // Queue to store goals
-        std::mutex queue_mutex_;                     // Mutex for thread-safe access to the queue
-    };
+  std::queue<urc_msgs::msg::Goal> goal_queue_;       // Queue to store goals
+  std::mutex queue_mutex_;                           // Mutex for thread-safe access to the queue
+};
 } // namespace urc_behavior
 
 #endif // DISPATCHER_HPP_
