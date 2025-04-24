@@ -14,7 +14,7 @@
 #include <geometry_msgs/msg/pose_array.hpp>
 #include <std_msgs/msg/bool.hpp>
 
-namespace urc_behaviors
+namespace search_for_aruco
 {
 class SearchForAruco : public rclcpp::Node
 {

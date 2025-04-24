@@ -2,7 +2,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include "urc_msgs/action/search_aruco.hpp"
 
-namespace urc_behaviors
+namespace search_for_aruco
 {
 SearchForAruco::SearchForAruco(const rclcpp::NodeOptions & options)
 : Node("search_for_aruco", options)

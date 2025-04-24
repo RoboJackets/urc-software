@@ -11,12 +11,14 @@ find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(OpenCV 4 REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 
 include_directories(
@@ -27,6 +29,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
+  src/search_for_aruco.cpp
 )
 
 set(dependencies
@@ -35,12 +38,14 @@ set(dependencies
   urc_msgs
   std_msgs
   sensor_msgs
+  geometry_msgs
   diagnostic_updater
   cv_bridge
   image_transport
   OpenCV
   tf2
   tf2_geometry_msgs
+  tf2_ros
   nav_msgs
 )
 
@@ -52,6 +57,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "planner_server::PlannerServer"
   EXECUTABLE ${PROJECT_NAME}_PlannerServer
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "search_for_aruco::SearchForAruco"
+  EXECUTABLE ${PROJECT_NAME}_SearchForAruco
 )
 
 # Install launch files.
