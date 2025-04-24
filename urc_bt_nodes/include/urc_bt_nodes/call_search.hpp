@@ -3,7 +3,6 @@
 
 #include "behaviortree_cpp/basic_types.h"
 #include "behaviortree_cpp/tree_node.h"
-#include "behaviortree_cpp/tree_node.h"
 #include "behaviortree_ros2/ros_node_params.hpp"
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "string"

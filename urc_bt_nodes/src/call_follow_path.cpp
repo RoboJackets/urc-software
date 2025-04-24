@@ -1,4 +1,4 @@
-#include "urc_bt_nodes/actions/follow_path.hpp"
+#include "urc_bt_nodes/call_follow_path.hpp"
 #include "behaviortree_cpp/basic_types.h"
 #include <nav_msgs/msg/detail/path__struct.hpp>
 #include <rclcpp/logging.hpp>

@@ -1,4 +1,4 @@
-#include "urc_bt_nodes/actions/call_generate_plan.hpp"
+#include "urc_bt_nodes/call_generate_plan.hpp"
 #include "behaviortree_ros2/plugins.hpp"
 #include "behaviortree_cpp/basic_types.h"
 #include <geometry_msgs/msg/detail/pose__struct.hpp>
