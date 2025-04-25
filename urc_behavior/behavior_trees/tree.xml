@@ -7,13 +7,17 @@
       <SubTree ID="NavigationSubtree"
                goal_pos="{goal_pos}"
                _autoremap="true"/>
-      <GenerateSearchPath path="{search_path}"/>
-      <FollowTrajectory path="{search_path}"
-                        goal_type="{goal_type}"
-                        final_goal_pos="{final_goal_pos}"/>
-      <SubTree ID="NavigationSubtree"
-               goal_pos="{final_goal_pos}"
-               _autoremap="true"/>
+      <Precondition if="goal_type!=0">
+        <Sequence>
+          <GenerateSearchPath path="{search_path}"/>
+          <FollowTrajectory path="{search_path}"
+                            goal_type="{goal_type}"
+                            final_goal_pos="{final_goal_pos}"/>
+          <SubTree ID="NavigationSubtree"
+                   goal_pos="{final_goal_pos}"
+                   _autoremap="true"/>
+        </Sequence>
+      </Precondition>
     </Sequence>
   </BehaviorTree>
 
