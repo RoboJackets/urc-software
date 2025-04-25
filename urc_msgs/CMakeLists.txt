@@ -22,7 +22,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/NavigationStatus.msg"
   "msg/StatusLightCommand.msg"
   "action/FollowPath.action"
-  "action/SearchAruco.action"
   "srv/GeneratePlan.srv"
   "srv/UpdateBehaviorTree.srv"
   "srv/GetGoal.srv"

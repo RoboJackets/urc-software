@@ -43,6 +43,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       10);
   }
 
+  aruco_detected_ = false;
   current_aruco_pose_ = geometry_msgs::msg::PoseStamped();
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
@@ -68,11 +69,12 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
     10,
     [this](const geometry_msgs::msg::PoseArray::SharedPtr msg) {
       if (msg->poses.empty()) {
-        return;
+        aruco_detected_ = false;
+      } else {
+        current_aruco_pose_.header = msg->header;
+        current_aruco_pose_.pose = msg->poses.front();
+        aruco_detected_ = true;
       }
-      current_aruco_pose_.header = msg->header;
-      current_aruco_pose_.pose = msg->poses.front();
-      aruco_detected_ = true;
     }
   );
 
@@ -239,6 +241,7 @@ void FollowerActionServer::execute(
     } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() ||
       aruco_detected_)
     {
+      result->final_goal_pose = current_aruco_pose_.pose;
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");

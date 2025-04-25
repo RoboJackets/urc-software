@@ -12,7 +12,7 @@ uint16 FAILURE=1
 uint16 OBSTACLE_DETECTED=2
 
 uint16 error_code
-geometry_msgs/Pose result
+geometry_msgs/Pose final_goal_pose
 ---
 # feedback definition
 float32 distance_to_goal
