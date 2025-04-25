@@ -5,6 +5,7 @@
 #include "tf2/exceptions.h"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose_array.hpp>
+#include <urc_msgs/action/detail/follow_path__struct.hpp>
 
 
 namespace follower_action_server
@@ -219,6 +220,7 @@ void FollowerActionServer::execute(
 
   auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
   auto & path = goal_handle->get_goal()->path;
+  uint16_t goal_type = goal_handle->get_goal()->goal_type;
 
   publishPlan(path);
 
@@ -239,7 +241,7 @@ void FollowerActionServer::execute(
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
     } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() ||
-      aruco_detected_)
+      (aruco_detected_ && goal_type == urc_msgs::action::FollowPath::Goal::ARUCO))
     {
       result->final_goal_pose = current_aruco_pose_.pose;
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
