@@ -21,12 +21,13 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Goal.msg"
   "msg/NavigationStatus.msg"
   "msg/StatusLightCommand.msg"
-  "srv/GeneratePlan.srv"
   "action/FollowPath.action"
   "action/SearchAruco.action"
+  "srv/GeneratePlan.srv"
   "srv/UpdateBehaviorTree.srv"
   "srv/GetGoal.srv"
   "srv/AddGoal.srv"
+  "srv/GenerateSearchPath.srv"
 
   DEPENDENCIES
   std_msgs

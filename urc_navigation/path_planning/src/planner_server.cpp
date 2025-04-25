@@ -16,14 +16,9 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
     "plan",
     std::bind(&PlannerServer::generatePlan, this, std::placeholders::_1, std::placeholders::_2));
 
-  // Create the publisher
-  plan_publisher_ = create_publisher<nav_msgs::msg::Path>(
-    "/path",
-    rclcpp::SystemDefaultsQoS());
-
   // Get current pose
   robot_pose_subscriber_ = create_subscription<nav_msgs::msg::Odometry>(
-    "/pose",
+    "/odometry/filtered_global",
     rclcpp::SystemDefaultsQoS(),
     [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
       current_pose_ = msg->pose.pose;

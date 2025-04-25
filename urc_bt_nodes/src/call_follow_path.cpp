@@ -1,5 +1,6 @@
 #include "urc_bt_nodes/call_follow_path.hpp"
 #include "behaviortree_cpp/basic_types.h"
+#include <cstdint>
 #include <nav_msgs/msg/detail/path__struct.hpp>
 #include <rclcpp/logging.hpp>
 
@@ -8,8 +9,9 @@ namespace behavior::actions
 
 bool FollowPath::setGoal(Goal & goal)
 {
-  std::string goal_type = getInput<std::string>("goal_type").value();
+  std::uint16_t goal_type = getInput<std::uint16_t>("goal_type").value();
   RCLCPP_INFO(logger(), "Setting Goal...");
+  goal.goal_type = goal_type;
   goal.path = getInput<nav_msgs::msg::Path>("path").value();
   return true;
 }

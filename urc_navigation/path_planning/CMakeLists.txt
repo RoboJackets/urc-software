@@ -29,7 +29,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
-  src/search_for_aruco.cpp
+  src/search_path_planner.cpp
 )
 
 set(dependencies
