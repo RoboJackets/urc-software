@@ -2,25 +2,64 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="MainBehavior">
     <Sequence>
-      <GetCurrentGoal coord="{path_goal}"
+      <GetCurrentGoal coord="{goal_pos}"
                       type="{goal_type}"/>
       <SubTree ID="NavigationSubtree"
-               goal_type="{goal_type}"
+               goal_pos="{goal_pos}"
                _autoremap="true"/>
-      <SearchRadius path_goal="{path_goal}"
-                    goal_type="{goal_type}"/>
+      <GenerateSearchPath path="{search_path}"/>
+      <FollowTrajectory path="{search_path}"
+                        goal_type="{goal_type}"
+                        final_goal_pos="{final_goal_pos}"/>
       <SubTree ID="NavigationSubtree"
-               goal_type="{goal_type}"
+               goal_pos="{final_goal_pos}"
                _autoremap="true"/>
     </Sequence>
   </BehaviorTree>
 
   <BehaviorTree ID="NavigationSubtree">
-    <RetryUntilSuccessful num_attempts="">
+    <RetryUntilSuccessful num_attempts="-1">
       <Sequence>
-        <PathPlan goal_pos="{path_goal}"/>
-        <FollowTrajectory/>
+        <PathPlan goal_pos="{goal_pos}"
+                  path="{path_trajectory}"/>
+        <FollowTrajectory path="{path_trajectory}"
+                          goal_type="0"
+                          final_goal_pos=""/>
       </Sequence>
     </RetryUntilSuccessful>
   </BehaviorTree>
+
+  <BehaviorTree ID="SearchSubtree">
+    <Sequence>
+      <GenerateSearchPath path="{search_path}"/>
+      <FollowTrajectory path="{search_path}"
+                        goal_type="{goal_type}"
+                        final_goal_pos=""/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="FollowTrajectory"
+            editable="true">
+      <input_port name="path"/>
+      <input_port name="goal_type"/>
+      <output_port name="final_goal_pos"/>
+    </Action>
+    <Action ID="GenerateSearchPath"
+            editable="true">
+      <output_port name="path"/>
+    </Action>
+    <Action ID="GetCurrentGoal"
+            editable="true">
+      <output_port name="coord"/>
+      <output_port name="type"/>
+    </Action>
+    <Action ID="PathPlan"
+            editable="true">
+      <input_port name="goal_pos"/>
+      <output_port name="path"/>
+    </Action>
+  </TreeNodesModel>
+
 </root>
