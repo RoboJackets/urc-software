@@ -31,10 +31,10 @@ public:
 
   static BT::PortsList providedPorts()
   {
-    return providedBasicPorts(
-      {BT::InputPort<geometry_msgs::msg::Pose>("start_pose"),
-        BT::InputPort<geometry_msgs::msg::Pose>("goal_pose"),
-        BT::OutputPort<nav_msgs::msg::Path>("path", "Path to follow.")});
+    return providedBasicPorts({
+      BT::InputPort<geometry_msgs::msg::Pose>("goal_pose"),
+      BT::OutputPort<nav_msgs::msg::Path>("path", "Path to follow.")
+    });
   }
 };
 }  // namespace behavior::actions

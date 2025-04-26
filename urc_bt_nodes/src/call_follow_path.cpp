@@ -38,6 +38,7 @@ BT::NodeStatus FollowPath::onResultReceived(const WrappedResult & wr)
   RCLCPP_INFO(
     logger(), "Finished following path with error code: %hu.", wr.result->error_code);
   if (wr.result->error_code == 0) {
+    setOutput("final_goal_pos", wr.result->final_goal_pose);
     return BT::NodeStatus::SUCCESS;
   }
 

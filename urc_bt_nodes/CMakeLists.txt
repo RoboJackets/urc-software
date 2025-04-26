@@ -36,14 +36,14 @@ add_library(bt_call_follow_path SHARED src/call_follow_path.cpp)
 target_compile_definitions(bt_call_follow_path PRIVATE BT_PLUGIN_EXPORT)
 ament_target_dependencies(bt_call_follow_path ${dependencies})
 
-add_library(bt_call_search SHARED src/call_search.cpp)
-target_compile_definitions(bt_call_search PRIVATE BT_PLUGIN_EXPORT)
-ament_target_dependencies(bt_call_search ${dependencies})
+add_library(bt_call_generate_search_path SHARED src/call_generate_search_path.cpp)
+target_compile_definitions(bt_call_generate_search_path PRIVATE BT_PLUGIN_EXPORT)
+ament_target_dependencies(bt_call_generate_search_path ${dependencies})
 
 set(plugins
   bt_call_generate_plan
   bt_call_follow_path
-  bt_call_search
+  bt_call_generate_search_path
 )
 
 install(TARGETS

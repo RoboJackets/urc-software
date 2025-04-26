@@ -6,6 +6,7 @@
 #include "behaviortree_ros2/ros_node_params.hpp"
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "string"
+#include <geometry_msgs/msg/detail/pose__struct.hpp>
 #include <nav_msgs/msg/detail/path__struct.hpp>
 #include <urc_msgs/action/detail/follow_path__struct.hpp>
 
@@ -21,7 +22,11 @@ public:
   : BT::RosActionNode<urc_msgs::action::FollowPath>(name, conf, params) {}
   static BT::PortsList providedPorts()
   {
-    return providedBasicPorts({BT::InputPort<nav_msgs::msg::Path>("path")});
+    return providedBasicPorts({
+      BT::InputPort<nav_msgs::msg::Path>("path"),
+      BT::InputPort<std::uint16_t>("goal_type"),
+      BT::OutputPort<geometry_msgs::msg::Pose>("final_goal_pos"),
+    });
   }
 
   bool setGoal(Goal & goal) override;
