@@ -115,8 +115,8 @@ hardware_interface::CallbackReturn RoverDrivetrain::on_activate(const rclcpp_lif
       } else {
         this->velocity_rps_states[1] = message.m4SpeedFeedback;
       }
-      this->velocity_rps_states[0] /= ENCODER_CPR;
-      this->velocity_rps_states[1] /= ENCODER_CPR;
+      this->velocity_rps_states[0] /= (72 * 2 * M_PI);
+      this->velocity_rps_states[1] /= (72 * 2 * M_PI);
     };
 
   udp_->Connect(udp_address, std::stoi(udp_port));
