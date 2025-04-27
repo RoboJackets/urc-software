@@ -79,7 +79,7 @@ ekf_filter_node_map:
     sensor_timeout: 5.0
 
     # 2D vs 3D data
-    two_d_mode: false
+    two_d_mode: true
 
     #Transform time offset
     transform_time_offset: 0.0
