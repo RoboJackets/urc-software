@@ -20,7 +20,7 @@ ImuNED2ENU::ImuNED2ENU(const rclcpp::NodeOptions & options)
       tf2::Quaternion q_ned;
       tf2::fromMsg(msg->orientation, q_ned);
       tf2::Quaternion q_rot;
-      q_rot.setRPY(0, 0, -M_PI/2); // we are only using the yaw rotation
+      q_rot.setRPY(M_PI, 0, M_PI/2); // we are only using the yaw rotation
       tf2::Quaternion q_enu = q_rot * q_ned;
       q_enu.normalize();
       msg_out.orientation = tf2::toMsg(q_enu);

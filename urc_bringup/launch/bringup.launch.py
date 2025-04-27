@@ -183,7 +183,7 @@ def generate_launch_description():
             load_status_light_controller,
             imu_ned2enu_node,
             twist_mux_node,
-            # launch_gps,
+            launch_gps,
             rosbridge_server_node,
             launch_ekf,
             vectornav_node,
