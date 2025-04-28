@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="MainBehavior">
-    <Sequence>
-      <GetCurrentGoal coord="{goal_pos}"
-                      type="{goal_type}"/>
-      <SubTree ID="NavigationSubtree"
-               goal_pos="{goal_pos}"
-               _autoremap="true"/>
-      <Precondition if="goal_type!=0">
-        <Sequence>
-          <GenerateSearchPath path="{search_path}"/>
-          <FollowTrajectory path="{search_path}"
-                            goal_type="{goal_type}"
-                            final_goal_pos="{final_goal_pos}"/>
-          <SubTree ID="NavigationSubtree"
-                   goal_pos="{final_goal_pos}"
-                   _autoremap="true"/>
-        </Sequence>
-      </Precondition>
-    </Sequence>
+    <Repeat num_cycles="7">
+      <Sequence>
+        <GetCurrentGoal coord="{goal_pos}"
+                        type="{goal_type}"/>
+        <SubTree ID="NavigationSubtree"
+                 goal_pos="{goal_pos}"
+                 _autoremap="true"/>
+        <Precondition else="FAILURE"
+                      if="goal_type!=0">
+          <Sequence>
+            <GenerateSearchPath path="{search_path}"/>
+            <FollowTrajectory path="{search_path}"
+                              goal_type="{goal_type}"
+                              final_goal_pos="{final_goal_pos}"/>
+            <SubTree ID="NavigationSubtree"
+                     goal_pos="{final_goal_pos}"
+                     _autoremap="true"/>
+          </Sequence>
+        </Precondition>
+      </Sequence>
+    </Repeat>
   </BehaviorTree>
 
   <BehaviorTree ID="NavigationSubtree">
