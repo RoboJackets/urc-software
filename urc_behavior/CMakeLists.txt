@@ -1,74 +1,73 @@
-cmake_minimum_required(VERSION 3.5)
-project(path_planning)
+cmake_minimum_required(VERSION 3.8)
+project(urc_behavior)
 
-include(../../cmake/default_settings.cmake)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
+find_package(btcpp_ros2_interfaces REQUIRED)
+find_package(pluginlib REQUIRED)
 find_package(urc_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(diagnostic_updater REQUIRED)
-find_package(OpenCV 4 REQUIRED)
-find_package(cv_bridge REQUIRED)
-find_package(image_transport REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
-find_package(tf2_ros REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(urc_bt_nodes REQUIRED)
 
+set(dependencies
+  rclcpp
+  behaviortree_cpp
+  behaviortree_ros2
+  btcpp_ros2_interfaces
+  pluginlib
+  rclcpp_components
+  urc_msgs
+  std_srvs
+  urc_bt_nodes
+)
 
 include_directories(
   include
 )
 
-# Library creation
 add_library(${PROJECT_NAME} SHARED
-  src/planner_server.cpp
-  src/astar.cpp
-  src/search_path_planner.cpp
-)
-
-set(dependencies
-  rclcpp
-  rclcpp_components
-  urc_msgs
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  diagnostic_updater
-  cv_bridge
-  image_transport
-  OpenCV
-  tf2
-  tf2_geometry_msgs
-  tf2_ros
-  nav_msgs
+  src/bt_orchestrator.cpp
+  src/bt_executor.cpp
+  src/dispatcher.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
+# Node registration
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "planner_server::PlannerServer"
-  EXECUTABLE ${PROJECT_NAME}_PlannerServer
+  PLUGIN "urc_behavior::BehaviorTreeOrchestrator"
+  EXECUTABLE ${PROJECT_NAME}_BehaviorTreeOrchestrator
 )
 
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "search_for_aruco::SearchForAruco"
-  EXECUTABLE ${PROJECT_NAME}_SearchForAruco
+  PLUGIN "urc_behavior::BTExecutor"
+  EXECUTABLE ${PROJECT_NAME}_BTExecutor
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_behavior::Dispatcher"
+  EXECUTABLE ${PROJECT_NAME}_Dispatcher
 )
 
 # Install launch files.
 install(
   DIRECTORY
+  config
   launch
+  behavior_trees
   DESTINATION share/${PROJECT_NAME}/
 )
 
@@ -80,21 +79,18 @@ install(TARGETS
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the copyright linker
   set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
+
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(msg)
-
-ament_export_include_directories(include)
-
-ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 
 ament_package()

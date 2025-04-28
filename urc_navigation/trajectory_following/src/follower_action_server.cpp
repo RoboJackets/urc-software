@@ -4,6 +4,9 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/exceptions.h"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <geometry_msgs/msg/pose_array.hpp>
+#include <urc_msgs/action/detail/follow_path__struct.hpp>
+
 
 namespace follower_action_server
 {
@@ -41,8 +44,15 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       10);
   }
 
+  aruco_detected_ = false;
+  current_aruco_pose_ = geometry_msgs::msg::PoseStamped();
   carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
   marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
+
+  // Create the publisher
+  plan_publisher_ = create_publisher<nav_msgs::msg::Path>(
+    "/path",
+    rclcpp::SystemDefaultsQoS());
 
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
     get_parameter("odom_topic").as_string(),
@@ -54,6 +64,20 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       pose.pose = msg->pose.pose;
       current_pose_ = pose;
     });
+
+  aruco_sub_ = create_subscription<geometry_msgs::msg::PoseArray>(
+    get_parameter("aruco_topic").as_string(),
+    10,
+    [this](const geometry_msgs::msg::PoseArray::SharedPtr msg) {
+      if (msg->poses.empty()) {
+        aruco_detected_ = false;
+      } else {
+        current_aruco_pose_.header = msg->header;
+        current_aruco_pose_.pose = msg->poses.front();
+        aruco_detected_ = true;
+      }
+    }
+  );
 
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
@@ -196,6 +220,9 @@ void FollowerActionServer::execute(
 
   auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
   auto & path = goal_handle->get_goal()->path;
+  uint16_t goal_type = goal_handle->get_goal()->goal_type;
+
+  publishPlan(path);
 
   // Create a PurePursuit object
   pure_pursuit::PurePursuitParams params;
@@ -213,7 +240,10 @@ void FollowerActionServer::execute(
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
-    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
+    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double() ||
+      (aruco_detected_ && goal_type == urc_msgs::action::FollowPath::Goal::ARUCO))
+    {
+      result->final_goal_pose = current_aruco_pose_.pose;
       result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
@@ -263,6 +293,14 @@ void FollowerActionServer::execute(
   }
 
   publishZeroVelocity();
+}
+
+void FollowerActionServer::publishPlan(const nav_msgs::msg::Path & plan)
+{
+  auto msg = std::make_unique<nav_msgs::msg::Path>(plan);
+  if (plan_publisher_->get_subscription_count() > 0) {
+    plan_publisher_->publish(std::move(msg));
+  }
 }
 
 } // namespace follower_node
