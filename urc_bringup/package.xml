@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>urc_bringup</name>
   <version>0.0.0</version>
@@ -9,11 +7,14 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <!-- runtime/build dependencies -->
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>rosbridge_server</depend>
   <depend>nmea_navsat_driver</depend>
   <depend>sick_scan_xd</depend>
+  <depend>ros_ign_gazebo</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

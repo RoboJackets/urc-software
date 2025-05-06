@@ -6,6 +6,8 @@ include(../cmake/default_settings.cmake)
 find_package(ament_cmake REQUIRED)
 find_package(Protobuf REQUIRED)
 
+set(CMAKE_C_STANDARD        11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../external/nanopb/extra)
 find_package(Nanopb REQUIRED)
 

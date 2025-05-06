@@ -1,3 +1,8 @@
+"""
+@file    bringup_simulation.launch.py
+@brief   Launch file for the URC robot simulation.
+@details This launch file is used to start the simulation of the URC robot in Gazebo.
+"""
 import os
 from xacro import process_file
 from ament_index_python.packages import get_package_share_directory
@@ -15,7 +20,12 @@ from launch.actions import (
 
 
 def generate_launch_description():
-    pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
+    """
+    Launch the simulation with the URC robot.
+    """
+
+    # Get the path to the package directories
+    pkg_gz_sim    = get_package_share_directory("ros_gz_sim")
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_path_planning = get_package_share_directory("path_planning")
@@ -23,38 +33,70 @@ def generate_launch_description():
     pkg_urc_localization = get_package_share_directory("urc_localization")
     pkg_urc_hw_description = get_package_share_directory("urc_hw_description")
 
+    # Get the path to the URDF and world files
     xacro_file = os.path.join(pkg_urc_hw_description, "urdf/walli.xacro")
-    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds/urc_world.world")
+    world_path = os.path.join(pkg_urc_gazebo, "urdf/worlds", "urc_world.world")
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "ros2_control_walli.yaml"
     )
 
+    # Check if the files exist
     assert os.path.exists(xacro_file), f"URDF path doesnt exist in {xacro_file}"
     assert os.path.exists(world_path), f"World path doesnt exist in {world_path}"
 
+    # Load the URDF file and process it with xacro
     robot_desc = process_file(xacro_file, mappings={"use_simulation": "true"}).toxml()
 
-    USE_WORLD_PATH = False
-    gazebo_args = {"use_sim_time": "true"}
-    if USE_WORLD_PATH:
-        gazebo_args["world"] = world_path
+    use_world_path = True
 
     gazebo_launch = IncludeLaunchDescription(
+      PythonLaunchDescriptionSource(
+        os.path.join(pkg_gz_sim, "launch", "gz_sim.launch.py"),
+      ),
+      launch_arguments={
+        "gz_args": f"-r -v4 {' '.join([world_path] if use_world_path else [])}",
+        "use_sim_time":"true"
+      }.items(),
+    )
+
+    bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, "launch", "gazebo.launch.py"),
-        ),
-        launch_arguments=gazebo_args.items(),
+            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+        )
+    )
+
+    path_planning_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_path_planning, "launch", "planning.launch.py")
+        )
+    )
+
+    trajectory_following_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                pkg_trajectory_following,
+                "launch",
+                "trajectory_following.launch.py",
+            )
+        )
+    )
+
+    ekf_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
+        )
     )
 
     enable_color = SetEnvironmentVariable(name="RCUTILS_COLORIZED_OUTPUT", value="1")
 
-    spawn_robot_args_str = (
-        "-entity walli -x 0 -y 0 -z 10 -R 0 -P 0 -Y 0 -topic robot_description"
-    )
     spawn_robot = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=spawn_robot_args_str.split(" "),
+      package="ros_gz_sim",
+      executable="create",
+      arguments=[
+        "-name",  "walli",
+        "-topic", "robot_description"
+      ],
+      output="screen",
     )
 
     rosbridge_server_node = Node(
@@ -98,33 +140,6 @@ def generate_launch_description():
         name="sim_gps_handler",
     )
 
-    bt_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
-        )
-    )
-
-    path_planning_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_path_planning, "launch", "planning.launch.py")
-        )
-    )
-
-    trajectory_following_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                pkg_trajectory_following,
-                "launch",
-                "trajectory_following.launch.py",
-            )
-        )
-    )
-
-    ekf_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
-        )
-    )
 
     elevation_mapping_node = Node(
         package="urc_perception",
