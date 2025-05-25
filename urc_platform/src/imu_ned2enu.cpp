@@ -16,11 +16,11 @@ ImuNED2ENU::ImuNED2ENU(const rclcpp::NodeOptions & options)
     get_parameter("imu_in_topic").as_string(), rclcpp::SystemDefaultsQoS(),
     [this](const sensor_msgs::msg::Imu::SharedPtr msg) {
       sensor_msgs::msg::Imu msg_out = *msg;
-      
+
       tf2::Quaternion q_ned;
       tf2::fromMsg(msg->orientation, q_ned);
       tf2::Quaternion q_rot;
-      q_rot.setRPY(M_PI, 0, M_PI/2); // we are only using the yaw rotation
+      q_rot.setRPY(M_PI, 0, M_PI / 2); // we are only using the yaw rotation
       tf2::Quaternion q_enu = q_rot * q_ned;
       q_enu.normalize();
       msg_out.orientation = tf2::toMsg(q_enu);
