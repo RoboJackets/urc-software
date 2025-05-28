@@ -1,4 +1,5 @@
 import os
+from launch.descriptions import executable
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
@@ -153,6 +154,12 @@ def generate_launch_description():
         )
     )
 
+    gps_imu_localizer_node = Node(
+        package="urc_localization",
+        name="gps_imu_localizer",
+        executable="urc_localization_GpsImuLocalizer",
+    )
+
     rosbridge_server_node = Node(
         package="rosbridge_server",
         name="rosbridge_server",
@@ -185,7 +192,8 @@ def generate_launch_description():
             twist_mux_node,
             launch_gps,
             rosbridge_server_node,
-            launch_ekf,
+            # launch_ekf,
+            gps_imu_localizer_node,
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
