@@ -1,7 +1,4 @@
 #include "gps_imu_localizer.hpp"
-#include <sensor_msgs/msg/detail/imu__struct.hpp>
-#include <sensor_msgs/msg/detail/nav_sat_fix__struct.hpp>
-#include <std_msgs/msg/detail/empty__struct.hpp>
 
 namespace gps_imu_localizer
 {
@@ -39,15 +36,14 @@ GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions &options)
 
 void GpsImuLocalizer::GpsCallback(const sensor_msgs::msg::NavSatFix & msg)
 {
-  double lat = msg.latitude;
-  double lng = msg.longitude;
-  int zone;
-  bool northp;
-  double x, y;
-
-  GeographicLib::UTMUPS::Forward(lat, lng, zone, northp, x, y);
-  odometry_msg_.pose.pose.position.x = x - base.first;
-  odometry_msg_.pose.pose.position.y = y - base.second;
+  geographic_msgs::msg::GeoPoint geo_point;
+  geo_point.latitude = msg.latitude;
+  geo_point.longitude = msg.longitude;
+  geo_point.altitude = msg.altitude;
+  geodesy::UTMPoint utm_point;
+  geodesy::fromMsg(geo_point, utm_point);
+  odometry_msg_.pose.pose.position.x = utm_point.easting - base.first;
+  odometry_msg_.pose.pose.position.y = utm_point.northing - base.second;
 }
 
 void GpsImuLocalizer::ImuCallback(const sensor_msgs::msg::Imu & msg)

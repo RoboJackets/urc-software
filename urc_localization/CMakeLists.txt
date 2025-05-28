@@ -12,6 +12,8 @@ find_package(rclcpp_components REQUIRED)
 find_package(robot_localization REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(geodesy REQUIRED)
+find_package(geographic_msgs REQUIRED)
 
 include_directories(
   include
@@ -27,6 +29,8 @@ set(dependencies
   rclcpp_components
   sensor_msgs
   nav_msgs
+  geodesy
+  geographic_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}

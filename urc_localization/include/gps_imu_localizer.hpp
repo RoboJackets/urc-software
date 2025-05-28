@@ -4,7 +4,10 @@
 #include "nav_msgs/msg/odometry.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
-#include <GeographicLib/UTMUPS.hpp>
+#include "geographic_msgs/msg/geo_point.hpp"
+#include "math.h"
+#include <geodesy/utm.h>
+#include <geodesy/wgs84.h>
 #include <memory>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
