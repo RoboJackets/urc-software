@@ -158,6 +158,7 @@ def generate_launch_description():
         package="urc_localization",
         name="gps_imu_localizer",
         executable="urc_localization_GpsImuLocalizer",
+        output="screen",
     )
 
     rosbridge_server_node = Node(

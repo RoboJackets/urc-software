@@ -57,4 +57,7 @@ void GpsImuLocalizer::ImuCallback(const sensor_msgs::msg::Imu & msg)
 
   odometry_publisher_->publish(odometry_msg_);
 }
-}
+
+} // namespace gps_imu_localizer
+
+RCLCPP_COMPONENTS_REGISTER_NODE(gps_imu_localizer::GpsImuLocalizer)
