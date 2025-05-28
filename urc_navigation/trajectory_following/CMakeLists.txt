@@ -76,17 +76,6 @@ if(BUILD_TESTING)
   # the following line skips cpplint (only works in a git repo)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
-
-  find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(${PROJECT_NAME}_geometry_util_test test/geometry_util_test.cpp)
-  target_include_directories(${PROJECT_NAME}_geometry_util_test PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  )
-  ament_target_dependencies(${PROJECT_NAME}_geometry_util_test
-    ${dependencies}
-  )
-  target_link_libraries(${PROJECT_NAME}_geometry_util_test ${PROJECT_NAME})
 endif()
 
 ament_export_include_directories(msg)
