@@ -23,11 +23,11 @@ GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions &options)
 
   imu_subscriber_ = create_subscription<sensor_msgs::msg::Imu>(
     get_parameter("imu_topic").as_string(), rclcpp::SystemDefaultsQoS(),
-    std::bind(&GpsImuLocalizer::ImuCallback, this, std::placeholders::_1));
+    [this](const sensor_msgs::msg::Imu msg) {ImuCallback(msg);});
 
   set_base_subscriber_ = create_subscription<std_msgs::msg::Empty>(
     get_parameter("set_base_topic").as_string(), rclcpp::SystemDefaultsQoS(),
-    [this](const std_msgs::msg::Empty msg) {
+    [this](const std_msgs::msg::Empty::SharedPtr msg) {
       base.first = odometry_msg_.pose.pose.position.x;
       base.second = odometry_msg_.pose.pose.position.y;
     }

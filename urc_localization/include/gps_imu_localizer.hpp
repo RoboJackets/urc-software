@@ -9,7 +9,7 @@
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
-#include <std_msgs/msg/detail/empty__struct.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <utility>
 
 namespace gps_imu_localizer
