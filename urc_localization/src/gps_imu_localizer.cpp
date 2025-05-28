@@ -32,6 +32,8 @@ GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions &options)
 
   odometry_publisher_ = create_publisher<nav_msgs::msg::Odometry>(
     get_parameter("odometry_topic").as_string(), rclcpp::SystemDefaultsQoS());
+
+  br = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 }
 
 void GpsImuLocalizer::GpsCallback(const sensor_msgs::msg::NavSatFix & msg)
@@ -52,6 +54,16 @@ void GpsImuLocalizer::ImuCallback(const sensor_msgs::msg::Imu & msg)
   odometry_msg_.pose.pose.orientation = msg.orientation;
 
   odometry_publisher_->publish(odometry_msg_);
+
+  geometry_msgs::msg::TransformStamped t;
+  t.header.stamp = msg.header.stamp;
+  t.header.frame_id = "map";
+  t.child_frame_id = "base_link";
+  t.transform.translation.x = odometry_msg_.pose.pose.position.x;
+  t.transform.translation.y = odometry_msg_.pose.pose.position.y;
+  t.transform.translation.z = 0.0;
+  t.transform.rotation = odometry_msg_.pose.pose.orientation;
+  br->sendTransform(t);
 }
 
 } // namespace gps_imu_localizer
