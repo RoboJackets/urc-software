@@ -50,10 +50,10 @@ rover_drivetrain_controller:
     right_wheel_radius_multiplier: 1.0
 
     publish_rate: 50.0
-    odom_frame_id: odom
+    odom_frame_id: base_link
     base_frame_id: base_link
-    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
-    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    pose_covariance_diagonal: [0.1, 0.1, 0.1, 0.5, 0.5, 0.5]
+    twist_covariance_diagonal: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
     open_loop: false
     enable_odom_tf: false

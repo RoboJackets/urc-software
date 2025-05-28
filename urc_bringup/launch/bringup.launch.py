@@ -100,9 +100,18 @@ def generate_launch_description():
                         pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
                     )
                 ),
-                launch_arguments={"device_serial_string": "rover"}.items(),
+                launch_arguments={
+                    "device_serial_string": "rover",
+                    "frame_id": "gps_link",
+                }.items(),
             ),
         ]
+    )
+
+    imu_ned2enu_node = Node(
+        package="urc_platform",
+        executable="urc_platform_ImuNED2ENU",
+        name="imu_ned2enu",
     )
 
     vectornav_node = Node(
@@ -118,7 +127,6 @@ def generate_launch_description():
         executable="vn_sensor_msgs",
         output="screen",
         parameters=[os.path.join(pkg_urc_bringup, "config", "vectornav_imu.yaml")],
-        remappings=[("/vectornav/imu", "/imu/data")],
     )
 
     sick_node = Node(
@@ -173,6 +181,7 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_drivetrain_controller,
             load_status_light_controller,
+            imu_ned2enu_node,
             twist_mux_node,
             launch_gps,
             rosbridge_server_node,
@@ -180,6 +189,6 @@ def generate_launch_description():
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
-            sick_node,
+            # sick_node,
         ]
     )

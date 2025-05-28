@@ -25,13 +25,13 @@ ekf_filter_node_odom:
     imu_remove_gravitational_acceleration: false
 
     odom0: /rover_drivetrain_controller/odom
-    odom0_config: [false, false, false,
+    odom0_config: [true, true, false,
                  false, false, true,
                  true, true, false,
-                 false, false, false,
+                 false, false, true,
                  false, false, false]
-    odom0_differential: false
-    odom0_relative: true
+    odom0_differential: true
+    odom0_relative: false
     odom0_queue_size: 10
     
     use_control: false
@@ -79,7 +79,7 @@ ekf_filter_node_map:
     sensor_timeout: 5.0
 
     # 2D vs 3D data
-    two_d_mode: false
+    two_d_mode: true
 
     #Transform time offset
     transform_time_offset: 0.0
@@ -120,12 +120,12 @@ ekf_filter_node_map:
     odom1_queue_size: 10
 
     imu0: /imu/data
-    imu0_config: [true, true, false,
+    imu0_config: [false, false, false,
                       false, false, true,
-                      true, true, false,
+                      false, false, false,
                       false, false, true,
                       true, false, false]
-    imu0_differential: true
+    imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
     imu_remove_gravitational_acceleration: false
@@ -163,6 +163,7 @@ ekf_filter_node_map:
     #                                0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
     #
     dynamic_process_noise_covariance: true
+    print_diagnostics: true
 
 
 
@@ -172,11 +173,11 @@ navsat_transform:
         frequency: 30.0
         # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
         delay: 2.0
-        magnetic_declination_radians: -0.06736971
-        yaw_offset: 1.5707963
+        magnetic_declination_radians: 0.06736971
+        yaw_offset: 0.0
         zero_altitude: true
         broadcast_utm_transform: true
         publish_filtered_gps: true
-        use_odometry_yaw: true
+        use_odometry_yaw: false
         wait_for_datum: false
         
