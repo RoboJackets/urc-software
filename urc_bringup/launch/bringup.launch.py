@@ -137,7 +137,7 @@ def generate_launch_description():
             {
                 "hostname": "192.168.1.10",
                 "scanner_type": "sick_multiscan",
-                "publish_frame_id": "sick_frame",
+                "publish_frame_id": "lidar_link",
                 "publish_laserscan_segment_topic": "scan_segment",
                 "publish_laserscan_fullframe_topic": "scan_fullframe",
                 "custom_pointclouds": "cloud_unstructured_fullframe",
@@ -198,6 +198,6 @@ def generate_launch_description():
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
-            # sick_node,
+            sick_node,
         ]
     )
