@@ -138,6 +138,7 @@ def generate_launch_description():
                 "hostname": "192.168.1.10",
                 "scanner_type": "sick_multiscan",
                 "publish_frame_id": "lidar_link",
+                "tf_base_frame_id": "lidar_link2",
                 "publish_laserscan_segment_topic": "scan_segment",
                 "publish_laserscan_fullframe_topic": "scan_fullframe",
                 "custom_pointclouds": "cloud_unstructured_fullframe",
