@@ -22,17 +22,17 @@ namespace gps_imu_localizer
 class GpsImuLocalizer : public rclcpp::Node
 {
 public:
-  explicit GpsImuLocalizer(const rclcpp::NodeOptions &options);
+  explicit GpsImuLocalizer(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Subscription<sensor_msgs::msg::NavSatFix>::SharedPtr gps_subscriber_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_subscriber_;
   rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr set_base_subscriber_;
   std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>>
-      odometry_publisher_;
+  odometry_publisher_;
 
-  void GpsCallback(const sensor_msgs::msg::NavSatFix &msg);
-  void ImuCallback(const sensor_msgs::msg::Imu &msg);
+  void GpsCallback(const sensor_msgs::msg::NavSatFix & msg);
+  void ImuCallback(const sensor_msgs::msg::Imu & msg);
 
   std::pair<double, double> base;
   nav_msgs::msg::Odometry odometry_msg_;

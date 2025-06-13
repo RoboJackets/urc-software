@@ -3,7 +3,7 @@
 namespace gps_imu_localizer
 {
 
-GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions &options)
+GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions & options)
 : rclcpp::Node("gps_imu_localizer", options)
 {
   declare_parameter("gps_topic", "/gps/data");
