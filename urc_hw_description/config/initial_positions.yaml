@@ -1,9 +1,0 @@
-# Default initial positions for walli's ros2_control fake system
-
-initial_positions:
-  bicepjoint: 0
-  clawjoint: 0
-  elbowjoint: 0
-  rightgripperjoint: 0
-  shoulderjoint: 0
-  wristjoint: 0
