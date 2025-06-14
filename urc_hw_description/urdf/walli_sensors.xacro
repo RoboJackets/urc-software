@@ -111,7 +111,7 @@
   </gazebo>
 
   <!-- LIDAR -->
-  <link name="lidar_link">
+  <link name="lidar_link2">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <mass value="0.125" />
@@ -132,8 +132,8 @@
   </link>
   <joint name="lidar_joint" type="fixed">
     <parent link="base_link" />
-    <child link="lidar_link" />
-    <origin xyz="0.1778 0.0 0.254" rpy="0 3.14159265358 0"/>
+    <child link="lidar_link2" />
+    <origin xyz="0.1778 0.0 0.254" rpy="3.14159265358 0 0"/>
   </joint>
 
   <!--<gazebo reference="lidar_link">

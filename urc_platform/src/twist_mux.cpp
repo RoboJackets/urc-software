@@ -13,7 +13,7 @@ TwistMux::TwistMux(const rclcpp::NodeOptions & options)
   declare_parameter("cmd_out_topic", "/rover_drivetrain_controller/cmd_vel");
 
   enabled = true;
-  mode = "autonomous";
+  mode = "teleop";
 
   cmd_publisher = create_publisher<geometry_msgs::msg::TwistStamped>(
     get_parameter("cmd_out_topic").as_string(), rclcpp::SystemDefaultsQoS());

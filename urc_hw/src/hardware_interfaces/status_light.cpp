@@ -133,6 +133,7 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
     lightStates[selected_color] = selected_state;
   }
 
+  message.which_messageType = TeensyMessage_statusLightMessage_tag;
   message.messageType.statusLightMessage.redEnabled = (lightStates[0] != 0);
   message.messageType.statusLightMessage.redBlink = (lightStates[0] == 2);
   message.messageType.statusLightMessage.greenEnabled = (lightStates[1] != 0);

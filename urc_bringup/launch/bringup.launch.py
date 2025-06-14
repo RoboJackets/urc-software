@@ -1,4 +1,5 @@
 import os
+from launch.descriptions import executable
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
@@ -136,7 +137,8 @@ def generate_launch_description():
             {
                 "hostname": "192.168.1.10",
                 "scanner_type": "sick_multiscan",
-                "publish_frame_id": "sick_frame",
+                "publish_frame_id": "lidar_link",
+                "tf_base_frame_id": "lidar_link2",
                 "publish_laserscan_segment_topic": "scan_segment",
                 "publish_laserscan_fullframe_topic": "scan_fullframe",
                 "custom_pointclouds": "cloud_unstructured_fullframe",
@@ -151,6 +153,13 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_urc_localization, "launch", "ekf.launch.py")
         )
+    )
+
+    gps_imu_localizer_node = Node(
+        package="urc_localization",
+        name="gps_imu_localizer",
+        executable="urc_localization_GpsImuLocalizer",
+        output="screen",
     )
 
     rosbridge_server_node = Node(
@@ -185,10 +194,11 @@ def generate_launch_description():
             twist_mux_node,
             launch_gps,
             rosbridge_server_node,
-            launch_ekf,
+            # launch_ekf,
+            gps_imu_localizer_node,
             vectornav_node,
             vectornav_sensor_msg_node,
             heartbeat_node,
-            # sick_node,
+            sick_node,
         ]
     )
