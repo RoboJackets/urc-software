@@ -1,9 +1,12 @@
 #ifndef PLANNER_SERVER_HPP_
 #define PLANNER_SERVER_HPP_
 
+#include <nav_msgs/msg/detail/odometry__struct.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <geometry_msgs/msg/pose.hpp>
 
 #include "urc_msgs/srv/generate_plan.hpp"
 
@@ -25,12 +28,6 @@ protected:
     std::shared_ptr<urc_msgs::srv::GeneratePlan::Response> response);
 
   /**
-   * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
-   * @param plan The plan to be published
-   */
-  void publishPlan(const nav_msgs::msg::Path & plan);
-
-  /**
    * @brief Wait for the costmap to be available
    */
   void waitForCostmap();
@@ -42,7 +39,9 @@ protected:
   void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
   nav_msgs::msg::OccupancyGrid current_costmap_;
+  geometry_msgs::msg::Pose current_pose_;
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr robot_pose_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
   rclcpp::Service<urc_msgs::srv::GeneratePlan>::SharedPtr plan_service_;
 };

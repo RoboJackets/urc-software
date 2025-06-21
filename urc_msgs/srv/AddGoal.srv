@@ -1,0 +1,5 @@
+# Request definition
+urc_msgs/Goal goal
+---
+# Response definition
+bool success
