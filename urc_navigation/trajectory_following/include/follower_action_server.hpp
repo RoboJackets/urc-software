@@ -13,6 +13,7 @@
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/follow_path.hpp"
 #include <nav_msgs/msg/occupancy_grid.hpp>
+#include "geometry_msgs/msg/pose_array.hpp"
 
 namespace follower_action_server
 {
@@ -31,7 +32,12 @@ private:
   visualization_msgs::msg::Marker create_lookahead_circle(
     double x, double y, double radius,
     std::string frame_id);
+  
 
+  geometry_msgs::msg::PoseStamped current_aruco_pose_;
+  bool aruco_detected_{false};
+
+  
   void publishZeroVelocity();
 
   rclcpp_action::GoalResponse handle_goal(
@@ -53,15 +59,23 @@ private:
    */
   void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
 
+  /**
+   * @brief Publish the plan to the /path topic for *visualization* purposes. The plan will be returned as a response to the service call.
+   * @param plan The plan to be published
+   */
+  void publishPlan(const nav_msgs::msg::Path & plan);
+
   int getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y);
 
   nav_msgs::msg::OccupancyGrid current_costmap_;
   rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
   rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::PoseArray>::SharedPtr aruco_sub_;
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
