@@ -20,6 +20,7 @@ def generate_launch_description():
     pkg_urc_gazebo = get_package_share_directory("urc_gazebo")
     pkg_path_planning = get_package_share_directory("path_planning")
     pkg_trajectory_following = get_package_share_directory("trajectory_following")
+    pkg_urc_behavior = get_package_share_directory("urc_behavior")
     pkg_urc_localization = get_package_share_directory("urc_localization")
     pkg_urc_hw_description = get_package_share_directory("urc_hw_description")
 
@@ -100,7 +101,7 @@ def generate_launch_description():
 
     bt_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_urc_bringup, "launch", "bt.launch.py")
+            os.path.join(pkg_urc_behavior, "launch", "behavior.launch.py")
         )
     )
 
@@ -166,6 +167,21 @@ def generate_launch_description():
         ],
         remappings=[
             ("/joystick_driver/joy", "/driver/joy"),
+        ],
+    )
+
+    elevation_mapping_node = Node(
+        package="urc_perception",
+        executable="urc_perception_ElevationMapping",
+        output="screen",
+        parameters=[
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("urc_perception"),
+                    "config",
+                    "mapping_params.yaml",
+                ]
+            )
         ],
     )
 

@@ -1,0 +1,12 @@
+bt_action_server:
+  ros__parameters:
+    action_name: "~/execute_tree"
+    tick_frequency: 10
+    groot2_port: 1667
+    ros_plugins_timeout: 1000
+
+    plugins:
+      - urc_bt_nodes/bt_plugins
+
+    behavior_trees:
+      - urc_behavior/behavior_trees
