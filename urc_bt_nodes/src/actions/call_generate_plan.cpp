@@ -19,9 +19,7 @@ bool CallGeneratePlan::setRequest(typename Request::SharedPtr & request)
     node_->get_logger(), "Calling service to generate plan from (%.2f, %.2f) to (%.2f, %.2f)",
     start_pose.position.x, start_pose.position.y, goal_pose.position.x, goal_pose.position.y);
 
-  request->start = geometry_msgs::msg::PoseStamped();
-  request->start.pose = start_pose;
-  request->goal.pose = goal_pose;
+  request->goal = goal_pose;
   return true;
 }
 
@@ -63,4 +61,4 @@ inline geometry_msgs::msg::Pose convertFromString(StringView str)
 }
 } // namespace BT
 
-CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "CallGeneratePlan");
+CreateRosNodePlugin(behavior::actions::CallGeneratePlan, "PathPlan");

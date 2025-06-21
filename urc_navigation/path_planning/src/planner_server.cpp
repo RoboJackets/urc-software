@@ -21,6 +21,14 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
     "/path",
     rclcpp::SystemDefaultsQoS());
 
+  // Get current pose
+  robot_pose_subscriber_ = create_subscription<nav_msgs::msg::Odometry>(
+    "/pose",
+    rclcpp::SystemDefaultsQoS(),
+    [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
+      current_pose_ = msg->pose.pose;
+    });
+
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
     "/costmap",
@@ -44,8 +52,8 @@ void PlannerServer::generatePlan(
     astar::AStar astar;
     astar.setMap(current_costmap_);
 
-    auto start = request->start.pose;
-    auto goal = request->goal.pose;
+    auto start = current_pose_;
+    auto goal = request->goal;
 
     astar.createPlan(start, goal);
     std::vector<astar::AStarNode> path = astar.getPath();

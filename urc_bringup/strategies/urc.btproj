@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="tree.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="FollowTrajectory" editable="true"/>
+        <Action ID="GetCurrentGoal" editable="true">
+            <output_port name="coord"/>
+            <output_port name="type"/>
+        </Action>
+        <Action ID="PathPlan" editable="true">
+            <input_port name="goal_pos"/>
+        </Action>
+        <Action ID="RemoveGoal" editable="true"/>
+        <Action ID="SearchRadius" editable="true">
+            <output_port name="path_goal"/>
+            <input_port name="goal_type"/>
+        </Action>
+    </TreeNodesModel>
+</root>
