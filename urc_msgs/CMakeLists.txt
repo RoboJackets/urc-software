@@ -7,29 +7,14 @@ include(../cmake/default_settings.cmake)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/VelocityPair.msg"
-  "msg/LandingLocations.msg"
-  "msg/ArucoDetection.msg"
-  "msg/ArucoLocation.msg"
   "msg/BatteryInfo.msg"
-  "msg/Waypoint.msg"
-  "msg/NavigationStatus.msg"
   "msg/StatusLightCommand.msg"
-  "msg/GridLocation.msg"
-  "srv/GeneratePlan.srv"
-  "action/FollowPath.action"
-  "srv/UpdateBehaviorTree.srv"
 
   DEPENDENCIES
-  std_msgs
-  geometry_msgs
-  nav_msgs
+  rclcpp
   builtin_interfaces
 )
 

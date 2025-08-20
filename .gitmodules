@@ -2,25 +2,9 @@
 	path = external/nanopb
 	url = https://github.com/nanopb/nanopb
 	ignore = dirty
-[submodule "external/gazebo_ros2_control"]
-	path = external/gazebo_ros2_control
-	url = https://github.com/ros-controls/gazebo_ros2_control
-	branch = humble
-[submodule "external/aruco_ros"]
-	path = external/aruco_ros
-	url = https://github.com/yambati03/aruco_ros.git
-	branch = humble-devel
 [submodule "external/BehaviorTree.ROS2"]
 	path = external/BehaviorTree.ROS2
 	url = https://github.com/BehaviorTree/BehaviorTree.ROS2.git
-[submodule "external/articubot_one"]
-	path = external/articubot_one
-	url = https://github.com/joshnewans/articubot_one.git
-	branch = humble
-[submodule "external/articubot_one"]
-	path = external/articubot_one
-	url = https://github.com/joshnewans/articubot_one.git
-	branch = humble
 [submodule "external/vectornav"]
 	path = external/vectornav
 	url = https://github.com/dawonn/vectornav.git
