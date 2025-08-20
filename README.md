@@ -87,3 +87,7 @@ colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/prot
 colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/nanopb_generator.py
 colcon build --symlink-install
 ```
+Can also try downgrading/installing protobuf (described in error message):
+```
+pip install protoc==3.20
+```
