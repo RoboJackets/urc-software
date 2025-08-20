@@ -87,6 +87,7 @@ ArmRT::~ArmRT()
   is_running_ = false;
 }
 
+
 void ArmRT::initialize()
 {
   if (!realtime_tools::has_realtime_kernel()) {
@@ -130,6 +131,7 @@ void ArmRT::initialize()
       }
       response->success = true;
     });
+
   stop_servo_service_ = create_service<std_srvs::srv::Trigger>(
     "~/stop_servo",
     [this](const std_srvs::srv::Trigger::Request::SharedPtr,

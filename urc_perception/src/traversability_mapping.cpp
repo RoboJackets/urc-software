@@ -1,22 +1,18 @@
 #include "traversability_mapping.hpp"
-
 #include <ament_index_cpp/get_package_share_directory.hpp>
-
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/filter.h>
 #include <pcl/PCLPointCloud2.h>
-
 #include <tf2_sensor_msgs/tf2_sensor_msgs.hpp>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <geometry_msgs/msg/pose.hpp>
-
 #include <grid_map_pcl/GridMapPclLoader.hpp>
 
 namespace urc_perception
 {
-
+  
 TraversabilityMapping::TraversabilityMapping(const rclcpp::NodeOptions & options)
 : Node("traversability_mapping", options), filter_chain_("grid_map::GridMap")
 {
@@ -61,7 +57,6 @@ void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2
   grid_map::GridMapPclLoader gridMapPclLoader(this->get_logger());
   gridMapPclLoader.setInputCloud(cloud);
   gridMapPclLoader.loadParameters(filePath);
-
   gridMapPclLoader.preProcessInputCloud();
   gridMapPclLoader.initializeGridMapGeometryFromInputCloud();
   gridMapPclLoader.addLayerFromInputCloud(std::string("elevation"));

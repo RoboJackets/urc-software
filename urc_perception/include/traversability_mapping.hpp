@@ -32,6 +32,8 @@ private:
   grid_map::GridMap map_;
   filters::FilterChain<grid_map::GridMap> filter_chain_;
 
+  
+
   double resolution_;
   double min_z_;
   double max_z_;

@@ -9,7 +9,7 @@ HeartbeatPublisher::HeartbeatPublisher(const rclcpp::NodeOptions & options)
   heartbeat_publisher = create_publisher<std_msgs::msg::Header>(
     "/heartbeat",
     rclcpp::SystemDefaultsQoS());
-  timer_ =
+  timer_ = 
     create_wall_timer(
     std::chrono::milliseconds(heartbeatInterval),
     std::bind(&HeartbeatPublisher::timerCallback, this));

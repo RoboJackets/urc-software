@@ -5,6 +5,7 @@ namespace astar
 
 AStar::AStar() {}
 
+
 Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 {
   int x = (pose.position.x - costmap_.info.origin.position.x) / costmap_.info.resolution;
@@ -24,7 +25,7 @@ void AStar::setGoalNode(const geometry_msgs::msg::Pose & goal_pose)
   goal_node_.y = goal_pose.position.y;
 }
 
-void AStar::createPlan(
+void AStar::createPlan (
   const geometry_msgs::msg::Pose & start_pose,
   const geometry_msgs::msg::Pose & goal_pose)
 {
@@ -42,7 +43,9 @@ void AStar::createPlan(
   setGoalNode(goal_pose);
 
   Coordinate start_coord = getCoordinateByPose(start_pose);
-  AStarNode * start_node = getNodeRef(start_coord.x, start_coord.y);
+  
+AStarNode * start_node = getNodeRef(start_coord.x, start_coord.y);
+
   start_node->x = start_pose.position.x;
   start_node->y = start_pose.position.y;
   start_node->g_cost = 0.0;
@@ -155,3 +158,4 @@ void AStar::reconstructPath(const AStarNode * goal_node)
   std::reverse(path_.begin(), path_.end());
 }
 } // namespace astar
+
