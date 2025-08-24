@@ -1,10 +1,14 @@
 #include "GaussianFilter.hpp"
 #include <pluginlib/class_list_macros.hpp>
 #include <rclcpp/rclcpp.hpp>
+
 #include <grid_map_core/grid_map_core.hpp>
+
 #include <string>
 #include <vector>
+
 #include <grid_map_cv/utilities.hpp>
+
 #define EPSILON 0.001
 
 namespace urc_perception
