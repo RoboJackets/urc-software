@@ -17,6 +17,7 @@
   <depend>urc_hw</depend>
   <depend>urc_nanopb</depend>
   <depend>urc_msgs</depend>
+  <depend>joint_trajectory_controller</depend>
 
   <build_depend>pluginlib</build_depend>
 
