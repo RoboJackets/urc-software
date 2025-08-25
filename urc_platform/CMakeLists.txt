@@ -13,6 +13,9 @@ find_package(diagnostic_updater REQUIRED)
 find_package(usb_cam REQUIRED)
 find_package(vectornav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 include_directories(
   include
@@ -23,6 +26,7 @@ add_library(${PROJECT_NAME} SHARED
   src/joystick_driver.cpp
   src/twist_mux.cpp
   src/sim_gps_handler.cpp
+  src/imu_ned2enu.cpp
 )
 
 set(dependencies
@@ -34,6 +38,9 @@ set(dependencies
   usb_cam
   vectornav_msgs
   geometry_msgs
+  tf2
+  tf2_geometry_msgs
+  tf2_ros
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -59,10 +66,15 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_SimGpsHandler
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "imu_ned2enu::ImuNED2ENU"
+  EXECUTABLE ${PROJECT_NAME}_ImuNED2ENU
+)
+
 # Install launch files.
 install(
   DIRECTORY
-  launch
   config
   DESTINATION share/${PROJECT_NAME}/
 )

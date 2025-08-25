@@ -14,7 +14,6 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(urc_hw REQUIRED)
-find_package(urc_util REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
 find_package(joint_trajectory_controller REQUIRED)
@@ -23,12 +22,8 @@ find_package(control_toolbox REQUIRED)
 add_library(
   ${PROJECT_NAME}
   SHARED
-  src/test_hardware_controller.cpp
-  src/imu_broadcaster.cpp
   src/status_light_controller.cpp
   src/bms_broadcaster.cpp
-  include/urc_controllers/test_hardware_controller.hpp
-  include/urc_controllers/imu_broadcaster.hpp
   include/urc_controllers/status_light_controller.hpp
   include/urc_controllers/bms_broadcaster.hpp
 )
@@ -47,7 +42,6 @@ ament_target_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
-  urc_util
   urc_nanopb
   urc_msgs
 )
@@ -81,7 +75,6 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
-  urc_util
 )
 
 ament_export_targets(

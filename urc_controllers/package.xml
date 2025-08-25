@@ -14,7 +14,6 @@
   <depend>realtime_tools</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
-  <depend>urc_util</depend>
   <depend>urc_hw</depend>
   <depend>urc_nanopb</depend>
   <depend>urc_msgs</depend>

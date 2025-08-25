@@ -32,6 +32,5 @@ def generate_launch_description():
         [
             traversability_mapping_node,
             grid_map_visualization_node,
-            # elevation_mapping_node,
         ]
     )

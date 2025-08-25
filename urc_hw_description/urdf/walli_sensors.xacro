@@ -1,22 +1,9 @@
 <?xml version="1.0"?>
 <robot name="walli_sensors" xmlns:xacro="http://ros.org/wiki/xacro">
   <!-- IMU -->
-  <link name="imu_link">
-    <visual>
-      <geometry>
-        <box size="0.05 0.05 0.05" />
-      </geometry>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="0.05 0.05 0.05" />
-      </geometry>
-    </collision>
-    <xacro:box_inertia m="0.1" w="0.1" d="0.1" h="0.1" />
-  </link>
+  <link name="imu_link"></link>
   <joint name="imu_joint" type="fixed">
-    <axis xyz="1 0 0" />
-    <origin xyz="-0.32 -0.09 0.0" />
+    <origin xyz="0.14 0.0 0.22" />
     <parent link="base_link" />
     <child link="imu_link" />
   </joint>
@@ -124,7 +111,7 @@
   </gazebo>
 
   <!-- LIDAR -->
-  <!-- <link name="lidar_link">
+  <link name="lidar_link2">
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <mass value="0.125" />
@@ -145,11 +132,11 @@
   </link>
   <joint name="lidar_joint" type="fixed">
     <parent link="base_link" />
-    <child link="lidar_link" />
-    <origin xyz="0.0 0.0 0.25" rpy="0.0 0.0 0.0" />
+    <child link="lidar_link2" />
+    <origin xyz="0.1778 0.0 0.254" rpy="3.14159265358 0 0"/>
   </joint>
 
-  <gazebo reference="lidar_link">
+  <!--<gazebo reference="lidar_link">
     <sensor name="lidar" type="ray">
       <always_on>true</always_on>
       <visualize>true</visualize>
