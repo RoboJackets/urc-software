@@ -14,6 +14,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
+cmake_policy(SET CMP0074 NEW)
 find_package(PCL 1.10 REQUIRED)
 find_package(grid_map_core REQUIRED)
 find_package(grid_map_ros REQUIRED)
@@ -23,6 +24,9 @@ find_package(grid_map_cv REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(filters REQUIRED)
 find_package(pluginlib REQUIRED)
+
+
+add_compile_options(-Wno-enum-constexpr-conversion)
 
 include_directories(
   include
