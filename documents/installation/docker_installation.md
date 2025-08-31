@@ -72,7 +72,7 @@ Navigate to the `docker` folder (located inside `rover_ws/src/docker`) and run t
 docker compose up
 ```
 
-You can open another terminal and run `docker run -it ros_desktop bash` to access the container. it is recommended to use VS Code to connect to the container and develop inside the container.
+You can open another terminal and run `docker exec -it ros_desktop bash` to access the container. it is recommended to use VS Code to connect to the container and develop inside the container.
 
 ## 7. Connect to container using VS Code (Highly Recommended)
 
