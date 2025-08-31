@@ -8,7 +8,6 @@
    <xacro:include filename="$(find urc_hw_description)/urdf/ros2_control.xacro" />
 
    <xacro:include filename="$(find urc_hw_description)/urdf/drivebase.xacro" />
-   <xacro:include filename="$(find urc_hw_description)/urdf/arm.xacro" />
 
    <xacro:drivebase mu="1.0" mu2="0.25" wheel_radius="0.1" wheel_thickness="0.08"
       approximate="false" />
