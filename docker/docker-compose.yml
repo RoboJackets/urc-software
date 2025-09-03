@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  ros-desktop:
+    image: osrf/ros:humble-desktop
+    container_name: ros_desktop
+    stdin_open: true
+    tty: true
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      # Workspace
+      - ..:/home/rover_ws/src
+      # X11 socket (Linux/WSL2 only, ignored elsewhere)
+      - ${XSOCK:-/tmp/.X11-unix}:${XSOCK:-/tmp/.X11-unix}
+      # Xauthority (Linux only, ignored elsewhere)
+      - ${XAUTH:-$HOME/.Xauthority}:/root/.Xauthority:rw
+    privileged: ${PRIVILEGED:-false}
+    network_mode: ${NETWORK_MODE:-bridge}

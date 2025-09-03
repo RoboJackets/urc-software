@@ -86,6 +86,13 @@ Any time you call `colcon build`, make sure you are in the colcon directory (`/r
 colcon build --symlink-install
 ```
 
+*For WSL users:* If you run into an error abour `protoc-gen-nanopb`, run the following commands, then retry building:
+```
+sudo apt install dos2unix
+dos2unix <path_to_rover_ws>/build/urc_nanopb/nanopb/generator/protoc-gen-nanopb
+dos2unix <path_to_rover_ws>/build/urc_nanopb/nanopb/generator/nanopb_generator.py
+```
+
 ### 5. Source the rover environment
 
 ```bash

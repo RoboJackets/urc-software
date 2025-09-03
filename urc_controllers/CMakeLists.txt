@@ -44,6 +44,7 @@ ament_target_dependencies(
   urc_hw
   urc_nanopb
   urc_msgs
+  joint_trajectory_controller
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
