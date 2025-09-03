@@ -47,8 +47,6 @@ void PlannerServer::generatePlan(
     auto start = request->start.pose;
     auto goal = request->goal.pose;
 
-    planner_type
-
     astar.createPlan(start, goal);
     std::vector<astar::AStarNode> path = astar.getPath();
 
