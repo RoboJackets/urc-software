@@ -1,0 +1,8 @@
+float32 FL_drive_ang_vel
+float32 FL_steer_ang
+float32 FR_drive_ang_vel
+float32 FR_steer_ang
+float32 BL_drive_ang_vel
+float32 BL_steer_ang
+float32 BR_drive_ang_vel
+float32 BR_steer_ang
