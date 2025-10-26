@@ -10,7 +10,11 @@ from urc_msgs.msg import Swerve
 class ControlTestNode(Node):
     def __init__(self):
         #TODO: read in module positions from config file
-        
+        # Module positions (meters from robot center)
+        # These values should match your actual robot dimensions
+        module_x = 0.3  # Distance in x-direction (front/back)
+        module_y = 0.3  # Distance in y-direction (left/right)
+
         self.modules = [
             SwerveModule(module_x, module_y, "FL"),    # Front Left
             SwerveModule(-module_x, module_y, "FR"),   # Front Right
