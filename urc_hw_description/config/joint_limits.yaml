@@ -8,38 +8,58 @@ default_acceleration_scaling_factor: 0.1
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  bicepjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  clawjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  elbowjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  leftgripperjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  rightgripperjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  shoulderjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  wristjoint:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
+  # Rocker joints
+  L_Rocker_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  R_Rocker_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  
+  # Swivel joints
+  FL_Swivel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  BL_Swivel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  FR_Swivel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  BR_Swivel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  
+  # Wheel joints (continuous, so no position limits)
+  FL_Wheel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  BL_Wheel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  FR_Wheel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50
+  BR_Wheel_Joint:
+    has_velocity_limits: true
+    max_velocity: 100
+    has_acceleration_limits: true
+    max_acceleration: 50

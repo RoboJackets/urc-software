@@ -15,8 +15,20 @@ def generate_launch_description():
     # Declare launch arguments
     urdf_file_arg = DeclareLaunchArgument(
         "urdf_file",
-        default_value="simplified_swerve/simplified_swerve.urdf",
+        default_value="simplified_swerve/simplified_swerve.urdf.xacro",
         description="Path to the URDF file",
+    )
+
+    use_sim_arg = DeclareLaunchArgument(
+        "use_sim",
+        default_value="false",
+        description="Whether to use simulation-specific features",
+    )
+
+    use_ros2_control_arg = DeclareLaunchArgument(
+        "use_ros2_control",
+        default_value="true",
+        description="Whether to include ROS2 control interfaces",
     )
 
     rviz_config_file_arg = DeclareLaunchArgument(
@@ -29,6 +41,8 @@ def generate_launch_description():
 
     # Get launch configurations
     rviz_config_file = LaunchConfiguration("rviz_config_file")
+    use_sim = LaunchConfiguration("use_sim")
+    use_ros2_control = LaunchConfiguration("use_ros2_control")
 
     # Robot state publisher node
     robot_state_publisher_node = Node(
@@ -48,6 +62,10 @@ def generate_launch_description():
                                     LaunchConfiguration("urdf_file"),
                                 ]
                             ),
+                            " use_sim:=",
+                            use_sim,
+                            " use_ros2_control:=",
+                            use_ros2_control,
                         ]
                     ),
                     value_type=str,
@@ -88,6 +106,8 @@ def generate_launch_description():
     return LaunchDescription(
         [
             urdf_file_arg,
+            use_sim_arg,
+            use_ros2_control_arg,
             rviz_config_file_arg,
             robot_state_publisher_node,
             joint_state_publisher_node,
