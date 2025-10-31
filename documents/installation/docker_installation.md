@@ -51,17 +51,17 @@ Search for and install the following extensions in VS Code
 
 ## 4. Obtain Docker Image
 
-You can either pull the image from Dockerhub or build the image manually using a Dockerfile. 
-**Pulling from Dockerhub is faster, easier, and less error-prone**. However, if you want to 
+You can either pull the image from Dockerhub or build the image manually using a Dockerfile.
+**Pulling from Dockerhub is faster, easier, and less error-prone**. However, if you want to
 edit the Dockerfile for some reason, do the manual build instructions.
 
--   ### Pull From Dockerhub (Recommended!)
+- ### Pull From Dockerhub (Recommended!)
 
 ```bash
 docker pull robojackets/urc-gui-baseimage
 ```
 
--   ### [Manually Build Docker Image](manual_docker_image.md)
+- ### [Manually Build Docker Image](manual_docker_image.md)
 
 ## 5. Create directory to mount container
 
@@ -76,6 +76,7 @@ mkdir urc_container
 ## 6. [Download our installation script](../../setup.sh)
 
 Our installation script will
+
 - Clone all necessary repos
 - Automatically setup your desktop NoVNC environment
 
@@ -86,6 +87,7 @@ Our installation script will
 **If on Windows, you will need to use Git Bash to run the following commands!**
 
 Run this command only if you are on Mac/Linux
+
 ```bash
 chmod +x setup.sh
 ```
@@ -97,9 +99,11 @@ chmod +x setup.sh
 ## 9. Access your new container
 
 For beginners to Docker:
+
 - Go to `localhost:6060` in your web browser of choice
 
 Recommended way:
+
 - Open up VS Code
 - Click on the whale Docker icon on your left
 - Right click the currently running container (Should be called tiryoh/ros2)
@@ -114,6 +118,7 @@ Open terminator in the desktop (this is the recommended terminal for commands in
 ![You can find terminator in the bottom left corner here](../pictures/terminator_location.png)
 
 In terminator, run
+
 ```bash
 cd urc_container
 ```
@@ -126,6 +131,7 @@ First, it's always a good idea to check for updates. Nothing will happen if you 
 sudo apt update
 sudo apt upgrade
 ```
+
 ```bash
 cd /rover_ws
 rosdep update && rosdep install --from-paths src --ignore-src -r -y
@@ -135,7 +141,7 @@ rosdep update && rosdep install --from-paths src --ignore-src -r -y
 
 Now, it's time for the moment of truth!
 
-``` bash
+```bash
 colcon build
 ```
 
@@ -146,26 +152,24 @@ colcon build
 
 ## 14. Closing/Starting the Container
 
-Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the 
+Once you are done with the conatiner, be sure to close the Docker container. Otherwise, the
 Docker container will take up a big chunk of memory on your computer.
 
--   ### Using VS Code
+- ### Using VS Code
+  - Go to the Docker tab in VS Code
+  - Right click the container (it has a green arrow next to it if already running)
+  - Press stop/start
 
-    - Go to the Docker tab in VS Code
-    - Right click the container (it has a green arrow next to it if already running)
-    - Press stop/start
+  ![Picture of where to head in VSCode](../pictures/docker_tab.png)
 
-    ![Picture of where to head in VSCode](../pictures/docker_tab.png)
-
--   ### Using the install script
-
-    - Go to where you placed `urc_container` locally
-    - Run `./setup.sh stop` to stop
-    - Run `./setup.sh start` to start up again
-
+- ### Using the install script
+  - Go to where you placed `urc_container` locally
+  - Run `./setup.sh stop` to stop
+  - Run `./setup.sh start` to start up again
 
 # Faster, but untested docker method
-The below steps are for a faster docker container. However, there are a few caveats: running graphical 
+
+The below steps are for a faster docker container. However, there are a few caveats: running graphical
 
 ## 4. Clone the Repository
 

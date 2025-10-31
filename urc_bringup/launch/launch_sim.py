@@ -106,8 +106,7 @@ def generate_launch_description():
         sim_gps_handler_node,
         imu_ned2enu_node,
 
-        joystick_driver_node,]
-    )
+        joystick_driver_node])
 
 
 
