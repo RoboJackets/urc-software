@@ -30,7 +30,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/Base_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/Base_Link.STL" />
         </geometry>
         <material
           name="">
@@ -44,7 +44,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/Base_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/Base_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -70,7 +70,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/L_Rocker_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/L_Rocker_Link.STL" />
         </geometry>
         <material
           name="">
@@ -84,7 +84,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/L_Rocker_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/L_Rocker_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -128,7 +128,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FL_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FL_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -142,7 +142,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FL_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FL_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -186,7 +186,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FL_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FL_Wheel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -200,7 +200,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FL_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FL_Wheel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -239,7 +239,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BL_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BL_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -253,7 +253,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BL_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BL_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -297,7 +297,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BL_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BL_Wheel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -311,7 +311,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BL_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BL_Wheel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -350,7 +350,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/R_Rocker_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/R_Rocker_Link.STL" />
         </geometry>
         <material
           name="">
@@ -364,7 +364,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/R_Rocker_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/R_Rocker_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -408,7 +408,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FR_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FR_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -422,7 +422,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FR_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FR_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -466,7 +466,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FR_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FR_Wheel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -480,7 +480,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/FR_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/FR_Wheel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -519,7 +519,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BR_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BR_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -533,7 +533,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BR_Swivel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BR_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -577,7 +577,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BR_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BR_Wheel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -591,7 +591,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/meshes/simplified_swerve/BR_Wheel_Link.STL" />
+            filename="package://urc_hw_description/models/simplified_swerve/BR_Wheel_Link.STL" />
         </geometry>
       </collision>
     </link>

@@ -3,7 +3,8 @@ from tempfile import NamedTemporaryFile
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, Command
+from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from xacro import process_file
@@ -21,7 +22,7 @@ def generate_launch_description():
 
     walli_xacro = DeclareLaunchArgument(
         "walli_xacro",
-        default_value = os.path.join(path_urc_hw_description, "urdf", "walli.xacro"),
+        default_value = os.path.join(path_urc_hw_description, "urdf/simplified_swerve", "simplified_swerve.urdf.xacro"),
         description = "Path to xacro file"
     )
 
@@ -32,12 +33,26 @@ def generate_launch_description():
     )
 
     world = LaunchConfiguration("world")
-    xacro = LaunchConfiguration("walli_xacro")
+    walli_xacro_config = LaunchConfiguration("walli_xacro")
 
+    '''
     robot_urdf_file = process_file(
-        os.path.join(path_urc_hw_description, "urdf", "walli.xacro"),
-        mappings = {"use_simulation": "true"}
+        ParameterValue(walli_xacro_config, value_type = str),
+        mappings = {"use_sim": "true"}
     ).toxml()
+    '''
+    robot_urdf_file = ParameterValue(
+        Command(
+            [
+                "xacro ",
+                walli_xacro_config,
+                " use_sim:=",
+                "true",
+            ]
+        ),
+        value_type=str,
+    )
+
 
 
     gz_sim = IncludeLaunchDescription(
@@ -55,14 +70,17 @@ def generate_launch_description():
         parameters = [{"config_file": LaunchConfiguration("bridge_yaml")}]
     )
 
-
-
-    temp = NamedTemporaryFile(delete = False, suffix = ".urdf")
-    with open(temp.name, "w") as file:
-        file.write(robot_urdf_file)
-
-    urdf_path = os.path.join(path_urc_hw_description, "urdf", "walli.urdf")
-
+    robot_state_publisher_node = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        name="robot_state_publisher",
+        parameters=[
+            {
+                "robot_description": robot_urdf_file
+            }
+        ],
+        output="screen",
+    )
 
     spawn = Node(
         package = "ros_gz_sim",
@@ -72,11 +90,11 @@ def generate_launch_description():
             "-name", "walli",
             "-x", "0", "-y", "0", "-z", "0.5",
             "-R", "0", "-P", "0", "-Y", "0",
-            "-file", temp.name,
+            "-topic", "robot_description"
         ],
    )
 
 
     return LaunchDescription([
-        sim_world_arg, gz_sim, spawn, bridge_yaml, bridge
+        sim_world_arg, walli_xacro, gz_sim, spawn, bridge_yaml, bridge, robot_state_publisher_node, 
     ])

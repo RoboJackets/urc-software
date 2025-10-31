@@ -17,8 +17,8 @@ def generate_launch_description():
     path_urc_localization = get_package_share_directory("urc_localization")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
 
-    xacro_file = os.path.join(path_urc_hw_description, "urdf", "walli.xacro")
-    robot_description = process_file(xacro_file, mappings = {"use_simulation": "true"}).toxml()
+    xacro_file = os.path.join(path_urc_hw_description, "urdf/simplified_swerve", "simplified_swerve.urdf.xacro")
+    robot_description = process_file(xacro_file, mappings = {"use_sim": "true"}).toxml()
     controller_config = os.path.join(path_urc_bringup, "config", "controller_config.yaml")
     twist_mux_config = os.path.join(path_urc_platform, "config", "twist_mux.yaml")
 
