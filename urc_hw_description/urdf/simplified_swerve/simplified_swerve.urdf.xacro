@@ -33,15 +33,6 @@
 
   <!-- Add Gazebo-specific elements for simulation -->
   <xacro:if value="$(arg use_sim)">
-    <!-- Gazebo world plugin -->
-    <gazebo>
-      <plugin filename="libgazebo_ros_clock.so" name="gazebo_ros_clock">
-        <ros>
-          <remapping>clock:=/clock</remapping>
-        </ros>
-      </plugin>
-    </gazebo>
-
     <!-- Gazebo physics settings -->
     <gazebo>
       <physics name="gazebo" type="ode">

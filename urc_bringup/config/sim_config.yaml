@@ -4,3 +4,7 @@
   gz_type_name: "ignition.msgs.Twist"
   direction: ROS_TO_GZ
 
+- ros_topic_name: "/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "ignition.msgs.Clock"
+  direction: GZ_TO_ROS
