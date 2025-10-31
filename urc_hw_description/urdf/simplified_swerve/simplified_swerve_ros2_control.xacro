@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Simplified Swerve Drive ROS2 Control Interfaces
+  This xacro file defines the ROS2 control hardware interfaces for the swerve drive
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Define the ROS2 control hardware interface macro -->
+  <xacro:macro name="simplified_swerve_ros2_control" params="use_sim:=false">
+    
+    <!-- ROS2 Control Hardware Interface -->
+    <ros2_control name="simplified_swerve_hardware" type="system">
+      
+      <!-- Hardware Plugin -->
+      <hardware>
+        <xacro:if value="${use_sim}">
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </xacro:if>
+        <xacro:unless value="${use_sim}">
+          <plugin>urc_hw/RoverDrivetrain</plugin>
+        </xacro:unless>
+      </hardware>
+
+      <!-- Joint State Interface -->
+      <joint name="FL_Swivel_Joint">
+        <command_interface name="position">
+          <param name="min">-1.57</param>
+          <param name="max">1.57</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+
+      <joint name="FL_Wheel_Joint">
+        <command_interface name="velocity">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <joint name="BL_Swivel_Joint">
+        <command_interface name="position">
+          <param name="min">-1.57</param>
+          <param name="max">1.57</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+
+      <joint name="BL_Wheel_Joint">
+        <command_interface name="velocity">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <joint name="FR_Swivel_Joint">
+        <command_interface name="position">
+          <param name="min">-1.57</param>
+          <param name="max">1.57</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+
+      <joint name="FR_Wheel_Joint">
+        <command_interface name="velocity">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <joint name="BR_Swivel_Joint">
+        <command_interface name="position">
+          <param name="min">-1.57</param>
+          <param name="max">1.57</param>
+        </command_interface>
+        <state_interface name="position"/>
+      </joint>
+
+      <joint name="BR_Wheel_Joint">
+        <command_interface name="velocity">
+          <param name="min">-100</param>
+          <param name="max">100</param>
+        </command_interface>
+        <state_interface name="velocity"/>
+      </joint>
+
+    </ros2_control>
+
+    <!-- Gazebo specific elements for simulation -->
+    <xacro:if value="${use_sim}">
+      <!-- Gazebo materials -->
+      <gazebo reference="base_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="L_Rocker_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="FL_Swivel_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="FL_Wheel_Link">
+        <material>Gazebo/Black</material>
+        <mu1>0.9</mu1>
+        <mu2>0.9</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+      </gazebo>
+      
+      <gazebo reference="BL_Swivel_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="BL_Wheel_Link">
+        <material>Gazebo/Black</material>
+        <mu1>0.9</mu1>
+        <mu2>0.9</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+      </gazebo>
+      
+      <gazebo reference="R_Rocker_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="FR_Swivel_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="FR_Wheel_Link">
+        <material>Gazebo/Black</material>
+        <mu1>0.9</mu1>
+        <mu2>0.9</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+      </gazebo>
+      
+      <gazebo reference="BR_Swivel_Link">
+        <material>Gazebo/Grey</material>
+      </gazebo>
+      
+      <gazebo reference="BR_Wheel_Link">
+        <material>Gazebo/Black</material>
+        <mu1>0.9</mu1>
+        <mu2>0.9</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+        <fdir1>1 0 0</fdir1>
+      </gazebo>
+    </xacro:if>
+
+  </xacro:macro>
+
+</robot>
