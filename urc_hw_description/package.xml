@@ -3,7 +3,7 @@
 <package format="3">
   <name>urc_hw_description</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>URDFs for URC</description>
   <maintainer email="zhiwan13579@126.com">keseterg</maintainer>
   <license>TODO: License declaration</license>
 
@@ -11,6 +11,14 @@
   <depend>urdf</depend>
   <depend>xacro</depend>
   <depend>urc_bringup</depend>
+  
+  <!-- Launch file dependencies -->
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
