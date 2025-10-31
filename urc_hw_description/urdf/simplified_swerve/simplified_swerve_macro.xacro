@@ -6,7 +6,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Define the simplified swerve drive macro -->
-  <xacro:macro name="simplified_swerve" params="parent_link">
+  <xacro:macro name="simplified_swerve">
     
     <link
       name="base_Link">
