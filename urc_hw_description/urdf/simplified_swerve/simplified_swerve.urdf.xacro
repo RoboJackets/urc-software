@@ -16,7 +16,7 @@
   <xacro:arg name="use_sim" default="false" />
 
   <!-- Create the robot structure -->
-  <xacro:simplified_swerve parent_link="world" />
+  <xacro:simplified_swerve />
 
   <!-- Add ROS2 control interfaces -->
   <xacro:simplified_swerve_ros2_control use_sim="$(arg use_sim)" />
