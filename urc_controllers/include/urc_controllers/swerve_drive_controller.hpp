@@ -6,12 +6,15 @@
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <hardware_interface/loaned_state_interface.hpp>
 #include <memory>
+#include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/subscription.hpp>
 #include <rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp>
 #include <rclcpp_lifecycle/state.hpp>
 #include <realtime_tools/realtime_tools/realtime_buffer.h>
+#include <realtime_tools/realtime_tools/realtime_publisher.h>
 #include <string>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <unordered_map>
 #include <vector>
 
@@ -70,6 +73,14 @@ protected:
   std::shared_ptr<rclcpp::Subscription<geometry_msgs::msg::Twist>> cmd_vel_subscriber_;
   realtime_tools::RealtimeBuffer<VelocityCommand> velocity_command_;
 
+  // Odometry publisher
+  std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>> odom_publisher_;
+
+  // Odometry state
+  double odom_x_{0.0};
+  double odom_y_{0.0};
+  double odom_theta_{0.0};
+
   // Command interfaces (write to hardware)
   std::unordered_map<std::string,
     std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedCommandInterface>>>
@@ -90,6 +101,9 @@ protected:
     const ModuleConfig & module,
     double vx, double vy, double omega,
     double & wheel_speed, double & wheel_angle);
+
+  void calculateRobotVelocityFromWheels(
+    double & vx, double & vy, double & omega);
 };
 
 } // namespace urc_controllers

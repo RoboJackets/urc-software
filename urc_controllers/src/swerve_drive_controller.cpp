@@ -4,9 +4,12 @@
 #include <controller_interface/controller_interface_base.hpp>
 #include <hardware_interface/loaned_command_interface.hpp>
 #include <memory>
+#include <nav_msgs/msg/odometry.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
 #include <string>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 #include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(
@@ -138,6 +141,17 @@ controller_interface::CallbackReturn SwerveDriveController::on_activate(
       velocity_command_.writeFromNonRT(cmd);
     });
 
+  // Create odometry publisher
+  odom_publisher_ = std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(
+    get_node()->create_publisher<nav_msgs::msg::Odometry>(
+      "/odom",
+      rclcpp::SystemDefaultsQoS()));
+
+  // Initialize odometry state
+  odom_x_ = 0.0;
+  odom_y_ = 0.0;
+  odom_theta_ = 0.0;
+
   RCLCPP_INFO(get_node()->get_logger(), "SwerveDriveController activated!");
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -199,9 +213,75 @@ void SwerveDriveController::calculateModuleKinematics(
   }
 }
 
+void SwerveDriveController::calculateRobotVelocityFromWheels(
+  double & vx, double & vy, double & omega)
+{
+  // Inverse kinematics: compute robot velocity from wheel states
+  // Uses least-squares solution for overdetermined system
+
+  // Read wheel states for all modules
+  std::vector<double> wheel_speeds;
+  std::vector<double> wheel_angles;
+
+  for (const auto & module : modules_) {
+    std::string drive_interface_name = module.name + "_drive/velocity";
+    std::string steer_interface_name = module.name + "_steer/position";
+
+    if (state_interface_map_.find(drive_interface_name) != state_interface_map_.end() &&
+        state_interface_map_.find(steer_interface_name) != state_interface_map_.end()) {
+      double speed = state_interface_map_[drive_interface_name]->get().get_value();
+      double angle = state_interface_map_[steer_interface_name]->get().get_value();
+
+      wheel_speeds.push_back(speed);
+      wheel_angles.push_back(angle);
+    }
+  }
+
+  // Convert wheel velocities to Cartesian components
+  double sum_vx = 0.0;
+  double sum_vy = 0.0;
+  double sum_omega = 0.0;
+
+  for (size_t i = 0; i < modules_.size() && i < wheel_speeds.size(); ++i) {
+    const auto & module = modules_[i];
+    double speed = wheel_speeds[i];
+    double angle = wheel_angles[i];
+
+    // Wheel velocity in robot frame
+    double wheel_vx = speed * std::cos(angle);
+    double wheel_vy = speed * std::sin(angle);
+
+    // Contribution to linear velocity (average all modules)
+    sum_vx += wheel_vx;
+    sum_vy += wheel_vy;
+
+    // Contribution to angular velocity
+    // omega = (wheel_vy - robot_vy) / module.x  or  (robot_vx - wheel_vx) / module.y
+    // Use cross product: omega_contribution = (wheel_vel cross module_position) / module_distance^2
+    double module_dist_sq = module.x * module.x + module.y * module.y;
+    if (module_dist_sq > 0.001) {
+      // Cross product in 2D: (wheel_vx, wheel_vy) x (module.x, module.y)
+      double omega_contrib = (wheel_vy * module.x - wheel_vx * module.y) / module_dist_sq;
+      sum_omega += omega_contrib;
+    }
+  }
+
+  // Average the contributions
+  int num_modules = static_cast<int>(modules_.size());
+  if (num_modules > 0) {
+    vx = sum_vx / num_modules;
+    vy = sum_vy / num_modules;
+    omega = sum_omega / num_modules;
+  } else {
+    vx = 0.0;
+    vy = 0.0;
+    omega = 0.0;
+  }
+}
+
 controller_interface::return_type SwerveDriveController::update(
-  const rclcpp::Time &,
-  const rclcpp::Duration &)
+  const rclcpp::Time & time,
+  const rclcpp::Duration & period)
 {
   // Read the latest velocity command from the realtime buffer
   auto velocity_cmd = *velocity_command_.readFromRT();
@@ -228,11 +308,49 @@ controller_interface::return_type SwerveDriveController::update(
     if (command_interface_map_.find(steer_interface_name) != command_interface_map_.end()) {
       command_interface_map_[steer_interface_name]->get().set_value(wheel_angle);
     }
+  }
 
-    // Optional: Read from state interfaces to get current wheel states
-    // (useful for debugging or advanced control algorithms)
-    // double current_drive_velocity = state_interface_map_[drive_interface_name]->get().get_value();
-    // double current_steer_position = state_interface_map_[steer_interface_name]->get().get_value();
+  // Compute odometry from wheel states (inverse kinematics)
+  double robot_vx, robot_vy, robot_omega;
+  calculateRobotVelocityFromWheels(robot_vx, robot_vy, robot_omega);
+
+  // Integrate velocity to get position
+  double dt = period.seconds();
+  double delta_x = (robot_vx * std::cos(odom_theta_) - robot_vy * std::sin(odom_theta_)) * dt;
+  double delta_y = (robot_vx * std::sin(odom_theta_) + robot_vy * std::cos(odom_theta_)) * dt;
+  double delta_theta = robot_omega * dt;
+
+  odom_x_ += delta_x;
+  odom_y_ += delta_y;
+  odom_theta_ += delta_theta;
+
+  // Publish odometry message
+  if (odom_publisher_ && odom_publisher_->trylock()) {
+    auto & odom_msg = odom_publisher_->msg_;
+
+    odom_msg.header.stamp = time;
+    odom_msg.header.frame_id = "odom";
+    odom_msg.child_frame_id = "base_link";
+
+    // Position
+    odom_msg.pose.pose.position.x = odom_x_;
+    odom_msg.pose.pose.position.y = odom_y_;
+    odom_msg.pose.pose.position.z = 0.0;
+
+    // Orientation (convert from yaw to quaternion)
+    tf2::Quaternion q;
+    q.setRPY(0.0, 0.0, odom_theta_);
+    odom_msg.pose.pose.orientation = tf2::toMsg(q);
+
+    // Velocity (in robot frame)
+    odom_msg.twist.twist.linear.x = robot_vx;
+    odom_msg.twist.twist.linear.y = robot_vy;
+    odom_msg.twist.twist.linear.z = 0.0;
+    odom_msg.twist.twist.angular.x = 0.0;
+    odom_msg.twist.twist.angular.y = 0.0;
+    odom_msg.twist.twist.angular.z = robot_omega;
+
+    odom_publisher_->unlockAndPublish();
   }
 
   return controller_interface::return_type::OK;
