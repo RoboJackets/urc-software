@@ -13,17 +13,27 @@ controller_manager:
       type: velocity_controllers/JointGroupVelocityController
 
 position_controller:
-  ros_parameters:
-    - FL_Swivel_Joint
-    - FR_Swivel_Joint
-    - BL_Swivel_Joint
-    - BR_Swivel_Joint
+  ros__parameters:
+    joints:
+      - FL_Swivel_Joint
+      - FR_Swivel_Joint
+      - BL_Swivel_Joint
+      - BR_Swivel_Joint
+    interface_name: position 
+    state_interfaces:
+      - position
+      - velocity
 
 velocity_controller:
-  ros_parameters:
-    - FL_Wheel_Joint
-    - FR_Wheel_Joint
-    - BL_Wheel_Joint
-    - BR_Wheel_Joint
+  ros__parameters:
+    joints:
+      - FL_Wheel_Joint
+      - FR_Wheel_Joint
+      - BL_Wheel_Joint
+      - BR_Wheel_Joint
+    interface_name: velocity
+    state_interfaces:
+      - position
+      - velocity
   
 

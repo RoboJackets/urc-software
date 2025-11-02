@@ -90,6 +90,15 @@
 
     <!-- Gazebo specific elements for simulation -->
     <xacro:if value="${use_sim}">
+      <!-- ROS2 Control Plugin-->
+      <gazebo>
+        <plugin
+          filename = "libign_ros2_control-system.so"
+          name = "ign_ros2_control::IgnitionROS2ControlPlugin">
+          <parameters>/home/rover_ws/src/urc_bringup/config/test_controllers.yaml</parameters>
+        </plugin>
+      </gazebo>
+
       <!-- Gazebo materials -->
       <gazebo reference="base_Link">
         <material>Gazebo/Grey</material>
