@@ -7,6 +7,7 @@
 
   <!-- Define the simplified swerve drive macro -->
   <xacro:macro name="simplified_swerve">
+        
     
     <link
       name="base_Link">
@@ -47,7 +48,69 @@
             filename="package://urc_hw_description/models/simplified_swerve/Base_Link.STL" />
         </geometry>
       </collision>
+      
     </link>
+
+    <!-- Lidar Link -->
+    <link name="lidar_link">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.03" length="0.05"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+     
+    </link>
+
+    <!-- Joint to attach lidar to base -->
+    <joint name="lidar_joint" type="fixed">
+      <parent link="base_Link"/>
+      <child link="lidar_link"/>
+      <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Gazebo plugin for lidar -->
+    <gazebo reference="lidar_link">
+      <sensor name="lidar" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>10</update_rate>
+        <topic>scan</topic>
+        <gz_frame_id>lidar_link</gz_frame_id>
+
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14</min_angle>
+              <max_angle>3.14</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+          <frame_id>lidar_link</frame_id>
+        </lidar>
+      </sensor>
+    </gazebo>
+
     <link
       name="L_Rocker_Link">
       <inertial>
@@ -608,6 +671,9 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
+
+  
+
 
   </xacro:macro>
 
