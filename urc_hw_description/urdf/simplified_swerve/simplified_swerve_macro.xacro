@@ -74,7 +74,7 @@
     <joint name="lidar_joint" type="fixed">
       <parent link="base_Link"/>
       <child link="lidar_link"/>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
+      <origin xyz="0 0 0.025" rpy="0 0 0"/>
     </joint>
 
     <!-- Gazebo plugin for lidar -->
@@ -108,6 +108,68 @@
           </noise>
           <frame_id>lidar_link</frame_id>
         </lidar>
+      </sensor>
+    </gazebo>
+
+    <link name="imu_link">
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+
+      <collision name="imu_collision">
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>  <!-- tiny collision -->
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="imu_visual">
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+      <parent link="base_Link"/>
+      <child link="imu_link"/>
+      <origin xyz="0.1 0 0" rpy="0 0 0"/> 
+    </joint>
+
+    <gazebo reference="imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <topic>/imu/data_raw</topic>
+        <imu>
+          <orientation>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.0001</stddev>
+            </noise>
+          </orientation>
+          <angular_velocity>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.0005</stddev>
+            </noise>
+          </angular_velocity>
+          <linear_acceleration>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </linear_acceleration>
+        </imu>
       </sensor>
     </gazebo>
 
