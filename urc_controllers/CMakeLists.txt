@@ -51,27 +51,12 @@ ament_target_dependencies(
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
 pluginlib_export_plugin_description_file(controller_interface urc_controllers.xml)
 
-# Add control_test executable
-add_executable(control_test src/control_test.cpp)
-target_compile_features(control_test PUBLIC c_std_99 cxx_std_17)
-ament_target_dependencies(control_test
-  rclcpp
-  geometry_msgs
-  urc_msgs
-)
 
 install(
   DIRECTORY include/
   DESTINATION include
 )
 
-install(
-    TARGETS urc_controllers control_test
-    EXPORT export_${PROJECT_NAME}
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
-)
 
 ament_export_include_directories(
   include
