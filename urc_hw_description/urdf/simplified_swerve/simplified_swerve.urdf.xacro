@@ -59,7 +59,6 @@
         <real_time_update_rate>1000.0</real_time_update_rate>
         <max_step_size>0.001</max_step_size>
         <real_time_factor>1</real_time_factor>
-<<<<<<< HEAD
         <max_contacts>20</max_contacts>
       </physics>
       <plugin filename="ignition-gazebo-pose-publisher-system"
@@ -75,12 +74,3 @@
   </xacro:if>
 
 </robot>
-=======
-        <max_contacts>20</max_contacts>
-      </physics>
-
-    </gazebo>
-  </xacro:if>
-
-</robot>
->>>>>>> feat/new-sim
