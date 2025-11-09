@@ -19,10 +19,6 @@ position_controller:
       - FR_Swivel_Joint
       - BL_Swivel_Joint
       - BR_Swivel_Joint
-    interface_name: position 
-    state_interfaces:
-      - position
-      - velocity
 
 velocity_controller:
   ros__parameters:
@@ -31,9 +27,6 @@ velocity_controller:
       - FR_Wheel_Joint
       - BL_Wheel_Joint
       - BR_Wheel_Joint
-    interface_name: velocity
-    state_interfaces:
-      - position
-      - velocity
+
   
 

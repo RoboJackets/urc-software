@@ -14,6 +14,11 @@ def generate_launch_description():
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
 
+    controller_config_file_dir = os.path.join(
+        path_urc_bringup, "config", "test_controllers.yaml"
+    )
+
+
     sim_world_arg = DeclareLaunchArgument(
         "world",
         default_value = os.path.join(path_urc_hw_description, "world", "leo_world.sdf"),
@@ -41,6 +46,7 @@ def generate_launch_description():
         mappings = {"use_sim": "true"}
     ).toxml()
     '''
+
     robot_urdf_file = ParameterValue(
         Command(
             [
@@ -82,6 +88,24 @@ def generate_launch_description():
         output="screen",
     )
 
+    load_joint_state_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
+    )
+
+    load_position_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["load_position_controller"],
+    )
+
+    load_velocity_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "load_velocity_controller"],
+    )
+
     spawn = Node(
         package = "ros_gz_sim",
         executable = "create",
@@ -96,5 +120,5 @@ def generate_launch_description():
 
 
     return LaunchDescription([
-        sim_world_arg, walli_xacro, gz_sim, spawn, bridge_yaml, bridge, robot_state_publisher_node, 
+        sim_world_arg, walli_xacro, gz_sim, spawn, bridge_yaml, bridge, robot_state_publisher_node, load_joint_state_broadcaster, load_position_controller, load_velocity_controller 
     ])
