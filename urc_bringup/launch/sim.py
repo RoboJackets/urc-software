@@ -82,19 +82,32 @@ def generate_launch_description():
         output="screen",
     )
 
+    orientation_pose_bridge = Node(
+        package="urc_bringup",
+        executable="urc_bringup_OrientationPoseBridge",
+        name="orientation_pose_bridge",
+        parameters=[
+            {
+                "tf_topic": "/tf",
+                "orientation_topic": "/orientation",
+            }
+        ],
+        output="screen",
+    )
+
     spawn = Node(
         package = "ros_gz_sim",
         executable = "create",
         output = "screen",
         arguments = [
             "-name", "walli",
-            "-x", "5", "-y", "5", "-z", "0.5",
-            "-R", "0", "-P", "0", "-Y", "0",
+            "-x", "0", "-y", "0", "-z", "0.5",
+            "-R", "1.57", "-P", "0", "-Y", "1.57",
             "-topic", "robot_description"
         ],
    )
 
 
     return LaunchDescription([
-        sim_world_arg, walli_xacro, gz_sim, spawn, bridge_yaml, bridge, robot_state_publisher_node, 
+        sim_world_arg, walli_xacro, gz_sim, spawn, bridge_yaml, bridge, robot_state_publisher_node, orientation_pose_bridge
     ])

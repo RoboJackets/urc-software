@@ -109,13 +109,6 @@
         <visualize>true</visualize>
         <topic>/imu/data_raw</topic>
         <imu>
-          <orientation>
-            <noise>
-              <type>gaussian</type>
-              <mean>0.0</mean>
-              <stddev>0.0001</stddev>
-            </noise>
-          </orientation>
           <angular_velocity>
             <noise>
               <type>gaussian</type>
