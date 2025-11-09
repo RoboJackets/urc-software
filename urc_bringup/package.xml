@@ -13,6 +13,7 @@
   <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>rosbridge_server</depend>
+  <depend>sensor_msgs</depend>
   <depend>tf2_msgs</depend>
   <depend>urc_msgs</depend>
 

@@ -90,6 +90,9 @@ def generate_launch_description():
             {
                 "tf_topic": "/tf",
                 "orientation_topic": "/orientation",
+                "imu_input_topic": "/imu/data_raw",
+                "imu_output_topic": "/imu/fused",
+                "target_link_name": "walli",
             }
         ],
         output="screen",
@@ -102,7 +105,7 @@ def generate_launch_description():
         arguments = [
             "-name", "walli",
             "-x", "0", "-y", "0", "-z", "0.5",
-            "-R", "1.57", "-P", "0", "-Y", "1.57",
+            "-R", "1.57", "-P", "0", "-Y", "3.14",
             "-topic", "robot_description"
         ],
    )

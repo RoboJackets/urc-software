@@ -10,6 +10,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosbridge_server REQUIRED)
 find_package(tf2_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 
 include_directories(
@@ -27,6 +28,7 @@ set(dependencies
   rclcpp_components
   std_msgs
   rosbridge_server
+  sensor_msgs
   tf2_msgs
   urc_msgs
 )
