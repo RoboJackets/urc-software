@@ -103,13 +103,13 @@ def generate_launch_description():
     load_position_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["load_position_controller"],
+        arguments=["-p", controller_config_file_dir, "position_controller"],
     )
 
     load_velocity_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "load_velocity_controller"],
+        arguments=["-p", controller_config_file_dir, "velocity_controller"],
     )
 
     spawn = Node(

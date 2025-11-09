@@ -22,14 +22,14 @@
   <xacro:simplified_swerve_ros2_control use_sim="$(arg use_sim)" />
 
   <!-- Add world link for simulation -->
-  <xacro:if value="$(arg use_sim)">
-    <link name="world" />
-    <joint name="world_to_base" type="fixed">
-      <parent link="world" />
-      <child link="base_Link" />
-      <origin xyz="0 0 0" rpy="0 0 0" />
-    </joint>
-  </xacro:if>
+  <!-- <xacro:if value="$(arg use_sim)"> -->
+  <!--   <link name="world" /> -->
+  <!--   <joint name="world_to_base" type="fixed"> -->
+  <!--     <parent link="world" /> -->
+  <!--     <child link="base_Link" /> -->
+  <!--     <origin xyz="0 0 0" rpy="0 0 0" /> -->
+  <!--   </joint> -->
+  <!-- </xacro:if> -->
 
   <!-- Add Gazebo-specific elements for simulation -->
   <xacro:if value="$(arg use_sim)">
