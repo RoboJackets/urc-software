@@ -88,7 +88,7 @@ def generate_launch_description():
         output = "screen",
         arguments = [
             "-name", "walli",
-            "-x", "0", "-y", "0", "-z", "0.5",
+            "-x", "5", "-y", "5", "-z", "0.5",
             "-R", "0", "-P", "0", "-Y", "0",
             "-topic", "robot_description"
         ],
