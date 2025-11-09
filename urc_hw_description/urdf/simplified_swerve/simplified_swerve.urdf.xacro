@@ -12,6 +12,9 @@
   <!-- Include the ROS2 control interfaces -->
   <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_ros2_control.xacro" />
 
+
+  <!-- Include Sensor interfaces -->
+
   <!-- Define parameters with defaults -->
   <xacro:arg name="use_sim" default="false" />
 
@@ -20,6 +23,8 @@
 
   <!-- Add ROS2 control interfaces -->
   <xacro:simplified_swerve_ros2_control use_sim="$(arg use_sim)" />
+  <!-- Add Sensor interfaces -->
+  <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_sensors.xacro" />
 
   <!-- Add world link for simulation -->
   <xacro:if value="$(arg use_sim)">

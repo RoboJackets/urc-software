@@ -20,3 +20,8 @@
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "ignition.msgs.IMU"
   direction: GZ_TO_ROS
+- ros_topic_name: "/gps"
+  gz_topic_name: "/gps"
+  ros_type_name: "sensor_msgs/msg/NavSatFix"
+  gz_type_name: "ignition.msgs.NavSat"
+  direction: GZ_TO_ROS
