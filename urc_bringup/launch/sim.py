@@ -158,6 +158,7 @@ def generate_launch_description():
             walli_xacro,
             gz_sim,
             spawn,
+            orientation_pose_bridge,
             bridge_yaml,
             bridge,
             control_node,
