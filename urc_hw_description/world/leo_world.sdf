@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <sdf version="1.8">
+<<<<<<< HEAD
   <world name="leo_marsyard">
     <spherical_coordinates>
       <surface_model>EARTH_WGS84</surface_model>
@@ -9,6 +10,10 @@
       <heading_deg>0.0</heading_deg>
     </spherical_coordinates>
     <physics name="1ms" type="dart">
+=======
+  <world name="empty_world">
+    <physics name="1ms" type="ignored">
+>>>>>>> feat/new-sim
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <dart>
@@ -16,6 +21,7 @@
       </dart>
     </physics>
     
+<<<<<<< HEAD
    <plugin filename="ignition-gazebo-physics-system"
             name="ignition::gazebo::systems::Physics"/>
    
@@ -24,6 +30,32 @@
     <plugin filename="ignition-gazebo-user-commands-system"
             name="ignition::gazebo::systems::UserCommands"/>
    
+=======
+    <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <robot_param>robot_description</robot_param>
+    </plugin>
+
+    <plugin
+      filename="ignition-gazebo-physics-system"
+      name="ignition::gazebo::systems::Physics">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-sensors-system"
+      name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-scene-broadcaster-system"
+      name="ignition::gazebo::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-user-commands-system"
+      name="ignition::gazebo::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+>>>>>>> feat/new-sim
 
     <light name="sun" type="directional">
       <cast_shadows>true</cast_shadows>
@@ -49,6 +81,33 @@
     <include>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
     </include>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
 
   </world>
 </sdf>

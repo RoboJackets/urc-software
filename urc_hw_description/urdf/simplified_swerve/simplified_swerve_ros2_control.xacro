@@ -14,7 +14,7 @@
       <!-- Hardware Plugin -->
       <hardware>
         <xacro:if value="${use_sim}">
-          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+          <plugin>ign_ros2_control/IgnitionSystem</plugin>
         </xacro:if>
         <xacro:unless value="${use_sim}">
           <plugin>urc_hw/RoverDrivetrain</plugin>
@@ -90,6 +90,24 @@
 
     <!-- Gazebo specific elements for simulation -->
     <xacro:if value="${use_sim}">
+      <!-- ROS2 Control Plugin-->
+      <!-- <gazebo> -->
+      <!--   <plugin -->
+      <!--     filename = "libign_ros2_control-system.so" -->
+      <!--     name = "ign_ros2_control"> -->
+      <!--     <robot_param>robot_description</robot_param> -->
+      <!--     <robot_param_node>robot_state_publisher</robot_param_node> -->
+      <!--     <parameters>$(find urc_bringup)/config/test_controllers.yaml</parameters> -->
+      <!--   </plugin> -->
+      <!-- </gazebo> -->
+
+      <gazebo>
+        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+          <parameters>$(find urc_bringup)/config/test_controllers.yaml</parameters>
+        </plugin>
+      </gazebo> 
+
+
       <!-- Gazebo materials -->
       <gazebo reference="base_Link">
         <material>Gazebo/Grey</material>

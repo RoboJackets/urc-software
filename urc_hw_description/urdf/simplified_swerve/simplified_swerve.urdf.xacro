@@ -27,14 +27,14 @@
   <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_sensors.xacro" />
 
   <!-- Add world link for simulation -->
-  <xacro:if value="$(arg use_sim)">
-    <link name="world" />
-    <joint name="world_to_base" type="fixed">
-      <parent link="world" />
-      <child link="base_Link" />
-      <origin xyz="0 0 0" rpy="0 0 0" />
-    </joint>
-  </xacro:if>
+  <!-- <xacro:if value="$(arg use_sim)"> -->
+  <!--   <link name="world" /> -->
+  <!--   <joint name="world_to_base" type="fixed"> -->
+  <!--     <parent link="world" /> -->
+  <!--     <child link="base_Link" /> -->
+  <!--     <origin xyz="0 0 0" rpy="0 0 0" /> -->
+  <!--   </joint> -->
+  <!-- </xacro:if> -->
 
   <!-- Add Gazebo-specific elements for simulation -->
   <xacro:if value="$(arg use_sim)">
@@ -59,6 +59,7 @@
         <real_time_update_rate>1000.0</real_time_update_rate>
         <max_step_size>0.001</max_step_size>
         <real_time_factor>1</real_time_factor>
+<<<<<<< HEAD
         <max_contacts>20</max_contacts>
       </physics>
       <plugin filename="ignition-gazebo-pose-publisher-system"
@@ -74,3 +75,12 @@
   </xacro:if>
 
 </robot>
+=======
+        <max_contacts>20</max_contacts>
+      </physics>
+
+    </gazebo>
+  </xacro:if>
+
+</robot>
+>>>>>>> feat/new-sim
