@@ -21,7 +21,8 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-        default_value=os.path.join(path_urc_hw_description, "world", "leo_world.sdf"),
+        # default_value=os.path.join(path_urc_hw_description, "world", "leo_world.sdf"),
+        default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
         description="Path to gz world file",
     )
 
@@ -151,3 +152,5 @@ def generate_launch_description():
             load_velocity_controller,
         ]
     )
+
+
