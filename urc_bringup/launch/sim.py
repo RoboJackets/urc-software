@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -21,9 +21,8 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-        # default_value=os.path.join(path_urc_hw_description, "world", "leo_world.sdf"),
-        default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
-        description="Path to gz world file",
+        default_value="marsyard2020.sdf",
+        description="Name of the world file (not full path)",
     )
 
     walli_xacro = DeclareLaunchArgument(
@@ -42,8 +41,13 @@ def generate_launch_description():
         description="bridge YAML config",
     )
 
-    world = LaunchConfiguration("world")
+    world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
+
+    # Construct the full world path from the filename
+    world_path = PathJoinSubstitution(
+        [path_urc_hw_description, "world", world_filename]
+    )
 
     """
     robot_urdf_file = process_file(
@@ -68,7 +72,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
         ),
-        launch_arguments={"gz_args": world}.items(),
+        launch_arguments={"gz_args": world_path}.items(),
     )
 
     bridge = Node(
@@ -152,5 +156,3 @@ def generate_launch_description():
             load_velocity_controller,
         ]
     )
-
-
