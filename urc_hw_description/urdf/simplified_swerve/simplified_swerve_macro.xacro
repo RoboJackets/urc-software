@@ -12,10 +12,11 @@
   <xacro:property name="package_path" value="$(find urc_hw_description)"/>
 
   <!-- Wheel Cylinder Geometry -->
-  <xacro:property name="wheel_radius" value="0.15" />  
-  <xacro:property name="wheel_length" value="0.1" /> 
+  <xacro:property name="wheel_radius" value="0.119888" />  
+  <xacro:property name="wheel_length" value="0.0762" /> 
   <!-- remove wheel_origin_xyz if not needed -->
-  <xacro:property name="wheel_origin_xyz" value="0 0 0" />
+  <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
+  <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
     
     <link
       name="base_Link">
@@ -177,7 +178,7 @@
       name="FL_Wheel_Link">
       <inertial>
         <origin
-          xyz="0 0.0381000000000001 1.38777878078145E-17"
+          xyz="${wheel_origin_xyz_left}"
           rpy="0 0 0" />
         <mass
           value="3.24703989875836" />
@@ -191,7 +192,7 @@
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_left}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -204,7 +205,7 @@
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_left}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -286,7 +287,7 @@
       name="BL_Wheel_Link">
       <inertial>
         <origin
-          xyz="0 0.0380999942740809 -2.08881547555939E-05"
+          xyz="${wheel_origin_xyz_left}"
           rpy="0 0 0" />
         <mass
           value="3.24703989875836" />
@@ -300,7 +301,7 @@
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_left}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -313,7 +314,7 @@
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_left}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -453,7 +454,7 @@
       name="FR_Wheel_Link">
       <inertial>
         <origin
-          xyz="0 -0.0381 6.93889390390723E-18"
+          xyz="${wheel_origin_xyz_right}"
           rpy="0 0 0" />
         <mass
           value="3.24703989875836" />
@@ -467,7 +468,7 @@
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_right}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -480,7 +481,7 @@
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_right}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -562,7 +563,7 @@
       name="BR_Wheel_Link">
       <inertial>
         <origin
-          xyz="-6.93889390390723E-18 -0.0381 0"
+          xyz="${wheel_origin_xyz_right}"
           rpy="0 0 0" />
         <mass
           value="3.24703989875836" />
@@ -576,7 +577,7 @@
       </inertial>
       <visual>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_right}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
@@ -589,7 +590,7 @@
       </visual>
       <collision>
         <origin
-          xyz="0 0 0"
+          xyz="${wheel_origin_xyz_right}"
           rpy="${pi/2} 0 0" />
         <geometry>
           <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
