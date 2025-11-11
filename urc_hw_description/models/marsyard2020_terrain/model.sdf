@@ -6,12 +6,32 @@
 
     <link name="marsyard_terrain">
       
-      <collision name="collision">
+            <collision name="collision">
         <geometry>
           <mesh>
             <uri>model://marsyard2020_terrain/meshes/terrain_compressed.obj</uri>
+            <scale>1 1 1</scale>
+            <!-- <pos>0 0 0</pos> -->
+            <origin>0 0 0</origin>
           </mesh>
         </geometry>
+        <max_contacts>20</max_contacts>
+        <surface>
+          <friction>
+            <ode>
+              <mu>100</mu>
+              <mu2>50</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1e8</kp>
+              <kd>1</kd>
+              <min_depth>0.001</min_depth>
+              <max_vel>0.01</max_vel>
+            </ode>
+          </contact>
+        </surface>
       </collision>
 
       <visual name="visual">	

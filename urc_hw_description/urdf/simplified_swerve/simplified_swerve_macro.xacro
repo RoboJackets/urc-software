@@ -7,6 +7,15 @@
 
   <!-- Define the simplified swerve drive macro -->
   <xacro:macro name="simplified_swerve">
+  
+  <!-- replacing package:// -->
+  <xacro:property name="package_path" value="$(find urc_hw_description)"/>
+
+  <!-- Wheel Cylinder Geometry -->
+  <xacro:property name="wheel_radius" value="0.15" />  
+  <xacro:property name="wheel_length" value="0.1" /> 
+  <!-- remove wheel_origin_xyz if not needed -->
+  <xacro:property name="wheel_origin_xyz" value="0 0 0" />
     
     <link
       name="base_Link">
@@ -30,7 +39,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/Base_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/Base_Link.STL" />
         </geometry>
         <material
           name="">
@@ -44,7 +53,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/Base_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/Base_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -70,7 +79,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/L_Rocker_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/L_Rocker_Link.STL" />
         </geometry>
         <material
           name="">
@@ -84,7 +93,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/L_Rocker_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/L_Rocker_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -128,7 +137,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FL_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/FL_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -142,7 +151,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FL_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/FL_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -183,10 +192,9 @@
       <visual>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FL_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
         <material
           name="">
@@ -197,10 +205,9 @@
       <collision>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FL_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
       </collision>
     </link>
@@ -239,7 +246,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BL_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/BL_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -253,7 +260,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BL_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/BL_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -294,10 +301,9 @@
       <visual>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BL_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
         <material
           name="">
@@ -308,10 +314,9 @@
       <collision>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BL_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
       </collision>
     </link>
@@ -350,7 +355,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/R_Rocker_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/R_Rocker_Link.STL" />
         </geometry>
         <material
           name="">
@@ -364,7 +369,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/R_Rocker_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/R_Rocker_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -408,7 +413,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FR_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/FR_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -422,7 +427,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FR_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/FR_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -463,10 +468,9 @@
       <visual>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FR_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
         <material
           name="">
@@ -477,10 +481,9 @@
       <collision>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/FR_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
       </collision>
     </link>
@@ -519,7 +522,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BR_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/BR_Swivel_Link.STL" />
         </geometry>
         <material
           name="">
@@ -533,7 +536,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BR_Swivel_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/BR_Swivel_Link.STL" />
         </geometry>
       </collision>
     </link>
@@ -574,10 +577,9 @@
       <visual>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BR_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
         <material
           name="">
@@ -588,10 +590,9 @@
       <collision>
         <origin
           xyz="0 0 0"
-          rpy="0 0 0" />
+          rpy="${pi/2} 0 0" />
         <geometry>
-          <mesh
-            filename="package://urc_hw_description/models/simplified_swerve/BR_Wheel_Link.STL" />
+          <cylinder radius="${wheel_radius}"  length="${wheel_length}" />
         </geometry>
       </collision>
     </link>

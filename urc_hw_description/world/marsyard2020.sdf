@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.8">
   <world name="leo_marsyard">
-    <physics name="1ms" type="ignored">
+    <physics name="1ms" type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <dart>
@@ -43,7 +43,7 @@
       </attenuation>
       <direction>-0.5 0.1 -0.9</direction>
     </light>
-
+    
     <model name="marsyard">
       <include>
         <uri>model://marsyard2020_terrain</uri>
