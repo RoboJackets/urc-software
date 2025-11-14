@@ -54,7 +54,8 @@ public:
 
 protected:
   // Module configuration
-  struct ModuleConfig {
+  struct ModuleConfig
+  {
     std::string name;
     double x;  // Position relative to robot center (meters)
     double y;
@@ -63,7 +64,8 @@ protected:
   std::vector<ModuleConfig> modules_;
 
   // Velocity command from /cmd_vel topic
-  struct VelocityCommand {
+  struct VelocityCommand
+  {
     double vx{0.0};
     double vy{0.0};
     double omega{0.0};

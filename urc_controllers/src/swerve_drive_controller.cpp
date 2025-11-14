@@ -229,7 +229,8 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
     std::string steer_interface_name = module.name + "_Swivel_Joint/position";
 
     if (state_interface_map_.find(drive_interface_name) != state_interface_map_.end() &&
-        state_interface_map_.find(steer_interface_name) != state_interface_map_.end()) {
+      state_interface_map_.find(steer_interface_name) != state_interface_map_.end())
+    {
       double speed = state_interface_map_[drive_interface_name]->get().get_value();
       double angle = state_interface_map_[steer_interface_name]->get().get_value();
 
