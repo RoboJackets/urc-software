@@ -225,8 +225,8 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
   std::vector<double> wheel_angles;
 
   for (const auto & module : modules_) {
-    std::string drive_interface_name = module.name + "_drive/velocity";
-    std::string steer_interface_name = module.name + "_steer/position";
+    std::string drive_interface_name = module.name + "_Wheel_Joint/velocity";
+    std::string steer_interface_name = module.name + "_Swivel_Joint/position";
 
     if (state_interface_map_.find(drive_interface_name) != state_interface_map_.end() &&
         state_interface_map_.find(steer_interface_name) != state_interface_map_.end()) {
@@ -299,8 +299,8 @@ controller_interface::return_type SwerveDriveController::update(
       wheel_angle);
 
     // Write to command interfaces
-    std::string drive_interface_name = module.name + "_drive/velocity";
-    std::string steer_interface_name = module.name + "_steer/position";
+    std::string drive_interface_name = module.name + "_Wheel_Joint/velocity";
+    std::string steer_interface_name = module.name + "_Swivel_Joint/position";
 
     if (command_interface_map_.find(drive_interface_name) != command_interface_map_.end()) {
       command_interface_map_[drive_interface_name]->get().set_value(wheel_speed);
