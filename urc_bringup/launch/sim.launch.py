@@ -105,16 +105,21 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_position_controller = Node(
+    # load_position_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "position_controller"],
+    # )
+    #
+    # load_velocity_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "velocity_controller"],
+    # )
+    load_swerve_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "position_controller"],
-    )
-
-    load_velocity_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "velocity_controller"],
+        arguments=["-p", controller_config_file_dir, "swerve_controller"],
     )
 
     spawn = Node(
@@ -152,7 +157,8 @@ def generate_launch_description():
             control_node,
             robot_state_publisher_node,
             load_joint_state_broadcaster,
-            load_position_controller,
-            load_velocity_controller,
+            # load_position_controller,
+            # load_velocity_controller,
+            load_swerve_controller,
         ]
     )

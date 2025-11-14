@@ -14,7 +14,6 @@
 #include <realtime_tools/realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_tools/realtime_publisher.h>
 #include <string>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <unordered_map>
 #include <vector>
 

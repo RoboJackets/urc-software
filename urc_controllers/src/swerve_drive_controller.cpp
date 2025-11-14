@@ -8,6 +8,7 @@
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
 #include <string>
+#include <geometry_msgs/msg/quaternion.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
@@ -32,14 +33,14 @@ controller_interface::CallbackReturn SwerveDriveController::on_configure(
 {
   // Read module configuration from parameters
   // TODO: Read these from a config file instead of hardcoding
-  const double module_x = get_node()->declare_parameter("module_x", 0.3);
-  const double module_y = get_node()->declare_parameter("module_y", 0.3);
+  const double module_x = get_node()->get_parameter("module_x").as_double();
+  const double module_y = get_node()->get_parameter("module_y").as_double();
 
   modules_.clear();
-  modules_.push_back({"fl", module_x, module_y});     // Front Left
-  modules_.push_back({"fr", module_x, -module_y});    // Front Right
-  modules_.push_back({"bl", -module_x, module_y});    // Back Left
-  modules_.push_back({"br", -module_x, -module_y});   // Back Right
+  modules_.push_back({"FL", module_x, module_y});     // Front Left
+  modules_.push_back({"FR", module_x, -module_y});    // Front Right
+  modules_.push_back({"BL", -module_x, module_y});    // Back Left
+  modules_.push_back({"BR", -module_x, -module_y});   // Back Right
 
   RCLCPP_INFO(
     get_node()->get_logger(),
@@ -60,11 +61,11 @@ const
   for (const auto & module : modules_) {
     // Drive motor velocity command
     command_interfaces_configuration.names.push_back(
-      module.name + "_drive/velocity");
+      module.name + "_Wheel_Joint/velocity");
 
     // Steer motor position command
     command_interfaces_configuration.names.push_back(
-      module.name + "_steer/position");
+      module.name + "_Swivel_Joint/position");
   }
 
   return command_interfaces_configuration;
@@ -81,11 +82,11 @@ const
   for (const auto & module : modules_) {
     // Drive motor velocity state
     state_interfaces_configuration.names.push_back(
-      module.name + "_drive/velocity");
+      module.name + "_Wheel_Joint/velocity");
 
     // Steer motor position state
     state_interfaces_configuration.names.push_back(
-      module.name + "_steer/position");
+      module.name + "_Swivel_Joint/position");
   }
 
   return state_interfaces_configuration;
@@ -340,6 +341,7 @@ controller_interface::return_type SwerveDriveController::update(
     // Orientation (convert from yaw to quaternion)
     tf2::Quaternion q;
     q.setRPY(0.0, 0.0, odom_theta_);
+    geometry_msgs::msg::Quaternion quat_msg;
     odom_msg.pose.pose.orientation = tf2::toMsg(q);
 
     // Velocity (in robot frame)
