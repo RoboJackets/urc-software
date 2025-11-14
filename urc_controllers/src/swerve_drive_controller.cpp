@@ -243,9 +243,12 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
   }
 
   // Convert wheel velocities to Cartesian components
+  // First pass: calculate translational velocity
   double sum_vx = 0.0;
   double sum_vy = 0.0;
-  double sum_omega = 0.0;
+
+  std::vector<double> wheel_vx_list;
+  std::vector<double> wheel_vy_list;
 
   for (size_t i = 0; i < modules_.size() && i < wheel_speeds.size(); ++i) {
     const auto & module = modules_[i];
@@ -259,32 +262,48 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
     double wheel_vx = linear_speed * std::cos(angle);
     double wheel_vy = linear_speed * std::sin(angle);
 
+    wheel_vx_list.push_back(wheel_vx);
+    wheel_vy_list.push_back(wheel_vy);
+
     // Contribution to linear velocity (average all modules)
     sum_vx += wheel_vx;
     sum_vy += wheel_vy;
-
-    // Contribution to angular velocity
-    // omega = (wheel_vy - robot_vy) / module.x  or  (robot_vx - wheel_vx) / module.y
-    // Use cross product: omega_contribution = (wheel_vel cross module_position) / module_distance^2
-    double module_dist_sq = module.x * module.x + module.y * module.y;
-    if (module_dist_sq > 0.001) {
-      // Cross product in 2D: (wheel_vx, wheel_vy) x (module.x, module.y)
-      double omega_contrib = (wheel_vy * module.x - wheel_vx * module.y) / module_dist_sq;
-      sum_omega += omega_contrib;
-    }
   }
 
-  // Average the contributions
+  // Average the contributions to get robot translational velocity
   int num_modules = static_cast<int>(modules_.size());
   if (num_modules > 0) {
     vx = sum_vx / num_modules;
     vy = sum_vy / num_modules;
-    omega = sum_omega / num_modules;
   } else {
     vx = 0.0;
     vy = 0.0;
     omega = 0.0;
+    return;
   }
+
+  // Second pass: calculate angular velocity from rotational components
+  double sum_omega = 0.0;
+  for (size_t i = 0; i < modules_.size() && i < wheel_speeds.size(); ++i) {
+    const auto & module = modules_[i];
+    
+    // Subtract translational component to get rotational component
+    double rot_vx = wheel_vx_list[i] - vx;
+    double rot_vy = wheel_vy_list[i] - vy;
+    
+    // Calculate omega from rotation: omega = rot_vy / module.x (or -rot_vx / module.y)
+    // Use the direction with larger module distance for better numerical stability
+    double module_dist_sq = module.x * module.x + module.y * module.y;
+    if (module_dist_sq > 0.001) {
+      if (std::abs(module.x) > std::abs(module.y)) {
+        sum_omega += rot_vy / module.x;
+      } else {
+        sum_omega += -rot_vx / module.y;
+      }
+    }
+  }
+  
+  omega = sum_omega / num_modules;
 }
 
 controller_interface::return_type SwerveDriveController::update(
