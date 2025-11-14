@@ -112,7 +112,7 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "velocity_controller"],
     )
 
-    orientation_pose_bridge = Node(
+    covariances_on_imu = Node(
         package="urc_localization",
         executable="urc_localization_CovariancesOnImu",
         name="covariances_on_imu",
@@ -155,7 +155,7 @@ def generate_launch_description():
             walli_xacro,
             gz_sim,
             spawn,
-            orientation_pose_bridge,
+            covariances_on_imu,
             bridge_yaml,
             bridge,
             control_node,
