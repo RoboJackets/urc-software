@@ -205,13 +205,15 @@ void SwerveDriveController::calculateModuleKinematics(
   wheel_vy += omega * module.x;
 
   // Calculate wheel angle and speed
-  wheel_speed = std::sqrt(wheel_vx * wheel_vx + wheel_vy * wheel_vy);
-  if (wheel_speed > 0.001) {  // Avoid atan2 with very small values
+  double linear_speed = std::sqrt(wheel_vx * wheel_vx + wheel_vy * wheel_vy);
+  if (linear_speed > 0.001) {  // Avoid atan2 with very small values
     wheel_angle = std::atan2(wheel_vy, wheel_vx);
   } else {
     // Keep previous angle if speed is negligible
     wheel_angle = 0.0;
   }
+  // Convert linear speed (m/s) to angular speed (rad/s)
+  wheel_speed = linear_speed / module.wheel_radius;
 }
 
 void SwerveDriveController::calculateRobotVelocityFromWheels(
