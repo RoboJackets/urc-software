@@ -93,11 +93,6 @@ protected:
     std::shared_ptr<std::reference_wrapper<hardware_interface::LoanedStateInterface>>>
   state_interface_map_;
 
-  // Interface names for each module
-  const std::vector<std::string> DRIVE_COMMAND_INTERFACES{"velocity"};
-  const std::vector<std::string> STEER_COMMAND_INTERFACES{"position"};
-  const std::vector<std::string> STATE_INTERFACES{"velocity", "position"};
-
   // Helper methods
   void calculateModuleKinematics(
     const ModuleConfig & module,
