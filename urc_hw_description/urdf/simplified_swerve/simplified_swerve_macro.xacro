@@ -9,7 +9,7 @@
   <xacro:macro name="simplified_swerve">
   
   <!-- replacing package:// -->
-  <xacro:property name="package_path" value="$(find urc_hw_description)"/>
+  <xacro:property name="package_path" value="file://$(find urc_hw_description)"/>
 
   <!-- Wheel Cylinder Geometry -->
   <xacro:property name="wheel_radius" value="0.119888" />  
@@ -19,7 +19,7 @@
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
     
     <link
-      name="base_Link">
+      name="base_link">
       <inertial>
         <origin
           xyz="4.08993662049939E-05 0 -0.10047242954429"
@@ -105,7 +105,7 @@
         xyz="0.070358 0.2808 -0.127"
         rpy="0 0.024048 0" />
       <parent
-        link="base_Link" />
+        link="base_link" />
       <child
         link="L_Rocker_Link" />
       <axis
@@ -381,7 +381,7 @@
         xyz="0.070358 -0.2808 -0.127"
         rpy="0 0.069977 0" />
       <parent
-        link="base_Link" />
+        link="base_link" />
       <child
         link="R_Rocker_Link" />
       <axis
