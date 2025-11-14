@@ -56,6 +56,12 @@
               <min_angle>-3.14</min_angle>
               <max_angle>3.14</max_angle>
             </horizontal>
+            <vertical>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14</min_angle>
+              <max_angle>3.14</max_angle>
+            </vertical>
           </scan>
           <range>
             <min>0.05</min>
@@ -116,6 +122,13 @@
               <stddev>0.0005</stddev>
             </noise>
           </angular_velocity>
+          <orientation>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </orientation>
           <linear_acceleration>
             <noise>
               <type>gaussian</type>

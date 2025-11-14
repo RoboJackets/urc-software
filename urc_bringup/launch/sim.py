@@ -113,16 +113,13 @@ def generate_launch_description():
     )
 
     orientation_pose_bridge = Node(
-        package="urc_bringup",
-        executable="urc_bringup_OrientationPoseBridge",
-        name="orientation_pose_bridge",
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnImu",
+        name="covariances_on_imu",
         parameters=[
             {
-                "tf_topic": "/tf",
-                "orientation_topic": "/orientation",
                 "imu_input_topic": "/imu/data_raw",
                 "imu_output_topic": "/imu/fused",
-                "target_link_name": "walli",
             }
         ],
         output="screen",

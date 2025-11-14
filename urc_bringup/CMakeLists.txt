@@ -20,7 +20,6 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/heartbeat_publisher.cpp
-  src/orientation_pose_bridge.cpp
 )
 
 set(dependencies
@@ -42,12 +41,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "heartbeat_publisher::HeartbeatPublisher"
   EXECUTABLE ${PROJECT_NAME}_HeartbeatPublisher
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "orientation_pose_bridge::OrientationPoseBridge"
-  EXECUTABLE ${PROJECT_NAME}_OrientationPoseBridge
 )
 
 
