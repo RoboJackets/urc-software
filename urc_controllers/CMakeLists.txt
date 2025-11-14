@@ -46,6 +46,7 @@ ament_target_dependencies(
   urc_nanopb
   urc_msgs
   joint_trajectory_controller
+  geometry_msgs
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
@@ -57,6 +58,13 @@ install(
   DESTINATION include
 )
 
+install(
+    TARGETS urc_controllers
+    EXPORT export_${PROJECT_NAME}
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 
 ament_export_include_directories(
   include
@@ -71,6 +79,10 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
+  urc_nanopb
+  urc_msgs
+  joint_trajectory_controller
+  geometry_msgs
 )
 
 ament_export_targets(
