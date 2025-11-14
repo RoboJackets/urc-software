@@ -9,10 +9,15 @@ find_package(Protobuf REQUIRED)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../external/nanopb/extra)
 find_package(Nanopb REQUIRED)
 
+# Add nanopb generator path
+set(NANOPB_GENERATOR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../external/nanopb/generator)
+set(NANOPB_GENERATOR_PROTO_PATH ${CMAKE_CURRENT_BINARY_DIR}/nanopb/generator/proto)
+# Generate the protobuf files
 nanopb_generate_cpp(
   PROTO_GENERATED_SRCS
   PROTO_HDRS
-  proto/urc.proto
+  ${CMAKE_CURRENT_SOURCE_DIR}/proto/urc.proto
+  RELPATH ${CMAKE_CURRENT_SOURCE_DIR}/proto
 )
 
 add_library(${PROJECT_NAME} SHARED

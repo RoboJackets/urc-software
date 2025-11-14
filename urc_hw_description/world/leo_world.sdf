@@ -16,13 +16,22 @@
       </dart>
     </physics>
     
-   <plugin filename="ignition-gazebo-physics-system"
-            name="ignition::gazebo::systems::Physics"/>
-   
     <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
       <robot_param>robot_description</robot_param>
     </plugin>
 
+<!-- Start incoming-->
+    <plugin
+
+      filename="ignition-gazebo-physics-system"
+      name="ignition::gazebo::systems::Physics">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-sensors-system"
+      name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+<!-- End incoming-->
     <plugin
       filename="ignition-gazebo-scene-broadcaster-system"
       name="ignition::gazebo::systems::SceneBroadcaster">
@@ -31,6 +40,12 @@
       filename="ignition-gazebo-user-commands-system"
       name="ignition::gazebo::systems::UserCommands">
     </plugin>
+
+    <!-- Start incoming-->
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <!-- End incoming-->
 
     <light name="sun" type="directional">
       <cast_shadows>true</cast_shadows>
@@ -58,6 +73,11 @@
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
     </include>
     -->
+    <!--<model name="marsyard">
+      <include>
+        <uri>model://marsyard2020_terrain</uri>
+      </include>
+    </model>-->
 
     <model name="ground_plane">
       <static>true</static>
