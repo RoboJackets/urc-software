@@ -35,3 +35,4 @@ swerve_controller:
   ros__parameters:
     module_x: 0.2
     module_y: 0.15
+    wheel_radius: 0.119888

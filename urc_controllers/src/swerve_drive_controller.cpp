@@ -35,17 +35,18 @@ controller_interface::CallbackReturn SwerveDriveController::on_configure(
   // TODO: Read these from a config file instead of hardcoding
   const double module_x = get_node()->get_parameter("module_x").as_double();
   const double module_y = get_node()->get_parameter("module_y").as_double();
+  const double wheel_radius = get_node()->get_parameter("wheel_radius").as_double();
 
   modules_.clear();
-  modules_.push_back({"FL", module_x, module_y});     // Front Left
-  modules_.push_back({"FR", module_x, -module_y});    // Front Right
-  modules_.push_back({"BL", -module_x, module_y});    // Back Left
-  modules_.push_back({"BR", -module_x, -module_y});   // Back Right
+  modules_.push_back({"FL", module_x, module_y, wheel_radius});     // Front Left
+  modules_.push_back({"FR", module_x, -module_y, wheel_radius});    // Front Right
+  modules_.push_back({"BL", -module_x, module_y, wheel_radius});    // Back Left
+  modules_.push_back({"BR", -module_x, -module_y, wheel_radius});   // Back Right
 
   RCLCPP_INFO(
     get_node()->get_logger(),
-    "Configured swerve drive with module positions: x=%.2f, y=%.2f",
-    module_x, module_y);
+    "Configured swerve drive with module positions: x=%.2f, y=%.2f, wheel_radius=%.4f",
+    module_x, module_y, wheel_radius);
 
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -248,12 +249,15 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
 
   for (size_t i = 0; i < modules_.size() && i < wheel_speeds.size(); ++i) {
     const auto & module = modules_[i];
-    double speed = wheel_speeds[i];
+    double angular_speed = wheel_speeds[i];  // rad/s from state interface
     double angle = wheel_angles[i];
 
+    // Convert angular velocity to linear velocity
+    double linear_speed = angular_speed * module.wheel_radius;
+
     // Wheel velocity in robot frame
-    double wheel_vx = speed * std::cos(angle);
-    double wheel_vy = speed * std::sin(angle);
+    double wheel_vx = linear_speed * std::cos(angle);
+    double wheel_vy = linear_speed * std::sin(angle);
 
     // Contribution to linear velocity (average all modules)
     sum_vx += wheel_vx;

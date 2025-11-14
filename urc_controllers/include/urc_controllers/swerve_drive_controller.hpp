@@ -59,6 +59,7 @@ protected:
     std::string name;
     double x;  // Position relative to robot center (meters)
     double y;
+    double wheel_radius;  // Wheel radius (meters)
   };
 
   std::vector<ModuleConfig> modules_;
