@@ -348,7 +348,7 @@ controller_interface::return_type SwerveDriveController::update(
     // Orientation (convert from yaw to quaternion)
     tf2::Quaternion q;
     q.setRPY(0.0, 0.0, odom_theta_);
-    geometry_msgs::msg::Quaternion quat_msg;
+    // Removed unused variable quat_msg
     odom_msg.pose.pose.orientation = tf2::toMsg(q);
 
     // Velocity (in robot frame)
