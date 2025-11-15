@@ -286,11 +286,11 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
   double sum_omega = 0.0;
   for (size_t i = 0; i < modules_.size() && i < wheel_speeds.size(); ++i) {
     const auto & module = modules_[i];
-    
+
     // Subtract translational component to get rotational component
     double rot_vx = wheel_vx_list[i] - vx;
     double rot_vy = wheel_vy_list[i] - vy;
-    
+
     // Calculate omega from rotation: omega = rot_vy / module.x (or -rot_vx / module.y)
     // Use the direction with larger module distance for better numerical stability
     double module_dist_sq = module.x * module.x + module.y * module.y;
@@ -302,7 +302,7 @@ void SwerveDriveController::calculateRobotVelocityFromWheels(
       }
     }
   }
-  
+
   omega = sum_omega / num_modules;
 }
 
