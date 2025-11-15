@@ -22,7 +22,23 @@ jobs:
       - name: Update Dependencies
         shell: bash
         run: |
-          source /opt/ros/humble/setup.bash
+          # ensure tools
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg lsb-release ca-certificates
+
+          # Remove any old ROS repo/key files that may be invalid
+          sudo rm -f /etc/apt/sources.list.d/ros2.list
+          sudo rm -f /usr/share/keyrings/ros-archive-keyring.gpg
+          # (optional) try to remove old apt-key entry if present
+          sudo apt-key del F42ED6FBAB17C654 || true
+
+          # Install fresh ROS apt keyring and repository (signed-by)
+          curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+            | sudo gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" \
+            | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+          # Update & upgrade now that key/repo are correct
           sudo apt-get update
           sudo apt-get --with-new-pkgs upgrade -y
 
