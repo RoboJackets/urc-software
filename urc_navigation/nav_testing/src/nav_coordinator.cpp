@@ -125,8 +125,8 @@ void NavCoordinator::followerFeedbackCallback(
     rclcpp_action::ClientGoalHandle<urc_msgs::action::FollowPath>::SharedPtr,
     const std::shared_ptr<const urc_msgs::action::FollowPath::Feedback> feedback) 
 {
-    RCLCPP_INFO(this->get_logger(), "feedback TODO %f", feedback->TODO);
-    //TODO
+    RCLCPP_INFO(this->get_logger(), "feedback TODO %f", feedback->distance_to_goal);
+    
 }
 
 void NavCoordinator::followerResultCallback(
@@ -137,7 +137,8 @@ void NavCoordinator::followerResultCallback(
             RCLCPP_INFO(this->get_logger(), "SUCCEEDED TODO");
             break;
         case rclcpp_action::ResultCode::ABORTED:
-            RCLCPP_ERROR(this->get_logger(), "ABORTED TODO");
+            RCLCPP_ERROR(this->get_logger(), "ABORTED Error Code %d", result.result->error_code);
+            sendPlannerRequest(); // replan
             break; // return ?
         case rclcpp_action::ResultCode::CANCELED:
             RCLCPP_ERROR(this->get_logger(), "CANCELED TODO");
