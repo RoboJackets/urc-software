@@ -209,6 +209,17 @@ void SwerveDriveController::calculateModuleKinematics(
   double linear_speed = std::sqrt(wheel_vx * wheel_vx + wheel_vy * wheel_vy);
   if (linear_speed > 0.001) {  // Avoid atan2 with very small values
     wheel_angle = std::atan2(wheel_vy, wheel_vx);
+
+    // Optimize angle to be within ±90 degrees by reversing wheel direction if needed
+    // This prevents the steering from trying to turn more than 90 degrees
+    while (wheel_angle > M_PI / 2.0) {
+      wheel_angle -= M_PI;
+      linear_speed = -linear_speed;
+    }
+    while (wheel_angle < -M_PI / 2.0) {
+      wheel_angle += M_PI;
+      linear_speed = -linear_speed;
+    }
   } else {
     // Keep previous angle if speed is negligible
     wheel_angle = 0.0;

@@ -33,6 +33,6 @@ velocity_controller:
 
 swerve_controller:
   ros__parameters:
-    module_x: 0.3192
-    module_y: 0.35825
+    module_x: 0.35255
+    module_y: 0.307978
     wheel_radius: 0.119888
