@@ -14,6 +14,7 @@ def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
+    path_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
@@ -73,6 +74,20 @@ def generate_launch_description():
             os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
         ),
         launch_arguments={"gz_args": world_path}.items(),
+    )
+
+    rover_pose_bridge = Node(
+        package="urc_bringup",
+        executable="urc_bringup_RoverPoseBridge",
+        name="rover_pose_bridge",
+        parameters=[
+            {
+                "tf_topic": "/ground_truth_pose",
+                "rover_pos_topic": "/rover_ground_truth",
+                "use_sim_time": True,
+            }
+        ],
+        output="screen",
     )
 
     bridge = Node(
@@ -154,5 +169,6 @@ def generate_launch_description():
             load_joint_state_broadcaster,
             load_position_controller,
             load_velocity_controller,
+            rover_pose_bridge,
         ]
     )

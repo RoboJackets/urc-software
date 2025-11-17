@@ -17,7 +17,7 @@
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
-    
+
     <link
       name="base_link">
       <inertial>

@@ -8,3 +8,20 @@
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "ignition.msgs.Clock"
   direction: GZ_TO_ROS
+
+- ros_topic_name: "/ground_truth_pose"
+  gz_topic_name: "/world/leo_marsyard/dynamic_pose/info"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "ignition.msgs.Pose_V"
+  direction: GZ_TO_ROS
+# - ros_topic_name: "/model/walli/pose"
+#   gz_topic_name: "/model/walli/pose"
+#   ros_type_name: "geometry_msgs/msg/PoseStamped"
+#   gz_type_name: "ignition.msgs.Pose"
+#   direction: GZ_TO_ROS
+  
+# - ros_topic_name: "/model/walli/tf"
+#   gz_topic_name: "/model/walli/pose"
+#   ros_type_name: "tf2_msgs/msg/TFMessage"
+#   gz_type_name: "ignition.msgs.Pose"
+#   direction: GZ_TO_ROS
