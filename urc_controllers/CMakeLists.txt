@@ -54,7 +54,7 @@ ament_target_dependencies(
   geometry_msgs
   tf2
   tf2_ros
-  tf2_geometry_msgs 
+  tf2_geometry_msgs
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
@@ -93,7 +93,7 @@ ament_export_dependencies(
   geometry_msgs
   tf2
   tf2_ros
-  tf2_geometry_msgs 
+  tf2_geometry_msgs
 )
 
 ament_export_targets(
