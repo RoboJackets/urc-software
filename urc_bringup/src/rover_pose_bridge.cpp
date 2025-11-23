@@ -64,23 +64,7 @@ namespace rover_pose_bridge
     output.names.push_back(target_it->child_frame_id);
     output.poses.push_back(pose);
 
-    // RCLCPP_INFO(get_logger(), "Publishing rover pose for frame '%s'", target_it->child_frame_id.c_str());
     publisher_->publish(std::move(output));
-
-
-    const auto frame_1 = std::find_if(
-      msg->transforms.begin(),
-      msg->transforms.end(),
-      [this](const geometry_msgs::msg::TransformStamped & tf) { return tf.child_frame_id == "base_link"; });
-
-    // RCLCPP_INFO(get_logger(), "Frame 'base_link' \nPosition: [%.2f, %.2f, %.2f], Orientation: [%.2f, %.2f, %.2f, %.2f]",
-    //   frame_1->transform.translation.x,
-    //   frame_1->transform.translation.y,
-    //   frame_1->transform.translation.z,
-    //   frame_1->transform.rotation.x,
-    //   frame_1->transform.rotation.y,
-    //   frame_1->transform.rotation.z,
-    //   frame_1->transform.rotation.w);
 
     geometry_msgs::msg::TransformStamped tf_out;
     target_it->header.frame_id = "map";
@@ -90,12 +74,7 @@ namespace rover_pose_bridge
     tf_out.transform = target_it->transform;
     tf_out.header.stamp = this->now();
     
-
-
     tf_broadcaster_->sendTransform(tf_out);
-    // RCLCPP_INFO(get_logger(), "Broadcasted TF for frame '%s'", tf_out.child_frame_id.c_str());
-    // RCLCPP_INFO(get_logger(), "Broadcasted TF for frame '%s'", tf_out.header.frame_id.c_str());
-    // RCLCPP_INFO(get_logger(), "TF Position: [%.2f, %.2f, %.2f]", tf_out.transform.translation.x, tf_out.transform.translation.y, tf_out.transform.translation.z);
   }
 
 } // namespace rover_pose_bridge

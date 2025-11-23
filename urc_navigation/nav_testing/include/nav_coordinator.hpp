@@ -12,7 +12,7 @@ class NavCoordinator : public rclcpp::Node
     private:
         // --- Subscribers --- //
         rclcpp::Subscription<TODO>::SharedPtr localization_subscriber_;
-        rclcpp::Subscription<TODO>::SharedPtr goal_subscriber_;
+        rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_subscriber_;
         rclcpp::Subscription<TODO>::SharedPtr cancel_subscriber_;
 
         // --- Publishers --- //
