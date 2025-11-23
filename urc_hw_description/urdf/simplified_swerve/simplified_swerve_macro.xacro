@@ -11,12 +11,18 @@
   <!-- replacing package:// -->
   <xacro:property name="package_path" value="$(find urc_hw_description)"/>
 
-  <!-- Wheel Cylinder Geometry -->
   <xacro:property name="wheel_radius" value="0.119888" />  
   <xacro:property name="wheel_length" value="0.0762" /> 
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
+<gazebo>
+  <plugin filename="libleo_gz_differential_plugin" name="leo_gz::DifferentialSystem">
+    <jointA>L_Rocker_Joint</jointA>
+    <jointB>R_Rocker_Joint</jointB>
+    <forceConstant>300.0</forceConstant>
+  </plugin>
+</gazebo>
     
     <link
       name="base_Link">
@@ -113,7 +119,7 @@
       <limit
         lower="-0.523"
         upper="0.523"
-        effort="10"
+        effort="1000"
         velocity="100" />
     </joint>
     <link
@@ -389,7 +395,7 @@
       <limit
         lower="-0.523"
         upper="0.523"
-        effort="10"
+        effort="1000"
         velocity="100" />
     </joint>
     <link
