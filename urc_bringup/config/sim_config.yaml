@@ -38,4 +38,8 @@
   gz_topic_name: "/scan/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "ignition.msgs.PointCloudPacked"
+- ros_topic_name: "/ground_truth_pose"
+  gz_topic_name: "/world/leo_marsyard/dynamic_pose/info"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "ignition.msgs.Pose_V"
   direction: GZ_TO_ROS

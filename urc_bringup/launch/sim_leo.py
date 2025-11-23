@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -15,30 +15,47 @@ def generate_launch_description():
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
 
+    # <-- ADDED paths for the Leo Rover packages
+    path_leo_description = get_package_share_directory("leo_description")
+    path_leo_gz_bringup = get_package_share_directory("leo_gz_bringup")
+
+    # <-- CHANGED to use the Leo Rover's controller config
     controller_config_file_dir = os.path.join(
-        path_urc_bringup, "config", "test_controllers.yaml"
+        path_leo_gz_bringup, "config", "controllers.yaml" 
     )
+
+    # controller_config_file_dir = os.path.join(
+    #     path_urc_bringup, "config", "test_controllers.yaml"
+    # )
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-<<<<<<< HEAD
+        # default_value=os.path.join(path_urc_hw_description, "world", "leo_world.sdf"),
         default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
         description="Path to gz world file",
-=======
-        default_value="marsyard2020.sdf",
-        description="Name of the world file (not full path)",
->>>>>>> origin/feat/nav_testing
     )
 
+    # <-- CHANGED default_value to point to the Leo Rover's xacro file
+    # (I kept your variable name 'walli_xacro' for minimal changes, 
+    #  but you could rename it to 'robot_xacro')
     walli_xacro = DeclareLaunchArgument(
         "walli_xacro",
         default_value=os.path.join(
-            path_urc_hw_description,
-            "urdf/simplified_swerve",
-            "simplified_swerve.urdf.xacro",
+            path_leo_description,
+            "urdf",
+            "leo.urdf.xacro",
         ),
         description="Path to xacro file",
     )
+    # walli_xacro = DeclareLaunchArgument(
+    #     "walli_xacro",
+    #     default_value=os.path.join(
+    #         path_urc_hw_description,
+    #         "urdf/simplified_swerve",
+    #         "simplified_swerve.urdf.xacro",
+    #     ),
+    #     description="Path to xacro file",
+    # )
 
     bridge_yaml = DeclareLaunchArgument(
         "bridge_yaml",
@@ -46,13 +63,8 @@ def generate_launch_description():
         description="bridge YAML config",
     )
 
-    world_filename = LaunchConfiguration("world")
+    world = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
-
-    # Construct the full world path from the filename
-    world_path = PathJoinSubstitution(
-        [path_urc_hw_description, "world", world_filename]
-    )
 
     """
     robot_urdf_file = process_file(
@@ -77,7 +89,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
         ),
-        launch_arguments={"gz_args": world_path}.items(),
+        launch_arguments={"gz_args": world}.items(),
     )
 
     bridge = Node(
@@ -104,36 +116,29 @@ def generate_launch_description():
         remappings=[("/controller_manager/robot_description", "/robot_description")],
     )
 
+# <-- ADDED spawner for the Leo Rover's differential drive controller
+    load_diff_drive_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "diff_drive_controller"],
+    )
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    load_position_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "position_controller"],
-    )
+    # load_position_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "position_controller"],
+    # )
 
-    load_velocity_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["-p", controller_config_file_dir, "velocity_controller"],
-    )
-
-    covariances_on_imu = Node(
-        package="urc_localization",
-        executable="urc_localization_CovariancesOnImu",
-        name="covariances_on_imu",
-        parameters=[
-            {
-                "imu_input_topic": "/imu/data_raw",
-                "imu_output_topic": "/imu/fused",
-            }
-        ],
-        output="screen",
-    )
+    # load_velocity_controller = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=["-p", controller_config_file_dir, "velocity_controller"],
+    # )
 
     spawn = Node(
         package="ros_gz_sim",
@@ -141,13 +146,13 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-name",
-            "walli",
+            "leo", # "walli",
             "-x",
             "0",
             "-y",
             "0",
             "-z",
-            "1.5",
+            "10.5",
             "-R",
             "0",
             "-P",
@@ -165,13 +170,32 @@ def generate_launch_description():
             walli_xacro,
             gz_sim,
             spawn,
-            covariances_on_imu,
             bridge_yaml,
             bridge,
             control_node,
             robot_state_publisher_node,
             load_joint_state_broadcaster,
-            load_position_controller,
-            load_velocity_controller,
+            load_diff_drive_controller, # <-- ADDED
+            # <-- REMOVED old controllers
         ]
     )
+
+    # return LaunchDescription(
+    #     [
+    #         sim_world_arg,
+    #         walli_xacro,
+    #         gz_sim,
+    #         spawn,
+    #         bridge_yaml,
+    #         bridge,
+    #         control_node,
+    #         robot_state_publisher_node,
+    #         load_joint_state_broadcaster,
+    #         load_position_controller,
+    #         load_velocity_controller,
+    #     ]
+    # )
+
+    
+
+
