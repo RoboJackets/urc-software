@@ -61,15 +61,7 @@
         <real_time_factor>1</real_time_factor>
         <max_contacts>20</max_contacts>
       </physics>
-      <plugin filename="ignition-gazebo-pose-publisher-system"
-              name="ignition::gazebo::systems::PosePublisher">
-        <publish_model_pose>true</publish_model_pose>
-        <publish_link_pose>true</publish_link_pose>
-        <publish_nested_model_pose>false</publish_nested_model_pose>
-        <publish_collision_pose>false</publish_collision_pose>
-        <publish_visual_pose>false</publish_visual_pose>
-        <use_pose_vector_msg>true</use_pose_vector_msg>
-      </plugin>
+      
     </gazebo>
   </xacro:if>
 

@@ -21,11 +21,13 @@
   gz_type_name: "ignition.msgs.IMU"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/tf"
-  gz_topic_name: "/world/leo_marsyard/pose/info"
-  ros_type_name: "tf2_msgs/msg/TFMessage"
-  gz_type_name: "ignition.msgs.Pose_V"
-  direction: GZ_TO_ROS
+
+#- ros_topic_name: "/tf"
+#  gz_topic_name: "/world/leo_marsyard/pose/info"
+#  ros_type_name: "tf2_msgs/msg/TFMessage"
+#  gz_type_name: "ignition.msgs.Pose_V"
+#  direction: GZ_TO_ROS
+
 
 - ros_topic_name: "/gps"
   gz_topic_name: "/gps"
