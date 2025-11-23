@@ -121,7 +121,7 @@
 
 
       <!-- Gazebo materials -->
-      <gazebo reference="base_Link">
+      <gazebo reference="base_link">
         <material>Gazebo/Grey</material>
       </gazebo>
       

@@ -46,7 +46,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="${package_path}/models/simplified_swerve/Base_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/base_link.STL" />
         </geometry>
         <material
           name="">
@@ -60,7 +60,7 @@
           rpy="0 0 0" />
         <geometry>
           <mesh
-            filename="${package_path}/models/simplified_swerve/Base_Link.STL" />
+            filename="${package_path}/models/simplified_swerve/base_link.STL" />
         </geometry>
       </collision>
     </link>

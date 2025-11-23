@@ -31,7 +31,7 @@
   <!--   <link name="world" /> -->
   <!--   <joint name="world_to_base" type="fixed"> -->
   <!--     <parent link="world" /> -->
-  <!--     <child link="base_Link" /> -->
+  <!--     <child link="base_link" /> -->
   <!--     <origin xyz="0 0 0" rpy="0 0 0" /> -->
   <!--   </joint> -->
   <!-- </xacro:if> -->

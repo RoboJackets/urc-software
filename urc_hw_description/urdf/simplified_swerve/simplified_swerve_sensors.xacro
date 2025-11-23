@@ -33,7 +33,7 @@
 
     <!-- Joint to attach lidar to base -->
     <joint name="lidar_joint" type="fixed">
-      <parent link="base_Link"/>
+      <parent link="base_link"/>
       <child link="lidar_link"/>
       <origin xyz="0 0 0.025" rpy="0 0 0"/>
     </joint>
@@ -103,7 +103,7 @@
     </link>
 
     <joint name="imu_joint" type="fixed">
-      <parent link="base_Link"/>
+      <parent link="base_link"/>
       <child link="imu_link"/>
       <origin xyz="0.1 0 0" rpy="0 0 0"/> 
     </joint>
@@ -141,7 +141,7 @@
     </gazebo>
 
 
-     <gazebo reference="base_Link">
+     <gazebo reference="base_link">
         <sensor name="gps" type="navsat">
             <always_on>1</always_on>
             <update_rate>1</update_rate>
