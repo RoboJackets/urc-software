@@ -117,6 +117,19 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "velocity_controller"],
     )
 
+    covariances_on_imu = Node(
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnImu",
+        name="covariances_on_imu",
+        parameters=[
+            {
+                "imu_input_topic": "/imu/data_raw",
+                "imu_output_topic": "/imu/fused",
+            }
+        ],
+        output="screen",
+    )
+
     spawn = Node(
         package="ros_gz_sim",
         executable="create",
@@ -147,6 +160,7 @@ def generate_launch_description():
             walli_xacro,
             gz_sim,
             spawn,
+            covariances_on_imu,
             bridge_yaml,
             bridge,
             control_node,
