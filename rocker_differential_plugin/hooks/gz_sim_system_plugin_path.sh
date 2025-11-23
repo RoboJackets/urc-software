@@ -1,0 +1,2 @@
+ament_prepend_unique_value IGN_GAZEBO_SYSTEM_PLUGIN_PATH "$AMENT_CURRENT_PREFIX/lib"
+ament_prepend_unique_value GZ_SIM_SYSTEM_PLUGIN_PATH "$AMENT_CURRENT_PREFIX/lib"

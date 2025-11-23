@@ -20,6 +20,7 @@
   <plugin filename="libleo_gz_differential_plugin" name="leo_gz::DifferentialSystem">
     <jointA>L_Rocker_Joint</jointA>
     <jointB>R_Rocker_Joint</jointB>
+    <barJoint>base_to_differential_bar</barJoint>
     <forceConstant>300.0</forceConstant>
   </plugin>
 </gazebo>
@@ -64,6 +65,27 @@
         </geometry>
       </collision>
     </link>
+
+    <!-- Differential bar link fixed to base_link so its pose matches base_link.
+         Rockers will be reparented to this link and coupled by the
+         DifferentialSystem plugin to behave like a mechanical differential: 
+         bar angle equals average of rocker angles. -->
+    <link name="differential_bar">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <!-- Tiny mass/inertia; merged with base via fixed joint at runtime -->
+        <mass value="1e-6" />
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+      </inertial>
+    </link>
+    <joint name="base_to_differential_bar" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="differential_bar" />
+      <axis xyz="0 1 0" />
+      <limit lower="-1.57" upper="1.57" effort="1000" velocity="100" />
+      <dynamics damping="5.0" friction="0.0" />
+    </joint>
     <link
       name="L_Rocker_Link">
       <inertial>
@@ -121,6 +143,7 @@
         upper="0.523"
         effort="1000"
         velocity="100" />
+      <dynamics damping="3.0" friction="0.0" />
     </joint>
     <link
       name="FL_Swivel_Link">
@@ -397,6 +420,7 @@
         upper="0.523"
         effort="1000"
         velocity="100" />
+      <dynamics damping="3.0" friction="0.0" />
     </joint>
     <link
       name="FR_Swivel_Link">
