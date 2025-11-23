@@ -2,15 +2,18 @@
 controller_manager:
   ros__parameters:
     update_rate: 100
-  
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
-    
+
     position_controller:
       type: position_controllers/JointGroupPositionController
 
     velocity_controller:
       type: velocity_controllers/JointGroupVelocityController
+
+    swerve_controller:
+      type: urc_controllers/SwerveDriveController
 
 position_controller:
   ros__parameters:
@@ -28,5 +31,8 @@ velocity_controller:
       - BL_Wheel_Joint
       - BR_Wheel_Joint
 
-  
-
+swerve_controller:
+  ros__parameters:
+    module_x: 0.35255
+    module_y: 0.307978
+    wheel_radius: 0.119888

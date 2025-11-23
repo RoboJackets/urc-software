@@ -18,14 +18,20 @@ find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
 find_package(joint_trajectory_controller REQUIRED)
 find_package(control_toolbox REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 add_library(
   ${PROJECT_NAME}
   SHARED
   src/status_light_controller.cpp
   src/bms_broadcaster.cpp
+  src/swerve_drive_controller.cpp
   include/urc_controllers/status_light_controller.hpp
   include/urc_controllers/bms_broadcaster.hpp
+  include/urc_controllers/swerve_drive_controller.hpp
 )
 
 target_compile_features(urc_controllers PUBLIC c_std_99 cxx_std_17)
@@ -45,10 +51,15 @@ ament_target_dependencies(
   urc_nanopb
   urc_msgs
   joint_trajectory_controller
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
 pluginlib_export_plugin_description_file(controller_interface urc_controllers.xml)
+
 
 install(
   DIRECTORY include/
@@ -76,6 +87,13 @@ ament_export_dependencies(
   rclcpp
   rclcpp_lifecycle
   urc_hw
+  urc_nanopb
+  urc_msgs
+  joint_trajectory_controller
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 
 ament_export_targets(
