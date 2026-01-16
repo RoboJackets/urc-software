@@ -87,18 +87,14 @@
 
       <collision name="imu_collision">
         <geometry>
-          <box>
-            <size>0.001 0.001 0.001</size>  <!-- tiny collision -->
-          </box>
+          <box size="0.001 0.001 0.001"/>  <!-- tiny collision -->
         </geometry>
       </collision>
 
       <visual name="imu_visual">
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <box>
-            <size>0.001 0.001 0.001</size>
-          </box>
+          <box size="0.001 0.001 0.001"/>
         </geometry>
       </visual>
     </link>
