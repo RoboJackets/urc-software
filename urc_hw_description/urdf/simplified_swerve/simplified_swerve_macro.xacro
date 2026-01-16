@@ -17,7 +17,6 @@
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
-    
     <link
       name="base_link">
       <inertial>
@@ -610,6 +609,9 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
+
+  
+
 
   </xacro:macro>
 

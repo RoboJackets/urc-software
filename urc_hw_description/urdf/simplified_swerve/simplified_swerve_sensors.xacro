@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<gazebo>
+ <plugin filename="libignition-gazebo-imu-system"
+            name="ignition::gazebo::systems::Imu"/>
+<plugin filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+     <plugin filename="ignition-gazebo-navsat-system" name="ignition::gazebo::systems::NavSat"/>
+
+</gazebo>
+
+     
+    <!-- Lidar Link -->
+    <link name="lidar_link">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="0.03" length="0.05"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0 0 0 1"/>
+        </material>
+      </visual>
+     
+    </link>
+
+    <!-- Joint to attach lidar to base -->
+    <joint name="lidar_joint" type="fixed">
+      <parent link="base_Link"/>
+      <child link="lidar_link"/>
+      <origin xyz="0 0 0.025" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Gazebo plugin for lidar -->
+    <gazebo reference="lidar_link">
+      <sensor name="lidar" type="gpu_lidar">
+        <pose>0 0 0 0 0 0</pose>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <update_rate>10</update_rate>
+        <topic>scan</topic>
+        <gz_frame_id>lidar_link</gz_frame_id>
+
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14</min_angle>
+              <max_angle>3.14</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14</min_angle>
+              <max_angle>3.14</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>10.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+          <frame_id>lidar_link</frame_id>
+        </lidar>
+      </sensor>
+    </gazebo>
+
+    <link name="imu_link">
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+
+      <collision name="imu_collision">
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>  <!-- tiny collision -->
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="imu_visual">
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+      <parent link="base_Link"/>
+      <child link="imu_link"/>
+      <origin xyz="0.1 0 0" rpy="0 0 0"/> 
+    </joint>
+
+    <gazebo reference="imu_link">
+      <sensor name="imu_sensor" type="imu">
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <visualize>true</visualize>
+        <topic>/imu/data_raw</topic>
+        <imu>
+          <angular_velocity>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.0005</stddev>
+            </noise>
+          </angular_velocity>
+          <orientation>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.001</stddev>
+            </noise>
+          </orientation>
+          <linear_acceleration>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+    </gazebo>
+
+
+     <gazebo reference="base_Link">
+        <sensor name="gps" type="navsat">
+            <always_on>1</always_on>
+            <update_rate>1</update_rate>
+            <visualize>true</visualize>
+            <topic>gps</topic>
+        </sensor>
+    </gazebo>
+</robot>
+
+

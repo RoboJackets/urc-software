@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
 <sdf version="1.8">
-  <world name="empty_world">
-    <physics name="1ms" type="ignored">
+  <world name="leo_marsyard">
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0.0</latitude_deg>
+      <longitude_deg>0.0</longitude_deg>
+      <elevation>0.0</elevation>
+      <heading_deg>0.0</heading_deg>
+    </spherical_coordinates>
+    <physics name="1ms" type="dart">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <dart>
@@ -13,7 +20,9 @@
       <robot_param>robot_description</robot_param>
     </plugin>
 
+<!-- Start incoming-->
     <plugin
+
       filename="ignition-gazebo-physics-system"
       name="ignition::gazebo::systems::Physics">
     </plugin>
@@ -22,6 +31,7 @@
       name="ignition::gazebo::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
+<!-- End incoming-->
     <plugin
       filename="ignition-gazebo-scene-broadcaster-system"
       name="ignition::gazebo::systems::SceneBroadcaster">
@@ -30,9 +40,12 @@
       filename="ignition-gazebo-user-commands-system"
       name="ignition::gazebo::systems::UserCommands">
     </plugin>
+
+    <!-- Start incoming-->
     <plugin filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
     </plugin>
+    <!-- End incoming-->
 
     <light name="sun" type="directional">
       <cast_shadows>true</cast_shadows>
@@ -48,6 +61,18 @@
       <direction>-0.5 0.1 -0.9</direction>
     </light>
 
+    <!-- <model name="marsyard">
+      <include>
+        <uri>model://marsyard2020_terrain</uri>
+      </include>
+    </model> -->
+
+    <!--- should be removed later. Added for testing blocks so they don't fall through the ground-->
+    <!--
+    <include>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Ground Plane</uri>
+    </include>
+    -->
     <!--<model name="marsyard">
       <include>
         <uri>model://marsyard2020_terrain</uri>

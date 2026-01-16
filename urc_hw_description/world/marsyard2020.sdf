@@ -13,11 +13,13 @@
       filename="ignition-gazebo-physics-system"
       name="ignition::gazebo::systems::Physics">
     </plugin>
+    <!--
     <plugin
       filename="ignition-gazebo-sensors-system"
       name="ignition::gazebo::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
+    -->
     <plugin
       filename="ignition-gazebo-scene-broadcaster-system"
       name="ignition::gazebo::systems::SceneBroadcaster">
@@ -26,8 +28,15 @@
       filename="ignition-gazebo-user-commands-system"
       name="ignition::gazebo::systems::UserCommands">
     </plugin>
+    <!--
     <plugin filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
+    </plugin>
+    -->
+    <plugin name='gazebo_ros_state5' filename='libgazebo_ros_state.so'>
+      <ros>
+          <namespace>gazebo</namespace>
+      </ros>
     </plugin>
 
     <light name="sun" type="directional">

@@ -14,7 +14,6 @@ def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
@@ -22,8 +21,13 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
+<<<<<<< HEAD
+        default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
+        description="Path to gz world file",
+=======
         default_value="marsyard2020.sdf",
         description="Name of the world file (not full path)",
+>>>>>>> origin/feat/nav_testing
     )
 
     walli_xacro = DeclareLaunchArgument(
@@ -76,20 +80,6 @@ def generate_launch_description():
         launch_arguments={"gz_args": world_path}.items(),
     )
 
-    rover_pose_bridge = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RoverPoseBridge",
-        name="rover_pose_bridge",
-        parameters=[
-            {
-                "tf_topic": "/ground_truth_pose",
-                "rover_pos_topic": "/rover_ground_truth",
-                "use_sim_time": True,
-            }
-        ],
-        output="screen",
-    )
-
     bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
@@ -120,21 +110,16 @@ def generate_launch_description():
         arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
     )
 
-    # load_position_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "position_controller"],
-    # )
-    #
-    # load_velocity_controller = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=["-p", controller_config_file_dir, "velocity_controller"],
-    # )
-    load_swerve_controller = Node(
+    load_position_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["-p", controller_config_file_dir, "swerve_controller"],
+        arguments=["-p", controller_config_file_dir, "position_controller"],
+    )
+
+    load_velocity_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "velocity_controller"],
     )
 
     covariances_on_imu = Node(
@@ -158,9 +143,9 @@ def generate_launch_description():
             "-name",
             "walli",
             "-x",
-            "-20",
+            "0",
             "-y",
-            "-15",
+            "0",
             "-z",
             "1.5",
             "-R",
@@ -186,9 +171,7 @@ def generate_launch_description():
             control_node,
             robot_state_publisher_node,
             load_joint_state_broadcaster,
-            # load_position_controller,
-            # load_velocity_controller,
-            load_swerve_controller,
-            rover_pose_bridge,
+            load_position_controller,
+            load_velocity_controller,
         ]
     )

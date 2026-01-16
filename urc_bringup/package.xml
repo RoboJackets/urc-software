@@ -10,8 +10,18 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>rosbridge_server</depend>
+<<<<<<< HEAD
+  <depend>sensor_msgs</depend>
+  <depend>tf2_msgs</depend>
+  <depend>urc_msgs</depend>
+=======
+  <depend>tf2_msgs</depend>
+  <depend>urc_msgs</depend>
+  <depend>tf2_ros</depend>
+>>>>>>> origin/feat/nav_testing
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
