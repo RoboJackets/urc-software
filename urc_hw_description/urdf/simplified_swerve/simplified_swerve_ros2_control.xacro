@@ -14,7 +14,7 @@
       <!-- Hardware Plugin -->
       <hardware>
         <xacro:if value="${use_sim}">
-          <plugin>ign_ros2_control/IgnitionSystem</plugin>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </xacro:if>
         <xacro:unless value="${use_sim}">
           <plugin>urc_hw/RoverDrivetrain</plugin>
@@ -114,7 +114,7 @@
       <!-- </gazebo> -->
 
       <gazebo>
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
           <parameters>$(find urc_bringup)/config/test_controllers.yaml</parameters>
         </plugin>
       </gazebo> 
