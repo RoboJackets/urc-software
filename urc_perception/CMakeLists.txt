@@ -39,10 +39,13 @@ add_definitions(${PCL_DEFINITIONS})
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
+  src/elevation_mapping.cpp
   src/traversability_mapping.cpp
 )
 
-
+add_library(gaussian_filter SHARED
+  src/GaussianFilter.cpp
+)
 
 target_link_libraries(${PROJECT_NAME}
   ${PCL_LIBRARIES}
@@ -72,10 +75,27 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
+ament_target_dependencies(gaussian_filter
+  ${dependencies}
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_perception::ElevationMapping"
+  EXECUTABLE ${PROJECT_NAME}_ElevationMapping
+)
+
 rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "urc_perception::TraversabilityMapping"
   EXECUTABLE ${PROJECT_NAME}_TraversabilityMapping
+)
+
+install(
+  TARGETS gaussian_filter
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 # Install launch files.
@@ -109,5 +129,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_libraries(gaussian_filter)
 ament_export_dependencies(${dependencies})
+pluginlib_export_plugin_description_file(filters filter_plugins.xml)
 ament_package()
