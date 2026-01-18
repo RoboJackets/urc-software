@@ -21,7 +21,7 @@
       name="base_link">
       <inertial>
         <origin
-          xyz="4.08993662049939E-05 0 -0.10047242954429"
+          xyz="0 0 0"
           rpy="0 0 0" />
         <mass
           value="66.4215786923517" />
@@ -609,6 +609,21 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
+
+     <gazebo>
+      <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
+        <jointA>L_Rocker_Joint</jointA>
+        <jointB>R_Rocker_Joint</jointB>
+        <forceConstant>100.0</forceConstant>
+      </plugin>
+      
+      <!-- Average Rocker Position: keeps base_link level at average of left/right rocker heights -->
+      <plugin name="leo_gz::AverageRockerPosition" filename="libleo_gz_average_rocker_plugin.so">
+        <rocker_left_joint>L_Rocker_Joint</rocker_left_joint>
+        <rocker_right_joint>R_Rocker_Joint</rocker_right_joint>
+        <base_link>base_link</base_link>
+      </plugin>
+    </gazebo>
 
   
 
