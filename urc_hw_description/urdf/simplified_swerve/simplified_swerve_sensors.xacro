@@ -8,7 +8,6 @@
       <render_engine>ogre2</render_engine>
     </plugin>
      <plugin filename="ignition-gazebo-navsat-system" name="ignition::gazebo::systems::NavSat"/>
-
 </gazebo>
 
      
