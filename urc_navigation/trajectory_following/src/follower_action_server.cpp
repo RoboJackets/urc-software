@@ -12,12 +12,12 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 {
   RCLCPP_INFO(this->get_logger(), "Follower node has been started.");
 
-  declare_parameter("lookahead_distance", 1.0);
-  declare_parameter("desired_linear_velocity", 0.5);
+  declare_parameter("lookahead_distance", 2.0);
+  declare_parameter("desired_linear_velocity", 0.2);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
-  declare_parameter("odom_topic", "/odom");
+  declare_parameter("odom_topic", "base_link");
   declare_parameter("map_frame", "map");
-  declare_parameter("goal_tolerance", 0.1);
+  declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
   declare_parameter("lethal_cost_threshold", 50);
 
@@ -70,6 +70,8 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
       std::placeholders::_2),
     std::bind(&FollowerActionServer::handle_cancel, this, std::placeholders::_1),
     std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
+
+  rover_position_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("rover_position", 10);
 }
 
 void FollowerActionServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
@@ -82,6 +84,7 @@ geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_transform(
 {
   geometry_msgs::msg::TransformStamped transform;
   try {
+    // RCLCPP_INFO(this->get_logger(), "Looking up transform from %s to %s", source_frame.c_str(), target_frame.c_str());
     transform = tf_buffer_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
   } catch (tf2::TransformException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
@@ -204,6 +207,16 @@ void FollowerActionServer::execute(
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   pure_pursuit.setPath(path);
+  // print parameters
+  RCLCPP_INFO(this->get_logger(), "Lookahead distance: %f", params.lookahead_distance);
+  RCLCPP_INFO(this->get_logger(), "Desired linear velocity: %f", params.desired_linear_velocity);
+  //print path
+  RCLCPP_INFO(this->get_logger(), "Path coordinates: ");
+  for (const auto & pose : path.poses) {
+    RCLCPP_INFO(this->get_logger(), "(%f, %f)", pose.pose.position.x, pose.pose.position.y);
+  }   
+  // print current pose
+  RCLCPP_INFO(this->get_logger(), "Current pose: (%f, %f)", current_pose_.pose.position.x, current_pose_.pose.position.y);    
 
   pure_pursuit::PurePursuitOutput output;
   rclcpp::Rate rate(10);
@@ -229,12 +242,12 @@ void FollowerActionServer::execute(
     }
 
     output =
-      pure_pursuit.getCommandVelocity(
+      pure_pursuit.getCommandVelocity(this->get_logger(),
       lookup_transform(
         "base_link",
         get_parameter("map_frame").as_string()));
 
-    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "odom");
+    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "base_link");
 
     if (stamped_) {
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
@@ -244,6 +257,12 @@ void FollowerActionServer::execute(
 
     geometry_msgs::msg::PoseStamped current_pose_map_frame_;
     tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+
+    // Publish rover position as PointStamped for rqt_plot
+    geometry_msgs::msg::PointStamped rover_point;
+    rover_point.header = current_pose_map_frame_.header;
+    rover_point.point = current_pose_map_frame_.pose.position;
+    rover_position_pub_->publish(rover_point);
 
     auto circle =
       create_lookahead_circle(

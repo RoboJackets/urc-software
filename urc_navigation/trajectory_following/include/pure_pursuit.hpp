@@ -7,6 +7,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include <rclcpp/rclcpp.hpp>
 
 namespace pure_pursuit
 {
@@ -54,7 +55,7 @@ public:
    * @brief Get the desired velocity command and lookahead point given the current pose
    * @param map_to_base_link Transform from the map frame to base link
    */
-  PurePursuitOutput getCommandVelocity(
+  PurePursuitOutput getCommandVelocity(const rclcpp::Logger & logger, 
     const geometry_msgs::msg::TransformStamped & map_to_base_link);
 
 private:
@@ -63,7 +64,7 @@ private:
    * @param path The path to follow in the local frame (usually the base_link frame)
    * @param lookahead_distance The distance to look ahead (m)
    */
-  geometry_msgs::msg::PoseStamped getLookaheadPose(
+  geometry_msgs::msg::PoseStamped getLookaheadPose(const rclcpp::Logger & logger, 
     const nav_msgs::msg::Path & path,
     double lookahead_distance);
 

@@ -48,7 +48,9 @@ geometry_msgs::msg::Point circleSegmentIntersection(
   discriminant = r * r * dr * dr - D * D;
 
   if (discriminant < 0) {
-    throw std::runtime_error("No intersection found, discriminant is zero or negative.");
+    throw std::runtime_error("No intersection found, discriminant is zero or negative.\nPoint a: (" + std::to_string(a.x) + ", " + std::to_string(a.y) + "), Point b: (" +
+                         std::to_string(b.x) + ", " + std::to_string(b.y) + "), radius: " + std::to_string(r));
+    // throw std::runtime_error("No intersection found, discriminant is zero or negative.");
   }
 
   x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
