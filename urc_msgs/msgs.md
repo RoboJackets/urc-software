@@ -39,7 +39,6 @@ This system includes the following modules:
 
 ```
 ├── action
-│   └── FollowPath.action
 ├── CMakeLists.txt
 ├── msg
 │   ├── ArucoDetection.msg

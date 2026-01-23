@@ -1,6 +1,6 @@
 ## Trajectory Following
 
-This package exposes the the `/follow_path` action server that, when called, commands the robot along the desired path. The request, response, and feedback definitions can be found [here](/urc_msgs/action/FollowPath.action).
+This package exposes the `/navigate_to_waypoint` action server that, when called, commands the robot along the desired path. The request, response, and feedback definitions can be found [here](/urc_msgs/action/NavigateToWaypoint.action).
 
 >  **Note:** Currently, the server is set up to call an implementation of the pure pursuit algorithm to achieve this. However, it is also set up so that we can (somewhat) easily drop in another
 >  path tracking implementation in the future. However, to do this correctly, this would require the creation of a `PathTrackingAlgorithm` interface and a refactor of how we set parameters.

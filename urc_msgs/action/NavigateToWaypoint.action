@@ -1,0 +1,21 @@
+# request definition
+# Either path or goal must be provided
+# If goal is provided, path planning service will be called
+nav_msgs/Path path
+geometry_msgs/PoseStamped goal
+bool has_path
+bool has_goal
+---
+# response definition
+uint16 SUCCESS=0
+uint16 FAILURE=1
+uint16 OBSTACLE_DETECTED=2
+uint16 PLANNING_FAILED=3
+
+std_msgs/Empty result
+uint16 error_code
+---
+# feedback definition
+float32 distance_to_goal
+bool is_planning
+uint16 replan_count

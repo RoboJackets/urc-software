@@ -61,15 +61,18 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS(),
     std::bind(&FollowerActionServer::handleCostmap, this, std::placeholders::_1));
 
-  // Create an action server for the follow_path action
-  follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
+  // Create an action server for the navigate_to_waypoint action
+  navigate_server_ = rclcpp_action::create_server<urc_msgs::action::NavigateToWaypoint>(
     this,
-    "follow_path",
+    "navigate_to_waypoint",
     std::bind(
-      &FollowerActionServer::handle_goal, this, std::placeholders::_1,
+      &FollowerActionServer::handle_navigate_goal, this, std::placeholders::_1,
       std::placeholders::_2),
-    std::bind(&FollowerActionServer::handle_cancel, this, std::placeholders::_1),
-    std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
+    std::bind(&FollowerActionServer::handle_navigate_cancel, this, std::placeholders::_1),
+    std::bind(&FollowerActionServer::handle_navigate_accepted, this, std::placeholders::_1));
+
+  // Create a client for the path planning service
+  planning_client_ = create_client<urc_msgs::srv::GeneratePlan>("plan");
 
   rover_position_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("rover_position", 10);
 }
@@ -97,108 +100,124 @@ FollowerActionServer::~FollowerActionServer()
   RCLCPP_INFO(this->get_logger(), "Follower action server has been stopped.");
 }
 
-rclcpp_action::GoalResponse FollowerActionServer::handle_goal(
+rclcpp_action::GoalResponse FollowerActionServer::handle_navigate_goal(
   const rclcpp_action::GoalUUID & uuid,
-  std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal)
+  std::shared_ptr<const urc_msgs::action::NavigateToWaypoint::Goal> goal)
 {
-  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  RCLCPP_INFO(this->get_logger(), "Received navigate to waypoint goal request");
 
   (void)uuid;
-  (void)goal;
+
+  if (!goal->has_path && !goal->has_goal) {
+    RCLCPP_ERROR(this->get_logger(), "Neither path nor goal provided");
+    return rclcpp_action::GoalResponse::REJECT;
+  }
+
+  if (goal->has_goal && !planning_client_->service_is_ready()) {
+    RCLCPP_WARN(this->get_logger(), "Planning service not available");
+    return rclcpp_action::GoalResponse::REJECT;
+  }
 
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
-rclcpp_action::CancelResponse FollowerActionServer::handle_cancel(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
+rclcpp_action::CancelResponse FollowerActionServer::handle_navigate_cancel(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle)
 {
-  RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
+  RCLCPP_INFO(this->get_logger(), "Received request to cancel navigate goal");
 
   (void)goal_handle;
 
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 
-void FollowerActionServer::handle_accepted(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
+void FollowerActionServer::handle_navigate_accepted(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle)
 {
-  // this needs to return quickly to avoid blocking the executor, so spin up a new thread
-  std::thread{std::bind(&FollowerActionServer::execute, this, std::placeholders::_1),
+  std::thread{std::bind(&FollowerActionServer::execute_navigate, this, std::placeholders::_1),
     goal_handle}
   .detach();
 }
 
-visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
-  double x, double y,
-  double radius,
-  std::string frame_id)
+nav_msgs::msg::Path FollowerActionServer::callPlanningService(
+  const geometry_msgs::msg::PoseStamped & start,
+  const geometry_msgs::msg::PoseStamped & goal,
+  bool & success)
 {
-  visualization_msgs::msg::Marker circle;
-  circle.header.frame_id = frame_id;
-  circle.header.stamp = get_clock()->now();
-  uint32_t shape = visualization_msgs::msg::Marker::CYLINDER;
+  auto request = std::make_shared<urc_msgs::srv::GeneratePlan::Request>();
+  request->start = start;
+  request->goal = goal;
 
-  circle.ns = "basic_shapes";
-  circle.id = 0;
-  circle.type = shape;
-  circle.action = visualization_msgs::msg::Marker::ADD;
+  RCLCPP_INFO(this->get_logger(), "Calling planning service...");
 
-  circle.pose.position.x = x;
-  circle.pose.position.y = y;
-  circle.pose.position.z = 0.0;
-  circle.pose.orientation.x = 0.0;
-  circle.pose.orientation.y = 0.0;
-  circle.pose.orientation.z = 0.0;
-  circle.pose.orientation.w = 1.0;
+  auto result = planning_client_->async_send_request(request);
 
-  circle.scale.x = 2 * radius;
-  circle.scale.y = 2 * radius;
-  circle.scale.z = 0.01;
-
-  circle.color.r = 0.0f;
-  circle.color.g = 0.0f;
-  circle.color.b = 1.0f;
-  circle.color.a = 0.3;
-
-  return circle;
-}
-
-void FollowerActionServer::publishZeroVelocity()
-{
-  geometry_msgs::msg::TwistStamped cmd_vel;
-  cmd_vel.header.stamp = get_clock()->now();
-  cmd_vel.twist.linear.x = 0.0;
-  cmd_vel.twist.angular.z = 0.0;
-
-  if (stamped_) {
-    cmd_vel_stamped_pub_->publish(cmd_vel);
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result, std::chrono::seconds(10)) ==
+    rclcpp::FutureReturnCode::SUCCESS)
+  {
+    auto response = result.get();
+    if (response->error_code == urc_msgs::srv::GeneratePlan::Response::SUCCESS) {
+      RCLCPP_INFO(this->get_logger(), "Planning successful, path has %ld poses", response->path.poses.size());
+      success = true;
+      return response->path;
+    } else {
+      RCLCPP_ERROR(this->get_logger(), "Planning failed with error code %d", response->error_code);
+      success = false;
+      return nav_msgs::msg::Path();
+    }
   } else {
-    cmd_vel_pub_->publish(cmd_vel.twist);
+    RCLCPP_ERROR(this->get_logger(), "Planning service call timed out");
+    success = false;
+    return nav_msgs::msg::Path();
   }
 }
 
-int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y)
+void FollowerActionServer::execute_navigate(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle)
 {
-  int map_x = (x - costmap.info.origin.position.x) / costmap.info.resolution;
-  int map_y = (y - costmap.info.origin.position.y) / costmap.info.resolution;
+  RCLCPP_INFO(this->get_logger(), "Executing navigate to waypoint goal");
 
-  if (map_x < 0 || map_x >= costmap.info.width || map_y < 0 || map_y >= costmap.info.height) {
-    return 0;
-  }
-
-  return costmap.data[map_y * costmap.info.width + map_x];
-}
-
-void FollowerActionServer::execute(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
-{
-  RCLCPP_INFO(this->get_logger(), "Executing goal");
-
-  auto feedback = std::make_shared<urc_msgs::action::FollowPath::Feedback>();
+  auto feedback = std::make_shared<urc_msgs::action::NavigateToWaypoint::Feedback>();
   feedback->distance_to_goal = std::numeric_limits<double>::max();
+  feedback->is_planning = false;
+  feedback->replan_count = 0;
 
-  auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
-  auto & path = goal_handle->get_goal()->path;
+  auto result = std::make_shared<urc_msgs::action::NavigateToWaypoint::Result>();
+  const auto & goal_msg = goal_handle->get_goal();
+
+  nav_msgs::msg::Path path;
+  geometry_msgs::msg::PoseStamped goal_pose;
+
+  // Determine the path to follow
+  if (goal_msg->has_goal) {
+    // Need to call planning service
+    feedback->is_planning = true;
+    goal_handle->publish_feedback(feedback);
+
+    goal_pose = goal_msg->goal;
+    
+    geometry_msgs::msg::PoseStamped start_pose;
+    start_pose.header = current_pose_.header;
+    start_pose.pose = current_pose_.pose;
+
+    bool planning_success = false;
+    path = callPlanningService(start_pose, goal_pose, planning_success);
+
+    feedback->is_planning = false;
+
+    if (!planning_success || path.poses.empty()) {
+      result->error_code = urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+      goal_handle->abort(result);
+      RCLCPP_ERROR(this->get_logger(), "Initial planning failed");
+      publishZeroVelocity();
+      return;
+    }
+  } else {
+    // Use provided path
+    path = goal_msg->path;
+    goal_pose.header = path.header;
+    goal_pose.pose = path.poses.back().pose;
+  }
 
   // Create a PurePursuit object
   pure_pursuit::PurePursuitParams params;
@@ -207,16 +226,9 @@ void FollowerActionServer::execute(
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   pure_pursuit.setPath(path);
-  // print parameters
   RCLCPP_INFO(this->get_logger(), "Lookahead distance: %f", params.lookahead_distance);
   RCLCPP_INFO(this->get_logger(), "Desired linear velocity: %f", params.desired_linear_velocity);
-  //print path
-  RCLCPP_INFO(this->get_logger(), "Path coordinates: ");
-  for (const auto & pose : path.poses) {
-    RCLCPP_INFO(this->get_logger(), "(%f, %f)", pose.pose.position.x, pose.pose.position.y);
-  }   
-  // print current pose
-  RCLCPP_INFO(this->get_logger(), "Current pose: (%f, %f)", current_pose_.pose.position.x, current_pose_.pose.position.y);    
+  RCLCPP_INFO(this->get_logger(), "Following path with %ld poses", path.poses.size());
 
   pure_pursuit::PurePursuitOutput output;
   rclcpp::Rate rate(10);
@@ -227,7 +239,7 @@ void FollowerActionServer::execute(
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
     } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
-      result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
+      result->error_code = urc_msgs::action::NavigateToWaypoint::Result::SUCCESS;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
       break;
@@ -235,10 +247,33 @@ void FollowerActionServer::execute(
         current_costmap_, output.lookahead_point.point.x,
         output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
     {
-      result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
-      goal_handle->abort(result);
-      RCLCPP_INFO(this->get_logger(), "Obstacle detected!");
-      break;
+      // Obstacle detected - attempt to re-plan
+      RCLCPP_WARN(this->get_logger(), "Obstacle detected! Attempting to re-plan...");
+      
+      feedback->is_planning = true;
+      feedback->replan_count++;
+      goal_handle->publish_feedback(feedback);
+
+      geometry_msgs::msg::PoseStamped start_pose;
+      start_pose.header = current_pose_.header;
+      start_pose.pose = current_pose_.pose;
+
+      bool planning_success = false;
+      nav_msgs::msg::Path new_path = callPlanningService(start_pose, goal_pose, planning_success);
+
+      feedback->is_planning = false;
+
+      if (!planning_success || new_path.poses.empty()) {
+        result->error_code = urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+        goal_handle->abort(result);
+        RCLCPP_ERROR(this->get_logger(), "Re-planning failed");
+        break;
+      }
+
+      // Update the path and continue
+      path = new_path;
+      pure_pursuit.setPath(path);
+      RCLCPP_INFO(this->get_logger(), "Re-planning successful, following new path with %ld poses", path.poses.size());
     }
 
     output =
@@ -275,7 +310,7 @@ void FollowerActionServer::execute(
 
     // Publish feedback
     feedback->distance_to_goal =
-      geometry_util::dist2D(current_pose_map_frame_.pose.position, path.poses.back().pose.position);
+      geometry_util::dist2D(current_pose_map_frame_.pose.position, goal_pose.pose.position);
     goal_handle->publish_feedback(feedback);
 
     rate.sleep();
@@ -284,7 +319,7 @@ void FollowerActionServer::execute(
   publishZeroVelocity();
 }
 
-} // namespace follower_node
+} // namespace follower_action_server
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(follower_action_server::FollowerActionServer)

@@ -6,6 +6,7 @@ include(../../cmake/default_settings.cmake)
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -30,6 +31,7 @@ add_library(${PROJECT_NAME} SHARED
 
 set(dependencies
   rclcpp
+  rclcpp_action
   rclcpp_components
   urc_msgs
   std_msgs

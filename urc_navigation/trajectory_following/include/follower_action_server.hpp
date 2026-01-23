@@ -11,7 +11,8 @@
 #include <nav_msgs/msg/path.hpp>
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
-#include "urc_msgs/action/follow_path.hpp"
+#include "urc_msgs/action/navigate_to_waypoint.hpp"
+#include "urc_msgs/srv/generate_plan.hpp"
 #include <nav_msgs/msg/occupancy_grid.hpp>
 
 namespace follower_action_server
@@ -34,18 +35,23 @@ private:
 
   void publishZeroVelocity();
 
-  rclcpp_action::GoalResponse handle_goal(
+  rclcpp_action::GoalResponse handle_navigate_goal(
     const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal);
+    std::shared_ptr<const urc_msgs::action::NavigateToWaypoint::Goal> goal);
 
-  rclcpp_action::CancelResponse handle_cancel(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  rclcpp_action::CancelResponse handle_navigate_cancel(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle);
 
-  void handle_accepted(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  void handle_navigate_accepted(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle);
 
-  void execute(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle);
+  void execute_navigate(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle);
+
+  nav_msgs::msg::Path callPlanningService(
+    const geometry_msgs::msg::PoseStamped & start,
+    const geometry_msgs::msg::PoseStamped & goal,
+    bool & success);
 
   /**
    * @brief Handle the costmap data
@@ -60,7 +66,8 @@ private:
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
-  rclcpp_action::Server<urc_msgs::action::FollowPath>::SharedPtr follow_path_server_;
+  rclcpp_action::Server<urc_msgs::action::NavigateToWaypoint>::SharedPtr navigate_server_;
+  rclcpp::Client<urc_msgs::srv::GeneratePlan>::SharedPtr planning_client_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr rover_position_pub_;
 
