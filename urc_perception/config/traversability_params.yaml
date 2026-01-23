@@ -26,7 +26,7 @@ grid_map_visualization:
 
 traversability_mapping:
   ros__parameters:
-    pointcloud_topic: /scan/points
+    pointcloud_topic: /point_cloud
     output_map_topic: /costmap
     filter_radius: 5.0
 
