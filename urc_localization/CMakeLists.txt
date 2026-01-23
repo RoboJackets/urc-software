@@ -17,6 +17,7 @@ find_package(geographic_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(laser_geometry REQUIRED)
 
 include_directories(
   include
@@ -25,6 +26,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/gps_imu_localizer.cpp
   src/covariances_on_imu.cpp
+  src/scan_to_point_cloud.cpp
 )
 
 set(dependencies
@@ -38,6 +40,8 @@ set(dependencies
   geometry_msgs
   tf2
   tf2_ros
+  laser_geometry
+  
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -55,6 +59,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "covariances_on_imu::CovariancesOnImu"
   EXECUTABLE ${PROJECT_NAME}_CovariancesOnImu
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "scan_to_point_cloud::ScanToPointCloud"
+  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
 # Install launch files.
@@ -83,8 +93,6 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-ament_export_include_directories(msg)
 
 ament_export_include_directories(include)
 

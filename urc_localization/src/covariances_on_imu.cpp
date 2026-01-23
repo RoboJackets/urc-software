@@ -1,6 +1,7 @@
 #include "covariances_on_imu.hpp"
 
 #include <array>
+#include <functional>
 #include <sensor_msgs/msg/imu.hpp>
 #include "rclcpp_components/register_node_macro.hpp"
 
