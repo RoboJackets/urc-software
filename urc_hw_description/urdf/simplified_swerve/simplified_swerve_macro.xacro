@@ -609,19 +609,6 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
-
-     <gazebo>
-      <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
-        <jointA>L_Rocker_Joint</jointA>
-        <jointB>R_Rocker_Joint</jointB>
-        <forceConstant>100000.0</forceConstant>
-      </plugin>
-    
-    </gazebo>
-
-  
-
-
   </xacro:macro>
 
 </robot>

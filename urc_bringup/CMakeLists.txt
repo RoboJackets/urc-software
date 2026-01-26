@@ -22,6 +22,8 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/heartbeat_publisher.cpp
   src/rover_pose_bridge.cpp
+  src/rocker_effort_pid.cpp
+  src/rocker_tf_broadcaster.cpp
 )
 
 set(dependencies
@@ -50,6 +52,18 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "rover_pose_bridge::RoverPoseBridge"
   EXECUTABLE ${PROJECT_NAME}_RoverPoseBridge
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_bringup::RockerEffortPid"
+  EXECUTABLE ${PROJECT_NAME}_RockerEffortPid
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_bringup::RockerTfBroadcaster"
+  EXECUTABLE ${PROJECT_NAME}_RockerTfBroadcaster
 )
 
 # Install launch files.

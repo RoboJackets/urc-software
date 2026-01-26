@@ -34,6 +34,7 @@ def generate_launch_description():
         description="Path to xacro file",
     )
 
+
     bridge_yaml = DeclareLaunchArgument(
         "bridge_yaml",
         default_value=os.path.join(path_urc_bringup, "config", "sim_config.yaml"),
@@ -119,6 +120,22 @@ def generate_launch_description():
         output="screen",
     )
 
+    rocker_tf_broadcaster = Node(
+        package="urc_bringup",
+        executable="urc_bringup_RockerTfBroadcaster",
+        name="rocker_tf_broadcaster",
+        parameters=[
+            {
+                "left_joint_name": "L_Rocker_Joint",
+                "right_joint_name": "R_Rocker_Joint",
+                "joint_state_topic": "/joint_states",
+                "invert_sign": True,
+                "use_sim_time": True,
+            }
+        ],
+        output="screen",
+    )
+
     spawn = Node(
         package="ros_gz_sim",
         executable="create",
@@ -170,6 +187,25 @@ def generate_launch_description():
         output="screen",
     )
 
+    rocker_effort_pid_node = Node(
+        package="urc_bringup",
+        executable="urc_bringup_RockerEffortPid",
+        name="rocker_effort_pid",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "pitch_topic": "/rocker/pitch_raw",
+                "command_topic": "/rocker_effort_controller/commands",
+                "spin_effort_topic": "/rocker/spin_effort",
+                "min_spin_effort": 40.0,
+                "stiction_vel_epsilon": 0.05,
+                "kp": 120.0,
+                "kd": 15.0,
+            }
+        ],
+        output="screen",
+    )
+
     # IMPORTANT:
     # Using TimerAction chaining is more reliable than OnProcessExit on the spawner nodes,
     # because spawners exit quickly and your previous event target was not the TimerAction.
@@ -183,13 +219,14 @@ def generate_launch_description():
             walli_xacro,
             bridge_yaml,
             spawn_rocker_effort,
-
             gz_sim,
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
             scan_to_point_cloud,
             rover_pose_bridge,
+            rocker_tf_broadcaster,
+            rocker_effort_pid_node,
             spawn,
 
             # After robot spawn, start controller spawners on a fixed schedule
