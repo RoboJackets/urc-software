@@ -196,11 +196,10 @@ def generate_launch_description():
                 "use_sim_time": True,
                 "pitch_topic": "/rocker/pitch_raw",
                 "command_topic": "/rocker_effort_controller/commands",
-                "spin_effort_topic": "/rocker/spin_effort",
                 "min_spin_effort": 40.0,
-                "stiction_vel_epsilon": 0.05,
                 "kp": 120.0,
-                "kd": 15.0,
+                "ki": 10.0,
+                "kd": 40.0,
             }
         ],
         output="screen",

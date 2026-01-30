@@ -17,9 +17,6 @@ def generate_launch_description():
     js_topic = DeclareLaunchArgument(
         "joint_state_topic", default_value="/joint_states"
     )
-    spin_topic = DeclareLaunchArgument(
-        "spin_effort_topic", default_value="/rocker/spin_effort"
-    )
     kp = DeclareLaunchArgument("kp", default_value="200.0")
     ki = DeclareLaunchArgument("ki", default_value="0.0")
     kd = DeclareLaunchArgument("kd", default_value="5.0")
@@ -36,7 +33,6 @@ def generate_launch_description():
                 "right_joint_name": LaunchConfiguration("right_joint_name"),
                 "command_topic": LaunchConfiguration("command_topic"),
                 "joint_state_topic": LaunchConfiguration("joint_state_topic"),
-                "spin_effort_topic": LaunchConfiguration("spin_effort_topic"),
                 "kp": LaunchConfiguration("kp"),
                 "ki": LaunchConfiguration("ki"),
                 "kd": LaunchConfiguration("kd"),
@@ -51,7 +47,6 @@ def generate_launch_description():
             right_joint,
             cmd_topic,
             js_topic,
-            spin_topic,
             kp,
             ki,
             kd,
@@ -59,4 +54,3 @@ def generate_launch_description():
             node,
         ]
     )
-

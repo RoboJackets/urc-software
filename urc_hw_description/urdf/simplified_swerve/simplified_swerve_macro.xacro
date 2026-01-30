@@ -17,6 +17,8 @@
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
+  <xacro:property name="swivel_damping_factor" value = "0.8" />
+  <xacro:property name="mu" value="0.8" />
     <link
       name="base_link">
       <inertial>
@@ -172,6 +174,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="FL_Wheel_Link">
@@ -281,6 +284,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="BL_Wheel_Link">
@@ -448,6 +452,8 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
+
     </joint>
     <link
       name="FR_Wheel_Link">
@@ -557,6 +563,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="BR_Wheel_Link">

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <atomic>
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
@@ -17,12 +16,10 @@ public:
 
 private:
   void onPitch(const std_msgs::msg::Float64::SharedPtr msg);
-  void onSpinEffort(const std_msgs::msg::Float64::SharedPtr msg);
 
   // Params
   std::string pitch_topic_;
   std::string command_topic_;
-  std::string spin_effort_topic_;
 
   // PID gains
   double kp_{200.0};
@@ -32,23 +29,16 @@ private:
   double i_clamp_{100.0};
   double pitch_target_{0.0};
 
-  // Spin command shaping
-  double spin_scale_{1.0};            // scale input spin effort
+  // Correction command shaping
   double min_spin_effort_{50.0};      // minimum torque to overcome stiction
-  double stiction_vel_epsilon_{0.05}; // rad/s below which to apply min torque
-
-  bool invert_pitch_{false};
 
   // State
   double last_error_{0.0};
   double integ_error_{0.0};
   rclcpp::Time last_stamp_{};
-  std::atomic<double> base_spin_effort_{0.0};
-  double prev_pitch_{0.0};
 
   // ROS interfaces
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr pitch_sub_;
-  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr spin_sub_;
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr cmd_pub_;
 };
 

@@ -26,7 +26,6 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/gps_imu_localizer.cpp
   src/covariances_on_imu.cpp
-  src/scan_to_point_cloud.cpp
 )
 
 set(dependencies
@@ -59,12 +58,6 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "covariances_on_imu::CovariancesOnImu"
   EXECUTABLE ${PROJECT_NAME}_CovariancesOnImu
-)
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "scan_to_point_cloud::ScanToPointCloud"
-  EXECUTABLE ${PROJECT_NAME}_ScanToPointCloud
 )
 
 # Install launch files.

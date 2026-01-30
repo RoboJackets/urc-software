@@ -56,7 +56,7 @@ void RockerTfBroadcaster::onJointState(const sensor_msgs::msg::JointState::Share
   if (invert_sign_) avg = -avg;
 
   std_msgs::msg::Float64 out;
-  out.data = avg;                 // <-- RAW rocker pitch
+  out.data = avg;                 
   pitch_pub_->publish(out);
 }
 
