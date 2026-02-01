@@ -16,6 +16,7 @@ grid_map_visualization:
         layer: traversability
         data_min: 0.0
         data_max: 1.0
+      publish_rate: 50
 
     traversability_inflated:
       type: occupancy_grid
@@ -26,7 +27,7 @@ grid_map_visualization:
 
 traversability_mapping:
   ros__parameters:
-    pointcloud_topic: /point_cloud
+    pointcloud_topic: /scan/points
     output_map_topic: /costmap
     filter_radius: 5.0
 
