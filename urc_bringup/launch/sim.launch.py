@@ -92,19 +92,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    scan_to_point_cloud = Node(
-        package="urc_localization",
-        executable="urc_localization_ScanToPointCloud",
-        name="scan_to_point_cloud",
-        parameters=[
-            {
-                "scan_input_topic": "/scan",
-                "point_cloud_output_topic": "/point_cloud",
-                "target_frame": "base_link",
-            }
-        ],
-        output="screen",
-    )
 
     rover_pose_bridge = Node(
         package="urc_bringup",
@@ -222,7 +209,6 @@ def generate_launch_description():
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
-            scan_to_point_cloud,
             rover_pose_bridge,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
