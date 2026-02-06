@@ -5,54 +5,19 @@ import os
 
 
 def generate_launch_description():
-
-    ekf_global = launch_ros.actions.Node(
+    ekf_node = launch_ros.actions.Node(
         package="robot_localization",
         executable="ekf_node",
-        name="ekf_filter_node_map",
+        name="ekf_filter_node",
         output="screen",
         parameters=[
             os.path.join(
                 get_package_share_directory("urc_localization"),
                 "config",
-                "ekf.yaml",
+                "ekf_redemption.yaml",
             )
-        ],
-        remappings=[("/odometry/filtered", "/odometry/filtered_global")],
-    )
-
-    ekf_local = launch_ros.actions.Node(
-        package="robot_localization",
-        executable="ekf_node",
-        name="ekf_filter_node_odom",
-        output="screen",
-        parameters=[
-            os.path.join(
-                get_package_share_directory("urc_localization"),
-                "config",
-                "ekf.yaml",
-            )
-        ],
-        remappings=[("/odometry/filtered", "odometry/filtered_local")],
-    )
-
-    navsat = launch_ros.actions.Node(
-        package="robot_localization",
-        executable="navsat_transform_node",
-        name="navsat_transform",
-        output="screen",
-        parameters=[
-            os.path.join(
-                get_package_share_directory("urc_localization"),
-                "config",
-                "ekf.yaml",
-            )
-        ],
-        remappings=[
-            ("/imu", "/imu/data"),
-            ("/odometry/filtered", "/odometry/filtered_global"),
-            ("/gps/fix", "/gps/data"),
         ],
     )
 
-    return LaunchDescription([navsat, ekf_local, ekf_global])
+
+    return LaunchDescription([ekf_node])

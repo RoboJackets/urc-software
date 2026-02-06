@@ -33,6 +33,9 @@ void CovariancesOnImu::handleImu(const sensor_msgs::msg::Imu::SharedPtr msg)
 
   sensor_msgs::msg::Imu output = *msg;
 
+  output.header.stamp = this->get_clock()->now();
+  output.header.frame_id = "imu_link"; // Ensure the frame_id is set to the expected value
+
   // Set covariance diagonals to squared stddevs per field
   constexpr double var_lin_acc = 0.01 * 0.01;     // 1e-4
   constexpr double var_ang_vel = 0.0005 * 0.0005; // 2.5e-7
@@ -50,6 +53,8 @@ void CovariancesOnImu::handleImu(const sensor_msgs::msg::Imu::SharedPtr msg)
   set_diag_variance(output.linear_acceleration_covariance, var_lin_acc);
   set_diag_variance(output.angular_velocity_covariance, var_ang_vel);
   set_diag_variance(output.orientation_covariance, var_orientation);
+
+
 
   imu_publisher_->publish(output);
 }

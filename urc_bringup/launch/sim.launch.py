@@ -85,6 +85,7 @@ def generate_launch_description():
         name="covariances_on_imu",
         parameters=[
             {
+                "use_sim_time": True,
                 "imu_input_topic": "/imu/data_raw",
                 "imu_output_topic": "/imu/fused",
             }
@@ -209,7 +210,7 @@ def generate_launch_description():
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
-            rover_pose_bridge,
+            #rover_pose_bridge,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,

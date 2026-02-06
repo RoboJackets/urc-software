@@ -1,0 +1,69 @@
+ekf_filter_node:
+  ros__parameters:
+    # Timing
+    frequency: 30.0
+    sensor_timeout: 5.0
+    two_d_mode: true
+    use_sim_time: true
+
+    # Frames
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    # TF
+    publish_tf: true
+
+    # IMU input
+    # Use IMU published by imu_ned2enu/vectornav pipeline
+    imu0: /imu/fused
+    imu0_queue_size: 20
+    imu0_differential: false
+    imu0_relative: false
+    imu0_remove_gravitational_acceleration: true
+    print_diagnostics: true
+    # State order (15):
+    # [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
+    # Enable yaw (orientation), yaw rate, and linear accel X/Y only
+    imu0_config: [
+        false, # x
+        false, # y
+        false, # z
+        false, # roll
+        false, # pitch
+        true, # yaw
+        false, # vx
+        false, # vy
+        false, # vz
+        false, # vroll
+        false, # vpitch
+        true, # vyaw
+        true, # ax
+        true, # ay
+        false, # az
+      ]
+    odom0: /odom
+    odom0_queue_size: 10
+    odom0_differential: false
+    odom0_relative: false
+
+    # [x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az]
+    odom0_config:
+      [
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+      ]
