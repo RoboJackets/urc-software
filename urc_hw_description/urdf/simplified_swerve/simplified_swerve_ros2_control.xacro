@@ -14,12 +14,20 @@
       <!-- Hardware Plugin -->
       <hardware>
         <xacro:if value="${use_sim}">
-          <plugin>ign_ros2_control/IgnitionSystem</plugin>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </xacro:if>
         <xacro:unless value="${use_sim}">
           <plugin>urc_hw/RoverDrivetrain</plugin>
         </xacro:unless>
       </hardware>
+
+      <joint name="L_Rocker_Joint">
+        <state_interface name="position"/>
+      </joint>
+
+      <joint name="R_Rocker_Joint">
+        <state_interface name="position"/>
+      </joint>
 
       <!-- Joint State Interface -->
       <joint name="FL_Swivel_Joint">
@@ -36,6 +44,7 @@
           <param name="max">100</param>
         </command_interface>
         <state_interface name="velocity"/>
+        <state_interface name="position"/>
       </joint>
 
       <joint name="BL_Swivel_Joint">
@@ -52,6 +61,7 @@
           <param name="max">100</param>
         </command_interface>
         <state_interface name="velocity"/>
+        <state_interface name="position"/>
       </joint>
 
       <joint name="FR_Swivel_Joint">
@@ -68,6 +78,7 @@
           <param name="max">100</param>
         </command_interface>
         <state_interface name="velocity"/>
+        <state_interface name="position"/>
       </joint>
 
       <joint name="BR_Swivel_Joint">
@@ -84,6 +95,7 @@
           <param name="max">100</param>
         </command_interface>
         <state_interface name="velocity"/>
+        <state_interface name="position"/>
       </joint>
 
     </ros2_control>
@@ -102,7 +114,7 @@
       <!-- </gazebo> -->
 
       <gazebo>
-        <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
           <parameters>$(find urc_bringup)/config/test_controllers.yaml</parameters>
         </plugin>
       </gazebo> 

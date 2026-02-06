@@ -18,6 +18,7 @@
   <depend>urc_nanopb</depend>
   <depend>urc_msgs</depend>
   <depend>joint_trajectory_controller</depend>
+  <depend>geometry_msgs</depend>
 
   <build_depend>pluginlib</build_depend>
 

@@ -17,7 +17,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/StatusLightCommand.msg"
   "msg/Waypoint.msg"
   "msg/GridLocation.msg"
+  "msg/OrientationPoses.msg"
   "srv/GeneratePlan.srv"
+  "msg/RoverPoses.msg"
   "action/FollowPath.action"
 
   DEPENDENCIES

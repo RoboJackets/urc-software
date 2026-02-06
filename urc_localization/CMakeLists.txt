@@ -24,6 +24,7 @@ include_directories(
 
 add_library(${PROJECT_NAME} SHARED
   src/gps_imu_localizer.cpp
+  src/covariances_on_imu.cpp
 )
 
 set(dependencies
@@ -48,6 +49,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "gps_imu_localizer::GpsImuLocalizer"
   EXECUTABLE ${PROJECT_NAME}_GpsImuLocalizer
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "covariances_on_imu::CovariancesOnImu"
+  EXECUTABLE ${PROJECT_NAME}_CovariancesOnImu
 )
 
 # Install launch files.

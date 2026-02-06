@@ -9,7 +9,7 @@
   <xacro:macro name="simplified_swerve">
   
   <!-- replacing package:// -->
-  <xacro:property name="package_path" value="$(find urc_hw_description)"/>
+  <xacro:property name="package_path" value="file://$(find urc_hw_description)"/>
 
   <!-- Wheel Cylinder Geometry -->
   <xacro:property name="wheel_radius" value="0.119888" />  
@@ -17,12 +17,11 @@
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
-    
     <link
-      name="base_Link">
+      name="base_link">
       <inertial>
         <origin
-          xyz="4.08993662049939E-05 0 -0.10047242954429"
+          xyz="0 0 0"
           rpy="0 0 0" />
         <mass
           value="66.4215786923517" />
@@ -105,7 +104,7 @@
         xyz="0.070358 0.2808 -0.127"
         rpy="0 0.024048 0" />
       <parent
-        link="base_Link" />
+        link="base_link" />
       <child
         link="L_Rocker_Link" />
       <axis
@@ -381,7 +380,7 @@
         xyz="0.070358 -0.2808 -0.127"
         rpy="0 0.069977 0" />
       <parent
-        link="base_Link" />
+        link="base_link" />
       <child
         link="R_Rocker_Link" />
       <axis
@@ -610,6 +609,24 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
+
+     <gazebo>
+      <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
+        <jointA>L_Rocker_Joint</jointA>
+        <jointB>R_Rocker_Joint</jointB>
+        <forceConstant>100.0</forceConstant>
+      </plugin>
+      
+      <!-- Average Rocker Position: keeps base_link level at average of left/right rocker heights -->
+      <plugin name="leo_gz::AverageRockerPosition" filename="libleo_gz_average_rocker_plugin.so">
+        <rocker_left_joint>L_Rocker_Joint</rocker_left_joint>
+        <rocker_right_joint>R_Rocker_Joint</rocker_right_joint>
+        <base_link>base_link</base_link>
+      </plugin>
+    </gazebo>
+
+  
+
 
   </xacro:macro>
 

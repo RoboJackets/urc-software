@@ -1,21 +1,13 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>urc_bringup</name>
+  <name>nav_testing</name>
   <version>0.0.0</version>
-  <description>Package to launch all urc packages</description>
-  <maintainer email="abhiramg2021@gmail.com">Abhiram Ghanta</maintainer>
+  <description>Package for testing navigation</description>
+  <maintainer email="mavren22@gmail.com">mavren22</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <depend>rclcpp</depend>
-  <depend>rclcpp_components</depend>
-  <depend>std_msgs</depend>
-  <depend>rosbridge_server</depend>
-  <depend>sensor_msgs</depend>
-  <depend>tf2_msgs</depend>
-  <depend>urc_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

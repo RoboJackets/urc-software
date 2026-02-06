@@ -1,23 +1,19 @@
 import os
+from tempfile import NamedTemporaryFile
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    RegisterEventHandler,
-)
-from launch.event_handlers import OnProcessExit
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
+from xacro import process_file
 
 
 def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
@@ -25,8 +21,13 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
+<<<<<<< HEAD
+        default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
+        description="Path to gz world file",
+=======
         default_value="marsyard2020.sdf",
         description="Name of the world file (not full path)",
+>>>>>>> origin/feat/nav_testing
     )
 
     walli_xacro = DeclareLaunchArgument(
@@ -48,9 +49,17 @@ def generate_launch_description():
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
 
+    # Construct the full world path from the filename
     world_path = PathJoinSubstitution(
         [path_urc_hw_description, "world", world_filename]
     )
+
+    """
+    robot_urdf_file = process_file(
+        ParameterValue(walli_xacro_config, value_type = str),
+        mappings = {"use_sim": "true"}
+    ).toxml()
+    """
 
     robot_urdf_file = ParameterValue(
         Command(
@@ -87,6 +96,32 @@ def generate_launch_description():
         output="screen",
     )
 
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[controller_config_file_dir],
+        output="screen",
+        remappings=[("/controller_manager/robot_description", "/robot_description")],
+    )
+
+    load_joint_state_broadcaster = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "joint_state_broadcaster"],
+    )
+
+    load_position_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "position_controller"],
+    )
+
+    load_velocity_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["-p", controller_config_file_dir, "velocity_controller"],
+    )
+
     covariances_on_imu = Node(
         package="urc_localization",
         executable="urc_localization_CovariancesOnImu",
@@ -100,20 +135,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    rover_pose_bridge = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RoverPoseBridge",
-        name="rover_pose_bridge",
-        parameters=[
-            {
-                "tf_topic": "/ground_truth_pose",
-                "rover_pos_topic": "/rover_ground_truth",
-                "use_sim_time": True,
-            }
-        ],
-        output="screen",
-    )
-
     spawn = Node(
         package="ros_gz_sim",
         executable="create",
@@ -122,9 +143,9 @@ def generate_launch_description():
             "-name",
             "walli",
             "-x",
-            "-20",
+            "0",
             "-y",
-            "-15",
+            "0",
             "-z",
             "1.5",
             "-R",
@@ -138,51 +159,19 @@ def generate_launch_description():
         ],
     )
 
-    # --- Controller Spawners ---
-    load_joint_state_broadcaster = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--param-file",
-            controller_config_file_dir,
-        ],
-    )
-
-    load_swerve_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "swerve_controller",
-            "--param-file",
-            controller_config_file_dir,
-        ],
-    )
-
     return LaunchDescription(
         [
             sim_world_arg,
             walli_xacro,
-            bridge_yaml,
             gz_sim,
-            bridge,
-            robot_state_publisher_node,
-            covariances_on_imu,
-            rover_pose_bridge,
             spawn,
-            # Start joint_state_broadcaster AFTER robot spawn
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=spawn,
-                    on_exit=[load_joint_state_broadcaster],
-                )
-            ),
-            # Start swerve controller AFTER joint_state_broadcaster
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=load_joint_state_broadcaster,
-                    on_exit=[load_swerve_controller],
-                )
-            ),
+            covariances_on_imu,
+            bridge_yaml,
+            bridge,
+            control_node,
+            robot_state_publisher_node,
+            load_joint_state_broadcaster,
+            load_position_controller,
+            load_velocity_controller,
         ]
     )
