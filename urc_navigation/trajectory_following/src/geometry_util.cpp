@@ -1,6 +1,8 @@
 #include "geometry_util.hpp"
 
 #include <math.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace geometry_util
 {
@@ -95,4 +97,19 @@ geometry_msgs::msg::Point circleSegmentIntersection(
 
   return intersection;
 }
+
+double angularDistance(
+  const geometry_msgs::msg::Quaternion & q1,
+  const geometry_msgs::msg::Quaternion & q2)
+{
+  tf2::Quaternion tf_q1, tf_q2;
+  tf2::fromMsg(q1, tf_q1);
+  tf2::fromMsg(q2, tf_q2);
+  
+  double dot = tf_q1.dot(tf_q2);
+  dot = std::clamp(dot, -1.0, 1.0);
+  
+  return std::acos(std::abs(dot)) * 2.0;
+}
+
 } // namespace geometry_util

@@ -15,6 +15,8 @@ The action server is set up to be configurable. See `config/pure_pursuit_config.
 | odom_topic | "/odom" |
 | map_frame | "map" |
 | goal_tolerance | 0.1 |
+| enforce_goal_heading | false |
+| goal_heading_tolerance | 0.1 |
 
 These default values will be used if the parameter is not defined in the specified config file.
 

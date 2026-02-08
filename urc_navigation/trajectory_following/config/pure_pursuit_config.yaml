@@ -9,3 +9,5 @@ follower_action_server:
     odom_topic: "base_link"
     map_frame: "map"
     goal_tolerance: 0.1
+    enforce_goal_heading: false
+    goal_heading_tolerance: 0.1

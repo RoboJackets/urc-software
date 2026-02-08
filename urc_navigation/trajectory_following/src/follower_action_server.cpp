@@ -20,6 +20,8 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
   declare_parameter("lethal_cost_threshold", 50);
+  declare_parameter("enforce_goal_heading", false);
+  declare_parameter("goal_heading_tolerance", 0.1);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -185,6 +187,10 @@ void FollowerActionServer::execute_navigate(
   auto result = std::make_shared<urc_msgs::action::NavigateToWaypoint::Result>();
   const auto & goal_msg = goal_handle->get_goal();
 
+  // Determine if we should enforce goal heading (from request or config)
+  bool enforce_heading = goal_msg->enforce_goal_heading || 
+                         get_parameter("enforce_goal_heading").as_bool();
+
   nav_msgs::msg::Path path;
   geometry_msgs::msg::PoseStamped goal_pose;
 
@@ -234,15 +240,42 @@ void FollowerActionServer::execute_navigate(
   rclcpp::Rate rate(10);
 
   while (rclcpp::ok()) {
+    // Get current pose in map frame at the start of each iteration
+    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "base_link");
+    geometry_msgs::msg::PoseStamped current_pose_map_frame_;
+    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+
+    // Update feedback distance
+    feedback->distance_to_goal =
+      geometry_util::dist2D(current_pose_map_frame_.pose.position, goal_pose.pose.position);
+
     if (goal_handle->is_canceling()) {
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
     } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
-      result->error_code = urc_msgs::action::NavigateToWaypoint::Result::SUCCESS;
-      goal_handle->succeed(result);
-      RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
-      break;
+      bool heading_satisfied = true;
+      
+      if (enforce_heading) {
+        double heading_error = geometry_util::angularDistance(
+          current_pose_map_frame_.pose.orientation,
+          goal_pose.pose.orientation);
+        heading_satisfied = heading_error < get_parameter("goal_heading_tolerance").as_double();
+        
+        if (!heading_satisfied) {
+          RCLCPP_DEBUG(
+            this->get_logger(),
+            "Position reached but heading error %.3f rad exceeds tolerance %.3f rad",
+            heading_error, get_parameter("goal_heading_tolerance").as_double());
+        }
+      }
+      
+      if (heading_satisfied) {
+        result->error_code = urc_msgs::action::NavigateToWaypoint::Result::SUCCESS;
+        goal_handle->succeed(result);
+        RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
+        break;
+      }
     } else if (getCost(
         current_costmap_, output.lookahead_point.point.x,
         output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
@@ -282,16 +315,11 @@ void FollowerActionServer::execute_navigate(
         "base_link",
         get_parameter("map_frame").as_string()));
 
-    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "base_link");
-
     if (stamped_) {
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
     } else {
       cmd_vel_pub_->publish(output.cmd_vel.twist);
     }
-
-    geometry_msgs::msg::PoseStamped current_pose_map_frame_;
-    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
 
     // Publish rover position as PointStamped for rqt_plot
     geometry_msgs::msg::PointStamped rover_point;
@@ -309,8 +337,6 @@ void FollowerActionServer::execute_navigate(
     carrot_pub_->publish(output.lookahead_point);
 
     // Publish feedback
-    feedback->distance_to_goal =
-      geometry_util::dist2D(current_pose_map_frame_.pose.position, goal_pose.pose.position);
     goal_handle->publish_feedback(feedback);
 
     rate.sleep();

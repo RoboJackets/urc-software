@@ -5,6 +5,7 @@ nav_msgs/Path path
 geometry_msgs/PoseStamped goal
 bool has_path
 bool has_goal
+bool enforce_goal_heading
 ---
 # response definition
 uint16 SUCCESS=0
