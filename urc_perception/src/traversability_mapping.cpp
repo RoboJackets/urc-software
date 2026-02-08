@@ -13,7 +13,6 @@
 
 namespace urc_perception
 {
-
 TraversabilityMapping::TraversabilityMapping(const rclcpp::NodeOptions & options)
 : Node("traversability_mapping", options), filter_chain_("grid_map::GridMap")
 {
