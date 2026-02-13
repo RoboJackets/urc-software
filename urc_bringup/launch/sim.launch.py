@@ -93,6 +93,20 @@ def generate_launch_description():
         output="screen",
     )
 
+    covariances_on_gps = Node(
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnGps",
+        name="covariances_on_gps",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "gps_input_topic": "/gps",
+                "gps_output_topic": "/gps/covariances",
+            }
+        ],
+        output="screen",
+    )
+
 
     rover_pose_bridge = Node(
         package="urc_bringup",
@@ -210,7 +224,7 @@ def generate_launch_description():
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
-            #rover_pose_bridge,
+            covariances_on_gps,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,
