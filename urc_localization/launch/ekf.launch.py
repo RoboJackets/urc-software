@@ -18,7 +18,7 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         remappings=[
-            ("/odometry/filtered", "/odometry/filtered_local"),
+            ("odometry/filtered", "/odometry/filtered_local"),
         ],
     )
 
@@ -30,9 +30,9 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         remappings=[
-            ("imu", "/imu/fused"),
-            ("/gps/fix", "/gps/covariances"),
-            ("/odometry/filtered", "/odometry/filtered_local"),  # IMPORTANT
+            ("imu/data", "/imu/fused"),
+            ("gps/fix", "/gps/covariances"),
+            ("odometry/filtered", "/odometry/filtered_local"),
         ],
     )
 
@@ -45,7 +45,7 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         remappings=[
-            ("/odometry/filtered", "/odometry/filtered_global"),
+            ("odometry/filtered", "/odometry/filtered_global"),
         ],
     )
 

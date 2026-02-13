@@ -21,7 +21,6 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/heartbeat_publisher.cpp
-  src/rover_pose_bridge.cpp
   src/rocker_effort_pid.cpp
   src/rocker_tf_broadcaster.cpp
 )
@@ -48,11 +47,6 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_HeartbeatPublisher
 )
 
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "rover_pose_bridge::RoverPoseBridge"
-  EXECUTABLE ${PROJECT_NAME}_RoverPoseBridge
-)
 
 rclcpp_components_register_node(
   ${PROJECT_NAME}

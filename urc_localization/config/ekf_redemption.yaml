@@ -70,7 +70,7 @@ ekf_filter_node:
 ekf_filter_node_global:
   ros__parameters:
     # Timing
-    frequency: 5.0
+    frequency: 15.0
     sensor_timeout: 5.0
     two_d_mode: true
     use_sim_time: true
@@ -111,21 +111,23 @@ ekf_filter_node_global:
     odom1: /odometry/filtered_local
     odom1_queue_size: 10
     odom1_differential: false
-    odom1_relative: false
+    # Local EKF is in the drifting odom frame: use it as relative motion input,
+    # not as an absolute global position source.
+    odom1_relative: true
     # [x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az]
     odom1_config: [
-        true, #x
-        true, #y
+        false, #x
+        false, #y
         false, #z
         false, #roll
         false, #pitch
-        false, #yaw
-        true, #vx
-        true, #vy
+        true, #yaw
+        false, #vx
+        false, #vy
         false, #vz
         false, #vroll
         false, #vpitch
-        false, #vyaw
+        true, #vyaw
         false, #ax
         false, #ay
         false, #az
@@ -142,5 +144,5 @@ navsat_transform:
     zero_altitude: true
     broadcast_cartesian_transform: true
     publish_filtered_gps: true
-    use_odometry_yaw: false
+    use_odometry_yaw: true
     wait_for_datum: false
