@@ -2,6 +2,9 @@ follower_action_server:
   ros__parameters:
     lookahead_distance: 0.75
     desired_linear_velocity: 0.25
+    max_angular_velocity: 1.0
+    heading_alignment_tolerance: 0.2
+    enable_holonomic_motion: true
     lethal_cost_threshold: 10
     cmd_vel_stamped: true
     cmd_vel_topic: "/cmd_vel_autonomous"

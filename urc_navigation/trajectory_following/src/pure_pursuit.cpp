@@ -1,33 +1,33 @@
 #include "pure_pursuit.hpp"
 #include "geometry_util.hpp"
+#include <algorithm>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-namespace pure_pursuit
-{
+namespace pure_pursuit {
 
-PurePursuit::PurePursuit(PurePursuitParams params)
-{
-  params_ = params;
-}
+PurePursuit::PurePursuit(PurePursuitParams params) { params_ = params; }
 
-void PurePursuit::setPath(const nav_msgs::msg::Path & path)
-{
-  path_ = path;
-}
+void PurePursuit::setPath(const nav_msgs::msg::Path &path) { path_ = path; }
 
-geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(const rclcpp::Logger & logger, 
-  const nav_msgs::msg::Path & path,
-  double lookahead_distance)
-{
+geometry_msgs::msg::PoseStamped
+PurePursuit::getLookaheadPose(const rclcpp::Logger &logger,
+                              const nav_msgs::msg::Path &path,
+                              double lookahead_distance) {
   // Find the closest pose in the path
-  auto closestPoseIt = find_min_by(
-    path.poses.begin(), path.poses.end(), [&](const geometry_msgs::msg::PoseStamped & pose)
-    {return geometry_util::magnitude(pose.pose.position);});
+  auto closestPoseIt =
+      find_min_by(path.poses.begin(), path.poses.end(),
+                  [&](const geometry_msgs::msg::PoseStamped &pose) {
+                    return geometry_util::magnitude(pose.pose.position);
+                  });
 
-  // Find the first point outside the lookahead distance, starting at the pose closest to the current pose
-  auto pose = std::find_if(
-    closestPoseIt, path.poses.end(), [&](const geometry_msgs::msg::PoseStamped & pose)
-    {return geometry_util::magnitude(pose.pose.position) > lookahead_distance;});
+  // Find the first point outside the lookahead distance, starting at the pose
+  // closest to the current pose
+  auto pose =
+      std::find_if(closestPoseIt, path.poses.end(),
+                   [&](const geometry_msgs::msg::PoseStamped &pose) {
+                     return geometry_util::magnitude(pose.pose.position) >
+                            lookahead_distance;
+                   });
 
   // If no point is found, return the last pose in the path
   if (pose == path.poses.end()) {
@@ -37,15 +37,16 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(const rclcpp::Logg
 
   auto prev_pose = std::prev(pose);
 
-  // Find the intersection of the lookahead circle and the line segment between prev_pose and pose, where prev_pose
-  // is guaranteed to be within the lookahead circle.
-  /* RCLCPP_INFO(logger, "Closest Pt (%f, %f), Previous Pt: (%f, %f),  Lookahead Pt: (%f, %f)", 
-    closestPoseIt->pose.position.x, closestPoseIt->pose.position.y, 
-    prev_pose->pose.position.x, prev_pose->pose.position.y, 
-    pose->pose.position.x, pose->pose.position.y); */
+  // Find the intersection of the lookahead circle and the line segment between
+  // prev_pose and pose, where prev_pose is guaranteed to be within the
+  // lookahead circle.
+  /* RCLCPP_INFO(logger, "Closest Pt (%f, %f), Previous Pt: (%f, %f),  Lookahead
+    Pt: (%f, %f)", closestPoseIt->pose.position.x,
+    closestPoseIt->pose.position.y, prev_pose->pose.position.x,
+    prev_pose->pose.position.y, pose->pose.position.x, pose->pose.position.y);
+  */
   auto point = geometry_util::circleSegmentIntersection(
-    prev_pose->pose.position,
-    pose->pose.position, lookahead_distance);
+      prev_pose->pose.position, pose->pose.position, lookahead_distance);
 
   geometry_msgs::msg::PoseStamped lookahead_point;
   lookahead_point.header.frame_id = pose->header.frame_id;
@@ -55,43 +56,92 @@ geometry_msgs::msg::PoseStamped PurePursuit::getLookaheadPose(const rclcpp::Logg
   return lookahead_point;
 }
 
-PurePursuitOutput PurePursuit::getCommandVelocity(const rclcpp::Logger & logger,
-  const geometry_msgs::msg::TransformStamped & map_to_base_link)
-{
+PurePursuitOutput PurePursuit::getCommandVelocity(
+    const rclcpp::Logger &logger,
+    const geometry_msgs::msg::TransformStamped &map_to_base_link) {
 
   nav_msgs::msg::Path transformed_path_;
 
   // modify map_to_base_link to have zero z translation and zero x,y rotation
-  geometry_msgs::msg::TransformStamped map_to_base_link_modified = map_to_base_link;
+  geometry_msgs::msg::TransformStamped map_to_base_link_modified =
+      map_to_base_link;
   map_to_base_link_modified.transform.translation.z = 0.0;
   map_to_base_link_modified.transform.rotation.x = 0.0;
   map_to_base_link_modified.transform.rotation.y = 0.0;
 
-  for (const auto & pose : path_.poses) {
+  for (const auto &pose : path_.poses) {
     geometry_msgs::msg::PoseStamped transformed_pose;
 
     tf2::doTransform(pose, transformed_pose, map_to_base_link_modified);
     transformed_path_.poses.push_back(transformed_pose);
-    RCLCPP_INFO(logger, "Current Pose: (%f, %f, w: %f, z: %f), map_to_base_link: (%f, %f, w: %f, z: %f), Transformed Path Pose: (%f, %f, w: %f, z: %f)", 
-      pose.pose.position.x, pose.pose.position.y, pose.pose.orientation.w, pose.pose.orientation.z,  
-      map_to_base_link_modified.transform.translation.x, map_to_base_link_modified.transform.translation.y,  map_to_base_link_modified.transform.rotation.w, map_to_base_link_modified.transform.rotation.z,
-      transformed_pose.pose.position.x, transformed_pose.pose.position.y, transformed_pose.pose.orientation.w, transformed_pose.pose.orientation.z);
+    RCLCPP_INFO(
+        logger,
+        "Current Pose: (%f, %f, w: %f, z: %f), map_to_base_link: (%f, %f, w: "
+        "%f, z: %f), Transformed Path Pose: (%f, %f, w: %f, z: %f)",
+        pose.pose.position.x, pose.pose.position.y, pose.pose.orientation.w,
+        pose.pose.orientation.z,
+        map_to_base_link_modified.transform.translation.x,
+        map_to_base_link_modified.transform.translation.y,
+        map_to_base_link_modified.transform.rotation.w,
+        map_to_base_link_modified.transform.rotation.z,
+        transformed_pose.pose.position.x, transformed_pose.pose.position.y,
+        transformed_pose.pose.orientation.w,
+        transformed_pose.pose.orientation.z);
   }
 
-  auto lookahead_pose = getLookaheadPose(logger, transformed_path_, params_.lookahead_distance);
-
-  double linear_vel, angular_vel;
-  linear_vel = params_.desired_linear_velocity;
-
-  double curvature = geometry_util::calcCurvature(lookahead_pose.pose.position);
-  angular_vel = linear_vel * curvature;
+  auto lookahead_pose =
+      getLookaheadPose(logger, transformed_path_, params_.lookahead_distance);
 
   PurePursuitOutput output;
-
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header = path_.header;
-  cmd_vel.twist.linear.x = linear_vel;
-  cmd_vel.twist.angular.z = angular_vel;
+
+  if (params_.enable_swerve_motion) {
+    // Swerve drive: Use swerve motion capabilities
+    double lookahead_angle = std::atan2(lookahead_pose.pose.position.y,
+                                        lookahead_pose.pose.position.x);
+    double lookahead_distance =
+        geometry_util::magnitude(lookahead_pose.pose.position);
+
+    // Check if we need to align heading before moving
+    if (lookahead_distance > 0.01 &&
+        std::abs(lookahead_angle) > params_.heading_alignment_tolerance) {
+      // Turn in place to face the lookahead point
+      cmd_vel.twist.linear.x = 0.0;
+      cmd_vel.twist.linear.y = 0.0;
+      cmd_vel.twist.angular.z = std::clamp(
+          lookahead_angle * 2.0, // Proportional control
+          -params_.max_angular_velocity, params_.max_angular_velocity);
+      RCLCPP_DEBUG(
+          logger,
+          "Aligning heading: angle error = %.3f rad, omega = %.3f rad/s",
+          lookahead_angle, cmd_vel.twist.angular.z);
+    } else {
+      // Move towards lookahead point with direct motion
+      double linear_vel = params_.desired_linear_velocity;
+
+      // Calculate velocity components for direct motion to lookahead
+      cmd_vel.twist.linear.x = linear_vel * std::cos(lookahead_angle);
+      cmd_vel.twist.linear.y = linear_vel * std::sin(lookahead_angle);
+
+      // Add corrective angular velocity for path curvature
+      double curvature =
+          geometry_util::calcCurvature(lookahead_pose.pose.position);
+      cmd_vel.twist.angular.z =
+          std::clamp(linear_vel * curvature, -params_.max_angular_velocity,
+                     params_.max_angular_velocity);
+    }
+  } else {
+    // Diff drive mode: Original pure pursuit behavior
+    double linear_vel = params_.desired_linear_velocity;
+    double curvature =
+        geometry_util::calcCurvature(lookahead_pose.pose.position);
+    double angular_vel = linear_vel * curvature;
+
+    cmd_vel.twist.linear.x = linear_vel;
+    cmd_vel.twist.linear.y = 0.0;
+    cmd_vel.twist.angular.z = angular_vel;
+  }
 
   output.cmd_vel = cmd_vel;
 

@@ -3,6 +3,7 @@
 #include "geometry_util.hpp"
 #include "pure_pursuit.hpp"
 #include "tf2/exceptions.h"
+#include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace follower_action_server {
@@ -12,6 +13,9 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
 
   declare_parameter("lookahead_distance", 2.0);
   declare_parameter("desired_linear_velocity", 0.2);
+  declare_parameter("max_angular_velocity", 1.0);
+  declare_parameter("heading_alignment_tolerance", 0.2);
+  declare_parameter("enable_swerve_motion", true);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
   declare_parameter("odom_topic", "base_link");
   declare_parameter("map_frame", "map");
@@ -291,6 +295,11 @@ void FollowerActionServer::execute_navigate(
   params.lookahead_distance = get_parameter("lookahead_distance").as_double();
   params.desired_linear_velocity =
       get_parameter("desired_linear_velocity").as_double();
+  params.max_angular_velocity =
+      get_parameter("max_angular_velocity").as_double();
+  params.heading_alignment_tolerance =
+      get_parameter("heading_alignment_tolerance").as_double();
+  params.enable_swerve_motion = get_parameter("enable_swerve_motion").as_bool();
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   pure_pursuit.setPath(path);
@@ -298,6 +307,12 @@ void FollowerActionServer::execute_navigate(
               params.lookahead_distance);
   RCLCPP_INFO(this->get_logger(), "Desired linear velocity: %f",
               params.desired_linear_velocity);
+  RCLCPP_INFO(this->get_logger(), "Max angular velocity: %f",
+              params.max_angular_velocity);
+  RCLCPP_INFO(this->get_logger(), "Heading alignment tolerance: %f rad",
+              params.heading_alignment_tolerance);
+  RCLCPP_INFO(this->get_logger(), "swerve motion enabled: %s",
+              params.enable_swerve_motion ? "true" : "false");
   RCLCPP_INFO(this->get_logger(), "Following path with %ld poses",
               path.poses.size());
 
@@ -331,11 +346,54 @@ void FollowerActionServer::execute_navigate(
             heading_error < get_parameter("goal_heading_tolerance").as_double();
 
         if (!heading_satisfied) {
-          RCLCPP_DEBUG(this->get_logger(),
-                       "Position reached but heading error %.3f rad exceeds "
-                       "tolerance %.3f rad",
-                       heading_error,
-                       get_parameter("goal_heading_tolerance").as_double());
+          // For swerve drive, perform in-place turning to align heading
+          if (get_parameter("enable_swerve_motion").as_bool()) {
+            // Calculate signed heading error for proper turn direction
+            tf2::Quaternion current_quat, goal_quat;
+            tf2::fromMsg(current_pose_map_frame_.pose.orientation,
+                         current_quat);
+            tf2::fromMsg(goal_pose.pose.orientation, goal_quat);
+
+            double current_yaw = tf2::getYaw(current_quat);
+            double goal_yaw = tf2::getYaw(goal_quat);
+            double signed_error = goal_yaw - current_yaw;
+
+            // Normalize to [-pi, pi]
+            while (signed_error > M_PI)
+              signed_error -= 2.0 * M_PI;
+            while (signed_error < -M_PI)
+              signed_error += 2.0 * M_PI;
+
+            geometry_msgs::msg::TwistStamped align_cmd;
+            align_cmd.header.stamp = get_clock()->now();
+            align_cmd.twist.linear.x = 0.0;
+            align_cmd.twist.linear.y = 0.0;
+            align_cmd.twist.angular.z =
+                std::clamp(signed_error * 2.0, // Proportional control
+                           -get_parameter("max_angular_velocity").as_double(),
+                           get_parameter("max_angular_velocity").as_double());
+
+            if (stamped_) {
+              cmd_vel_stamped_pub_->publish(align_cmd);
+            } else {
+              cmd_vel_pub_->publish(align_cmd.twist);
+            }
+
+            RCLCPP_DEBUG(
+                this->get_logger(),
+                "Aligning final heading: error %.3f rad, omega %.3f rad/s",
+                signed_error, align_cmd.twist.angular.z);
+
+            goal_handle->publish_feedback(feedback);
+            rate.sleep();
+            continue;
+          } else {
+            RCLCPP_DEBUG(this->get_logger(),
+                         "Position reached but heading error %.3f rad exceeds "
+                         "tolerance %.3f rad",
+                         heading_error,
+                         get_parameter("goal_heading_tolerance").as_double());
+          }
         }
       }
 
