@@ -10,19 +10,16 @@ def generate_launch_description():
         "ekf_redemption.yaml",
     )
 
-    # LOCAL EKF: publishes odom -> base_link, and /odometry/filtered_local
+    # LOCAL EKF: publishes odom -> base_link, and /odometry/filtered
     ekf_node_local = launch_ros.actions.Node(
         package="robot_localization",
         executable="ekf_node",
         name="ekf_filter_node",
         output="screen",
         parameters=[params],
-        remappings=[
-            ("odometry/filtered", "/odometry/filtered_local"),
-        ],
     )
 
-    # NAVSAT: consumes /odometry/filtered_local, publishes /odometry/gps
+    # NAVSAT: consumes /odometry/filtered, publishes /odometry/gps
     navsat = launch_ros.actions.Node(
         package="robot_localization",
         executable="navsat_transform_node",
@@ -30,17 +27,17 @@ def generate_launch_description():
         output="screen",
         parameters=[params],
         remappings=[
-            ("imu/data", "/imu/fused"),
+            ("imu", "/imu/fused"),
             ("gps/fix", "/gps/covariances"),
-            ("odometry/filtered", "/odometry/filtered_local"),
         ],
     )
 
-    # GLOBAL EKF: consumes /odometry/gps + /odometry/filtered_local
+    # GLOBAL EKF: consumes /odometry/gps + /odometry/filtered
     # publishes map -> odom and /odometry/filtered_global
     ekf_node_global = launch_ros.actions.Node(
         package="robot_localization",
         executable="ekf_node",
+        namespace="global",
         name="ekf_filter_node_global",
         output="screen",
         parameters=[params],

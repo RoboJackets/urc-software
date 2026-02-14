@@ -107,20 +107,14 @@ def generate_launch_description():
         output="screen",
     )
 
-
-    rover_pose_bridge = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RoverPoseBridge",
-        name="rover_pose_bridge",
-        parameters=[
-            {
-                "tf_topic": "/ground_truth_pose",
-                "rover_pos_topic": "/rover_ground_truth",
-                "use_sim_time": True,
-            }
-        ],
-        output="screen",
+    launch_ekf = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(path_urc_localization, "launch", "ekf.launch.py")
+        )
     )
+
+
+   
 
     rocker_tf_broadcaster = Node(
         package="urc_bringup",
@@ -225,6 +219,7 @@ def generate_launch_description():
             robot_state_publisher_node,
             covariances_on_imu,
             covariances_on_gps,
+            launch_ekf,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,

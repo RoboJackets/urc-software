@@ -171,7 +171,7 @@
      <gazebo reference="gps_link">
         <sensor name="gps" type="navsat">
             <always_on>1</always_on>
-            <update_rate>1</update_rate>
+            <update_rate>2</update_rate>
             <visualize>true</visualize>
             <topic>gps</topic>
             <!-- Ensure downstream messages can use this frame name -->
@@ -181,25 +181,24 @@
                     <noise>
                         <type>gaussian</type>
                         <mean>0.0</mean>
-                        <stddev>0.00001</stddev>
+                        <stddev>0.15</stddev>
                     </noise>
                 </latitude>
                 <longitude>
                     <noise>
                         <type>gaussian</type>
                         <mean>0.0</mean>
-                        <stddev>0.00001</stddev>
+                        <stddev>0.15</stddev>
                     </noise>
                 </longitude>
                 <altitude>
                     <noise>
                         <type>gaussian</type>
                         <mean>0.0</mean>
-                        <stddev>0.1</stddev>
+                        <stddev>0.15</stddev>
                     </noise>
                 </altitude>
             </navsat>
         </sensor>
     </gazebo>
 </robot>
-

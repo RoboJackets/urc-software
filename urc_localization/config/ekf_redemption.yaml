@@ -1,9 +1,9 @@
 ekf_filter_node:
   ros__parameters:
     # Timing
-    frequency: 15.0
+    frequency: 30.0
     sensor_timeout: 5.0
-    two_d_mode: false
+    two_d_mode: true
     use_sim_time: true
 
     # Frames
@@ -20,7 +20,7 @@ ekf_filter_node:
     imu0_queue_size: 20
     imu0_differential: false
     imu0_relative: false
-    imu0_remove_gravitational_acceleration: false
+    imu0_remove_gravitational_acceleration: true
     print_diagnostics: true
     # State order (15):
     # [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
@@ -29,17 +29,17 @@ ekf_filter_node:
         false, # x
         false, # y
         false, # z
-        true, # roll
-        true, # pitch
+        false, # roll
+        false, # pitch
         true, # yaw
         false, # vx
         false, # vy
         false, # vz
-        true, # vroll
-        true, # vpitch
+        false, # vroll
+        false, # vpitch
         true, # vyaw
-        false, # ax
-        false, # ay
+        true, # ax
+        true, # ay
         false, # az
       ]
     odom0: /odom
@@ -52,8 +52,8 @@ ekf_filter_node:
       [
         true,
         true,
-        false,
-        false,
+        true,
+        true,
         false,
         false,
         true,
@@ -67,10 +67,24 @@ ekf_filter_node:
         false,
       ]
 
-ekf_filter_node_global:
+navsat_transform:
+  ros__parameters:
+    frequency: 30.0
+    use_sim_time: true
+    # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
+    delay: 2.0
+    magnetic_declination_radians: 0.06736971
+    yaw_offset: 0.0
+    zero_altitude: true
+    broadcast_cartesian_transform: false
+    publish_filtered_gps: true
+    use_odometry_yaw: false
+    wait_for_datum: false
+
+/global/ekf_filter_node_global:
   ros__parameters:
     # Timing
-    frequency: 15.0
+    frequency: 10.0
     sensor_timeout: 5.0
     two_d_mode: true
     use_sim_time: true
@@ -84,11 +98,11 @@ ekf_filter_node_global:
     # TF
     publish_tf: true
 
+    # GPS absolute position from navsat_transform
     odom0: /odometry/gps
     odom0_queue_size: 10
     odom0_differential: false
     odom0_relative: false
-    # [x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az]
     odom0_config:
       [
         true,
@@ -108,22 +122,20 @@ ekf_filter_node_global:
         false,
       ]
 
-    odom1: /odometry/filtered_local
+    # Local EKF for smooth yaw/velocity
+    odom1: /odometry/filtered
     odom1_queue_size: 10
     odom1_differential: false
-    # Local EKF is in the drifting odom frame: use it as relative motion input,
-    # not as an absolute global position source.
-    odom1_relative: true
-    # [x y z roll pitch yaw vx vy vz vroll vpitch vyaw ax ay az]
+    odom1_relative: false
     odom1_config: [
-        false, #x
-        false, #y
+        true, #x
+        true, #y
         false, #z
         false, #roll
         false, #pitch
         true, #yaw
-        false, #vx
-        false, #vy
+        true, #vx
+        true, #vy
         false, #vz
         false, #vroll
         false, #vpitch
@@ -132,17 +144,3 @@ ekf_filter_node_global:
         false, #ay
         false, #az
       ]
-
-navsat_transform:
-  ros__parameters:
-    frequency: 30.0
-    use_sim_time: true
-    # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
-    delay: 2.0
-    magnetic_declination_radians: 0.06736971
-    yaw_offset: 0.0
-    zero_altitude: true
-    broadcast_cartesian_transform: true
-    publish_filtered_gps: true
-    use_odometry_yaw: true
-    wait_for_datum: false
