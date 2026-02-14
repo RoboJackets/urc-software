@@ -3,7 +3,7 @@ ekf_filter_node:
     # Timing
     frequency: 30.0
     sensor_timeout: 5.0
-    two_d_mode: true
+    two_d_mode: false
     use_sim_time: true
 
     # Frames
@@ -128,14 +128,14 @@ navsat_transform:
     odom1_differential: false
     odom1_relative: false
     odom1_config: [
-        true, #x
-        true, #y
+        false, #x
+        false, #y
         false, #z
         false, #roll
         false, #pitch
         true, #yaw
-        true, #vx
-        true, #vy
+        false, #vx
+        false, #vy
         false, #vz
         false, #vroll
         false, #vpitch

@@ -19,7 +19,7 @@ def generate_launch_description():
         parameters=[params],
     )
 
-    # NAVSAT: consumes /odometry/filtered, publishes /odometry/gps
+    # NAVSAT: consumes /odometry/filtered_global, publishes /odometry/gps
     navsat = launch_ros.actions.Node(
         package="robot_localization",
         executable="navsat_transform_node",
@@ -29,6 +29,9 @@ def generate_launch_description():
         remappings=[
             ("imu", "/imu/fused"),
             ("gps/fix", "/gps/covariances"),
+            # navsat_transform's /odometry/gps frame_id follows its odometry input frame.
+            # Feed the map-frame global EKF output so /odometry/gps is in map.
+            ("odometry/filtered", "/odometry/filtered_global"),
         ],
     )
 
