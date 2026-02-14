@@ -39,7 +39,7 @@ void CovariancesOnGps::handleGps(const sensor_msgs::msg::NavSatFix::SharedPtr ms
   // Keep covariance in realistic meter^2 units for EKF weighting.
   output.position_covariance[0] = 0.15 * 0.15;  // x variance (m^2)
   output.position_covariance[4] = 0.15 * 0.15;  // y variance (m^2)
-  output.position_covariance[8] = 1 * 1;  // z variance (m^2)
+  output.position_covariance[8] = 2 * 2;  // z variance (m^2)
   output.position_covariance_type = sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_DIAGONAL_KNOWN;
 
   gps_publisher_->publish(output);

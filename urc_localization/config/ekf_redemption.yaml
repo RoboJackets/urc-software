@@ -29,17 +29,17 @@ ekf_filter_node:
         false, # x
         false, # y
         false, # z
-        false, # roll
-        false, # pitch
+        true, # roll
+        true, # pitch
         true, # yaw
         false, # vx
         false, # vy
         false, # vz
-        false, # vroll
-        false, # vpitch
+        true, # vroll
+        true, # vpitch
         true, # vyaw
-        true, # ax
-        true, # ay
+        false, # ax
+        false, # ay
         false, # az
       ]
     odom0: /odom
@@ -53,7 +53,7 @@ ekf_filter_node:
         true,
         true,
         true,
-        true,
+        false,
         false,
         false,
         true,
@@ -71,7 +71,6 @@ navsat_transform:
   ros__parameters:
     frequency: 30.0
     use_sim_time: true
-    # Delay time, in seconds, before we calculate the transform from the UTM frame to your world frame.
     delay: 2.0
     magnetic_declination_radians: 0.06736971
     yaw_offset: 0.0
@@ -86,7 +85,7 @@ navsat_transform:
     # Timing
     frequency: 10.0
     sensor_timeout: 5.0
-    two_d_mode: true
+    two_d_mode: false
     use_sim_time: true
 
     # Frames
@@ -107,7 +106,7 @@ navsat_transform:
       [
         true,
         true,
-        false,
+        true,
         false,
         false,
         false,
@@ -134,9 +133,9 @@ navsat_transform:
         false, #roll
         false, #pitch
         true, #yaw
-        false, #vx
-        false, #vy
-        false, #vz
+        true, #vx
+        true, #vy
+        true, #vz
         false, #vroll
         false, #vpitch
         true, #vyaw
