@@ -20,7 +20,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/OrientationPoses.msg"
   "srv/GeneratePlan.srv"
   "msg/RoverPoses.msg"
-  "action/FollowPath.action"
+  "action/NavigateToWaypoint.action"
 
   DEPENDENCIES
   rclcpp

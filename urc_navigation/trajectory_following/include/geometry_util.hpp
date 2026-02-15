@@ -2,6 +2,7 @@
 #define GEOMETRY_UTIL_HPP_
 
 #include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
 
 namespace geometry_util
 {
@@ -28,6 +29,16 @@ double calcCurvature(const geometry_msgs::msg::Point & lookahead);
 geometry_msgs::msg::Point circleSegmentIntersection(
   const geometry_msgs::msg::Point & a,
   const geometry_msgs::msg::Point & b, double r);
+
+/**
+   * @brief Calculate the shortest angular difference between two quaternions (in radians).
+   * @param q1 The first quaternion
+   * @param q2 The second quaternion
+   * @return The absolute angular difference in radians [0, pi]
+   */
+double angularDistance(
+  const geometry_msgs::msg::Quaternion & q1,
+  const geometry_msgs::msg::Quaternion & q2);
 
 } // namespace geometry_util
 

@@ -1,25 +1,29 @@
 #include "follower_action_server.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_util.hpp"
 #include "pure_pursuit.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "tf2/exceptions.h"
+#include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-namespace follower_action_server
-{
-FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
-: Node("follower_action_server", options)
-{
+namespace follower_action_server {
+FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
+    : Node("follower_action_server", options) {
   RCLCPP_INFO(this->get_logger(), "Follower node has been started.");
 
-  declare_parameter("lookahead_distance", 1.0);
-  declare_parameter("desired_linear_velocity", 0.5);
+  declare_parameter("lookahead_distance", 2.0);
+  declare_parameter("desired_linear_velocity", 0.2);
+  declare_parameter("max_angular_velocity", 1.0);
+  declare_parameter("heading_alignment_tolerance", 0.2);
+  declare_parameter("enable_swerve_motion", true);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
-  declare_parameter("odom_topic", "/odom");
+  declare_parameter("odom_topic", "base_link");
   declare_parameter("map_frame", "map");
-  declare_parameter("goal_tolerance", 0.1);
+  declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
   declare_parameter("lethal_cost_threshold", 50);
+  declare_parameter("enforce_goal_heading", false);
+  declare_parameter("goal_heading_tolerance", 0.1);
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -27,109 +31,120 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   stamped_ = get_parameter("cmd_vel_stamped").as_bool();
 
   if (stamped_) {
-    cmd_vel_stamped_pub_ =
-      create_publisher<geometry_msgs::msg::TwistStamped>(
-      get_parameter(
-        "cmd_vel_topic")
-      .as_string(),
-      10);
+    cmd_vel_stamped_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
+        get_parameter("cmd_vel_topic").as_string(), 10);
   } else {
     cmd_vel_pub_ = create_publisher<geometry_msgs::msg::Twist>(
-      get_parameter(
-        "cmd_vel_topic")
-      .as_string(),
-      10);
+        get_parameter("cmd_vel_topic").as_string(), 10);
   }
 
-  carrot_pub_ = create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
-  marker_pub_ = create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
+  carrot_pub_ =
+      create_publisher<geometry_msgs::msg::PointStamped>("carrot", 10);
+  marker_pub_ =
+      create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
 
   odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
-    get_parameter("odom_topic").as_string(),
-    10,
-    [this](const nav_msgs::msg::Odometry::SharedPtr msg)
-    {
-      geometry_msgs::msg::PoseStamped pose;
-      pose.header = msg->header;
-      pose.pose = msg->pose.pose;
-      current_pose_ = pose;
-    });
+      get_parameter("odom_topic").as_string(), 10,
+      [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
+        geometry_msgs::msg::PoseStamped pose;
+        pose.header = msg->header;
+        pose.pose = msg->pose.pose;
+        current_pose_ = pose;
+      });
 
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
-    "/costmap",
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&FollowerActionServer::handleCostmap, this, std::placeholders::_1));
+      "/costmap", rclcpp::SystemDefaultsQoS(),
+      std::bind(&FollowerActionServer::handleCostmap, this,
+                std::placeholders::_1));
 
-  // Create an action server for the follow_path action
-  follow_path_server_ = rclcpp_action::create_server<urc_msgs::action::FollowPath>(
-    this,
-    "follow_path",
-    std::bind(
-      &FollowerActionServer::handle_goal, this, std::placeholders::_1,
-      std::placeholders::_2),
-    std::bind(&FollowerActionServer::handle_cancel, this, std::placeholders::_1),
-    std::bind(&FollowerActionServer::handle_accepted, this, std::placeholders::_1));
+  // Create an action server for the navigate_to_waypoint action
+  navigate_server_ =
+      rclcpp_action::create_server<urc_msgs::action::NavigateToWaypoint>(
+          this, "navigate_to_waypoint",
+          std::bind(&FollowerActionServer::handle_navigate_goal, this,
+                    std::placeholders::_1, std::placeholders::_2),
+          std::bind(&FollowerActionServer::handle_navigate_cancel, this,
+                    std::placeholders::_1),
+          std::bind(&FollowerActionServer::handle_navigate_accepted, this,
+                    std::placeholders::_1));
+
+  // Create a client for the path planning service
+  planning_client_ = create_client<urc_msgs::srv::GeneratePlan>("plan");
+
+  rover_position_pub_ =
+      create_publisher<geometry_msgs::msg::PointStamped>("rover_position", 10);
 }
 
-void FollowerActionServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
-{
+void FollowerActionServer::handleCostmap(
+    const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
   current_costmap_ = *msg;
 }
 
-geometry_msgs::msg::TransformStamped FollowerActionServer::lookup_transform(
-  std::string target_frame, std::string source_frame)
-{
+geometry_msgs::msg::TransformStamped
+FollowerActionServer::lookup_transform(std::string target_frame,
+                                       std::string source_frame) {
   geometry_msgs::msg::TransformStamped transform;
   try {
-    transform = tf_buffer_->lookupTransform(target_frame, source_frame, tf2::TimePointZero);
-  } catch (tf2::TransformException & ex) {
-    RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s", ex.what());
+    // RCLCPP_INFO(this->get_logger(), "Looking up transform from %s to %s",
+    // source_frame.c_str(), target_frame.c_str());
+    transform = tf_buffer_->lookupTransform(target_frame, source_frame,
+                                            tf2::TimePointZero);
+  } catch (tf2::TransformException &ex) {
+    RCLCPP_ERROR(this->get_logger(), "Could not lookup transform: %s",
+                 ex.what());
   }
   return transform;
 }
 
-FollowerActionServer::~FollowerActionServer()
-{
+FollowerActionServer::~FollowerActionServer() {
   RCLCPP_INFO(this->get_logger(), "Follower action server has been stopped.");
 }
 
-rclcpp_action::GoalResponse FollowerActionServer::handle_goal(
-  const rclcpp_action::GoalUUID & uuid,
-  std::shared_ptr<const urc_msgs::action::FollowPath::Goal> goal)
-{
-  RCLCPP_INFO(this->get_logger(), "Received goal request");
+rclcpp_action::GoalResponse FollowerActionServer::handle_navigate_goal(
+    const rclcpp_action::GoalUUID &uuid,
+    std::shared_ptr<const urc_msgs::action::NavigateToWaypoint::Goal> goal) {
+  RCLCPP_INFO(this->get_logger(), "Received navigate to waypoint goal request");
 
   (void)uuid;
-  (void)goal;
+
+  if (!goal->has_path && !goal->has_goal) {
+    RCLCPP_ERROR(this->get_logger(), "Neither path nor goal provided");
+    return rclcpp_action::GoalResponse::REJECT;
+  }
+
+  if (goal->has_goal && !planning_client_->service_is_ready()) {
+    RCLCPP_WARN(this->get_logger(), "Planning service not available");
+    return rclcpp_action::GoalResponse::REJECT;
+  }
 
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
-rclcpp_action::CancelResponse FollowerActionServer::handle_cancel(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
-{
-  RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
+rclcpp_action::CancelResponse FollowerActionServer::handle_navigate_cancel(
+    const std::shared_ptr<
+        rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>>
+        goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Received request to cancel navigate goal");
 
   (void)goal_handle;
 
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 
-void FollowerActionServer::handle_accepted(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
-{
-  // this needs to return quickly to avoid blocking the executor, so spin up a new thread
-  std::thread{std::bind(&FollowerActionServer::execute, this, std::placeholders::_1),
-    goal_handle}
-  .detach();
+void FollowerActionServer::handle_navigate_accepted(
+    const std::shared_ptr<
+        rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>>
+        goal_handle) {
+  std::thread{std::bind(&FollowerActionServer::execute_navigate, this,
+                        std::placeholders::_1),
+              goal_handle}
+      .detach();
 }
 
-visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
-  double x, double y,
-  double radius,
-  std::string frame_id)
-{
+visualization_msgs::msg::Marker
+FollowerActionServer::create_lookahead_circle(double x, double y, double radius,
+                                              std::string frame_id) {
   visualization_msgs::msg::Marker circle;
   circle.header.frame_id = frame_id;
   circle.header.stamp = get_clock()->now();
@@ -160,8 +175,7 @@ visualization_msgs::msg::Marker FollowerActionServer::create_lookahead_circle(
   return circle;
 }
 
-void FollowerActionServer::publishZeroVelocity()
-{
+void FollowerActionServer::publishZeroVelocity() {
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header.stamp = get_clock()->now();
   cmd_vel.twist.linear.x = 0.0;
@@ -174,67 +188,262 @@ void FollowerActionServer::publishZeroVelocity()
   }
 }
 
-int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y)
-{
+int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid &costmap,
+                                  double x, double y) {
   int map_x = (x - costmap.info.origin.position.x) / costmap.info.resolution;
   int map_y = (y - costmap.info.origin.position.y) / costmap.info.resolution;
 
-  if (map_x < 0 || map_x >= costmap.info.width || map_y < 0 || map_y >= costmap.info.height) {
+  if (map_x < 0 || (unsigned int)map_x >= costmap.info.width || map_y < 0 ||
+      (unsigned int)map_y >= costmap.info.height) {
     return 0;
   }
 
   return costmap.data[map_y * costmap.info.width + map_x];
 }
 
-void FollowerActionServer::execute(
-  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::FollowPath>> goal_handle)
-{
-  RCLCPP_INFO(this->get_logger(), "Executing goal");
+nav_msgs::msg::Path FollowerActionServer::callPlanningService(
+    const geometry_msgs::msg::PoseStamped &start,
+    const geometry_msgs::msg::PoseStamped &goal, bool &success) {
+  auto request = std::make_shared<urc_msgs::srv::GeneratePlan::Request>();
+  request->start = start;
+  request->goal = goal;
 
-  auto feedback = std::make_shared<urc_msgs::action::FollowPath::Feedback>();
+  RCLCPP_INFO(this->get_logger(), "Calling planning service...");
+
+  auto result = planning_client_->async_send_request(request);
+
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(),
+                                         result, std::chrono::seconds(10)) ==
+      rclcpp::FutureReturnCode::SUCCESS) {
+    auto response = result.get();
+    if (response->error_code ==
+        urc_msgs::srv::GeneratePlan::Response::SUCCESS) {
+      RCLCPP_INFO(this->get_logger(), "Planning successful, path has %ld poses",
+                  response->path.poses.size());
+      success = true;
+      return response->path;
+    } else {
+      RCLCPP_ERROR(this->get_logger(), "Planning failed with error code %d",
+                   response->error_code);
+      success = false;
+      return nav_msgs::msg::Path();
+    }
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Planning service call timed out");
+    success = false;
+    return nav_msgs::msg::Path();
+  }
+}
+
+void FollowerActionServer::execute_navigate(
+    const std::shared_ptr<
+        rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>>
+        goal_handle) {
+  RCLCPP_INFO(this->get_logger(), "Executing navigate to waypoint goal");
+
+  auto feedback =
+      std::make_shared<urc_msgs::action::NavigateToWaypoint::Feedback>();
   feedback->distance_to_goal = std::numeric_limits<double>::max();
+  feedback->is_planning = false;
+  feedback->replan_count = 0;
 
-  auto result = std::make_shared<urc_msgs::action::FollowPath::Result>();
-  auto & path = goal_handle->get_goal()->path;
+  auto result =
+      std::make_shared<urc_msgs::action::NavigateToWaypoint::Result>();
+  const auto &goal_msg = goal_handle->get_goal();
+
+  // Determine if we should enforce goal heading (from request or config)
+  bool enforce_heading = goal_msg->enforce_goal_heading ||
+                         get_parameter("enforce_goal_heading").as_bool();
+
+  nav_msgs::msg::Path path;
+  geometry_msgs::msg::PoseStamped goal_pose;
+
+  // Determine the path to follow
+  if (goal_msg->has_goal) {
+    // Need to call planning service
+    feedback->is_planning = true;
+    goal_handle->publish_feedback(feedback);
+
+    goal_pose = goal_msg->goal;
+
+    geometry_msgs::msg::PoseStamped start_pose;
+    start_pose.header = current_pose_.header;
+    start_pose.pose = current_pose_.pose;
+
+    bool planning_success = false;
+    path = callPlanningService(start_pose, goal_pose, planning_success);
+
+    feedback->is_planning = false;
+
+    if (!planning_success || path.poses.empty()) {
+      result->error_code =
+          urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+      goal_handle->abort(result);
+      RCLCPP_ERROR(this->get_logger(), "Initial planning failed");
+      publishZeroVelocity();
+      return;
+    }
+  } else {
+    // Use provided path
+    path = goal_msg->path;
+    goal_pose.header = path.header;
+    goal_pose.pose = path.poses.back().pose;
+  }
 
   // Create a PurePursuit object
   pure_pursuit::PurePursuitParams params;
   params.lookahead_distance = get_parameter("lookahead_distance").as_double();
-  params.desired_linear_velocity = get_parameter("desired_linear_velocity").as_double();
+  params.desired_linear_velocity =
+      get_parameter("desired_linear_velocity").as_double();
+  params.max_angular_velocity =
+      get_parameter("max_angular_velocity").as_double();
+  params.heading_alignment_tolerance =
+      get_parameter("heading_alignment_tolerance").as_double();
+  params.enable_swerve_motion = get_parameter("enable_swerve_motion").as_bool();
   pure_pursuit::PurePursuit pure_pursuit(params);
 
   pure_pursuit.setPath(path);
+  RCLCPP_INFO(this->get_logger(), "Lookahead distance: %f",
+              params.lookahead_distance);
+  RCLCPP_INFO(this->get_logger(), "Desired linear velocity: %f",
+              params.desired_linear_velocity);
+  RCLCPP_INFO(this->get_logger(), "Max angular velocity: %f",
+              params.max_angular_velocity);
+  RCLCPP_INFO(this->get_logger(), "Heading alignment tolerance: %f rad",
+              params.heading_alignment_tolerance);
+  RCLCPP_INFO(this->get_logger(), "swerve motion enabled: %s",
+              params.enable_swerve_motion ? "true" : "false");
+  RCLCPP_INFO(this->get_logger(), "Following path with %ld poses",
+              path.poses.size());
 
   pure_pursuit::PurePursuitOutput output;
   rclcpp::Rate rate(10);
 
   while (rclcpp::ok()) {
+    // Get current pose in map frame at the start of each iteration
+    auto odom_to_map_ =
+        lookup_transform(get_parameter("map_frame").as_string(), "base_link");
+    geometry_msgs::msg::PoseStamped current_pose_map_frame_;
+    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+
+    // Update feedback distance
+    feedback->distance_to_goal = geometry_util::dist2D(
+        current_pose_map_frame_.pose.position, goal_pose.pose.position);
+
     if (goal_handle->is_canceling()) {
       goal_handle->canceled(result);
       RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
       break;
-    } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
-      result->error_code = urc_msgs::action::FollowPath::Result::SUCCESS;
-      goal_handle->succeed(result);
-      RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
-      break;
-    } else if (getCost(
-        current_costmap_, output.lookahead_point.point.x,
-        output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
-    {
-      result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
-      goal_handle->abort(result);
-      RCLCPP_INFO(this->get_logger(), "Obstacle detected!");
-      break;
+    } else if (feedback->distance_to_goal <
+               get_parameter("goal_tolerance").as_double()) {
+      bool heading_satisfied = true;
+
+      if (enforce_heading) {
+        double heading_error = geometry_util::angularDistance(
+            current_pose_map_frame_.pose.orientation,
+            goal_pose.pose.orientation);
+        heading_satisfied =
+            heading_error < get_parameter("goal_heading_tolerance").as_double();
+
+        if (!heading_satisfied) {
+          // For swerve drive, perform in-place turning to align heading
+          if (get_parameter("enable_swerve_motion").as_bool()) {
+            // Calculate signed heading error for proper turn direction
+            tf2::Quaternion current_quat, goal_quat;
+            tf2::fromMsg(current_pose_map_frame_.pose.orientation,
+                         current_quat);
+            tf2::fromMsg(goal_pose.pose.orientation, goal_quat);
+
+            double current_yaw = tf2::getYaw(current_quat);
+            double goal_yaw = tf2::getYaw(goal_quat);
+            double signed_error = goal_yaw - current_yaw;
+
+            // Normalize to [-pi, pi]
+            while (signed_error > M_PI)
+              signed_error -= 2.0 * M_PI;
+            while (signed_error < -M_PI)
+              signed_error += 2.0 * M_PI;
+
+            geometry_msgs::msg::TwistStamped align_cmd;
+            align_cmd.header.stamp = get_clock()->now();
+            align_cmd.twist.linear.x = 0.0;
+            align_cmd.twist.linear.y = 0.0;
+            align_cmd.twist.angular.z =
+                std::clamp(signed_error * 2.0, // Proportional control
+                           -get_parameter("max_angular_velocity").as_double(),
+                           get_parameter("max_angular_velocity").as_double());
+
+            if (stamped_) {
+              cmd_vel_stamped_pub_->publish(align_cmd);
+            } else {
+              cmd_vel_pub_->publish(align_cmd.twist);
+            }
+
+            RCLCPP_DEBUG(
+                this->get_logger(),
+                "Aligning final heading: error %.3f rad, omega %.3f rad/s",
+                signed_error, align_cmd.twist.angular.z);
+
+            goal_handle->publish_feedback(feedback);
+            rate.sleep();
+            continue;
+          } else {
+            RCLCPP_DEBUG(this->get_logger(),
+                         "Position reached but heading error %.3f rad exceeds "
+                         "tolerance %.3f rad",
+                         heading_error,
+                         get_parameter("goal_heading_tolerance").as_double());
+          }
+        }
+      }
+
+      if (heading_satisfied) {
+        result->error_code =
+            urc_msgs::action::NavigateToWaypoint::Result::SUCCESS;
+        goal_handle->succeed(result);
+        RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
+        break;
+      }
+    } else if (getCost(current_costmap_, output.lookahead_point.point.x,
+                       output.lookahead_point.point.y) >
+               get_parameter("lethal_cost_threshold").as_int()) {
+      // Obstacle detected - attempt to re-plan
+      RCLCPP_WARN(this->get_logger(),
+                  "Obstacle detected! Attempting to re-plan...");
+
+      feedback->is_planning = true;
+      feedback->replan_count++;
+      goal_handle->publish_feedback(feedback);
+
+      geometry_msgs::msg::PoseStamped start_pose;
+      start_pose.header = current_pose_.header;
+      start_pose.pose = current_pose_.pose;
+
+      bool planning_success = false;
+      nav_msgs::msg::Path new_path =
+          callPlanningService(start_pose, goal_pose, planning_success);
+
+      feedback->is_planning = false;
+
+      if (!planning_success || new_path.poses.empty()) {
+        result->error_code =
+            urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+        goal_handle->abort(result);
+        RCLCPP_ERROR(this->get_logger(), "Re-planning failed");
+        break;
+      }
+
+      // Update the path and continue
+      path = new_path;
+      pure_pursuit.setPath(path);
+      RCLCPP_INFO(this->get_logger(),
+                  "Re-planning successful, following new path with %ld poses",
+                  path.poses.size());
     }
 
-    output =
-      pure_pursuit.getCommandVelocity(
-      lookup_transform(
-        "base_link",
-        get_parameter("map_frame").as_string()));
-
-    auto odom_to_map_ = lookup_transform(get_parameter("map_frame").as_string(), "odom");
+    output = pure_pursuit.getCommandVelocity(
+        this->get_logger(),
+        lookup_transform("base_link", get_parameter("map_frame").as_string()));
 
     if (stamped_) {
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
@@ -242,21 +451,22 @@ void FollowerActionServer::execute(
       cmd_vel_pub_->publish(output.cmd_vel.twist);
     }
 
-    geometry_msgs::msg::PoseStamped current_pose_map_frame_;
-    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+    // Publish rover position as PointStamped for rqt_plot
+    geometry_msgs::msg::PointStamped rover_point;
+    rover_point.header = current_pose_map_frame_.header;
+    rover_point.point = current_pose_map_frame_.pose.position;
+    rover_position_pub_->publish(rover_point);
 
-    auto circle =
-      create_lookahead_circle(
-      current_pose_map_frame_.pose.position.x, current_pose_map_frame_.pose.position.y,
-      params.lookahead_distance, get_parameter("map_frame").as_string());
+    auto circle = create_lookahead_circle(
+        current_pose_map_frame_.pose.position.x,
+        current_pose_map_frame_.pose.position.y, params.lookahead_distance,
+        get_parameter("map_frame").as_string());
     marker_pub_->publish(circle);
 
     // Publish the carrot point
     carrot_pub_->publish(output.lookahead_point);
 
     // Publish feedback
-    feedback->distance_to_goal =
-      geometry_util::dist2D(current_pose_map_frame_.pose.position, path.poses.back().pose.position);
     goal_handle->publish_feedback(feedback);
 
     rate.sleep();
@@ -265,7 +475,7 @@ void FollowerActionServer::execute(
   publishZeroVelocity();
 }
 
-} // namespace follower_node
+} // namespace follower_action_server
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(follower_action_server::FollowerActionServer)

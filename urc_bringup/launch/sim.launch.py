@@ -122,9 +122,9 @@ def generate_launch_description():
             "-name",
             "walli",
             "-x",
-            "-20",
+            "0", # "-20",
             "-y",
-            "-15",
+            "0", # "-15",
             "-z",
             "1.5",
             "-R",
@@ -159,6 +159,16 @@ def generate_launch_description():
         ],
     )
 
+    follower_action_server_node = Node(
+        package="trajectory_following",
+        executable="trajectory_following_FollowerActionServer",
+        name="follower_action_server",
+        output="screen",
+        parameters=[
+            {"use_sim_time": True}
+        ],
+    )
+
     return LaunchDescription(
         [
             sim_world_arg,
@@ -170,6 +180,7 @@ def generate_launch_description():
             covariances_on_imu,
             rover_pose_bridge,
             spawn,
+            follower_action_server_node,
             # Start joint_state_broadcaster AFTER robot spawn
             RegisterEventHandler(
                 event_handler=OnProcessExit(
