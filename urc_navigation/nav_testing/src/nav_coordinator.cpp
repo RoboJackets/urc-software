@@ -46,12 +46,6 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     std::thread(std::bind(&NavCoordinator::sendPlannerRequest, this)).detach();
     */
 
-    // --- Follower Action Client --- //
-    follower_client_ = rclcpp_action::create_client<urc_msgs::action::FollowPath>(
-        this,
-        "/follow_path"
-    );
-
     // // --- NavCoordinator Timer Callback --- //
     // // one second timer callback
     // timer_ = this->create_wall_timer(
@@ -124,23 +118,11 @@ void NavCoordinator::executeTODO(
     // } else if (getCost(
     //     current_costmap_, output.lookahead_point.point.x,
     //     output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
-    } else if (TODO_obstacle_detected_condition || TODO_new_goal_received)    // repath
+    // } else if (TODO_obstacle_detected_condition || TODO_new_goal_received)    // repath
         {
-        // result->error_code = urc_msgs::action::FollowPath::Result::OBSTACLE_DETECTED;
-        // goal_handle->abort(result);
         RCLCPP_INFO(this->get_logger(), "Replanning Path: Obstacle detected!");
-        // hardcoded waypoint goal for testing
-        urc_msgs::action::FollowPath::Goal follower_goal;
-        
-        follower_goal.path.poses.pose.position.x = 0; 
-        follower_goal.path.poses.pose.position.y = 0;
-        follower_goal.path.poses.pose.position.z = 0;
-        follower_goal.path.poses.pose.orientation.x = 0;
-        follower_goal.path.poses.pose.orientation.y = 0;
-        follower_goal.path.poses.pose.orientation.z = 0;
-        follower_goal.path.poses.pose.orientation.w = 1;
-
-        sendPlannerRequest(follower_goal); 
+        // TODO: Call planner service to generate new path
+        sendPlannerRequest(); 
         break;
     } else if (TODO_path_planner_failure) {
         result->error_code = urc_msgs::action::TODO::Result::PLANNER_FAILURE;
@@ -161,8 +143,6 @@ void NavCoordinator::execute(
 
     auto result = std::make_shared<urc_msgs::action::NavToGoal::Result>();
     auto & path = goal_handle->get_goal()->path;
-    
-    sendNextPathPoint(goal_handle->get_goal()->path);
 
     while (rclcpp::ok()) {
     if (goal_handle->is_canceling()) {
@@ -208,82 +188,6 @@ void NavCoordinator::sendPlannerRequest()
     
 }
 */
-
-void NavCoordinator::sendNextPathPoint(urc_msgs::action::FollowPath::Goal follower_goal)
-{
-    rclcpp_action::Client<urc_msgs::action::FollowPath>::SendGoalOptions follower_goal_options;
-    follower_goal_options.goal_response_callback = std::bind(
-        &NavCoordinator::followerGoalResponseCallback, this, std::placeholders::_1);
-    follower_goal_options.feedback_callback = std::bind(
-        &NavCoordinator::followerFeedbackCallback, this, std::placeholders::_1, std::placeholders::_2);
-    follower_goal_options.result_callback = std::bind(
-        &NavCoordinator::followerResultCallback, this, std::placeholders::_1);
-
-    follower_client_->async_send_goal(follower_goal, follower_goal_options);
-}
-
-// ---- follower action  ---- //
-// void NavCoordinator::timerCallback()
-// {
-//     timer_->cancel(); //one-shot timer
-
-//     rclcpp_action::Client<urc_msgs::action::FollowPath>::SendGoalOptions follower_goal_options;
-//     follower_goal_options.goal_response_callback = std::bind(
-//         &NavCoordinator::followerGoalResponseCallback, this, std::placeholders::_1);
-//     follower_goal_options.feedback_callback = std::bind(
-//         &NavCoordinator::followerFeedbackCallback, this, std::placeholders::_1, std::placeholders::_2);
-//     follower_goal_options.result_callback = std::bind(
-//         &NavCoordinator::followerResultCallback, this, std::placeholders::_1);
-
-//     urc_msgs::action::FollowPath::Goal follower_goal;
-
-//     // TODO?
-
-//     follower_client_->async_send_goal(follower_goal, follower_goal_options);
-// }
-
-// --- follower action callbacks --- //
-void NavCoordinator::followerGoalResponseCallback(
-    const rclcpp_action::ClientGoalHandle<urc_msgs::action::FollowPath>::SharedPtr goal_handle) 
-{
-    if (!goal_handle) {
-        RCLCPP_ERROR(this->get_logger(), "Goal was rejected by the follower server");
-    } else {
-        RCLCPP_INFO(this->get_logger(), "Goal accepted by the follower server, waiting for result");
-    }
-}
-void NavCoordinator::followerFeedbackCallback(
-    rclcpp_action::ClientGoalHandle<urc_msgs::action::FollowPath>::SharedPtr,
-    const std::shared_ptr<const urc_msgs::action::FollowPath::Feedback> feedback) 
-{
-    RCLCPP_INFO(this->get_logger(), "Follower Feedback Distance to goal: %f", feedback->distance_to_goal); // potentially redudant
-}
-
-
-void NavCoordinator::followerResultCallback(
-    const rclcpp_action::ClientGoalHandle<urc_msgs::action::FollowPath>::WrappedResult & result)
-{
-    switch(result.code) {
-        case rclcpp_action::ResultCode::SUCCEEDED:
-            RCLCPP_INFO(this->get_logger(), "SUCCEEDED TODO");
-            break;
-        case rclcpp_action::ResultCode::ABORTED:
-            RCLCPP_ERROR(this->get_logger(), "ABORTED Error Code %d", result.result->error_code);
-            sendPlannerRequest(); // replan
-            break; // return ?
-        case rclcpp_action::ResultCode::CANCELED:
-            RCLCPP_ERROR(this->get_logger(), "CANCELED TODO");
-            break; // return ?
-        default:
-            RCLCPP_ERROR(this->get_logger(), "Unkown result code for follower client");
-            break; // return ?
-    }
-}
-
-Nav::~NavCoordinator()
-{
-    RCLCPP_INFO(this->get_logger(), "Nav Coordinator has been stopped.");
-}
 
 } // namespace nav_coordinator
 
