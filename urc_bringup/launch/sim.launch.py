@@ -93,6 +93,21 @@ def generate_launch_description():
         output="screen",
     )
 
+    ground_truth = Node(
+        package="urc_bringup",
+        executable="urc_bringup_GroundTruth",
+        name="ground_truth",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "target_child_frame": "walli",
+                "odom_frame_id": "map",
+                "base_frame_id": "walli",
+            }
+        ],
+        output="screen",
+    )
+
     covariances_on_gps = Node(
         package="urc_localization",
         executable="urc_localization_CovariancesOnGps",
@@ -138,9 +153,9 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-name", "walli",
-            "-x", "-20",
-            "-y", "-15",
-            "-z", "1.5",
+            "-x", "0",
+            "-y", "0",
+            "-z", "2.0",
             "-R", "0",
             "-P", "0",
             "-Y", "0",
@@ -228,7 +243,7 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=spawn,
-                    on_exit=[delayed_load_jsb, delayed_load_swerve, delayed_load_rocker],
+                    on_exit=[delayed_load_jsb, delayed_load_swerve, delayed_load_rocker, ground_truth],
                 )
             ),
         ]

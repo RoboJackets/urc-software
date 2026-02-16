@@ -392,13 +392,13 @@ controller_interface::return_type SwerveDriveController::update(
     odom_msg.pose.covariance.fill(0.0);  // Placeholder covariance
     odom_msg.twist.covariance.fill(0.0); // Placeholder covariance
 
-    odom_msg.pose.covariance[0] = 0.1 * 0.1;  // x variance
-    odom_msg.pose.covariance[7] = 0.2 * 0.2;  // y variance
-    odom_msg.pose.covariance[35] = 0.3 * 0.3; // yaw variance
+    odom_msg.pose.covariance[0] = 0.15 * 0.15;  // x variance
+    odom_msg.pose.covariance[7] = 0.3 * 0.3;  // y variance
+    odom_msg.pose.covariance[35] = 2.0 * 2.0; // yaw variance
 
     odom_msg.twist.covariance[0] = 0.1 * 0.1;  // vx variance
     odom_msg.twist.covariance[7] = 0.2 * 0.2;  // vy variance
-    odom_msg.twist.covariance[35] = 0.3 * 0.3; // omega variance
+    odom_msg.twist.covariance[35] = 1.0 * 1.0; // omega variance
 
     odom_publisher_->unlockAndPublish();
   }

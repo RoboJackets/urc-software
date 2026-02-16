@@ -3,7 +3,7 @@ ekf_filter_node:
     # Timing
     frequency: 30.0
     sensor_timeout: 5.0
-    two_d_mode: false
+    two_d_mode: true
     use_sim_time: true
 
     # Frames
@@ -72,7 +72,7 @@ navsat_transform:
     frequency: 30.0
     use_sim_time: true
     delay: 2.0
-    magnetic_declination_radians: 0.06736971
+    magnetic_declination_radians: 0.0
     yaw_offset: 0.0
     zero_altitude: true
     broadcast_cartesian_transform: false
@@ -85,7 +85,7 @@ navsat_transform:
     # Timing
     frequency: 10.0
     sensor_timeout: 5.0
-    two_d_mode: false
+    two_d_mode: true
     use_sim_time: true
 
     # Frames

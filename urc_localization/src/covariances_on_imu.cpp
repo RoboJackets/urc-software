@@ -36,26 +36,22 @@ void CovariancesOnImu::handleImu(const sensor_msgs::msg::Imu::SharedPtr msg)
   output.header.stamp = this->get_clock()->now();
   output.header.frame_id = "imu_link"; // Ensure the frame_id is set to the expected value
 
-  // Set covariance diagonals to squared stddevs per field
-  constexpr double var_lin_acc = 0.01 * 0.01;     // 1e-4
-  constexpr double var_ang_vel = 0.0005 * 0.0005; // 2.5e-7
-  constexpr double var_orientation = 0.001 * 0.001; // 1e-6
+  output.orientation_covariance.fill(0.0);
+  output.angular_velocity_covariance.fill(0.0);
+  output.linear_acceleration_covariance.fill(0.0);
 
-  auto set_diag_variance = [](std::array<double, 9> &cov, double variance) {
-    if (!cov.empty() && cov[0] < 0.0) {
-      cov.fill(0.0);
-    }
-    cov[0] = variance;
-    cov[4] = variance;
-    cov[8] = variance;
-  };
+  output.orientation_covariance[0] = 0.0001;  // roll variance
+  output.orientation_covariance[4] = 0.0001;  // pitch variance
+  output.orientation_covariance[8] = 0.0001;  // yaw variance
 
-  set_diag_variance(output.linear_acceleration_covariance, var_lin_acc);
-  set_diag_variance(output.angular_velocity_covariance, var_ang_vel);
-  set_diag_variance(output.orientation_covariance, var_orientation);
+  output.angular_velocity_covariance[0] = 0.00001;  // x variance
+  output.angular_velocity_covariance[4] = 0.00001;  // y
+  output.angular_velocity_covariance[8] = 0.00001;  // z
 
-
-
+  output.linear_acceleration_covariance[0] = 1e6;  // x variance
+  output.linear_acceleration_covariance[4] = 1e6;  // y
+  output.linear_acceleration_covariance[8] = 1e6;  // z
+  
   imu_publisher_->publish(output);
 }
 
