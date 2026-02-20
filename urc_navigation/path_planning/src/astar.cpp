@@ -7,6 +7,7 @@ AStar::AStar() {}
 
 Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 {
+  
   int x = (pose.position.x - costmap_.info.origin.position.x) / costmap_.info.resolution;
   int y = (pose.position.y - costmap_.info.origin.position.y) / costmap_.info.resolution;
 
@@ -102,7 +103,11 @@ double AStar::cost(const AStarNode * from, const AStarNode * to)
 
   // Check cell cost if index is within the costmap
   if (costmap_index >= 0 && costmap_index < costmap_.data.size()) {
-    cell_cost = costmap_.data[costmap_index];
+    if (costmap_.data[costmap_index] >= 0) {
+      cell_cost = costmap_.data[costmap_index] + 1;
+    } else {
+      cell_cost = 5;
+    }
   }
 
   double distance = std::sqrt(std::pow(to->x - from->x, 2) + std::pow(to->y - from->y, 2));
@@ -118,16 +123,17 @@ std::vector<AStarNode *> AStar::getNeighbors(const AStarNode * node)
       if (i == 0 && j == 0) {
         continue;
       }
-
+      // x and y must be meters
       double x = node->x + (i * costmap_.info.resolution);
       double y = node->y + (j * costmap_.info.resolution);
 
+      // pose.position.x and pose.position.y are both in meters
       geometry_msgs::msg::Pose pose;
       pose.position.x = x;
       pose.position.y = y;
-
-      if (x >= 0 && x < costmap_.info.width && y >= 0 && y < costmap_.info.height) {
-        Coordinate coord = getCoordinateByPose(pose);
+      // coord is in cells
+      Coordinate coord = getCoordinateByPose(pose);
+      if (coord.x >= 0 && coord.x < costmap_.info.width && coord.y >= 0 && coord.y < costmap_.info.height) {
         AStarNode * neighbor = getNodeRef(coord.x, coord.y);
         if (neighbor->status == NodeStatus::None) {
           neighbor->x = x;
