@@ -41,11 +41,20 @@ def generate_launch_description():
         output="screen",
     )
 
+    grid_map_visualization_node = Node(
+        package="grid_map_visualization",
+        executable="grid_map_visualization",
+        name="grid_map_visualization",
+        output="screen",
+        parameters=[traversability_config],
+    )
+
     return LaunchDescription(
         [
             state_machine_node,
             path_planning_node,
             trajectory_following_node,
             traversability_mapping_node,
+            grid_map_visualization_node
         ]
     )
