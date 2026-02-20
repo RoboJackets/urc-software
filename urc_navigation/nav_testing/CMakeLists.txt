@@ -12,6 +12,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 
 include_directories(include)
@@ -24,6 +25,7 @@ ament_target_dependencies(nav_coordinator
   rclcpp
   rclcpp_action
   geometry_msgs
+  std_msgs
   urc_msgs
 )
 
@@ -49,6 +51,6 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_dependencies(rclcpp rclcpp_action geometry_msgs urc_msgs)
+ament_export_dependencies(rclcpp rclcpp_action geometry_msgs std_msgs urc_msgs)
 
 ament_package()

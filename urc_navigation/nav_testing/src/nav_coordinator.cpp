@@ -14,6 +14,7 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
   state_ = State::IDLE;
   last_error_ = ErrorType::NONE;
 
+  state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
   follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
 
   waypoint_subscriber_ = create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -26,6 +27,7 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     "Nav Coordinator ready. Waiting for waypoints on topic '%s' and forwarding to action '%s'.",
     get_parameter("waypoint_topic").as_string().c_str(),
     follower_action_name_.c_str());
+  publishState();
 }
 
 void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
@@ -172,6 +174,8 @@ void NavCoordinator::transitionTo(State new_state, const std::string & reason)
     get_logger(), "State transition: %s -> %s (%s)", state_name(state_),
     state_name(new_state), reason.c_str());
   state_ = new_state;
+  publishState();
+}
 }
 
 void NavCoordinator::handleError(ErrorType error_type, const std::string & details)
@@ -202,6 +206,7 @@ void NavCoordinator::handleError(ErrorType error_type, const std::string & detai
       RCLCPP_ERROR(get_logger(), "[UNHANDLED_ERROR] %s", details.c_str());
       break;
   }
+  publishState();
 }
 
 std::string NavCoordinator::errorTypeToString(ErrorType error_type) const
@@ -224,6 +229,38 @@ std::string NavCoordinator::errorTypeToString(ErrorType error_type) const
     default:
       return "UNHANDLED";
   }
+}
+
+std::string NavCoordinator::stateToString(State state) const
+{
+  switch (state) {
+    case State::IDLE:
+      return "IDLE";
+    case State::WAITING_FOR_SERVER:
+      return "WAITING_FOR_SERVER";
+    case State::SENDING_GOAL:
+      return "SENDING_GOAL";
+    case State::TRACKING_GOAL:
+      return "TRACKING_GOAL";
+    case State::SUCCEEDED:
+      return "SUCCEEDED";
+    case State::FAILED:
+      return "FAILED";
+    case State::CANCELED:
+      return "CANCELED";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+void NavCoordinator::publishState()
+{
+  auto msg = std::make_shared<std_msgs::msg::String>();
+  msg->data = "state=" + stateToString(state_) + " error=" + errorTypeToString(last_error_);
+  if (!last_error_details_.empty()) {
+    msg->data += " details=" + last_error_details_;
+  }
+  state_publisher_->publish(*msg);
 }
 
 } // namespace nav_coordinator
