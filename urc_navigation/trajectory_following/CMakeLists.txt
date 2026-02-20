@@ -27,6 +27,7 @@ add_library(${PROJECT_NAME} SHARED
   src/pure_pursuit.cpp
   src/geometry_util.cpp
   src/follower_action_server.cpp
+  src/spiral_path_generator.cpp
 )
 
 set(dependencies
@@ -53,6 +54,11 @@ rclcpp_components_register_node(
   PLUGIN "follower_action_server::FollowerActionServer"
   EXECUTABLE ${PROJECT_NAME}_FollowerActionServer
 )
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "trajectory_following::SpiralPathGenerator"
+  EXECUTABLE SpiralPathGenerator
+)
 
 # Install launch files.
 install(
@@ -69,6 +75,7 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
 
 
 if(BUILD_TESTING)

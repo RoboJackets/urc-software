@@ -215,6 +215,15 @@ def generate_launch_description():
         ],
         output="screen",
     )
+    follower_action_server_node = Node(
+        package="trajectory_following",
+        executable="trajectory_following_FollowerActionServer",
+        name="follower_action_server",
+        output="screen",
+        parameters=[
+            {"use_sim_time": True}
+        ],
+    )
 
     # IMPORTANT:
     # Using TimerAction chaining is more reliable than OnProcessExit on the spawner nodes,
@@ -238,6 +247,7 @@ def generate_launch_description():
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,
+            follower_action_server_node,
 
             # After robot spawn, start controller spawners on a fixed schedule
             RegisterEventHandler(
