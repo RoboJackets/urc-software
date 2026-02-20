@@ -47,6 +47,12 @@ def generate_launch_description():
         description="Spawn rocker effort controller (Option B)",
     )
 
+    autonomy_arg = DeclareLaunchArgument(
+        "autonomy",
+        default_value="false",
+        description="Launch autonomy nodes",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
 
@@ -126,6 +132,13 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_urc_localization, "launch", "ekf.launch.py")
         )
+    )
+
+    launch_autonomy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
+        ),
+        condition=IfCondition(LaunchConfiguration("autonomy")),
     )
 
 
@@ -229,12 +242,14 @@ def generate_launch_description():
             walli_xacro,
             bridge_yaml,
             spawn_rocker_effort,
+            autonomy_arg,
             gz_sim,
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
             covariances_on_gps,
             launch_ekf,
+            launch_autonomy,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,
