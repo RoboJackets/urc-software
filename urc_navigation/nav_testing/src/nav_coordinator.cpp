@@ -12,6 +12,7 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
   follower_action_name_ = get_parameter("follower_action_name").as_string();
   cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
   state_ = State::IDLE;
+  last_error_ = ErrorType::NONE;
 
   follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
 
@@ -49,9 +50,10 @@ void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & wa
 {
   transitionTo(State::WAITING_FOR_SERVER, "checking follower action server");
   if (!follower_client_->wait_for_action_server(std::chrono::seconds(2))) {
+    handleError(
+      ErrorType::SERVER_UNAVAILABLE,
+      "Follower action server '" + follower_action_name_ + "' not available.");
     transitionTo(State::FAILED, "follower action server unavailable");
-    RCLCPP_ERROR(
-      get_logger(), "Action server '%s' not available.", follower_action_name_.c_str());
     return;
   }
 
@@ -77,8 +79,8 @@ void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & wa
 void NavCoordinator::handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle)
 {
   if (!goal_handle) {
+    handleError(ErrorType::FOLLOWER_FAILURE, "Follower action server rejected the goal.");
     transitionTo(State::FAILED, "follower rejected goal");
-    RCLCPP_ERROR(get_logger(), "Follower action server rejected the goal.");
     return;
   }
 
@@ -107,13 +109,26 @@ void NavCoordinator::handleResult(const GoalHandleNavigate::WrappedResult & resu
       return;
     }
 
-    transitionTo(State::FAILED, "follower finished with non-success error code");
-    RCLCPP_WARN(
-      get_logger(), "Follower completed with error_code=%u", result.result->error_code);
+    switch (result.result->error_code) {
+      case NavigateToWaypoint::Result::OBSTACLE_DETECTED:
+        handleError(ErrorType::OBSTACLE_DETECTED, "Obstacle detected during trajectory following.");
+        break;
+      case NavigateToWaypoint::Result::PLANNING_FAILED:
+        handleError(ErrorType::PLANNING_FAILED_IN_FOLLOWER, "Path planning failed in follower.");
+        break;
+      case NavigateToWaypoint::Result::FAILURE:
+        handleError(ErrorType::FOLLOWER_FAILURE, "Follower reported generic failure.");
+        break;
+      default:
+        handleError(ErrorType::UNKNOWN_ERROR, "Follower finished with error_code=" + std::to_string(result.result->error_code));
+        break;
+    }
+    transitionTo(State::FAILED, "follower finished with error");
     return;
   }
 
   if (result.code == rclcpp_action::ResultCode::ABORTED) {
+    handleError(ErrorType::FOLLOWER_FAILURE, "Follower aborted goal.");
     transitionTo(State::FAILED, "follower aborted goal");
     return;
   }
@@ -123,6 +138,7 @@ void NavCoordinator::handleResult(const GoalHandleNavigate::WrappedResult & resu
     return;
   }
 
+  handleError(ErrorType::UNKNOWN_ERROR, "Unknown follower result code: " + std::to_string(static_cast<int>(result.code)));
   transitionTo(State::FAILED, "unknown follower result code");
 }
 
@@ -156,6 +172,58 @@ void NavCoordinator::transitionTo(State new_state, const std::string & reason)
     get_logger(), "State transition: %s -> %s (%s)", state_name(state_),
     state_name(new_state), reason.c_str());
   state_ = new_state;
+}
+
+void NavCoordinator::handleError(ErrorType error_type, const std::string & details)
+{
+  last_error_ = error_type;
+  last_error_details_ = details;
+
+  switch (error_type) {
+    case ErrorType::PLANNER_FAILURE:
+      RCLCPP_ERROR(get_logger(), "[PLANNER_FAILURE] %s", details.c_str());
+      break;
+    case ErrorType::OBSTACLE_DETECTED:
+      RCLCPP_WARN(get_logger(), "[OBSTACLE_DETECTED] %s", details.c_str());
+      break;
+    case ErrorType::PLANNING_FAILED_IN_FOLLOWER:
+      RCLCPP_ERROR(get_logger(), "[PLANNING_FAILED] %s", details.c_str());
+      break;
+    case ErrorType::FOLLOWER_FAILURE:
+      RCLCPP_ERROR(get_logger(), "[FOLLOWER_FAILURE] %s", details.c_str());
+      break;
+    case ErrorType::SERVER_UNAVAILABLE:
+      RCLCPP_ERROR(get_logger(), "[SERVER_UNAVAILABLE] %s", details.c_str());
+      break;
+    case ErrorType::UNKNOWN_ERROR:
+      RCLCPP_ERROR(get_logger(), "[UNKNOWN_ERROR] %s", details.c_str());
+      break;
+    default:
+      RCLCPP_ERROR(get_logger(), "[UNHANDLED_ERROR] %s", details.c_str());
+      break;
+  }
+}
+
+std::string NavCoordinator::errorTypeToString(ErrorType error_type) const
+{
+  switch (error_type) {
+    case ErrorType::NONE:
+      return "NONE";
+    case ErrorType::PLANNER_FAILURE:
+      return "PLANNER_FAILURE";
+    case ErrorType::OBSTACLE_DETECTED:
+      return "OBSTACLE_DETECTED";
+    case ErrorType::PLANNING_FAILED_IN_FOLLOWER:
+      return "PLANNING_FAILED";
+    case ErrorType::FOLLOWER_FAILURE:
+      return "FOLLOWER_FAILURE";
+    case ErrorType::SERVER_UNAVAILABLE:
+      return "SERVER_UNAVAILABLE";
+    case ErrorType::UNKNOWN_ERROR:
+      return "UNKNOWN_ERROR";
+    default:
+      return "UNHANDLED";
+  }
 }
 
 } // namespace nav_coordinator
