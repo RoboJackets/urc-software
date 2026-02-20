@@ -17,6 +17,8 @@
   <!-- remove wheel_origin_xyz if not needed -->
   <xacro:property name="wheel_origin_xyz_left" value="0 0.0381 0" />
   <xacro:property name="wheel_origin_xyz_right" value="0 -0.0381 0" />
+  <xacro:property name="swivel_damping_factor" value = "0.8" />
+  <xacro:property name="mu" value="0.8" />
     <link
       name="base_link">
       <inertial>
@@ -112,7 +114,7 @@
       <limit
         lower="-0.523"
         upper="0.523"
-        effort="10"
+        effort="1000"
         velocity="100" />
     </joint>
     <link
@@ -172,6 +174,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="FL_Wheel_Link">
@@ -281,6 +284,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="BL_Wheel_Link">
@@ -388,7 +392,7 @@
       <limit
         lower="-0.523"
         upper="0.523"
-        effort="10"
+        effort="1000"
         velocity="100" />
     </joint>
     <link
@@ -448,6 +452,8 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
+
     </joint>
     <link
       name="FR_Wheel_Link">
@@ -557,6 +563,7 @@
         upper="1.57"
         effort="10"
         velocity="100" />
+      <dynamics damping="${swivel_damping_factor}" friction="${mu}"/>
     </joint>
     <link
       name="BR_Wheel_Link">
@@ -609,25 +616,6 @@
       <axis
         xyz="-9.257E-05 1 0" />
     </joint>
-
-     <gazebo>
-      <plugin name="leo_gz::DifferentialSystem" filename="libleo_gz_differential_plugin.so">
-        <jointA>L_Rocker_Joint</jointA>
-        <jointB>R_Rocker_Joint</jointB>
-        <forceConstant>100.0</forceConstant>
-      </plugin>
-      
-      <!-- Average Rocker Position: keeps base_link level at average of left/right rocker heights -->
-      <plugin name="leo_gz::AverageRockerPosition" filename="libleo_gz_average_rocker_plugin.so">
-        <rocker_left_joint>L_Rocker_Joint</rocker_left_joint>
-        <rocker_right_joint>R_Rocker_Joint</rocker_right_joint>
-        <base_link>base_link</base_link>
-      </plugin>
-    </gazebo>
-
-  
-
-
   </xacro:macro>
 
 </robot>

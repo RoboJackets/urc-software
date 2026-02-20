@@ -23,7 +23,7 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 
   // Setup the costmap
   costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
-    "/costmap",
+    "/traversability",
     rclcpp::SystemDefaultsQoS(),
     std::bind(&PlannerServer::handleCostmap, this, std::placeholders::_1));
 }

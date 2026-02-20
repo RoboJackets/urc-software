@@ -15,6 +15,9 @@ controller_manager:
     swerve_controller:
       type: urc_controllers/SwerveDriveController
 
+    rocker_effort_controller:
+      type: forward_command_controller/ForwardCommandController
+
 position_controller:
   ros__parameters:
     joints:
@@ -36,3 +39,10 @@ swerve_controller:
     module_x: 0.35255
     module_y: 0.307978
     wheel_radius: 0.119888
+
+rocker_effort_controller:
+  ros__parameters:
+    joints:
+      - L_Rocker_Joint
+      - R_Rocker_Joint
+    interface_name: effort

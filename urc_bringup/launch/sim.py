@@ -21,13 +21,8 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-<<<<<<< HEAD
         default_value=os.path.join(path_urc_hw_description, "world", "marsyard2020.sdf"),
         description="Path to gz world file",
-=======
-        default_value="marsyard2020.sdf",
-        description="Name of the world file (not full path)",
->>>>>>> origin/feat/nav_testing
     )
 
     walli_xacro = DeclareLaunchArgument(
