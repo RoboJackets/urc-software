@@ -27,7 +27,11 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     "Nav Coordinator ready. Waiting for waypoints on topic '%s' and forwarding to action '%s'.",
     get_parameter("waypoint_topic").as_string().c_str(),
     follower_action_name_.c_str());
-  publishState();
+  
+  // Publish initial state
+  if (state_publisher_) {
+    publishState();
+  }
 }
 
 void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
@@ -175,7 +179,6 @@ void NavCoordinator::transitionTo(State new_state, const std::string & reason)
     state_name(new_state), reason.c_str());
   state_ = new_state;
   publishState();
-}
 }
 
 void NavCoordinator::handleError(ErrorType error_type, const std::string & details)
