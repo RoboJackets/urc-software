@@ -28,7 +28,6 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     get_parameter("waypoint_topic").as_string().c_str(),
     follower_action_name_.c_str());
   
-  // Publish initial state
   if (state_publisher_) {
     publishState();
   }
@@ -154,25 +153,26 @@ void NavCoordinator::transitionTo(State new_state, const std::string & reason)
     return;
   }
 
-  const auto state_name = [](State state) {
-      switch (state) {
-        case State::IDLE:
-          return "IDLE";
-        case State::WAITING_FOR_SERVER:
-          return "WAITING_FOR_SERVER";
-        case State::SENDING_GOAL:
-          return "SENDING_GOAL";
-        case State::TRACKING_GOAL:
-          return "TRACKING_GOAL";
-        case State::SUCCEEDED:
-          return "SUCCEEDED";
-        case State::FAILED:
-          return "FAILED";
-        case State::CANCELED:
-          return "CANCELED";
-      }
-      return "UNKNOWN";
-    };
+  const auto state_name = [](State state) -> const char* {
+    switch (state) {
+      case State::IDLE:
+        return "IDLE";
+      case State::WAITING_FOR_SERVER:
+        return "WAITING_FOR_SERVER";
+      case State::SENDING_GOAL:
+        return "SENDING_GOAL";
+      case State::TRACKING_GOAL:
+        return "TRACKING_GOAL";
+      case State::SUCCEEDED:
+        return "SUCCEEDED";
+      case State::FAILED:
+        return "FAILED";
+      case State::CANCELED:
+        return "CANCELED";
+      default:
+        return "UNKNOWN";
+    }
+  };
 
   RCLCPP_INFO(
     get_logger(), "State transition: %s -> %s (%s)", state_name(state_),
