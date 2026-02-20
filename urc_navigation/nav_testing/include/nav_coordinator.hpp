@@ -1,37 +1,76 @@
 #ifndef NAV_COORDINATOR_HPP_
 #define NAV_COORDINATOR_HPP_
 
+#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <urc_msgs/action/navigate_to_waypoint.hpp>
+#include <std_msgs/msg/string.hpp>
+
 namespace nav_coordinator
 {
 class NavCoordinator : public rclcpp::Node
 {
-    public:
-        explicit NavCoordinator(const rclcpp::NodeOptions & options);
-        ~NavCoordinator();
+public:
+    explicit NavCoordinator(const rclcpp::NodeOptions & options);
+    ~NavCoordinator() override = default;
 
-    private:
-        // --- Subscribers --- //
-        rclcpp::Subscription<TODO>::SharedPtr localization_subscriber_;
-        rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_subscriber_;
-        rclcpp::Subscription<TODO>::SharedPtr cancel_subscriber_;
+private:
+    using NavigateToWaypoint = urc_msgs::action::NavigateToWaypoint;
+    using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateToWaypoint>;
 
-        // --- Publishers --- //
+    enum class State
+    {
+        IDLE,
+        WAITING_FOR_SERVER,
+        SENDING_GOAL,
+        TRACKING_GOAL,
+        SUCCEEDED,
+        FAILED,
+        CANCELED
+    };
 
-        // --- Planner Service Client --- //
-        rclcpp::Client<urc_msgs::action::GeneratePlan>::SharedPtr planner_client_;
+    enum class ErrorType
+    {
+        NONE,
+        PLANNER_FAILURE,
+        OBSTACLE_DETECTED,
+        PLANNING_FAILED_IN_FOLLOWER,
+        FOLLOWER_FAILURE,
+        SERVER_UNAVAILABLE,
+        UNKNOWN_ERROR
+    };
 
-        rclcpp::TimerBase::SharedPtr timer_;
+    void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
+    void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
 
-        // TODO
+    void handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle);
+    void handleFeedback(
+        GoalHandleNavigate::SharedPtr,
+        const std::shared_ptr<const NavigateToWaypoint::Feedback> feedback);
+    void handleResult(const GoalHandleNavigate::WrappedResult & result);
+
+    void transitionTo(State new_state, const std::string & reason);
+    void handleError(ErrorType error_type, const std::string & details);
+    void publishState();
+    std::string errorTypeToString(ErrorType error_type) const;
+    std::string stateToString(State state) const;
+
+    State state_;
+    std::string follower_action_name_;
+    bool cancel_on_new_waypoint_;
+
+    geometry_msgs::msg::PoseStamped active_waypoint_;
+    GoalHandleNavigate::SharedPtr active_goal_handle_;
+
+    rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
+    rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
+
+    ErrorType last_error_;
+    std::string last_error_details_;
+};
 
 }
 
-        // void timerCallback();
-
-        void handleLocalization(const TODO::SharedPtr msg);
-        void handleGoal(const TODO::SharedPtr msg);
-        void handleStart(const TODO::SharedPtr msg);
-
-} // namespace nav_coordinator
-
-#endif // NAV_COORDINATOR_HPP_
+#endif

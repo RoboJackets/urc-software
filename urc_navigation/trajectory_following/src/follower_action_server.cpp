@@ -5,6 +5,7 @@
 #include "tf2/exceptions.h"
 #include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <algorithm>
 
 namespace follower_action_server {
 FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
@@ -17,18 +18,20 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
   declare_parameter("heading_alignment_tolerance", 0.2);
   declare_parameter("enable_swerve_motion", true);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
-  declare_parameter("odom_topic", "base_link");
   declare_parameter("map_frame", "map");
+  declare_parameter("base_link_frame", "base_link");
   declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
-  declare_parameter("lethal_cost_threshold", 50);
+  declare_parameter("lethal_cost_threshold", 50.0);
   declare_parameter("enforce_goal_heading", false);
   declare_parameter("goal_heading_tolerance", 0.1);
+  declare_parameter("costmap_layer", "traversability_inflated");
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   stamped_ = get_parameter("cmd_vel_stamped").as_bool();
+  costmap_layer_ = get_parameter("costmap_layer").as_string();
 
   if (stamped_) {
     cmd_vel_stamped_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
@@ -43,17 +46,8 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
   marker_pub_ =
       create_publisher<visualization_msgs::msg::Marker>("lookahead_circle", 10);
 
-  odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
-      get_parameter("odom_topic").as_string(), 10,
-      [this](const nav_msgs::msg::Odometry::SharedPtr msg) {
-        geometry_msgs::msg::PoseStamped pose;
-        pose.header = msg->header;
-        pose.pose = msg->pose.pose;
-        current_pose_ = pose;
-      });
-
   // Setup the costmap
-  costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
+  costmap_subscriber_ = create_subscription<grid_map_msgs::msg::GridMap>(
       "/costmap", rclcpp::SystemDefaultsQoS(),
       std::bind(&FollowerActionServer::handleCostmap, this,
                 std::placeholders::_1));
@@ -77,7 +71,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
 }
 
 void FollowerActionServer::handleCostmap(
-    const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
+    const grid_map_msgs::msg::GridMap::SharedPtr msg) {
   current_costmap_ = *msg;
 }
 
@@ -188,17 +182,54 @@ void FollowerActionServer::publishZeroVelocity() {
   }
 }
 
-int FollowerActionServer::getCost(const nav_msgs::msg::OccupancyGrid &costmap,
+float FollowerActionServer::getCost(const grid_map_msgs::msg::GridMap &costmap,
                                   double x, double y) {
-  int map_x = (x - costmap.info.origin.position.x) / costmap.info.resolution;
-  int map_y = (y - costmap.info.origin.position.y) / costmap.info.resolution;
+  // Find the layer index
+  auto it = std::find(costmap.layers.begin(), costmap.layers.end(), costmap_layer_);
+  if (it == costmap.layers.end()) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "Costmap layer '%s' not found", costmap_layer_.c_str());
+    return 0.0f;
+  }
+  size_t layer_index = std::distance(costmap.layers.begin(), it);
 
-  if (map_x < 0 || (unsigned int)map_x >= costmap.info.width || map_y < 0 ||
-      (unsigned int)map_y >= costmap.info.height) {
-    return 0;
+  // Get grid dimensions from the data layout
+  if (costmap.data.empty() || layer_index >= costmap.data.size()) {
+    return 0.0f;
   }
 
-  return costmap.data[map_y * costmap.info.width + map_x];
+  const auto &layer_data = costmap.data[layer_index];
+  if (layer_data.layout.dim.size() < 2) {
+    return 0.0f;
+  }
+
+  // GridMap uses center of grid as origin
+  double origin_x = costmap.info.pose.position.x;
+  double origin_y = costmap.info.pose.position.y;
+  double resolution = costmap.info.resolution;
+  
+  // Calculate map indices (GridMap stores data row-major)
+  int width = layer_data.layout.dim[1].size;
+  int height = layer_data.layout.dim[0].size;
+  
+  // Transform world coordinates to grid coordinates
+  double rel_x = x - origin_x;
+  double rel_y = y - origin_y;
+  
+  int map_x = static_cast<int>(rel_x / resolution + width / 2.0);
+  int map_y = static_cast<int>(rel_y / resolution + height / 2.0);
+
+  if (map_x < 0 || map_x >= width || map_y < 0 || map_y >= height) {
+    return 0.0f;
+  }
+
+  // Access data in row-major order
+  size_t index = map_y * width + map_x;
+  if (index >= layer_data.data.size()) {
+    return 0.0f;
+  }
+
+  return layer_data.data[index];
 }
 
 nav_msgs::msg::Path FollowerActionServer::callPlanningService(
@@ -212,9 +243,7 @@ nav_msgs::msg::Path FollowerActionServer::callPlanningService(
 
   auto result = planning_client_->async_send_request(request);
 
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(),
-                                         result, std::chrono::seconds(10)) ==
-      rclcpp::FutureReturnCode::SUCCESS) {
+  if (result.wait_for(std::chrono::seconds(10)) == std::future_status::ready) {
     auto response = result.get();
     if (response->error_code ==
         urc_msgs::srv::GeneratePlan::Response::SUCCESS) {
@@ -266,9 +295,26 @@ void FollowerActionServer::execute_navigate(
 
     goal_pose = goal_msg->goal;
 
+    // Get current pose from TF
     geometry_msgs::msg::PoseStamped start_pose;
-    start_pose.header = current_pose_.header;
-    start_pose.pose = current_pose_.pose;
+    try {
+      auto transform = tf_buffer_->lookupTransform(
+          get_parameter("map_frame").as_string(),
+          get_parameter("base_link_frame").as_string(), tf2::TimePointZero);
+      start_pose.header = transform.header;
+      start_pose.pose.position.x = transform.transform.translation.x;
+      start_pose.pose.position.y = transform.transform.translation.y;
+      start_pose.pose.position.z = transform.transform.translation.z;
+      start_pose.pose.orientation = transform.transform.rotation;
+    } catch (tf2::TransformException &ex) {
+      RCLCPP_ERROR(this->get_logger(), "Could not get current pose: %s",
+                   ex.what());
+      result->error_code =
+          urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+      goal_handle->abort(result);
+      publishZeroVelocity();
+      return;
+    }
 
     bool planning_success = false;
     path = callPlanningService(start_pose, goal_pose, planning_success);
@@ -320,11 +366,26 @@ void FollowerActionServer::execute_navigate(
   rclcpp::Rate rate(10);
 
   while (rclcpp::ok()) {
-    // Get current pose in map frame at the start of each iteration
-    auto odom_to_map_ =
-        lookup_transform(get_parameter("map_frame").as_string(), "base_link");
+    // Get current pose in map frame from TF
     geometry_msgs::msg::PoseStamped current_pose_map_frame_;
-    tf2::doTransform(current_pose_, current_pose_map_frame_, odom_to_map_);
+    try {
+      auto transform = tf_buffer_->lookupTransform(
+          get_parameter("map_frame").as_string(),
+          get_parameter("base_link_frame").as_string(), tf2::TimePointZero);
+      current_pose_map_frame_.header = transform.header;
+      current_pose_map_frame_.pose.position.x =
+          transform.transform.translation.x;
+      current_pose_map_frame_.pose.position.y =
+          transform.transform.translation.y;
+      current_pose_map_frame_.pose.position.z =
+          transform.transform.translation.z;
+      current_pose_map_frame_.pose.orientation = transform.transform.rotation;
+    } catch (tf2::TransformException &ex) {
+      RCLCPP_WARN(this->get_logger(), "Could not get current pose: %s",
+                  ex.what());
+      rate.sleep();
+      continue;
+    }
 
     // Update feedback distance
     feedback->distance_to_goal = geometry_util::dist2D(
@@ -406,7 +467,7 @@ void FollowerActionServer::execute_navigate(
       }
     } else if (getCost(current_costmap_, output.lookahead_point.point.x,
                        output.lookahead_point.point.y) >
-               get_parameter("lethal_cost_threshold").as_int()) {
+               get_parameter("lethal_cost_threshold").as_double()) {
       // Obstacle detected - attempt to re-plan
       RCLCPP_WARN(this->get_logger(),
                   "Obstacle detected! Attempting to re-plan...");
@@ -415,9 +476,27 @@ void FollowerActionServer::execute_navigate(
       feedback->replan_count++;
       goal_handle->publish_feedback(feedback);
 
+      // Get current pose from TF for replanning
       geometry_msgs::msg::PoseStamped start_pose;
-      start_pose.header = current_pose_.header;
-      start_pose.pose = current_pose_.pose;
+      try {
+        auto transform = tf_buffer_->lookupTransform(
+            get_parameter("map_frame").as_string(),
+            get_parameter("base_link_frame").as_string(), tf2::TimePointZero);
+        start_pose.header = transform.header;
+        start_pose.pose.position.x = transform.transform.translation.x;
+        start_pose.pose.position.y = transform.transform.translation.y;
+        start_pose.pose.position.z = transform.transform.translation.z;
+        start_pose.pose.orientation = transform.transform.rotation;
+      } catch (tf2::TransformException &ex) {
+        RCLCPP_ERROR(this->get_logger(),
+                     "Could not get current pose for replanning: %s",
+                     ex.what());
+        result->error_code =
+            urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+        goal_handle->abort(result);
+        publishZeroVelocity();
+        return;
+      }
 
       bool planning_success = false;
       nav_msgs::msg::Path new_path =
@@ -443,7 +522,8 @@ void FollowerActionServer::execute_navigate(
 
     output = pure_pursuit.getCommandVelocity(
         this->get_logger(),
-        lookup_transform("base_link", get_parameter("map_frame").as_string()));
+        lookup_transform(get_parameter("base_link_frame").as_string(),
+                         get_parameter("map_frame").as_string()));
 
     if (stamped_) {
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
