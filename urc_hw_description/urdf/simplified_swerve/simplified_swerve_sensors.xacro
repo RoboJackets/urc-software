@@ -137,14 +137,68 @@
     </gazebo>
 
 
-     <gazebo reference="base_link">
+    <!-- GPS Link -->
+    <link name="gps_link">
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+
+      <!-- Tiny collision/visual just to have a frame in TF -->
+      <collision name="gps_collision">
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+
+      <visual name="gps_visual">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- Joint to attach GPS to base -->
+    <joint name="gps_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="gps_link"/>
+      <!-- Slightly above base so it's easy to visualize -->
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+
+     <gazebo reference="gps_link">
         <sensor name="gps" type="navsat">
             <always_on>1</always_on>
-            <update_rate>1</update_rate>
+            <update_rate>2</update_rate>
             <visualize>true</visualize>
             <topic>gps</topic>
+            <!-- Ensure downstream messages can use this frame name -->
+            <gz_frame_id>gps_link</gz_frame_id>
+            <navsat>
+                <latitude>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.15</stddev>
+                    </noise>
+                </latitude>
+                <longitude>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.15</stddev>
+                    </noise>
+                </longitude>
+                <altitude>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.15</stddev>
+                    </noise>
+                </altitude>
+            </navsat>
         </sensor>
     </gazebo>
 </robot>
-
-

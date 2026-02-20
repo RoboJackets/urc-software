@@ -1,12 +1,9 @@
 import os
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    RegisterEventHandler,
-)
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, TimerAction
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
@@ -19,9 +16,7 @@ def generate_launch_description():
     path_urc_bringup = get_package_share_directory("urc_bringup")
     path_urc_localization = get_package_share_directory("urc_localization")
 
-    controller_config_file_dir = os.path.join(
-        path_urc_bringup, "config", "test_controllers.yaml"
-    )
+    controller_config_file_dir = os.path.join(path_urc_bringup, "config", "test_controllers.yaml")
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
@@ -39,36 +34,33 @@ def generate_launch_description():
         description="Path to xacro file",
     )
 
+
     bridge_yaml = DeclareLaunchArgument(
         "bridge_yaml",
         default_value=os.path.join(path_urc_bringup, "config", "sim_config.yaml"),
         description="bridge YAML config",
     )
 
+    spawn_rocker_effort = DeclareLaunchArgument(
+        "spawn_rocker_effort_controller",
+        default_value="true",
+        description="Spawn rocker effort controller (Option B)",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
 
-    world_path = PathJoinSubstitution(
-        [path_urc_hw_description, "world", world_filename]
-    )
+    world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
 
     robot_urdf_file = ParameterValue(
-        Command(
-            [
-                "xacro ",
-                walli_xacro_config,
-                " use_sim:=",
-                "true",
-            ]
-        ),
+        Command(["xacro ", walli_xacro_config, " use_sim:=", "true"]),
         value_type=str,
     )
 
+    # Start Gazebo and immediately run the simulation (-r)
     gz_sim = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
-        ),
-        launch_arguments={"gz_args": world_path}.items(),
+        PythonLaunchDescriptionSource(os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")),
+        launch_arguments={"gz_args": ["-r ", world_path]}.items(),
     )
 
     bridge = Node(
@@ -93,6 +85,7 @@ def generate_launch_description():
         name="covariances_on_imu",
         parameters=[
             {
+                "use_sim_time": True,
                 "imu_input_topic": "/imu/data_raw",
                 "imu_output_topic": "/imu/fused",
             }
@@ -100,14 +93,54 @@ def generate_launch_description():
         output="screen",
     )
 
-    rover_pose_bridge = Node(
+    ground_truth = Node(
         package="urc_bringup",
-        executable="urc_bringup_RoverPoseBridge",
-        name="rover_pose_bridge",
+        executable="urc_bringup_GroundTruth",
+        name="ground_truth",
         parameters=[
             {
-                "tf_topic": "/ground_truth_pose",
-                "rover_pos_topic": "/rover_ground_truth",
+                "use_sim_time": True,
+                "target_child_frame": "walli",
+                "odom_frame_id": "map",
+                "base_frame_id": "walli",
+            }
+        ],
+        output="screen",
+    )
+
+    covariances_on_gps = Node(
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnGps",
+        name="covariances_on_gps",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "gps_input_topic": "/gps",
+                "gps_output_topic": "/gps/covariances",
+            }
+        ],
+        output="screen",
+    )
+
+    launch_ekf = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(path_urc_localization, "launch", "ekf.launch.py")
+        )
+    )
+
+
+   
+
+    rocker_tf_broadcaster = Node(
+        package="urc_bringup",
+        executable="urc_bringup_RockerTfBroadcaster",
+        name="rocker_tf_broadcaster",
+        parameters=[
+            {
+                "left_joint_name": "L_Rocker_Joint",
+                "right_joint_name": "R_Rocker_Joint",
+                "joint_state_topic": "/joint_states",
+                "invert_sign": True,
                 "use_sim_time": True,
             }
         ],
@@ -119,22 +152,14 @@ def generate_launch_description():
         executable="create",
         output="screen",
         arguments=[
-            "-name",
-            "walli",
-            "-x",
-            "0", # "-20",
-            "-y",
-            "0", # "-15",
-            "-z",
-            "1.5",
-            "-R",
-            "0",
-            "-P",
-            "0",
-            "-Y",
-            "0",
-            "-topic",
-            "robot_description",
+            "-name", "walli",
+            "-x", "0",
+            "-y", "0",
+            "-z", "2.0",
+            "-R", "0",
+            "-P", "0",
+            "-Y", "0",
+            "-topic", "robot_description",
         ],
     )
 
@@ -144,9 +169,10 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "joint_state_broadcaster",
-            "--param-file",
-            controller_config_file_dir,
+            "--param-file", controller_config_file_dir,
+            "--controller-manager-timeout", "120",
         ],
+        output="screen",
     )
 
     load_swerve_controller = Node(
@@ -154,45 +180,70 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "swerve_controller",
-            "--param-file",
-            controller_config_file_dir,
+            "--param-file", controller_config_file_dir,
+            "--controller-manager-timeout", "120",
         ],
+        output="screen",
     )
 
-    follower_action_server_node = Node(
-        package="trajectory_following",
-        executable="trajectory_following_FollowerActionServer",
-        name="follower_action_server",
-        output="screen",
-        parameters=[
-            {"use_sim_time": True}
+    load_rocker_effort_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        condition=IfCondition(LaunchConfiguration("spawn_rocker_effort_controller")),
+        arguments=[
+            "rocker_effort_controller",
+            "--param-file", controller_config_file_dir,
+            "--controller-manager-timeout", "120",
         ],
+        output="screen",
     )
+
+    rocker_effort_pid_node = Node(
+        package="urc_bringup",
+        executable="urc_bringup_RockerEffortPid",
+        name="rocker_effort_pid",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "pitch_topic": "/rocker/pitch_raw",
+                "command_topic": "/rocker_effort_controller/commands",
+                "min_spin_effort": 40.0,
+                "kp": 120.0,
+                "ki": 10.0,
+                "kd": 40.0,
+            }
+        ],
+        output="screen",
+    )
+
+    # IMPORTANT:
+    # Using TimerAction chaining is more reliable than OnProcessExit on the spawner nodes,
+    # because spawners exit quickly and your previous event target was not the TimerAction.
+    delayed_load_jsb = TimerAction(period=5.0, actions=[load_joint_state_broadcaster])
+    delayed_load_swerve = TimerAction(period=7.0, actions=[load_swerve_controller])
+    delayed_load_rocker = TimerAction(period=9.0, actions=[load_rocker_effort_controller])
 
     return LaunchDescription(
         [
             sim_world_arg,
             walli_xacro,
             bridge_yaml,
+            spawn_rocker_effort,
             gz_sim,
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
-            rover_pose_bridge,
+            covariances_on_gps,
+            launch_ekf,
+            rocker_tf_broadcaster,
+            rocker_effort_pid_node,
             spawn,
-            follower_action_server_node,
-            # Start joint_state_broadcaster AFTER robot spawn
+
+            # After robot spawn, start controller spawners on a fixed schedule
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=spawn,
-                    on_exit=[load_joint_state_broadcaster],
-                )
-            ),
-            # Start swerve controller AFTER joint_state_broadcaster
-            RegisterEventHandler(
-                event_handler=OnProcessExit(
-                    target_action=load_joint_state_broadcaster,
-                    on_exit=[load_swerve_controller],
+                    on_exit=[delayed_load_jsb, delayed_load_swerve, delayed_load_rocker, ground_truth],
                 )
             ),
         ]

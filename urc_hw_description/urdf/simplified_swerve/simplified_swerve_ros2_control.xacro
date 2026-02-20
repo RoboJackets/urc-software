@@ -22,11 +22,23 @@
       </hardware>
 
       <joint name="L_Rocker_Joint">
+        <!-- Expose effort command for rocker in sim -->
+        <command_interface name="effort">
+          <param name="min">-1200</param>
+          <param name="max">1200</param>
+        </command_interface>
         <state_interface name="position"/>
+        <state_interface name="effort"/>
       </joint>
 
       <joint name="R_Rocker_Joint">
+        <!-- Expose effort command for rocker in sim -->
+        <command_interface name="effort">
+          <param name="min">-1200</param>
+          <param name="max">1200</param>
+        </command_interface>
         <state_interface name="position"/>
+        <state_interface name="effort"/>
       </joint>
 
       <!-- Joint State Interface -->

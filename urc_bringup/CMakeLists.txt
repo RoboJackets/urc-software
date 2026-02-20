@@ -12,6 +12,7 @@ find_package(rosbridge_server REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 
 include_directories(
@@ -21,7 +22,9 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/heartbeat_publisher.cpp
-  src/rover_pose_bridge.cpp
+  src/ground_truth.cpp
+  src/rocker_effort_pid.cpp
+  src/rocker_tf_broadcaster.cpp
 )
 
 set(dependencies
@@ -30,6 +33,7 @@ set(dependencies
   std_msgs
   rosbridge_server
   sensor_msgs
+  nav_msgs
   tf2_msgs
   tf2_ros
   urc_msgs
@@ -46,10 +50,23 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_HeartbeatPublisher
 )
 
+
 rclcpp_components_register_node(
   ${PROJECT_NAME}
-  PLUGIN "rover_pose_bridge::RoverPoseBridge"
-  EXECUTABLE ${PROJECT_NAME}_RoverPoseBridge
+  PLUGIN "urc_bringup::RockerEffortPid"
+  EXECUTABLE ${PROJECT_NAME}_RockerEffortPid
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_bringup::RockerTfBroadcaster"
+  EXECUTABLE ${PROJECT_NAME}_RockerTfBroadcaster
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "ground_truth::GroundTruth"
+  EXECUTABLE ${PROJECT_NAME}_GroundTruth
 )
 
 # Install launch files.
