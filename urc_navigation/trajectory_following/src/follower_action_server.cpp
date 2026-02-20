@@ -243,9 +243,7 @@ nav_msgs::msg::Path FollowerActionServer::callPlanningService(
 
   auto result = planning_client_->async_send_request(request);
 
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(),
-                                         result, std::chrono::seconds(10)) ==
-      rclcpp::FutureReturnCode::SUCCESS) {
+  if (result.wait_for(std::chrono::seconds(10)) == std::future_status::ready) {
     auto response = result.get();
     if (response->error_code ==
         urc_msgs::srv::GeneratePlan::Response::SUCCESS) {

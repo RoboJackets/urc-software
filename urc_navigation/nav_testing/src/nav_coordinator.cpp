@@ -268,11 +268,5 @@ void NavCoordinator::publishState()
 
 } // namespace nav_coordinator
 
-int main(int argc, char ** argv)
-{
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<nav_coordinator::NavCoordinator>(rclcpp::NodeOptions());
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
-}
+#include <rclcpp_components/register_node_macro.hpp>
+RCLCPP_COMPONENTS_REGISTER_NODE(nav_coordinator::NavCoordinator)
