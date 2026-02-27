@@ -13,7 +13,7 @@ def generate_launch_description():
 
     state_machine_node = Node(
         package="nav_testing",
-        executable="nav_coordinator",
+        executable="nav_testing_NavCoordinator",
         name="nav_coordinator",
         output="screen",
     )
