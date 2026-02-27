@@ -11,6 +11,7 @@ def generate_launch_description():
         parameters = [
             {
                 "hostname": "192.168.1.10",
+                "udp_receiver_ip": "192.168.1.3",
                 "scanner_type": "sick_multiscan",
                 "publish_frame_id": "lidar_link",
                 "tf_base_frame_id": "lidar_link",
