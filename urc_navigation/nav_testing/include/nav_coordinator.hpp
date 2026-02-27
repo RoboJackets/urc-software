@@ -1,6 +1,7 @@
 #ifndef NAV_COORDINATOR_HPP_
 #define NAV_COORDINATOR_HPP_
 
+#include <math.h>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geographic_msgs/msg/geo_point.hpp>
 #include <geodesy/utm.h>
