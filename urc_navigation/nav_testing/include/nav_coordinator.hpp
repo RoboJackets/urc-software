@@ -2,8 +2,11 @@
 #define NAV_COORDINATOR_HPP_
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <geographic_msgs/msg/geo_point.hpp>
+#include <geodesy/utm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <urc_msgs/msg/waypoint.hpp>
 #include <urc_msgs/action/navigate_to_waypoint.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -42,7 +45,10 @@ private:
     };
 
     void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
+    void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
     void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
+    geometry_msgs::msg::PoseStamped convertGpsToMapWaypoint(
+        const urc_msgs::msg::Waypoint & waypoint) const;
 
     void handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle);
     void handleFeedback(
@@ -59,11 +65,15 @@ private:
     State state_;
     std::string follower_action_name_;
     bool cancel_on_new_waypoint_;
+    std::string map_frame_id_;
+    bool gps_conversion_ready_;
+    geodesy::UTMPoint map_origin_utm_;
 
     geometry_msgs::msg::PoseStamped active_waypoint_;
     GoalHandleNavigate::SharedPtr active_goal_handle_;
 
     rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
+    rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_waypoint_subscriber_;
     rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
 

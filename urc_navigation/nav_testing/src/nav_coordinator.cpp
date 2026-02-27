@@ -6,13 +6,40 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
 : rclcpp::Node("nav_coordinator", options)
 {
   declare_parameter<std::string>("waypoint_topic", "/nav/waypoint");
+  declare_parameter<std::string>("gps_waypoint_topic", "/waypoint");
   declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
   declare_parameter<bool>("cancel_on_new_waypoint", true);
+  declare_parameter<std::string>("map_frame_id", "map");
+  declare_parameter<double>("map_origin_latitude", 0.0);
+  declare_parameter<double>("map_origin_longitude", 0.0);
+  declare_parameter<double>("map_origin_altitude", 0.0);
 
   follower_action_name_ = get_parameter("follower_action_name").as_string();
   cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
+  map_frame_id_ = get_parameter("map_frame_id").as_string();
   state_ = State::IDLE;
   last_error_ = ErrorType::NONE;
+  gps_conversion_ready_ = true;
+
+  geographic_msgs::msg::GeoPoint map_origin;
+  map_origin.latitude = get_parameter("map_origin_latitude").as_double();
+  map_origin.longitude = get_parameter("map_origin_longitude").as_double();
+  map_origin.altitude = get_parameter("map_origin_altitude").as_double();
+
+  if (
+    map_origin.latitude < -90.0 || map_origin.latitude > 90.0 ||
+    map_origin.longitude < -180.0 || map_origin.longitude > 180.0)
+  {
+    gps_conversion_ready_ = false;
+    RCLCPP_WARN(
+      get_logger(),
+      "Invalid map origin lat/lon for GPS conversion (lat=%.8f lon=%.8f). "
+      "GPS waypoints will be rejected.",
+      map_origin.latitude,
+      map_origin.longitude);
+  } else {
+    geodesy::fromMsg(map_origin, map_origin_utm_);
+  }
 
   state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
   follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
@@ -22,10 +49,16 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS(),
     std::bind(&NavCoordinator::handleWaypoint, this, std::placeholders::_1));
 
+  gps_waypoint_subscriber_ = create_subscription<urc_msgs::msg::Waypoint>(
+    get_parameter("gps_waypoint_topic").as_string(),
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
+
   RCLCPP_INFO(
     get_logger(),
-    "Nav Coordinator ready. Waiting for waypoints on topic '%s' and forwarding to action '%s'.",
+    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
     get_parameter("waypoint_topic").as_string().c_str(),
+    get_parameter("gps_waypoint_topic").as_string().c_str(),
     follower_action_name_.c_str());
   
   if (state_publisher_) {
@@ -49,6 +82,59 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
   }
 
   sendFollowerGoal(active_waypoint_);
+}
+
+void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
+{
+  if (!gps_conversion_ready_) {
+    handleError(
+      ErrorType::PLANNER_FAILURE,
+      "Cannot process GPS waypoint: invalid map origin parameters for conversion.");
+    transitionTo(State::FAILED, "gps waypoint rejected - conversion unavailable");
+    return;
+  }
+
+  const auto converted_waypoint = convertGpsToMapWaypoint(*msg);
+  active_waypoint_ = converted_waypoint;
+
+  RCLCPP_INFO(
+    get_logger(),
+    "Received GPS waypoint: lat=%.8f lon=%.8f -> frame=%s x=%.3f y=%.3f",
+    msg->latitude,
+    msg->longitude,
+    active_waypoint_.header.frame_id.c_str(),
+    active_waypoint_.pose.position.x,
+    active_waypoint_.pose.position.y);
+
+  if (active_goal_handle_ && cancel_on_new_waypoint_) {
+    transitionTo(State::CANCELED, "canceling current goal due to new GPS waypoint");
+    follower_client_->async_cancel_goal(active_goal_handle_);
+    active_goal_handle_.reset();
+  }
+
+  sendFollowerGoal(active_waypoint_);
+}
+
+geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
+  const urc_msgs::msg::Waypoint & waypoint) const
+{
+  geographic_msgs::msg::GeoPoint geo_point;
+  geo_point.latitude = waypoint.latitude;
+  geo_point.longitude = waypoint.longitude;
+  geo_point.altitude = 0.0;
+
+  geodesy::UTMPoint waypoint_utm;
+  geodesy::fromMsg(geo_point, waypoint_utm);
+
+  geometry_msgs::msg::PoseStamped pose;
+  pose.header.stamp = now();
+  pose.header.frame_id = map_frame_id_;
+  pose.pose.position.x = waypoint_utm.easting - map_origin_utm_.easting;
+  pose.pose.position.y = waypoint_utm.northing - map_origin_utm_.northing;
+  pose.pose.position.z = 0.0;
+  pose.pose.orientation.w = 1.0;
+
+  return pose;
 }
 
 void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint)

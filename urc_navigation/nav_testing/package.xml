@@ -11,6 +11,8 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>geometry_msgs</depend>
+  <depend>geodesy</depend>
+  <depend>geographic_msgs</depend>
   <depend>std_msgs</depend>
   <depend>urc_msgs</depend>
 

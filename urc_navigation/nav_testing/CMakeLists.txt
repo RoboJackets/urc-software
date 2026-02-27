@@ -9,6 +9,8 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(geodesy REQUIRED)
+find_package(geographic_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 
@@ -26,6 +28,8 @@ set(dependencies
   rclcpp_action
   rclcpp_components
   geometry_msgs
+  geodesy
+  geographic_msgs
   std_msgs
   urc_msgs
 )
