@@ -187,10 +187,8 @@ void TraversabilityMapping::publishCacheMap()
   }
 
   auto msg1 = grid_map::GridMapRosConverter::toMessage(cache_map_);
-  auto msg2 = grid_map::GridMapRosConverter::toMessage(cache_map_);
 
   grid_map_publisher_->publish(std::move(msg1));
-  cache_map_publisher_->publish(std::move(msg2));
 }
 
 void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
