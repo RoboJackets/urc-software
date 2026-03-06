@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+<sdf version='1.5'>
+    <model name='Model0'>
+        <static>true</static>
+        <link name='link'>
+            <collision name='collision'>
+                <geometry>
+                    <mesh>
+                        <uri>model://aruco_tag_0/meshes/larger_triangle_post.dae</uri>
+                    </mesh>
+                </geometry> 
+            </collision> 
+            <visual name='visual'> 
+                <geometry> 
+                    <mesh> 
+                        <uri>model://aruco_tag_0/meshes/larger_triangle_post.dae</uri>
+                    </mesh> 
+                </geometry> 
+            </visual> 
+        </link> 
+    </model> 
+</sdf>
