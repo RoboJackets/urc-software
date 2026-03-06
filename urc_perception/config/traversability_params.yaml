@@ -27,9 +27,17 @@ grid_map_visualization:
 
 traversability_mapping:
   ros__parameters:
+    map_frame: map
+    odometry_topic: /odometry/filtered_global
     pointcloud_topic: /scan/points
     output_map_topic: /costmap
+    cache_map_topic: /cache_map
+    filter_chain_parameter_name: filters
     filter_radius: 5.0
+    cache_size_x: 10.0
+    cache_size_y: 10.0
+    resolution: 0.25
+    recenter_rate_hz: 20.0
 
     filters:
       filter1:
