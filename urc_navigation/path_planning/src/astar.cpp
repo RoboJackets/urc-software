@@ -18,93 +18,38 @@ Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 void AStar::setMap(const grid_map_msgs::msg::GridMap & costmap)
 {
   costmap_ = costmap;
+  grid_map_utils_.setMap(costmap);
 }
 
 void AStar::setCostmapLayer(const std::string & layer)
 {
   costmap_layer_ = layer;
+  grid_map_utils_.setLayer(layer);
 }
 
 int AStar::getLayerIndex() const
 {
-  auto it = std::find(costmap_.layers.begin(), costmap_.layers.end(), costmap_layer_);
-  if (it == costmap_.layers.end()) {
-    return -1;
-  }
-  return static_cast<int>(std::distance(costmap_.layers.begin(), it));
+  return grid_map_utils_.getLayerIndex();
 }
 
 bool AStar::getMapDimensions(int & width, int & height) const
 {
-  int idx = getLayerIndex();
-  if (idx < 0) {
-    return false;
-  }
-  if (costmap_.data.empty() || idx >= static_cast<int>(costmap_.data.size())) {
-    return false;
-  }
-
-  if (costmap_.data[idx].layout.dim.size() < 2) {
-    return false;
-  }
-
-  height = costmap_.data[idx].layout.dim[0].size;
-  width = costmap_.data[idx].layout.dim[1].size;
-  return true;
+  return grid_map_utils_.getMapDimensions(width, height);
 }
 
 bool AStar::worldToGrid(double x, double y, int & map_x, int & map_y) const
 {
-  int width, height;
-  if (!getMapDimensions(width, height)) {
-    return false;
-  }
-
-  double resolution = costmap_.info.resolution;
-  if (resolution <= 0.0) {
-    return false;
-  }
-
-  double origin_x = costmap_.info.pose.position.x;
-  double origin_y = costmap_.info.pose.position.y;
-  double rel_x = x - origin_x;
-  double rel_y = y - origin_y;
-
-  map_x = static_cast<int>(rel_x / resolution + width / 2.0);
-  map_y = static_cast<int>(rel_y / resolution + height / 2.0);
-
-  if (map_x < 0 || map_x >= width || map_y < 0 || map_y >= height) {
-    return false;
-  }
-  return true;
+  return grid_map_utils_.worldToGrid(x, y, map_x, map_y);
 }
 
 double AStar::getCellCost(double x, double y) const
 {
-  int idx = getLayerIndex();
-  if (idx < 0) {
-    throw std::runtime_error("Costmap layer not found");
-  }
-  if (costmap_.data.empty() || idx >= static_cast<int>(costmap_.data.size())) {
-    throw std::runtime_error("Costmap data is invalid");
+  float cost;
+  if (!grid_map_utils_.tryGetCellCost(x, y, cost)) {
+    throw std::runtime_error("Unable to get cell cost");
   }
 
-  int width, height;
-  if (!getMapDimensions(width, height)) {
-    throw std::runtime_error("Costmap dimensions are invalid");
-  }
-
-  int map_x, map_y;
-  if (!worldToGrid(x, y, map_x, map_y)) {
-    throw std::runtime_error("Point is outside costmap bounds");
-  }
-
-  size_t index = static_cast<size_t>(map_y * width + map_x);
-  if (index >= costmap_.data[idx].data.size()) {
-    throw std::runtime_error("Costmap index is out of range");
-  }
-
-  return costmap_.data[idx].data[index];
+  return cost;
 }
 
 bool AStar::clipGoalToCostmapBoundary(

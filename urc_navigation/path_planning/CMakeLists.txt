@@ -28,6 +28,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
+  src/grid_map_utils.cpp
 )
 
 set(dependencies
