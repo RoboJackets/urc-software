@@ -8,7 +8,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <nav_msgs/msg/path.hpp>
-#include "grid_map_utils.hpp"
+#include "grid_map_utils/grid_map_utils.hpp"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/navigate_to_waypoint.hpp"

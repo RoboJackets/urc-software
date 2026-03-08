@@ -5,6 +5,7 @@ include(../../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(grid_map_utils REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
@@ -28,12 +29,12 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
-  src/grid_map_utils.cpp
 )
 
 set(dependencies
   rclcpp
   rclcpp_components
+  grid_map_utils
   urc_msgs
   std_msgs
   grid_map_msgs
@@ -62,6 +63,11 @@ install(
   DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 # Install library

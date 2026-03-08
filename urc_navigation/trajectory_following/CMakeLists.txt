@@ -5,6 +5,7 @@ include(../../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(grid_map_utils REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
@@ -34,6 +35,7 @@ set(dependencies
   rclcpp
   rclcpp_action
   rclcpp_components
+  grid_map_utils
   urc_msgs
   std_msgs
   grid_map_msgs

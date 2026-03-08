@@ -32,6 +32,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
 
   stamped_ = get_parameter("cmd_vel_stamped").as_bool();
   costmap_layer_ = get_parameter("costmap_layer").as_string();
+  grid_map_utils_.setLayer(costmap_layer_);
 
   if (stamped_) {
     cmd_vel_stamped_pub_ = create_publisher<geometry_msgs::msg::TwistStamped>(
@@ -71,8 +72,9 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
 }
 
 void FollowerActionServer::handleCostmap(
-    const grid_map_msgs::msg::GridMap::SharedPtr msg) {
+  const grid_map_msgs::msg::GridMap::SharedPtr msg) {
   current_costmap_ = *msg;
+  grid_map_utils_.setMap(*msg);
 }
 
 geometry_msgs::msg::TransformStamped
@@ -182,54 +184,15 @@ void FollowerActionServer::publishZeroVelocity() {
   }
 }
 
-float FollowerActionServer::getCost(const grid_map_msgs::msg::GridMap &costmap,
-                                  double x, double y) {
-  // Find the layer index
-  auto it = std::find(costmap.layers.begin(), costmap.layers.end(), costmap_layer_);
-  if (it == costmap.layers.end()) {
+float FollowerActionServer::getCost(double x, double y) {
+  float cost;
+  if (!grid_map_utils_.tryGetCellCost(x, y, cost)) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "Costmap layer '%s' not found", costmap_layer_.c_str());
     return 0.0f;
   }
-  size_t layer_index = std::distance(costmap.layers.begin(), it);
 
-  // Get grid dimensions from the data layout
-  if (costmap.data.empty() || layer_index >= costmap.data.size()) {
-    return 0.0f;
-  }
-
-  const auto &layer_data = costmap.data[layer_index];
-  if (layer_data.layout.dim.size() < 2) {
-    return 0.0f;
-  }
-
-  // GridMap uses center of grid as origin
-  double origin_x = costmap.info.pose.position.x;
-  double origin_y = costmap.info.pose.position.y;
-  double resolution = costmap.info.resolution;
-  
-  // Calculate map indices (GridMap stores data row-major)
-  int width = layer_data.layout.dim[1].size;
-  int height = layer_data.layout.dim[0].size;
-  
-  // Transform world coordinates to grid coordinates
-  double rel_x = x - origin_x;
-  double rel_y = y - origin_y;
-  
-  int map_x = static_cast<int>(rel_x / resolution + width / 2.0);
-  int map_y = static_cast<int>(rel_y / resolution + height / 2.0);
-
-  if (map_x < 0 || map_x >= width || map_y < 0 || map_y >= height) {
-    return 0.0f;
-  }
-
-  // Access data in row-major order
-  size_t index = map_y * width + map_x;
-  if (index >= layer_data.data.size()) {
-    return 0.0f;
-  }
-
-  return layer_data.data[index];
+  return cost;
 }
 
 nav_msgs::msg::Path FollowerActionServer::callPlanningService(
@@ -465,7 +428,7 @@ void FollowerActionServer::execute_navigate(
         RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
         break;
       }
-    } else if (getCost(current_costmap_, output.lookahead_point.point.x,
+    } else if (getCost(output.lookahead_point.point.x,
                        output.lookahead_point.point.y) >
                get_parameter("lethal_cost_threshold").as_double()) {
       // Obstacle detected - attempt to re-plan
