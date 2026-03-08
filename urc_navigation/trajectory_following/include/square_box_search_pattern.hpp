@@ -4,22 +4,20 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 
 #include <nav_msgs/msg/path.hpp>
-#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include "urc_msgs/action/navigate_to_waypoint.hpp"
 
 namespace trajectory_following
 {
 
-class SpiralPathGenerator : public rclcpp::Node
+class SquareBoxSearchPattern : public rclcpp::Node
 {
 public:
-  explicit SpiralPathGenerator(const rclcpp::NodeOptions & options);
+  explicit SquareBoxSearchPattern(const rclcpp::NodeOptions & options);
 
 private:
   nav_msgs::msg::Path buildPath() const;
   void sendNextPathGoal();
-  void sendGoalPose(const geometry_msgs::msg::PoseStamped & goal_pose);
 
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_publisher_;
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_publisher_;
@@ -30,7 +28,6 @@ private:
   bool goal_in_flight_{false};
   bool completed_{false};
   bool auto_send_{true};
-  std::size_t path_goal_idx_{0};
 
   // Parameters
   std::string frame_id_;
@@ -38,9 +35,9 @@ private:
   double start_x_{0.0};
   double start_y_{0.0};
   double start_z_{0.0};
-  double radius_step_{0.5};
-  double angle_step_deg_{5.0};
-  double max_radius_{5.0};
+  double leg_step_{2.0};
+  double segment_resolution_{0.5};
+  double max_radius_{20.0};
 };
 
 }  // namespace trajectory_following

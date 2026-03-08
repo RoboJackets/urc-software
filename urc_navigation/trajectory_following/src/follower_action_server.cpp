@@ -21,7 +21,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions &options)
   declare_parameter("map_frame", "map");
   declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
-  declare_parameter("lethal_cost_threshold", 50);
+  declare_parameter("lethal_cost_threshold", 10);
   declare_parameter("enforce_goal_heading", false);
   declare_parameter("goal_heading_tolerance", 0.1);
 
@@ -113,8 +113,10 @@ rclcpp_action::GoalResponse FollowerActionServer::handle_navigate_goal(
     return rclcpp_action::GoalResponse::REJECT;
   }
 
-  if (goal->has_goal && !planning_client_->service_is_ready()) {
-    RCLCPP_WARN(this->get_logger(), "Planning service not available");
+  if (goal->has_goal && !goal->has_path && !planning_client_->service_is_ready()) {
+    // if we only have a goal (no explicit path) we require the planner;
+    // log a clear warning so clients know why the goal was rejected
+    RCLCPP_WARN(this->get_logger(), "Planning service not available for goal-only request");
     return rclcpp_action::GoalResponse::REJECT;
   }
 

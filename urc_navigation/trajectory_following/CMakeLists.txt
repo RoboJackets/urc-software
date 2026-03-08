@@ -28,6 +28,7 @@ add_library(${PROJECT_NAME} SHARED
   src/geometry_util.cpp
   src/follower_action_server.cpp
   src/spiral_path_generator.cpp
+  src/square_box_search_pattern.cpp
 )
 
 set(dependencies
@@ -58,6 +59,11 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "trajectory_following::SpiralPathGenerator"
   EXECUTABLE SpiralPathGenerator
+)
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "trajectory_following::SquareBoxSearchPattern"
+  EXECUTABLE SquareBoxSearchPattern
 )
 
 # Install launch files.

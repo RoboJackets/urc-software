@@ -39,6 +39,7 @@ SpiralPathGenerator::SpiralPathGenerator(const rclcpp::NodeOptions & options)
   // Generate and publish the spiral path
   auto latched_qos = rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable();
   path_publisher_ = create_publisher<nav_msgs::msg::Path>("spiral_path", latched_qos);
+  // also publish a marker so the spiral is visible in RViz
   marker_publisher_ = create_publisher<visualization_msgs::msg::Marker>("spiral_path_marker", latched_qos);
   action_client_ = rclcpp_action::create_client<urc_msgs::action::NavigateToWaypoint>(
     this, action_name_);
@@ -47,14 +48,14 @@ SpiralPathGenerator::SpiralPathGenerator(const rclcpp::NodeOptions & options)
 
   if (generated_path_.poses.empty()) {
     completed_ = true;
-    RCLCPP_WARN(get_logger(), "Generated spiral path is empty; no path goal to send.");
+    RCLCPP_WARN(get_logger(), "Generated spiral path is empty; no goals to send.");
     return;
   }
 
   if (auto_send_) {
     send_timer_ = create_wall_timer(
       std::chrono::milliseconds(send_period_ms),
-      std::bind(&SpiralPathGenerator::sendGoalPath, this));
+      std::bind(&SpiralPathGenerator::sendNextPathGoal, this));
   }
 }
 
@@ -123,11 +124,14 @@ nav_msgs::msg::Path SpiralPathGenerator::buildPath() const
   return path;
 }
 
-void SpiralPathGenerator::sendGoalPath()
+void SpiralPathGenerator::sendNextPathGoal()
 {
   if (completed_ || goal_in_flight_) {
     return;
   }
+
+  // publish the entire path for visualization/debug
+  path_publisher_->publish(generated_path_);
 
   if (!action_client_->wait_for_action_server(std::chrono::seconds(0))) {
     RCLCPP_WARN_THROTTLE(
@@ -135,13 +139,14 @@ void SpiralPathGenerator::sendGoalPath()
       "Waiting for '%s' action server...", action_name_.c_str());
     return;
   }
+
   using NavigateAction = urc_msgs::action::NavigateToWaypoint;
   using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateAction>;
 
   NavigateAction::Goal goal_msg;
-  goal_msg.path = generated_path_;
   goal_msg.has_goal = false;
   goal_msg.has_path = true;
+  goal_msg.path = generated_path_;
   goal_msg.enforce_goal_heading = false;
 
   rclcpp_action::Client<NavigateAction>::SendGoalOptions options;
@@ -155,9 +160,8 @@ void SpiralPathGenerator::sendGoalPath()
         }
         return;
       }
-      RCLCPP_INFO(
-        get_logger(), "Accepted spiral path goal with %zu poses.",
-        generated_path_.poses.size());
+      RCLCPP_INFO(get_logger(), "Accepted spiral path goal (%zu poses).",
+                  generated_path_.poses.size());
     };
 
   options.feedback_callback =
@@ -166,12 +170,12 @@ void SpiralPathGenerator::sendGoalPath()
 
   options.result_callback = [this](const GoalHandleNavigate::WrappedResult & wrapped_result) {
       goal_in_flight_ = false;
-      completed_ = true;
 
       if (wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED ||
         !wrapped_result.result ||
         wrapped_result.result->error_code != urc_msgs::action::NavigateToWaypoint::Result::SUCCESS)
       {
+        completed_ = true;
         RCLCPP_ERROR(get_logger(), "Spiral path goal failed.");
         if (send_timer_) {
           send_timer_->cancel();
@@ -179,9 +183,74 @@ void SpiralPathGenerator::sendGoalPath()
         return;
       }
 
-      RCLCPP_INFO(get_logger(), "Spiral path goal completed successfully.");
-      if (send_timer_) {
-        send_timer_->cancel();
+      completed_ = true;
+      RCLCPP_INFO(get_logger(), "Spiral path completed successfully.");
+    };
+
+  goal_in_flight_ = true;
+  action_client_->async_send_goal(goal_msg, options);
+  completed_ = true; // only send once
+}
+
+void SpiralPathGenerator::sendGoalPose(const geometry_msgs::msg::PoseStamped & goal_pose)
+{
+  using NavigateAction = urc_msgs::action::NavigateToWaypoint;
+  using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateAction>;
+
+  NavigateAction::Goal goal_msg;
+  // always include a trivial path with the single pose so the follower
+  // server doesn't need the planning service to be available
+  goal_msg.goal = goal_pose;
+  goal_msg.has_goal = true;
+  goal_msg.has_path = true;
+  goal_msg.path.header = goal_pose.header;
+  goal_msg.path.poses.push_back(goal_pose);
+  goal_msg.enforce_goal_heading = false;
+
+  rclcpp_action::Client<NavigateAction>::SendGoalOptions options;
+  options.goal_response_callback = [this](std::shared_ptr<GoalHandleNavigate> goal_handle) {
+      if (!goal_handle) {
+        completed_ = true;
+        goal_in_flight_ = false;
+        RCLCPP_ERROR(get_logger(), "navigate_to_waypoint goal was rejected.");
+        if (send_timer_) {
+          send_timer_->cancel();
+        }
+        return;
+      }
+      RCLCPP_INFO(
+        get_logger(), "Accepted point goal %zu/%zu.",
+        path_goal_idx_ + 1, generated_path_.poses.size());
+    };
+
+  options.feedback_callback =
+    [](GoalHandleNavigate::SharedPtr,
+      const std::shared_ptr<const NavigateAction::Feedback>) {};
+
+  options.result_callback = [this](const GoalHandleNavigate::WrappedResult & wrapped_result) {
+      goal_in_flight_ = false;
+
+      if (wrapped_result.code != rclcpp_action::ResultCode::SUCCEEDED ||
+        !wrapped_result.result ||
+        wrapped_result.result->error_code != urc_msgs::action::NavigateToWaypoint::Result::SUCCESS)
+      {
+        completed_ = true;
+        RCLCPP_ERROR(
+          get_logger(), "Point goal %zu/%zu failed.",
+          path_goal_idx_ + 1, generated_path_.poses.size());
+        if (send_timer_) {
+          send_timer_->cancel();
+        }
+        return;
+      }
+
+      ++path_goal_idx_;
+      if (path_goal_idx_ >= generated_path_.poses.size()) {
+        completed_ = true;
+        RCLCPP_INFO(get_logger(), "All spiral point goals completed successfully.");
+        if (send_timer_) {
+          send_timer_->cancel();
+        }
       }
     };
 
