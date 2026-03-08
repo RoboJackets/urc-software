@@ -22,13 +22,13 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS());
 
   // Setup the costmap
-  costmap_subscriber_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
-    "/traversability",
+  costmap_subscriber_ = create_subscription<grid_map_msgs::msg::GridMap>(
+    "/costmap",
     rclcpp::SystemDefaultsQoS(),
     std::bind(&PlannerServer::handleCostmap, this, std::placeholders::_1));
 }
 
-void PlannerServer::handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
+void PlannerServer::handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg)
 {
   // RCLCPP_INFO(get_logger(), "Received Costmap!");
   current_costmap_ = *msg;
@@ -42,6 +42,7 @@ void PlannerServer::generatePlan(
 {
   try {
     astar::AStar astar;
+    astar.setCostmapLayer("traversability_inflated");
     astar.setMap(current_costmap_);
 
     auto start = request->start.pose;

@@ -5,11 +5,13 @@ include(../../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(grid_map_utils REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(grid_map_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(OpenCV 4 REQUIRED)
@@ -32,8 +34,10 @@ add_library(${PROJECT_NAME} SHARED
 set(dependencies
   rclcpp
   rclcpp_components
+  grid_map_utils
   urc_msgs
   std_msgs
+  grid_map_msgs
   sensor_msgs
   diagnostic_updater
   cv_bridge
@@ -59,6 +63,11 @@ install(
   DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 # Install library

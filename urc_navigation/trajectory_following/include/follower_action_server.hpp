@@ -7,13 +7,13 @@
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <visualization_msgs/msg/marker.hpp>
-#include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include "grid_map_utils/grid_map_utils.hpp"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/navigate_to_waypoint.hpp"
 #include "urc_msgs/srv/generate_plan.hpp"
-#include <nav_msgs/msg/occupancy_grid.hpp>
+#include <grid_map_msgs/msg/grid_map.hpp>
 
 namespace follower_action_server
 {
@@ -57,18 +57,19 @@ private:
    * @brief Handle the costmap data
    * @param msg The costmap data
    */
-  void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+  void handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg);
 
-  int getCost(const nav_msgs::msg::OccupancyGrid & costmap, double x, double y);
+  float getCost(double x, double y);
 
-  nav_msgs::msg::OccupancyGrid current_costmap_;
-  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
+  grid_map_msgs::msg::GridMap current_costmap_;
+  grid_map_utils::GridMapUtils grid_map_utils_;
+  rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
+  std::string costmap_layer_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
   rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_stamped_pub_;
   rclcpp_action::Server<urc_msgs::action::NavigateToWaypoint>::SharedPtr navigate_server_;
   rclcpp::Client<urc_msgs::srv::GeneratePlan>::SharedPtr planning_client_;
-  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr rover_position_pub_;
 
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
@@ -76,7 +77,6 @@ private:
 
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub_;
 
-  geometry_msgs::msg::PoseStamped current_pose_;
   bool stamped_;
 };
 } // namespace follower_action_server

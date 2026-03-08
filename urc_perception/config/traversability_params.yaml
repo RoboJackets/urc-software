@@ -27,9 +27,17 @@ grid_map_visualization:
 
 traversability_mapping:
   ros__parameters:
+    map_frame: map
+    odometry_topic: /odometry/filtered_global
     pointcloud_topic: /scan/points
     output_map_topic: /costmap
+    cache_map_topic: /cache_map
+    filter_chain_parameter_name: filters
     filter_radius: 5.0
+    cache_size_x: 10.0
+    cache_size_y: 10.0
+    resolution: 0.25
+    recenter_rate_hz: 20.0
 
     filters:
       filter1:
@@ -42,7 +50,7 @@ traversability_mapping:
         params:
           input_layer: elevation
           output_layer: elevation_smooth
-          radius: 0.1
+          radius: 0.5
 
       filter3: # Compute surface normals.
         name: surface_normals
@@ -60,29 +68,21 @@ traversability_mapping:
           output_layer: slope
           expression: acos(normal_vectors_z)
 
-      filter5: # Zero out slope values below a threshold.
-        name: slope_lower_threshold
-        type: gridMapFilters/ThresholdFilter
-        params:
-          layer: slope
-          lower_threshold: 1.0
-          set_to: 0.0
-
-      filter6: # Compute roughness as absolute difference from map to smoothened map.
+      filter5: # Compute roughness as absolute difference from map to smoothened map.
         name: roughness
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: roughness
           expression: abs(elevation - elevation_smooth)
 
-      filter7: # Compute traversability as normalized weighted sum of slope and roughness.
+      filter6: # Compute traversability as normalized weighted sum of slope and roughness.
         name: traversability
         type: gridMapFilters/MathExpressionFilter
         params:
           output_layer: traversability
-          expression: slope / 1.57
+          expression: slope + roughness
 
-      filter8: # Apply a gaussian kernel with a given radius and coefficient.
+      filter7: # Apply a gaussian kernel with a given radius and coefficient.
         name: gaussian_kernel
         type: urcPerception/GaussianFilter
         params:

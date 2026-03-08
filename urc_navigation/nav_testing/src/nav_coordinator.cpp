@@ -1,193 +1,359 @@
-#include <rclcpp/rclcpp.hpp>
-#include <geometry_msgs/msg/pose_stamped.hpp>
-
 #include "nav_coordinator.hpp"
-#include "astar.hpp"
+
+#include <geometry_msgs/msg/point_stamped.hpp>
+#include <stdexcept>
+#include <tf2/exceptions.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace nav_coordinator
 {
 NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
 : rclcpp::Node("nav_coordinator", options)
 {
-    RCLCPP_INFO(get_logger(), "Nav Coordinator started.");
+  declare_parameter<std::string>("waypoint_topic", "/nav/waypoint");
+  declare_parameter<std::string>("gps_waypoint_topic", "/waypoint");
+  declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
+  declare_parameter<bool>("cancel_on_new_waypoint", true);
+  declare_parameter<std::string>("map_frame_id", "map");
+  declare_parameter<std::string>("utm_frame_id", "utm");
 
-    // --- Nav Action Server --- //
-    // to mannually send a goal, use 
-    // ros2 action send_goal /nav_coordinator urc_msgs/action/NavToGoal "{path: {poses: [{header: {frame_id: 'map'}, pose: {position: {x: 1.0, y: 1.0, z: 0,0}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}]}}" 
-    nav_action_server_ = rclcpp_action::create_server<urc_msgs::action::NavToGoal>(
-        this,
-        "nav_coordinator",
-        std::bind(
-            &NavCoordinator::handle_goal, this, std::placeholders::_1,
-            std::placeholders::_2),
-            std::bind(&NavCoordinator::handle_cancel, this, std::placeholders::_1),
-            std::bind(&NavCoordinator::handle_accepted, this, std::placeholders::_1));
-    
-    // --- Subscribers --- //
-    // Create localization subscriber    
-    localization_subscriber_ = create_subscription<TODO>(
-        "/rover_ground_truth", //TODO_localization_topic
-        rclcpp::SystemDefaultsQoS(),
-        [this](const nav_msgs::msg::Odometry::SharedPtr msg)
-        {
-        geometry_msgs::msg::PoseStamped pose;
-        pose.header = msg->header;
-        pose.pose = msg->pose.pose;
-        current_pose_ = pose;
-        });
+  follower_action_name_ = get_parameter("follower_action_name").as_string();
+  cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
+  map_frame_id_ = get_parameter("map_frame_id").as_string();
+  utm_frame_id_ = get_parameter("utm_frame_id").as_string();
+  state_ = State::IDLE;
+  last_error_ = ErrorType::NONE;
 
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-    // --- Planner Service Client --- //
-    /* IN PROGRESS
-    planner_client_ = rclcpp::create_client<urc_msgs::action::GeneratePlan>(
-        this,
-        "/plan"
-    );
-    std::thread(std::bind(&NavCoordinator::sendPlannerRequest, this)).detach();
-    */
+  state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
+  follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
 
-    // // --- NavCoordinator Timer Callback --- //
-    // // one second timer callback
-    // timer_ = this->create_wall_timer(
-    //     std::chrono::seconds(1),
-    //     std::bind(&NavCoordinator::timerCallback, this)
-    // );
+  waypoint_subscriber_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+    get_parameter("waypoint_topic").as_string(),
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&NavCoordinator::handleWaypoint, this, std::placeholders::_1));
 
+  gps_waypoint_subscriber_ = create_subscription<urc_msgs::msg::Waypoint>(
+    get_parameter("gps_waypoint_topic").as_string(),
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
 
+  RCLCPP_INFO(
+    get_logger(),
+    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
+    get_parameter("waypoint_topic").as_string().c_str(),
+    get_parameter("gps_waypoint_topic").as_string().c_str(),
+    follower_action_name_.c_str());
+  
+  if (state_publisher_) {
+    publishState();
+  }
 }
 
-// --- nav action server functions --- //
-
-rclcpp_action::GoalResponse NavCoordinator::handle_goal(
-    const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const urc_msgs::action::NavToGoal::Goal> goal)
+void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Received goal request");
+  active_waypoint_ = *msg;
+  RCLCPP_INFO(
+    get_logger(), "Received waypoint: frame=%s x=%.3f y=%.3f",
+    active_waypoint_.header.frame_id.c_str(),
+    active_waypoint_.pose.position.x,
+    active_waypoint_.pose.position.y);
 
-  (void)uuid;
-  (void)goal;
+  if (active_goal_handle_ && cancel_on_new_waypoint_) {
+    transitionTo(State::CANCELED, "canceling current goal due to new waypoint");
+    follower_client_->async_cancel_goal(active_goal_handle_);
+    active_goal_handle_.reset();
+  }
 
-  return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+  sendFollowerGoal(active_waypoint_);
 }
 
-rclcpp_action::CancelResponse NavCoordinator::handle_cancel(
-    const std::shared_ptr<rclcpp::action::ServerGoalHandle<urc_msgs::action::NavToGoal>> goal_handle)
+void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
+  geometry_msgs::msg::PoseStamped converted_waypoint;
+  try {
+    converted_waypoint = convertGpsToMapWaypoint(*msg);
+  } catch (const std::exception & ex) {
+    handleError(
+      ErrorType::PLANNER_FAILURE,
+      std::string("Cannot process GPS waypoint: ") + ex.what());
+    transitionTo(State::FAILED, "gps waypoint rejected - transform unavailable");
+    return;
+  }
 
-  (void)goal_handle;
+  active_waypoint_ = converted_waypoint;
 
-  return rclcpp_action::CancelResponse::ACCEPT;
+  RCLCPP_INFO(
+    get_logger(),
+    "Received GPS waypoint: lat=%.8f lon=%.8f -> frame=%s x=%.3f y=%.3f",
+    msg->latitude,
+    msg->longitude,
+    active_waypoint_.header.frame_id.c_str(),
+    active_waypoint_.pose.position.x,
+    active_waypoint_.pose.position.y);
+
+  if (active_goal_handle_ && cancel_on_new_waypoint_) {
+    transitionTo(State::CANCELED, "canceling current goal due to new GPS waypoint");
+    follower_client_->async_cancel_goal(active_goal_handle_);
+    active_goal_handle_.reset();
+  }
+
+  sendFollowerGoal(active_waypoint_);
 }
 
-void NavCoordinator::handle_accepted(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavToGoal>> goal_handle)
+geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
+  const urc_msgs::msg::Waypoint & waypoint)
 {
-  // this needs to return quickly to avoid blocking the executor, so spin up a new thread
-  std::thread{std::bind(&NavCoordinator::execute, this, std::placeholders::_1),
-    goal_handle}
-  .detach();
-}
-/*
-void NavCoordinator::executeTODO(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavToGoal>> goal_handle)
-{
-    RCLCPP_INFO(this->get_logger(), "Executing goal");
-    
-    auto feedback = std::make_shared<urc_msgs::action::NavToGoal::Feedback>();
-    feedback->distance_to_goal = std::numeric_limits<double>::max();
+  geographic_msgs::msg::GeoPoint geo_point;
+  geo_point.latitude = waypoint.latitude;
+  geo_point.longitude = waypoint.longitude;
+  geo_point.altitude = 0.0;
 
-    auto result = std::make_shared<urc_msgs::action::NavToGoal::Result>();
-    auto & path = goal_handle->get_goal()->path;
-    
-    while (rclcpp::ok()) {
-    if (goal_handle->is_canceling()) {
-        goal_handle->canceled(result);
-        RCLCPP_INFO(this->get_logger(), "Follower Goal has been canceled");
+  geodesy::UTMPoint waypoint_utm;
+  geodesy::fromMsg(geo_point, waypoint_utm);
+
+  geometry_msgs::msg::PointStamped utm_point;
+  utm_point.header.stamp = now();
+  utm_point.header.frame_id = utm_frame_id_;
+  utm_point.point.x = waypoint_utm.easting;
+  utm_point.point.y = waypoint_utm.northing;
+  utm_point.point.z = 0.0;
+
+  geometry_msgs::msg::PointStamped map_point;
+  try {
+    tf_buffer_->transform(utm_point, map_point, map_frame_id_);
+  } catch (const tf2::TransformException & ex) {
+    throw std::runtime_error(
+      "Failed to transform waypoint from '" + utm_frame_id_ + "' to '" + map_frame_id_ + "': " +
+      ex.what());
+  }
+
+  geometry_msgs::msg::PoseStamped pose;
+  pose.header = map_point.header;
+  pose.pose.position.x = map_point.point.x;
+  pose.pose.position.y = map_point.point.y;
+  pose.pose.position.z = map_point.point.z;
+  pose.pose.orientation.w = 1.0;
+
+  return pose;
+}
+
+void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint)
+{
+  transitionTo(State::WAITING_FOR_SERVER, "checking follower action server");
+  if (!follower_client_->wait_for_action_server(std::chrono::seconds(2))) {
+    handleError(
+      ErrorType::SERVER_UNAVAILABLE,
+      "Follower action server '" + follower_action_name_ + "' not available.");
+    transitionTo(State::FAILED, "follower action server unavailable");
+    return;
+  }
+
+  NavigateToWaypoint::Goal goal_msg;
+  goal_msg.goal = waypoint;
+  goal_msg.has_goal = true;
+  goal_msg.has_path = false;
+  goal_msg.enforce_goal_heading = false;
+
+  transitionTo(State::SENDING_GOAL, "forwarding waypoint to follower");
+
+  rclcpp_action::Client<NavigateToWaypoint>::SendGoalOptions options;
+  options.goal_response_callback = std::bind(
+    &NavCoordinator::handleGoalResponse, this, std::placeholders::_1);
+  options.feedback_callback = std::bind(
+    &NavCoordinator::handleFeedback, this, std::placeholders::_1, std::placeholders::_2);
+  options.result_callback = std::bind(
+    &NavCoordinator::handleResult, this, std::placeholders::_1);
+
+  follower_client_->async_send_goal(goal_msg, options);
+}
+
+void NavCoordinator::handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle)
+{
+  if (!goal_handle) {
+    handleError(ErrorType::FOLLOWER_FAILURE, "Follower action server rejected the goal.");
+    transitionTo(State::FAILED, "follower rejected goal");
+    return;
+  }
+
+  active_goal_handle_ = goal_handle;
+  transitionTo(State::TRACKING_GOAL, "follower accepted goal");
+}
+
+void NavCoordinator::handleFeedback(
+  GoalHandleNavigate::SharedPtr,
+  const std::shared_ptr<const NavigateToWaypoint::Feedback> feedback)
+{
+  RCLCPP_DEBUG(
+    get_logger(), "Feedback: dist=%.2f planning=%s replans=%u",
+    feedback->distance_to_goal,
+    feedback->is_planning ? "true" : "false",
+    feedback->replan_count);
+}
+
+void NavCoordinator::handleResult(const GoalHandleNavigate::WrappedResult & result)
+{
+  active_goal_handle_.reset();
+
+  if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
+    if (result.result->error_code == NavigateToWaypoint::Result::SUCCESS) {
+      transitionTo(State::SUCCEEDED, "follower reported success");
+      return;
+    }
+
+    switch (result.result->error_code) {
+      case NavigateToWaypoint::Result::OBSTACLE_DETECTED:
+        handleError(ErrorType::OBSTACLE_DETECTED, "Obstacle detected during trajectory following.");
         break;
-    // } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
-    } else if (TODO_next_path_point_reached_condition) {
-        // result->error_code = urc_msgs::action::NavToGoal::Result::SUCCESS;
-        // goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Moving to next path point");
-        sendNextPathPoint();
-    } else if (TODO_last_path_point_reached_condition) {
-        result->error_code = urc_msgs::action::NavToGoal::Result::SUCCESS;
-        goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Final Goal has been reached!");
+      case NavigateToWaypoint::Result::PLANNING_FAILED:
+        handleError(ErrorType::PLANNING_FAILED_IN_FOLLOWER, "Path planning failed in follower.");
         break;
-    // } else if (getCost(
-    //     current_costmap_, output.lookahead_point.point.x,
-    //     output.lookahead_point.point.y) > get_parameter("lethal_cost_threshold").as_int())
-    // } else if (TODO_obstacle_detected_condition || TODO_new_goal_received)    // repath
-        {
-        RCLCPP_INFO(this->get_logger(), "Replanning Path: Obstacle detected!");
-        // TODO: Call planner service to generate new path
-        sendPlannerRequest(); 
+      case NavigateToWaypoint::Result::FAILURE:
+        handleError(ErrorType::FOLLOWER_FAILURE, "Follower reported generic failure.");
         break;
-    } else if (TODO_path_planner_failure) {
-        result->error_code = urc_msgs::action::TODO::Result::PLANNER_FAILURE;
-        goal_handle->abort(result);
-        RCLCPP_INFO(this->get_logger(), "Path Planner Failure!");
+      default:
+        handleError(ErrorType::UNKNOWN_ERROR, "Follower finished with error_code=" + std::to_string(result.result->error_code));
         break;
     }
-}
-*/
+    transitionTo(State::FAILED, "follower finished with error");
+    return;
+  }
 
-void NavCoordinator::execute(
-    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavToGoal>> goal_handle)
+  if (result.code == rclcpp_action::ResultCode::ABORTED) {
+    handleError(ErrorType::FOLLOWER_FAILURE, "Follower aborted goal.");
+    transitionTo(State::FAILED, "follower aborted goal");
+    return;
+  }
+
+  if (result.code == rclcpp_action::ResultCode::CANCELED) {
+    transitionTo(State::CANCELED, "follower canceled goal");
+    return;
+  }
+
+  handleError(ErrorType::UNKNOWN_ERROR, "Unknown follower result code: " + std::to_string(static_cast<int>(result.code)));
+  transitionTo(State::FAILED, "unknown follower result code");
+}
+
+void NavCoordinator::transitionTo(State new_state, const std::string & reason)
 {
-    RCLCPP_INFO(this->get_logger(), "Executing goal");
-    
-    auto feedback = std::make_shared<urc_msgs::action::NavToGoal::Feedback>();
-    feedback->distance_to_goal = std::numeric_limits<double>::max();
+  if (state_ == new_state) {
+    return;
+  }
 
-    auto result = std::make_shared<urc_msgs::action::NavToGoal::Result>();
-    auto & path = goal_handle->get_goal()->path;
-
-    while (rclcpp::ok()) {
-    if (goal_handle->is_canceling()) {
-        goal_handle->canceled(result);
-        RCLCPP_INFO(this->get_logger(), "Follower Goal has been canceled");
-        break;
-    // } else if (feedback->distance_to_goal < get_parameter("goal_tolerance").as_double()) {
-    } else if (goal_handle->) {
-        result->error_code = urc_msgs::action::NavToGoal::Result::SUCCESS;
-        goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Final Goal has been reached!");
-        break;
+  const auto state_name = [](State state) -> const char* {
+    switch (state) {
+      case State::IDLE:
+        return "IDLE";
+      case State::WAITING_FOR_SERVER:
+        return "WAITING_FOR_SERVER";
+      case State::SENDING_GOAL:
+        return "SENDING_GOAL";
+      case State::TRACKING_GOAL:
+        return "TRACKING_GOAL";
+      case State::SUCCEEDED:
+        return "SUCCEEDED";
+      case State::FAILED:
+        return "FAILED";
+      case State::CANCELED:
+        return "CANCELED";
+      default:
+        return "UNKNOWN";
     }
+  };
+
+  RCLCPP_INFO(
+    get_logger(), "State transition: %s -> %s (%s)", state_name(state_),
+    state_name(new_state), reason.c_str());
+  state_ = new_state;
+  publishState();
 }
 
-// --- planner service request --- //
-/* IN PROGRESS
-void NavCoordinator::sendPlannerRequest()
+void NavCoordinator::handleError(ErrorType error_type, const std::string & details)
 {
-    RCLCPP_INFO(this->get_logger(), "Waiting for planner service...");
-    // if (!planner_client_->wait_for_service(std::chrono::seconds(10))){
-    //     RCLCPP_ERROR(this->get_logger(), "Couldn't find planner service");
-    //     return;
-    // }
-    while (!planner_client_->wait_for_action_server(std::chrono::seconds(1))) {
-        RCLCPP_INFO(this->get_logger(), "Waiting for planner server...");
-    }
-    RCLCPP_INFO(this->get_logger(), "Planner service ready");
-    auto planner_request = std::make_shared<urc_msgs::srv::GeneratePlan::Request>();
+  last_error_ = error_type;
+  last_error_details_ = details;
 
-    // TODO Request stuff
-    // Request: Start pose and goal pose (geometry_msgs/PoseStamped)
-    planner_request->start.pose = TODO_start_msg_; // rover starting position    
-    planner_request->goal.pose = TODO_goal_msg_;
-
-    auto result = planner_client_->async_send_request(planner_request);
-    RCLCPP_INFO(this->get_logger(), "Planner request sent");
-    if (result.wait_for(std::chrono::seconds(10)) == std::future_status::timeout) {
-        RCLCPP_ERROR(this->get_logger(), "Planner service took too long to complete!");
-        return;
-    }
-    RCLCPP_INFO(this->get_logger(), "Planner service completed");
-    
+  switch (error_type) {
+    case ErrorType::PLANNER_FAILURE:
+      RCLCPP_ERROR(get_logger(), "[PLANNER_FAILURE] %s", details.c_str());
+      break;
+    case ErrorType::OBSTACLE_DETECTED:
+      RCLCPP_WARN(get_logger(), "[OBSTACLE_DETECTED] %s", details.c_str());
+      break;
+    case ErrorType::PLANNING_FAILED_IN_FOLLOWER:
+      RCLCPP_ERROR(get_logger(), "[PLANNING_FAILED] %s", details.c_str());
+      break;
+    case ErrorType::FOLLOWER_FAILURE:
+      RCLCPP_ERROR(get_logger(), "[FOLLOWER_FAILURE] %s", details.c_str());
+      break;
+    case ErrorType::SERVER_UNAVAILABLE:
+      RCLCPP_ERROR(get_logger(), "[SERVER_UNAVAILABLE] %s", details.c_str());
+      break;
+    case ErrorType::UNKNOWN_ERROR:
+      RCLCPP_ERROR(get_logger(), "[UNKNOWN_ERROR] %s", details.c_str());
+      break;
+    default:
+      RCLCPP_ERROR(get_logger(), "[UNHANDLED_ERROR] %s", details.c_str());
+      break;
+  }
+  publishState();
 }
-*/
+
+std::string NavCoordinator::errorTypeToString(ErrorType error_type) const
+{
+  switch (error_type) {
+    case ErrorType::NONE:
+      return "NONE";
+    case ErrorType::PLANNER_FAILURE:
+      return "PLANNER_FAILURE";
+    case ErrorType::OBSTACLE_DETECTED:
+      return "OBSTACLE_DETECTED";
+    case ErrorType::PLANNING_FAILED_IN_FOLLOWER:
+      return "PLANNING_FAILED";
+    case ErrorType::FOLLOWER_FAILURE:
+      return "FOLLOWER_FAILURE";
+    case ErrorType::SERVER_UNAVAILABLE:
+      return "SERVER_UNAVAILABLE";
+    case ErrorType::UNKNOWN_ERROR:
+      return "UNKNOWN_ERROR";
+    default:
+      return "UNHANDLED";
+  }
+}
+
+std::string NavCoordinator::stateToString(State state) const
+{
+  switch (state) {
+    case State::IDLE:
+      return "IDLE";
+    case State::WAITING_FOR_SERVER:
+      return "WAITING_FOR_SERVER";
+    case State::SENDING_GOAL:
+      return "SENDING_GOAL";
+    case State::TRACKING_GOAL:
+      return "TRACKING_GOAL";
+    case State::SUCCEEDED:
+      return "SUCCEEDED";
+    case State::FAILED:
+      return "FAILED";
+    case State::CANCELED:
+      return "CANCELED";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+void NavCoordinator::publishState()
+{
+  auto msg = std::make_shared<std_msgs::msg::String>();
+  msg->data = "state=" + stateToString(state_) + " error=" + errorTypeToString(last_error_);
+  if (!last_error_details_.empty()) {
+    msg->data += " details=" + last_error_details_;
+  }
+  state_publisher_->publish(*msg);
+}
 
 } // namespace nav_coordinator
 
