@@ -1,21 +1,15 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>urc_bringup</name>
+  <name>grid_map_utils</name>
   <version>0.0.0</version>
-  <description>Package to launch all urc packages</description>
-  <maintainer email="mrinal@gatech.edu"> Mrinal Jain </maintainer>
+  <description>Shared GridMap access utilities</description>
+  <maintainer email="sfarahmand3@gatech.edu">Shaya Farahmand</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>rclcpp</depend>
-  <depend>rclcpp_components</depend>
-  <depend>std_msgs</depend>
-  <depend>rosbridge_server</depend>
-  <depend>sensor_msgs</depend>
-  <depend>tf2_msgs</depend>
-  <depend>urc_msgs</depend>
+  <depend>grid_map_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
