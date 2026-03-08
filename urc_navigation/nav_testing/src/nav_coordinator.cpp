@@ -1,5 +1,10 @@
 #include "nav_coordinator.hpp"
 
+#include <geometry_msgs/msg/point_stamped.hpp>
+#include <stdexcept>
+#include <tf2/exceptions.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+
 namespace nav_coordinator
 {
 NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
@@ -10,36 +15,17 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
   declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
   declare_parameter<bool>("cancel_on_new_waypoint", true);
   declare_parameter<std::string>("map_frame_id", "map");
-  declare_parameter<double>("map_origin_latitude", 0.0);
-  declare_parameter<double>("map_origin_longitude", 0.0);
-  declare_parameter<double>("map_origin_altitude", 0.0);
+  declare_parameter<std::string>("utm_frame_id", "utm");
 
   follower_action_name_ = get_parameter("follower_action_name").as_string();
   cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
   map_frame_id_ = get_parameter("map_frame_id").as_string();
+  utm_frame_id_ = get_parameter("utm_frame_id").as_string();
   state_ = State::IDLE;
   last_error_ = ErrorType::NONE;
-  gps_conversion_ready_ = true;
 
-  geographic_msgs::msg::GeoPoint map_origin;
-  map_origin.latitude = get_parameter("map_origin_latitude").as_double();
-  map_origin.longitude = get_parameter("map_origin_longitude").as_double();
-  map_origin.altitude = get_parameter("map_origin_altitude").as_double();
-
-  if (
-    map_origin.latitude < -90.0 || map_origin.latitude > 90.0 ||
-    map_origin.longitude < -180.0 || map_origin.longitude > 180.0)
-  {
-    gps_conversion_ready_ = false;
-    RCLCPP_WARN(
-      get_logger(),
-      "Invalid map origin lat/lon for GPS conversion (lat=%.8f lon=%.8f). "
-      "GPS waypoints will be rejected.",
-      map_origin.latitude,
-      map_origin.longitude);
-  } else {
-    geodesy::fromMsg(map_origin, map_origin_utm_);
-  }
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
   follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
@@ -86,15 +72,17 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
 
 void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
 {
-  if (!gps_conversion_ready_) {
+  geometry_msgs::msg::PoseStamped converted_waypoint;
+  try {
+    converted_waypoint = convertGpsToMapWaypoint(*msg);
+  } catch (const std::exception & ex) {
     handleError(
       ErrorType::PLANNER_FAILURE,
-      "Cannot process GPS waypoint: invalid map origin parameters for conversion.");
-    transitionTo(State::FAILED, "gps waypoint rejected - conversion unavailable");
+      std::string("Cannot process GPS waypoint: ") + ex.what());
+    transitionTo(State::FAILED, "gps waypoint rejected - transform unavailable");
     return;
   }
 
-  const auto converted_waypoint = convertGpsToMapWaypoint(*msg);
   active_waypoint_ = converted_waypoint;
 
   RCLCPP_INFO(
@@ -116,7 +104,7 @@ void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr 
 }
 
 geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
-  const urc_msgs::msg::Waypoint & waypoint) const
+  const urc_msgs::msg::Waypoint & waypoint)
 {
   geographic_msgs::msg::GeoPoint geo_point;
   geo_point.latitude = waypoint.latitude;
@@ -126,12 +114,27 @@ geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
   geodesy::UTMPoint waypoint_utm;
   geodesy::fromMsg(geo_point, waypoint_utm);
 
+  geometry_msgs::msg::PointStamped utm_point;
+  utm_point.header.stamp = now();
+  utm_point.header.frame_id = utm_frame_id_;
+  utm_point.point.x = waypoint_utm.easting;
+  utm_point.point.y = waypoint_utm.northing;
+  utm_point.point.z = 0.0;
+
+  geometry_msgs::msg::PointStamped map_point;
+  try {
+    tf_buffer_->transform(utm_point, map_point, map_frame_id_);
+  } catch (const tf2::TransformException & ex) {
+    throw std::runtime_error(
+      "Failed to transform waypoint from '" + utm_frame_id_ + "' to '" + map_frame_id_ + "': " +
+      ex.what());
+  }
+
   geometry_msgs::msg::PoseStamped pose;
-  pose.header.stamp = now();
-  pose.header.frame_id = map_frame_id_;
-  pose.pose.position.x = waypoint_utm.easting - map_origin_utm_.easting;
-  pose.pose.position.y = waypoint_utm.northing - map_origin_utm_.northing;
-  pose.pose.position.z = 0.0;
+  pose.header = map_point.header;
+  pose.pose.position.x = map_point.point.x;
+  pose.pose.position.y = map_point.point.y;
+  pose.pose.position.z = map_point.point.z;
   pose.pose.orientation.w = 1.0;
 
   return pose;
