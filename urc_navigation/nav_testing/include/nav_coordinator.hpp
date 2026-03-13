@@ -13,6 +13,7 @@
 #include <optional>
 #include <urc_msgs/msg/waypoint.hpp>
 #include <urc_msgs/action/navigate_to_waypoint.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
 
 namespace nav_coordinator
@@ -51,6 +52,7 @@ private:
 
     void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
     void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
+    void handleCancelRequest(const std_msgs::msg::Empty::SharedPtr msg);
     void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
     std::optional<geometry_msgs::msg::PoseStamped> convertGpsToMapWaypoint(
         const urc_msgs::msg::Waypoint & waypoint);
@@ -79,6 +81,7 @@ private:
 
     rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
     rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_waypoint_subscriber_;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr cancel_subscriber_;
     rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
