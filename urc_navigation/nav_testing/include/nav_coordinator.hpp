@@ -9,6 +9,7 @@
 #include <geodesy/utm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <std_msgs/msg/empty.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -51,6 +52,7 @@ private:
 
     void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
     void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
+    void handleCancelRequest(const std_msgs::msg::Empty::SharedPtr msg);
     void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
     geometry_msgs::msg::PoseStamped convertGpsToMapWaypoint(
         const urc_msgs::msg::Waypoint & waypoint);
@@ -78,6 +80,7 @@ private:
 
     rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
     rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_waypoint_subscriber_;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr cancel_subscriber_;
     rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;

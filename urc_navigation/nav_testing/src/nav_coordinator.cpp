@@ -12,6 +12,7 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
 {
   declare_parameter<std::string>("waypoint_topic", "/nav/waypoint");
   declare_parameter<std::string>("gps_waypoint_topic", "/waypoint");
+  declare_parameter<std::string>("cancel_topic", "/nav/cancel");
   declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
   declare_parameter<bool>("cancel_on_new_waypoint", true);
   declare_parameter<std::string>("map_frame_id", "map");
@@ -40,11 +41,17 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS(),
     std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
 
+  cancel_subscriber_ = create_subscription<std_msgs::msg::Empty>(
+    get_parameter("cancel_topic").as_string(),
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&NavCoordinator::handleCancelRequest, this, std::placeholders::_1));
+
   RCLCPP_INFO(
     get_logger(),
-    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
+    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', cancel on '%s', forwarding to action '%s'.",
     get_parameter("waypoint_topic").as_string().c_str(),
     get_parameter("gps_waypoint_topic").as_string().c_str(),
+    get_parameter("cancel_topic").as_string().c_str(),
     follower_action_name_.c_str());
   
   if (state_publisher_) {
@@ -101,6 +108,19 @@ void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr 
   }
 
   sendFollowerGoal(active_waypoint_);
+}
+
+void NavCoordinator::handleCancelRequest(const std_msgs::msg::Empty::SharedPtr)
+{
+  if (!active_goal_handle_) {
+    RCLCPP_WARN(get_logger(), "Cancel requested on /nav/cancel, but there is no active navigation goal.");
+    return;
+  }
+
+  transitionTo(State::CANCELED, "cancel requested on /nav/cancel");
+  follower_client_->async_cancel_goal(active_goal_handle_);
+  active_goal_handle_.reset();
+  RCLCPP_INFO(get_logger(), "Active navigation goal canceled from /nav/cancel.");
 }
 
 geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
