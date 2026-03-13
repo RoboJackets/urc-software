@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="large_cube_obstacle">
+    <static>true</static>
+    <pose>0 0 0 0 0 0</pose>
+    <link name="cube_link">
+      <collision name="cube_collision">
+        <geometry>
+          <box>
+            <size>2.0 2.0 2.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="cube_visual">
+        <geometry>
+          <box>
+            <size>2.0 2.0 2.0</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.8 0.2 0.2 1.0</ambient>
+          <diffuse>0.9 0.3 0.3 1.0</diffuse>
+          <specular>0.1 0.1 0.1 1.0</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
