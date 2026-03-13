@@ -6,6 +6,7 @@
 #include <urc_msgs/msg/grid_location.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
+#include "grid_map_utils/grid_map_utils.hpp"
 #include <math.h>
 #include <unistd.h>
 #include <queue>
@@ -135,6 +136,7 @@ private:
     const geometry_msgs::msg::Pose & to_pose);
 
   grid_map_msgs::msg::GridMap costmap_;
+  grid_map_utils::GridMapUtils grid_map_utils_;
   geometry_msgs::msg::Pose start_pose_;
   geometry_msgs::msg::Pose goal_pose_;
   AStarNode goal_node_;

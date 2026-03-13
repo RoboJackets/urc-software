@@ -18,6 +18,102 @@ Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 void AStar::setMap(const grid_map_msgs::msg::GridMap & costmap)
 {
   costmap_ = costmap;
+  grid_map_utils_.setMap(costmap);
+}
+
+void AStar::setCostmapLayer(const std::string & layer)
+{
+  costmap_layer_ = layer;
+  grid_map_utils_.setLayer(layer);
+}
+
+int AStar::getLayerIndex() const
+{
+  return grid_map_utils_.getLayerIndex();
+}
+
+bool AStar::getMapDimensions(int & width, int & height) const
+{
+  return grid_map_utils_.getMapDimensions(width, height);
+}
+
+bool AStar::worldToGrid(double x, double y, int & map_x, int & map_y) const
+{
+  return grid_map_utils_.worldToGrid(x, y, map_x, map_y);
+}
+
+double AStar::getCellCost(double x, double y) const
+{
+  float cost;
+  if (!grid_map_utils_.tryGetCellCost(x, y, cost)) {
+    throw std::runtime_error("Unable to get cell cost");
+  }
+
+  return cost;
+}
+
+bool AStar::clipGoalToCostmapBoundary(
+  const geometry_msgs::msg::Pose & start_pose,
+  const geometry_msgs::msg::Pose & goal_pose,
+  geometry_msgs::msg::Pose & clipped_goal) const
+{
+  double resolution = costmap_.info.resolution;
+  if (resolution <= 0.0) {
+    return false;
+  }
+
+  double dx = goal_pose.position.x - start_pose.position.x;
+  double dy = goal_pose.position.y - start_pose.position.y;
+  double distance = std::sqrt((dx * dx) + (dy * dy));
+
+  clipped_goal = start_pose;
+  clipped_goal.orientation = goal_pose.orientation;
+  if (distance <= 0.0) {
+    return true;
+  }
+
+  for (double traveled = resolution; traveled <= distance; traveled += resolution) {
+    double t = std::min(1.0, traveled / distance);
+    geometry_msgs::msg::Pose candidate = start_pose;
+    candidate.position.x = start_pose.position.x + (dx * t);
+    candidate.position.y = start_pose.position.y + (dy * t);
+    candidate.orientation = goal_pose.orientation;
+
+    int map_x, map_y;
+    if (!worldToGrid(candidate.position.x, candidate.position.y, map_x, map_y)) {
+      break;
+    }
+
+    clipped_goal = candidate;
+  }
+
+  return true;
+}
+
+void AStar::appendStraightLineSegment(
+  const geometry_msgs::msg::Pose & from_pose,
+  const geometry_msgs::msg::Pose & to_pose)
+{
+  double resolution = costmap_.info.resolution;
+  if (resolution <= 0.0) {
+    return;
+  }
+
+  double dx = to_pose.position.x - from_pose.position.x;
+  double dy = to_pose.position.y - from_pose.position.y;
+  double distance = std::sqrt((dx * dx) + (dy * dy));
+  if (distance <= 0.0) {
+    return;
+  }
+
+  int steps = std::max(1, static_cast<int>(std::ceil(distance / resolution)));
+  for (int step = 1; step <= steps; ++step) {
+    double t = static_cast<double>(step) / static_cast<double>(steps);
+    AStarNode node;
+    node.x = from_pose.position.x + (dx * t);
+    node.y = from_pose.position.y + (dy * t);
+    path_.push_back(node);
+  }
 }
 
 void AStar::setCostmapLayer(const std::string & layer)

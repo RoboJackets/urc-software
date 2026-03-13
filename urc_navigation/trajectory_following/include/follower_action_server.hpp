@@ -8,6 +8,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <nav_msgs/msg/path.hpp>
+#include "grid_map_utils/grid_map_utils.hpp"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 #include "urc_msgs/action/navigate_to_waypoint.hpp"
@@ -58,9 +59,10 @@ private:
    */
   void handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg);
 
-  float getCost(const grid_map_msgs::msg::GridMap & costmap, double x, double y);
+  float getCost(double x, double y);
 
   grid_map_msgs::msg::GridMap current_costmap_;
+  grid_map_utils::GridMapUtils grid_map_utils_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   std::string costmap_layer_;
   rclcpp::Publisher<geometry_msgs::msg::PointStamped>::SharedPtr carrot_pub_;

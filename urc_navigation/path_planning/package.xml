@@ -4,11 +4,12 @@
   <name>path_planning</name>
   <version>0.0.0</version>
   <description>Package for path planning</description>
-  <maintainer email="yashas.amb@gmail.com">yambati03</maintainer>
+  <maintainer email="sfarahmand3@gatech.edu">Shaya Farahmand</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>grid_map_utils</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>

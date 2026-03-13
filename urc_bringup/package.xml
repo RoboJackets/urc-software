@@ -4,7 +4,7 @@
   <name>urc_bringup</name>
   <version>0.0.0</version>
   <description>Package to launch all urc packages</description>
-  <maintainer email="abhiramg2021@gmail.com">Abhiram Ghanta</maintainer>
+  <maintainer email="mrinal@gatech.edu"> Mrinal Jain </maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

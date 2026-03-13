@@ -1,6 +1,8 @@
 #include "nav_coordinator.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2/exceptions.h"
+
+#include <geometry_msgs/msg/point_stamped.hpp>
+#include <stdexcept>
+#include <tf2/exceptions.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace nav_coordinator
@@ -10,22 +12,19 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
 {
   declare_parameter<std::string>("waypoint_topic", "/nav/waypoint");
   declare_parameter<std::string>("gps_waypoint_topic", "/waypoint");
-  declare_parameter<std::string>("cancel_topic", "/nav/cancel");
   declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
   declare_parameter<bool>("cancel_on_new_waypoint", true);
   declare_parameter<std::string>("map_frame_id", "map");
   declare_parameter<std::string>("utm_frame_id", "utm");
-  declare_parameter<double>("tf_lookup_timeout_sec", 0.5);
 
   follower_action_name_ = get_parameter("follower_action_name").as_string();
   cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
   map_frame_id_ = get_parameter("map_frame_id").as_string();
   utm_frame_id_ = get_parameter("utm_frame_id").as_string();
-  tf_lookup_timeout_sec_ = get_parameter("tf_lookup_timeout_sec").as_double();
   state_ = State::IDLE;
   last_error_ = ErrorType::NONE;
 
-  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
   state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
@@ -41,19 +40,11 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS(),
     std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
 
-  cancel_subscriber_ = create_subscription<std_msgs::msg::Empty>(
-    get_parameter("cancel_topic").as_string(),
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&NavCoordinator::handleCancelRequest, this, std::placeholders::_1));
-
   RCLCPP_INFO(
     get_logger(),
-    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', cancel on '%s', using TF '%s'->'%s', forwarding to action '%s'.",
+    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
     get_parameter("waypoint_topic").as_string().c_str(),
     get_parameter("gps_waypoint_topic").as_string().c_str(),
-    get_parameter("cancel_topic").as_string().c_str(),
-    utm_frame_id_.c_str(),
-    map_frame_id_.c_str(),
     follower_action_name_.c_str());
   
   if (state_publisher_) {
@@ -81,13 +72,18 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
 
 void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
 {
-  const auto converted_waypoint = convertGpsToMapWaypoint(*msg);
-  if (!converted_waypoint.has_value()) {
-    transitionTo(State::FAILED, "gps waypoint rejected - UTM to map transform unavailable");
+  geometry_msgs::msg::PoseStamped converted_waypoint;
+  try {
+    converted_waypoint = convertGpsToMapWaypoint(*msg);
+  } catch (const std::exception & ex) {
+    handleError(
+      ErrorType::PLANNER_FAILURE,
+      std::string("Cannot process GPS waypoint: ") + ex.what());
+    transitionTo(State::FAILED, "gps waypoint rejected - transform unavailable");
     return;
   }
 
-  active_waypoint_ = converted_waypoint.value();
+  active_waypoint_ = converted_waypoint;
 
   RCLCPP_INFO(
     get_logger(),
@@ -107,20 +103,7 @@ void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr 
   sendFollowerGoal(active_waypoint_);
 }
 
-void NavCoordinator::handleCancelRequest(const std_msgs::msg::Empty::SharedPtr)
-{
-  if (!active_goal_handle_) {
-    RCLCPP_WARN(get_logger(), "Cancel requested on /nav/cancel, but there is no active navigation goal.");
-    return;
-  }
-
-  transitionTo(State::CANCELED, "cancel requested on /nav/cancel");
-  follower_client_->async_cancel_goal(active_goal_handle_);
-  active_goal_handle_.reset();
-  RCLCPP_INFO(get_logger(), "Active navigation goal canceled from /nav/cancel.");
-}
-
-std::optional<geometry_msgs::msg::PoseStamped> NavCoordinator::convertGpsToMapWaypoint(
+geometry_msgs::msg::PoseStamped NavCoordinator::convertGpsToMapWaypoint(
   const urc_msgs::msg::Waypoint & waypoint)
 {
   geographic_msgs::msg::GeoPoint geo_point;
@@ -138,33 +121,23 @@ std::optional<geometry_msgs::msg::PoseStamped> NavCoordinator::convertGpsToMapWa
   utm_point.point.y = waypoint_utm.northing;
   utm_point.point.z = 0.0;
 
-  geometry_msgs::msg::TransformStamped utm_to_map;
+  geometry_msgs::msg::PointStamped map_point;
   try {
-    utm_to_map = tf_buffer_->lookupTransform(
-      map_frame_id_,
-      utm_frame_id_,
-      tf2::TimePointZero,
-      rclcpp::Duration::from_seconds(tf_lookup_timeout_sec_));
-  } catch (tf2::TransformException & ex) {
-    handleError(
-      ErrorType::PLANNER_FAILURE,
-      "Cannot convert GPS waypoint: missing transform '" + utm_frame_id_ + "' -> '" +
-      map_frame_id_ + "': " + ex.what());
-    return std::nullopt;
+    tf_buffer_->transform(utm_point, map_point, map_frame_id_);
+  } catch (const tf2::TransformException & ex) {
+    throw std::runtime_error(
+      "Failed to transform waypoint from '" + utm_frame_id_ + "' to '" + map_frame_id_ + "': " +
+      ex.what());
   }
 
-  geometry_msgs::msg::PointStamped map_point;
-  tf2::doTransform(utm_point, map_point, utm_to_map);
+  geometry_msgs::msg::PoseStamped pose;
+  pose.header = map_point.header;
+  pose.pose.position.x = map_point.point.x;
+  pose.pose.position.y = map_point.point.y;
+  pose.pose.position.z = map_point.point.z;
+  pose.pose.orientation.w = 1.0;
 
-  geometry_msgs::msg::PoseStamped converted_waypoint;
-  converted_waypoint.header.stamp = now();
-  converted_waypoint.header.frame_id = map_frame_id_;
-  converted_waypoint.pose.position.x = map_point.point.x;
-  converted_waypoint.pose.position.y = map_point.point.y;
-  converted_waypoint.pose.position.z = 0.0;
-  converted_waypoint.pose.orientation.w = 1.0;
-
-  return converted_waypoint;
+  return pose;
 }
 
 void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint)

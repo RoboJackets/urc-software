@@ -4,7 +4,7 @@
   <name>trajectory_following</name>
   <version>0.0.0</version>
   <description>Package for trajectory following implementation</description>
-  <maintainer email="yashas.amb@gmail.com">yambati03</maintainer>
+  <maintainer email="mrinal@gatech.edu">Mrinal Jain</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -13,6 +13,7 @@
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
 
+  <depend>grid_map_utils</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>
