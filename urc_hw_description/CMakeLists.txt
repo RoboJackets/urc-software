@@ -22,6 +22,7 @@ find_package(xacro REQUIRED)
 find_package(gz_ros2_control REQUIRED)
 find_package(ros_gz_sim REQUIRED)
 find_package(ros_gz_bridge REQUIRED)
+find_package(joint_state_broadcaster REQUIRED)
 
 install(
   DIRECTORY
