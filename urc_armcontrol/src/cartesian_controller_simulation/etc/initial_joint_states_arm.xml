@@ -1,0 +1,12 @@
+<!-- Initial robot joint positions at simulation startup.
+-->
+<joints>
+        <keyframe>
+                <key name="initial_joint_positions_arm" time="0"
+                        qpos="0.0
+                        0.0
+                        0.0
+                        0.0
+                        0.0" />
+        </keyframe>
+</joints>

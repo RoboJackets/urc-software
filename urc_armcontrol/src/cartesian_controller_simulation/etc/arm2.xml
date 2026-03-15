@@ -1,0 +1,99 @@
+<?xml version="1.0.0"?>
+<mujoco model="arm2">
+    <compiler angle="radian" inertiafromgeom="true" balanceinertia="true"/>
+    <option integrator="implicitfast" timestep="0.002"/>
+
+    <!-- <option integrator="RK4"/> -->
+
+    <asset>
+        <material name="joint_part1" rgba="0.525 0.713 0.662 1.0"/>
+        <material name="joint_part2" rgba="0.462 0.196 0.411 1.0"/>
+        <material name="base" rgba="0.956863 0.796078 0.631373 1.0"/>
+        <material name="tip" rgba="0.956 0.450 0.243 1.0"/>
+        <material name="link1" rgba="0.949 0.631 0.823 1.0"/>
+        <material name="link2" rgba="0.133 0.827 0.435 1.0"/>
+        <material name="link3" rgba="0.968 0.721 0.313 1.0"/>
+        <material name="link4" rgba="0.52549 0.529412 0.647059 1.0"/>
+        <material name="link5" rgba="0.478431 0.415686 0.662745 1.0"/>
+    </asset>
+
+    <worldbody>
+        <!-- Ground plane -->
+        <geom type="plane" size="1 1 0.1" rgba="0.9 0.9 0.9 1"/>
+        
+        <!-- Base link -->
+        <body name="base_link" pos="0 0 0">
+            <inertial pos="0 0 0.015" mass="1" diaginertia="1 1 1"/>
+            <geom type="cylinder" size="0.02 0.015" material="base"/>
+            
+            <!-- Joint1 (prismatic, y-axis slide) aka left/right slide -->
+            <body name="link1" pos="0 0 0.045">
+                <inertial pos="0 0 0.075" mass="1" diaginertia="1 1 1"/>
+                <joint name="joint1" type="slide" axis="0 1 0" pos="0 0 0" range="-0.5 0.5" damping="0.5"/>
+                <geom type="cylinder" size="0.02 0.015" material="link1" pos="0 0 0"/>
+                <geom type="cylinder" size="0.01 0.075" material="link1" pos="0 0 0.075"/>
+                <geom type="cylinder" size="0.02 0.015" material="link1" pos="0 0 0.15" euler="1.5708 0 0"/>
+                
+                <!-- Joint2 (shoulder pitch, y-axis) -->
+                <body name="link2" pos="0 0.03 0.15" euler="0 1.5708 0">
+                    <inertial pos="0 0 0.25" mass="1" diaginertia="1 1 1"/>
+                    <joint name="joint2" type="hinge" axis="0 1 0" pos="0 0 0" range="-6.28 6.28" damping="0.5"/>
+                    <geom type="cylinder" size="0.02 0.015" material="link2" pos="0 0 0" euler="1.5708 0 0"/>
+                    <geom type="cylinder" size="0.01 0.25" material="link2" pos="0 0 0.25"/>
+                    <geom type="cylinder" size="0.02 0.015" material="link2" pos="0 0 0.5" euler="1.5708 0 0"/>
+                    
+                    <!-- Joint3 (elbow pitch, y-axis) -->
+                    <body name="link3" pos="0 -0.03 0.5">
+                        <inertial pos="0 0 0.15" mass="1" diaginertia="1 1 1"/>
+                        <joint name="joint3" type="hinge" axis="0 1 0" pos="0 0 0" range="-3.14 3.14" damping="0.5"/>
+                        <geom type="cylinder" size="0.02 0.015" material="link3" pos="0 0 0" euler="1.5708 0 0"/>
+                        <geom type="cylinder" size="0.01 0.15" material="link3" pos="0 0 0.15"/>
+                        <geom type="cylinder" size="0.02 0.015" material="link3" pos="0 0 0.3" euler="1.5708 0 0"/>
+                        
+                        <!-- Joint4 (wrist pitch, y-axis) -->
+                        <body name="link4" pos="0 0.03 0.3" euler="0 0 0">
+                            <inertial pos="0 0.05 0" mass="1" diaginertia="1 1 1"/>
+                            <joint name="joint4" type="hinge" axis="0 1 0" pos="0 0 0" range="-6.28 6.28" damping="0.5"/>
+                            <geom type="cylinder" size="0.02 0.015" material="link4" pos="0 0 0" euler="1.5708 0 0"/>
+                            <geom type="cylinder" size="0.01 0.05" material="link4" pos="0 0 0.05"/>
+                            <geom type="cylinder" size="0.02 0.015" material="link4" pos="0 0 0.1" euler="0 1.5708 0"/>
+                            
+                            <!-- Joint5 (wrist roll, x-axis) -->
+                            <body name="link5" pos="0 0 0.1" euler="0 1.5708 0">
+                                <inertial pos="0 0 0.075" mass="0.5" diaginertia="0.5 0.5 0.5"/>
+                                <joint name="joint5" type="hinge" axis="1 0 0" pos="0 0 0" range="-3.14 3.14" damping="0.5"/>
+                                <geom type="cylinder" size="0.02 0.015" material="link5" pos="0 0 0" euler="1.5708 0 0"/>
+                                <geom type="cylinder" size="0.015 0.075" material="link5" pos="0 0 0.075" euler="1.5708 0 0"/>
+                                
+                                <!-- End effector -->
+                                <body name="tool0" pos="0 0 0.15">
+                                    <inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01"/>
+                                    <geom type="sphere" size="0.015" material="tip"/>
+                                    
+                                    <!-- Gripper Base (palm) -->
+                                    <geom type="box" size="0.02 0.025 0.01" pos="0 0 0" rgba="0.3 0.3 0.3 1"/>
+                                    
+                                    <!-- Right Finger (red) -->
+                                    <geom type="box" size="0.06 0.008 0.008" pos="0.04 0.02 0" euler="0 0 0.3" rgba="1 0 0 1"/>
+                                    <geom type="box" size="0.03 0.008 0.008" pos="0.075 0.03 0" euler="0 0 1.2" rgba="0.8 0 0 1"/>
+                                    
+                                    <!-- Left Finger (blue) -->
+                                    <geom type="box" size="0.06 0.008 0.008" pos="0.04 -0.02 0" euler="0 0 -0.3" rgba="0 0 1 1"/>
+                                    <geom type="box" size="0.03 0.008 0.008" pos="0.075 -0.03 0" euler="0 0 -1.2" rgba="0 0 0.8 1"/>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <motor name="motor1" joint="joint1" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor name="motor2" joint="joint2" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor name="motor3" joint="joint3" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor name="motor4" joint="joint4" ctrlrange="-1 1" ctrllimited="true"/>
+        <motor name="motor5" joint="joint5" ctrlrange="-1 1" ctrllimited="true"/>
+    </actuator>
+</mujoco>
