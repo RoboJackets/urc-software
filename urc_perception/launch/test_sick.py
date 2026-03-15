@@ -5,6 +5,14 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description():
+    map_to_base_link_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "base_link"],
+        output="screen",
+    )
+
+
     sick_node = Node(
         package = "sick_scan_xd",
         executable = "sick_generic_caller",
@@ -13,8 +21,9 @@ def generate_launch_description():
                 "hostname": "192.168.1.10",
                 "udp_receiver_ip": "192.168.1.3",
                 "scanner_type": "sick_multiscan",
+                "layer_lookup_table_id": -1,
                 "publish_frame_id": "lidar_link",
-                "tf_base_frame_id": "lidar_link",
+                "tf_base_frame_id": "base_link",
                 "publish_laserscan_segment_topic": "scan_segment",
                 "publish_laserscan_fullframe_topic": "scan_fullframe",
                 "custom_pointclouds": "cloud_unstructured_fullframe",
@@ -31,6 +40,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        map_to_base_link_tf,
         sick_node,
     ])
 
