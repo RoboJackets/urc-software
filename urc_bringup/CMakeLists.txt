@@ -15,6 +15,7 @@ find_package(tf2_ros REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(ros_gz REQUIRED)
+find_package(effort_controllers REQUIRED)
 
 include_directories(
   include
@@ -39,6 +40,7 @@ set(dependencies
   tf2_ros
   urc_msgs
   ros_gz
+  effort_controllers
 )
 
 ament_target_dependencies(${PROJECT_NAME}

@@ -17,6 +17,7 @@
   <depend>tf2_msgs</depend>
   <depend>urc_msgs</depend>
   <depend>ros_gz</depend>
+  <depend>effort_controller</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
