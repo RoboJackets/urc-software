@@ -16,6 +16,9 @@
   <depend>sensor_msgs</depend>
   <depend>tf2_msgs</depend>
   <depend>urc_msgs</depend>
+  <depend>ros_gz</depend>
+  <depend>effort_controllers</depend>
+  <depend>grid_map_rviz_plugin</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

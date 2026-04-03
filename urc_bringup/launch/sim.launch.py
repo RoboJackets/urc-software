@@ -4,7 +4,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, Regi
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, PythonExpression
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -53,8 +53,60 @@ def generate_launch_description():
         description="Launch autonomy nodes",
     )
 
+    add_cube_arg = DeclareLaunchArgument(
+        "add_cube",
+        default_value="false",
+        description="Spawn a large cube obstacle in front of the rover",
+    )
+
+    cube_x_arg = DeclareLaunchArgument(
+        "cube_x",
+        default_value="8.0",
+        description="X position for front cube obstacle (used when add_cube is true)",
+    )
+
+    cube_y_arg = DeclareLaunchArgument(
+        "cube_y",
+        default_value="0.0",
+        description="Y position for front cube obstacle (used when add_cube is true)",
+    )
+
+    add_incline_arg = DeclareLaunchArgument(
+        "add_incline",
+        default_value="false",
+        description="Spawn an inclined plane obstacle",
+    )
+
+    incline_x_arg = DeclareLaunchArgument(
+        "incline_x",
+        default_value="2.0",
+        description="X position for incline obstacle (used when add_incline is true)",
+    )
+
+    incline_y_arg = DeclareLaunchArgument(
+        "incline_y",
+        default_value="0.0",
+        description="Y position for incline obstacle (used when add_incline is true)",
+    )
+
+    incline_slope_arg = DeclareLaunchArgument(
+        "incline_slope",
+        default_value="15.0",
+        description="Incline slope in degrees (used when add_incline is true)",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
+    cube_x = LaunchConfiguration("cube_x")
+    cube_y = LaunchConfiguration("cube_y")
+    incline_x = LaunchConfiguration("incline_x")
+    incline_y = LaunchConfiguration("incline_y")
+    incline_slope = LaunchConfiguration("incline_slope")
+    cube_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "large_cube.sdf")
+    incline_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "incline_plane.sdf")
+    incline_pitch_rad = PythonExpression(
+        ["-float(", incline_slope, ") * 3.141592653589793 / 180.0"]
+    )
 
     world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
 
@@ -176,6 +228,40 @@ def generate_launch_description():
         ],
     )
 
+    spawn_cube = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_cube")),
+        arguments=[
+            "-name", "cube_obstacle",
+            "-x", cube_x,
+            "-y", cube_y,
+            "-z", "1.0",
+            "-R", "0.0",
+            "-P", "0.0",
+            "-Y", "0.0",
+            "-file", cube_sdf_path,
+        ],
+    )
+
+    spawn_incline = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_incline")),
+        arguments=[
+            "-name", "incline_obstacle",
+            "-x", incline_x,
+            "-y", incline_y,
+            "-z", "0.3",
+            "-R", "0.0",
+            "-P", incline_pitch_rad,
+            "-Y", "0.0",
+            "-file", incline_sdf_path,
+        ],
+    )
+
     # --- Controller Spawners ---
     load_joint_state_broadcaster = Node(
         package="controller_manager",
@@ -243,6 +329,13 @@ def generate_launch_description():
             bridge_yaml,
             spawn_rocker_effort,
             autonomy_arg,
+            add_cube_arg,
+            cube_x_arg,
+            cube_y_arg,
+            add_incline_arg,
+            incline_x_arg,
+            incline_y_arg,
+            incline_slope_arg,
             gz_sim,
             bridge,
             robot_state_publisher_node,
@@ -253,6 +346,8 @@ def generate_launch_description():
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
             spawn,
+            spawn_cube,
+            spawn_incline,
 
             # After robot spawn, start controller spawners on a fixed schedule
             RegisterEventHandler(
