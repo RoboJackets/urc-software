@@ -5,12 +5,14 @@ include(../../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(grid_map_utils REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(grid_map_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
@@ -33,8 +35,10 @@ set(dependencies
   rclcpp
   rclcpp_action
   rclcpp_components
+  grid_map_utils
   urc_msgs
   std_msgs
+  grid_map_msgs
   sensor_msgs
   geometry_msgs
   diagnostic_updater

@@ -4,7 +4,7 @@
   <name>urc_localization</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="bansalrohan18@gmail.com">kronos</maintainer>
+  <maintainer email="jmarra6@gatech.edu"> Joe Marra </maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

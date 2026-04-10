@@ -2,7 +2,7 @@
 #define PLANNER_SERVER_HPP_
 
 #include <rclcpp/rclcpp.hpp>
-#include <nav_msgs/msg/occupancy_grid.hpp>
+#include <grid_map_msgs/msg/grid_map.hpp>
 #include <nav_msgs/msg/path.hpp>
 
 #include "urc_msgs/srv/generate_plan.hpp"
@@ -39,10 +39,10 @@ protected:
    * @brief Handle the costmap data
    * @param msg The costmap data
    */
-  void handleCostmap(const nav_msgs::msg::OccupancyGrid::SharedPtr msg);
+  void handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg);
 
-  nav_msgs::msg::OccupancyGrid current_costmap_;
-  rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr costmap_subscriber_;
+  grid_map_msgs::msg::GridMap current_costmap_;
+  rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
   rclcpp::Service<urc_msgs::srv::GeneratePlan>::SharedPtr plan_service_;
 };

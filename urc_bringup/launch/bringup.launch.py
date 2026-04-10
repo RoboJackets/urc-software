@@ -3,8 +3,9 @@ from launch.descriptions import executable
 from xacro import process_file
 import yaml
 from launch import LaunchDescription
-from launch.actions import GroupAction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, SetRemap
 from launch_ros.substitutions import FindPackageShare
@@ -43,6 +44,12 @@ def generate_launch_description():
         xacro_file, mappings={"use_simulation": "false"}
     )
     robot_desc = robot_description_config.toxml()
+
+    autonomy_arg = DeclareLaunchArgument(
+        "autonomy",
+        default_value="false",
+        description="Launch autonomy nodes",
+    )
 
     heartbeat_node = Node(
         package="urc_bringup",
@@ -169,8 +176,16 @@ def generate_launch_description():
         parameters=[{"port": 9090}],
     )
 
+    launch_autonomy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_urc_bringup, "launch", "autonomy.launch.py")
+        ),
+        condition=IfCondition(LaunchConfiguration("autonomy")),
+    )
+
     return LaunchDescription(
         [
+            autonomy_arg,
             control_node,
             load_robot_state_publisher,
             load_joint_state_broadcaster,
@@ -186,5 +201,6 @@ def generate_launch_description():
             vectornav_sensor_msg_node,
             heartbeat_node,
             sick_node,
+            launch_autonomy,
         ]
     )
