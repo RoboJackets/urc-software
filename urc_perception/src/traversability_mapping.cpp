@@ -59,6 +59,9 @@ TraversabilityMapping::TraversabilityMapping(const rclcpp::NodeOptions & options
   cache_map_.add("elevation", 0.0);
   cache_map_.add("traversability_inflated", 0.0);
 
+  // Start with a cache centered at the map origin so mapping works before odometry arrives.
+  recenterCache(0.0, 0.0);
+
   use_filter_chain_ = filter_chain_.configure(
     filter_chain_parameter_name_,
     this->get_node_logging_interface(),
