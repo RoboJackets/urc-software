@@ -51,7 +51,7 @@ class XboxArmController(Node):
 
         self.publisher = self.create_publisher(
             PoseStamped,
-            '/cartesian_motion_controller/target_frame',
+            '/target_frame',
             10
         )
 
@@ -104,18 +104,24 @@ class XboxArmController(Node):
                         # Left stick
                         if event.code == 'ABS_X':
                             self._axes['left_x'] = event.state / AXIS_MAX
+                            print("left_X command registered!")
                         elif event.code == 'ABS_Y':
                             self._axes['left_y'] = event.state / AXIS_MAX
+                            print("left_Y command registered!")
                         # Right stick
                         elif event.code == 'ABS_RX':
                             self._axes['right_x'] = event.state / AXIS_MAX
+                            print("right_X command registered!")
                         elif event.code == 'ABS_RY':
                             self._axes['right_y'] = event.state / AXIS_MAX
+                            print("right_Y command registered!")
                         # Triggers (0-255)
                         elif event.code == 'ABS_Z':
                             self._axes['lt'] = event.state / TRIGGER_MAX
+                            print("left_trigger command registered!")
                         elif event.code == 'ABS_RZ':
                             self._axes['rt'] = event.state / TRIGGER_MAX
+                            print("right_trigger command registered!")
             except Exception as e:
                 if self._running:
                     self.get_logger().warn(f"Gamepad error: {e}")

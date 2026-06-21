@@ -76,7 +76,7 @@ class KeyboardArmController(Node):
 
         self.publisher = self.create_publisher(
             PoseStamped,
-            '/cartesian_motion_controller/target_frame',
+            '/target_frame',
             10
         )
 

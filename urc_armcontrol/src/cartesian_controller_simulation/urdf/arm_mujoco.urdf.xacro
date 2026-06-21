@@ -9,7 +9,7 @@
         aka joint 4 and 5 form a wrist (pitch and roll)
         -->
 
-        <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint.urdf.xacro"/>
+        <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint_mj.urdf.xacro"/>
 
         <!-- ROS2 control interfaces -->
         <ros2_control name="cartesian_controller_simulation" type="system">
