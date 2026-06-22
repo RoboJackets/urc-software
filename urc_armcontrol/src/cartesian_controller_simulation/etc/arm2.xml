@@ -25,6 +25,7 @@
         <body name="base_link" pos="0 0 0">
             <inertial pos="0 0 0.015" mass="1" diaginertia="1 1 1"/>
             <geom type="cylinder" size="0.02 0.015" material="base"/>
+            <geom type="sphere" size="0.015" material="tip"/>
             
             <!-- Joint1 (prismatic, y-axis slide) aka left/right slide -->
             <body name="link1" pos="0 0 0.045">
