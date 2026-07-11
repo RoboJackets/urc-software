@@ -79,17 +79,16 @@ def generate_launch_description():
             output="screen",
             arguments=[name] + [a for a in args],
         )
-
     
    # Active controllers
     active_list = [
         "joint_state_broadcaster",
+        "cartesian_motion_controller",
     ]
     active_spawners = [controller_spawner(controller) for controller in active_list]
 
     # Inactive controllers
     inactive_list = [
-        "cartesian_motion_controller",
         "motion_control_handle",
         "joint_trajectory_controller",
         "invalid_cartesian_compliance_controller",

@@ -1,4 +1,4 @@
-## This urc_armcontrol package contains the logic for controlling the Robonav arm
+## This urc_armcontrol package contains the logic for controlling the Robonav arm, this README includes instructions for setting up and running the code on your machine.
 **Doesn't work on docker, works for wsl / bare metal Ubuntu installation.**
 
 ### Instructions to get set up:
@@ -9,7 +9,7 @@ cd /home/[user]
 wget https://github.com/google-deepmind/mujoco/releases/download/3.0.0/mujoco-3.0.0-linux-x86_64.tar.gz
 ```
 
-**NOTE: This is a link to the mujuco releases <https://github.com/google-deepmind/mujoco/releases>**
+**This is a link to the mujuco releases <https://github.com/google-deepmind/mujoco/releases>**
 
 Extract from tar:
 ```
@@ -23,7 +23,7 @@ sudo cp -P mujoco-3.0.0/lib/libmujoco.so* /usr/local/lib/
 sudo ldconfig
 ```
 
-## If using WSL 22.04, to connect an xbox series x controller follow these steps  
+## If using WSL Ubuntu 22.04, follow these steps to connect an xbox series x controller:
 
 In **(powershell)**:
 ```
@@ -37,13 +37,13 @@ usbipd attach --wsl --busid [INSERT BUSID OF CONTROLLER]
 # You must re-attach the controller every time you plug it in. If the controller isn't working, try this first.
 ```
 
-### By default, wsl doesn't come installed with the drivers needed for the xbox controller to work. Follow these steps:  
+### By default, wsl doesn't with the drivers needed by the xbox controller. Follow these steps to install the proper drivers:
 
-Install the tools for compiling the linux kernel from source.
+Install the tools for compiling the linux kernel from source:
 ```
 sudo apt update && sudo apt install -y build-essential flex bison libssl-dev \ libelf-dev libncurses-dev bc dwarves python3
 ```
-Find the version of wsl you're using and clone the kernel for your version of ubuntu, you can do this in $HOME.
+Find the version of wsl you're using and clone the kernel for your version of ubuntu, you can do this in $HOME:
 ```
 uname -r
 # That command prints something like: [version-number]-microsoft-standard-WSL2
@@ -53,32 +53,32 @@ uname -r
 git clone --depth 1 -b linux-msft-wsl-[version-number] \
 https://github.com/microsoft/WSL2-Linux-Kernel.git
 ```
-Open the configuration menu.
+Open the configuration menu:
 ```
 cd WSL2-Linux-Kernel 
 cp Microsoft/config-wsl .config 
 make menuconfig
 ```
 After opening the configuration menu follow these steps.  
-Go to Device Drivers → Input device support.  
+Go to Device Drivers → Input device support:  
 Press "Y" or <\*> for:  
 * Event interface
 * Joystick interface
 * Joysticks/Gamepads
 * Joysticks/Gamepads->Xbox gamepad support (This is inside of Joysticks/Gamepads)
 
-Go to Device Drivers → USB support → USB/IP support.  
+Go to Device Drivers → USB support → USB/IP support:  
 Press "Y" or <\*> for:  
 * USB/IP support
 * VHCI hcd (USB/IP)
 
-Go to Device Drivers → LED support.
-Press "Y" or <\*> for:
+Go to Device Drivers → LED support:  
+Press "Y" or <\*> for:  
 * LED class support
 
-**NOTE: It might say that a configuration depends on another feature, press "?" key to see which configurations have a "M" modular configuration or aren't configured at all, and select "Y" for those configurations as well.**
+**The menu might say that a configuration depends on another feature, press "?" key to see which configurations have a "M" modular configuration or aren't configured at all, and select "Y" for those configurations as well.**
 
-Save, keep the name as ".config"
+Save as ".config".
 
 Run these commands in wsl:
 ```
@@ -91,7 +91,7 @@ In **powershell** run these commands in your HOME directory:
 ```
 notepad C:\Users\[name-of-your-windows-user]\.wslconfig
 ```
-Paste this into .wslconfig:
+Paste this into .wslconfig **still in powershell**:
 ```
 [wsl2] 
 kernel=C:\\Users\\[name-of-your-windows-user]\\bzImage
@@ -102,7 +102,7 @@ In wsl:
 wsl --shutdown
 ```
 
-**You should be done with installing the necessary drivers for wsl to work with the xbox controller run these commands to make sure everything is working. Also may be useful for non-wsl users.**  
+You should be done with installing the necessary drivers for the xbox controller. Run these commands to make sure everything is working. This information may also be useful for non-wsl users. 
 
 ### Test that everything works:
 
@@ -116,14 +116,15 @@ lsusb
 ls /dev/input
 ```
 
-Run this command in wsl to add your user to the input group:
+Run this command in wsl to add your user to the input group ():
 ```
 sudo usermod -a -G input $USER
 sudo reboot
 ```
 Run "usbipd attach --wsl --busid [INSERT BUSID OF CONTROLLER]" again in powershell, if you're using wsl.
 
-## Launch commands
+## Launch commands:
+**Make sure you CTRL+C out of both the launch sim and the controller script before launching again.**
   
 Command to launch simulation from rover_ws:
 ```
@@ -138,17 +139,26 @@ python3 [workspace-name]/src/urc_armcontrol/src/cartesian_motion_controller/scri
 python3 [workspace-name]/src/urc_armcontrol/src/cartesian_motion_controller/scripts/xbox_arm_control.py
 ```
 
-If you encounter this warning when trying to run the xbox arm controller:  
-**[WARN] [1782072228.213256607] [xbox_arm_controller]: Gamepad error: The user (that this program is being run as) does not have permission to access the input events, check groups and permissions, for example, on Debian, the user needs to be in the input group.**  
-
-Command to switch controllers:
+Command to switch controllers manually (use 'ros2 control list_controllers' to list available controllers):  
 ```
 ros2 control switch_controllers --activate [name-of-controller]
-# Ex: ros2 control switch_controllers --activate cartesian_motion_controller
+```
+**Manually switching controllers may confict with the logic in the xbox_arm_control.py script and cause unintended behavior, switching controllers with the xbox controller should be done by pressing (dpad_down + y) simultaneously.**
+
+Command to check currently active controllers (joint_state_broadcaster should **always** be active):
+```
+ros2 control list_controllers
 ```
 
-**IMPORTANT**  
-If an error is displayed while trying to launch the simulation regarding numpy needing to be less than 2.0, one possible fix is to downgrade numpy using the following command:
+**If you encounter this warning when trying to run the xbox arm controller, run the command to add your user to the input group in ubuntu/wsl (also mentioned above):**  
+[WARN] [1782072228.213256607] [xbox_arm_controller]: Gamepad error: The user (that this program is being run as) does not have permission to access the input events, check groups and permissions, for example, on Debian, the user needs to be in the input group. 
+```
+sudo usermod -a -G input $USER
+sudo reboot
+```
+or unplug/replug the controller and attach in powershell again.
+
+**If an error is displayed while trying to launch the simulation regarding numpy needing to be less than 2.0, one possible fix is to downgrade numpy using the following command:**
 ```
 pip install 'numpy<2'  
 ```
