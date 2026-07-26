@@ -23,6 +23,7 @@ import rclpy
 import time
 import numpy as np
 import threading
+from tf2_ros import Buffer, TransformListener
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
@@ -100,7 +101,7 @@ class XboxArmController(Node):
         self._controller_mode = MODE_CARTESIAN
         self.get_logger().info(f"Controller initialized as: {self._controller_mode}")
 
-        # Current target pose (starts at a neutral upright position)
+        # Current target pose (starts at a neutral upright position), these values get published to the IK topic
         self.position = np.array([0.0, 0.0, 0.3])   # x, y, z in base_link frame
         self.orientation = R.from_euler('xyz', [0.0, 0.0, 0.0])  # roll, pitch, yaw
 
@@ -131,6 +132,11 @@ class XboxArmController(Node):
         # Target joint values (where we want the joint to go), used by joint_trajectory_controller
         self._target_joint_values = {name: 0.0 for name in JOINT_NAMES}
         self._target_joint_values_seeded = False
+
+        # Create tf buffer/listener pair for position and orientation of the arm
+        self._tf_buffer = Buffer()
+        self._tf_listener = TransformListener(self._tf_buffer, self)
+        self._target_frame_values_seeded = True
 
         self.get_logger().info("Xbox arm controller started.")
         self.get_logger().info("Left stick: XY | Triggers: Z | Right stick: rotation")
@@ -214,6 +220,7 @@ class XboxArmController(Node):
             self._controller_mode = MODE_JOINT
 
         elif self._controller_mode == MODE_JOINT:
+            self._seed_target_frame_values()
             self._do_switch(activate = [MODE_CARTESIAN], deactivate = [MODE_JOINT])
             self._controller_mode = MODE_CARTESIAN
 
@@ -247,12 +254,12 @@ class XboxArmController(Node):
                 if(future.result().ok == True):
                     if activate == [MODE_CARTESIAN]:
                         output = ("\033[1m" + "Cartesian Motion Controller (IK)" + "\033[0m")
+                        self._target_joint_values_seeded = False
                     elif activate == [MODE_JOINT]:
                         output = ("\033[1m" +"Joint Trajectory Controller (FK)" + "\033[0m")
+                        self._target_frame_values_seeded = False
                     self.get_logger().info(f"Controller switched to: {output}")
-                    # If switching to cartesian_motion_controller, _target_joint_values will need to be re-seeded later.
-                    if activate == [MODE_CARTESIAN]:
-                        self._target_joint_values_seeded = False
+                        
                 else:
                     self.get_logger().error(f"Controller NOT switched to: {deactivate}")
             else:
@@ -260,7 +267,7 @@ class XboxArmController(Node):
 
         future.add_done_callback(_done_callback)
 
-    # Seeds target_joint_values with current_joint_values
+    # Seeds target_joint_values with current_joint_values IK -> FK
     def _seed_target_joint_values(self):
         with self._lock:
             current_joint_values = dict(self._current_joint_values)
@@ -272,15 +279,30 @@ class XboxArmController(Node):
                 f"No /joint_states data for {missing}, keeping previous targets for those joints."
             )
 
-        # Ensure that when target_joint_values is seeded, the 
+        # Ensure that when target_joint_values is seeded, the values fit within the limits
         for name in JOINT_NAMES:
             if name in current_joint_values:
                 lower_limit, upper_limit = JOINT_LIMITS[name]
                 self._target_joint_values[name] = float(np.clip(current_joint_values[name], lower_limit, upper_limit))
 
         self._target_joint_values_seeded = True
-        self.get_logger().info("Target joint values have been seeded.")
 
+    # Seeds the target frame values with values from the tf listener
+    def _seed_target_frame_values(self):
+        try:
+            # Get the target frame values from the tf buffer
+            t = self._tf_buffer.lookup_transform('base_link', 'tool0', rclpy.time.Time())
+        except Exception as e:
+            self.get_logger().error(f"No TF base_link->tool0 yet, keeping previous target: {e}")
+            return
+        # Get position and orientation of the target frame
+        tr, q = t.transform.translation, t.transform.rotation
+
+        # Set the position and orientation using the values from the buffer
+        self.position = np.array([tr.x, tr.y, tr.z])
+        self.orientation = R.from_quat([q.x, q.y, q.z, q.w])
+
+        self._target_frame_values_seeded = True
         
 # --- Publish ---
 
