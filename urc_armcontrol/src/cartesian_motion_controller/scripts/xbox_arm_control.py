@@ -287,7 +287,7 @@ class XboxArmController(Node):
 
         self._target_joint_values_seeded = True
 
-    # Seeds the target frame values with values from the tf listener
+    # Seeds the target frame values with values from the tf listener FK -> IK
     def _seed_target_frame_values(self):
         try:
             # Get the target frame values from the tf buffer
@@ -348,6 +348,8 @@ class XboxArmController(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = 'base_link'
 
+        # TODO: For IK (cartesian controller), the y value should stay between -0.5 and 0.5 but it doesn't.
+        # This behavior can be observed with the /target_frame topic, using np.clip() doesn't solve this issue.
         msg.pose.position.x = float(self.position[0])
         msg.pose.position.y = float(self.position[1])
         msg.pose.position.z = float(self.position[2])
