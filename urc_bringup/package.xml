@@ -18,6 +18,11 @@
   <depend>urc_msgs</depend>
   <depend>ros_gz</depend>
   <depend>effort_controllers</depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>opencv-python</exec_depend>
   <depend>grid_map_rviz_plugin</depend>
 
   <test_depend>ament_lint_auto</test_depend>

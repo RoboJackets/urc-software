@@ -41,7 +41,8 @@
     <!-- Gazebo physics settings -->
     <gazebo>
       <physics name="gazebo" type="ode">
-        <gravity>0 0 -9.8066</gravity>
+        <gravity>0 0 0</gravity>
+        <!-- <gravity>0 0 -9.8066</gravity> -->
         <ode>
           <solver>
             <type>quick</type>

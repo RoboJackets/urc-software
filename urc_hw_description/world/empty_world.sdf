@@ -9,6 +9,8 @@
       <heading_deg>0.0</heading_deg>
     </spherical_coordinates>
     <physics name="1ms" type="ode">
+      <!-- <gravity>0 0 -9.8066</gravity> -->
+      <gravity>0 0 0</gravity>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <dart>

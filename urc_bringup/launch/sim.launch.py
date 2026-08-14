@@ -1,10 +1,10 @@
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, SetEnvironmentVariable, TimerAction
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, PythonExpression
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, PythonExpression, TextSubstitution
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -95,6 +95,38 @@ def generate_launch_description():
         description="Incline slope in degrees (used when add_incline is true)",
     )
 
+    add_aruco_tag_arg = DeclareLaunchArgument(
+        "add_aruco_tag",
+        default_value="false",
+        description="Spawn an ArUco test tag in simulation",
+    )
+
+    aruco_tag_x_arg = DeclareLaunchArgument(
+        "aruco_tag_x",
+        default_value="4.0",
+        description="X position for ArUco tag",
+    )
+
+    aruco_tag_y_arg = DeclareLaunchArgument(
+        "aruco_tag_y",
+        default_value="0.0",
+        description="Y position for ArUco tag",
+    )
+
+    aruco_tag_z_arg = DeclareLaunchArgument(
+        "aruco_tag_z",
+        default_value="0.25",
+        description="Z position for the base of the ArUco tag stand",
+    )
+
+    aruco_tag_yaw_arg = DeclareLaunchArgument(
+        "aruco_tag_yaw",
+        # The tag mesh's face is normal to its local Y axis.  Turn it towards
+        # the rover, which starts at the origin looking in +X.
+        default_value="-1.57079632679",
+        description="Yaw of the ArUco tag in radians",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
     cube_x = LaunchConfiguration("cube_x")
@@ -102,13 +134,46 @@ def generate_launch_description():
     incline_x = LaunchConfiguration("incline_x")
     incline_y = LaunchConfiguration("incline_y")
     incline_slope = LaunchConfiguration("incline_slope")
+    aruco_tag_x = LaunchConfiguration("aruco_tag_x")
+    aruco_tag_y = LaunchConfiguration("aruco_tag_y")
+    aruco_tag_z = LaunchConfiguration("aruco_tag_z")
+    aruco_tag_yaw = LaunchConfiguration("aruco_tag_yaw")
     cube_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "large_cube.sdf")
     incline_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "incline_plane.sdf")
+    aruco_tag_sdf_path = os.path.join(path_urc_bringup, "models", "aruco_tag_0", "model.sdf")
     incline_pitch_rad = PythonExpression(
         ["-float(", incline_slope, ") * 3.141592653589793 / 180.0"]
     )
 
     world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
+    urc_bringup_model_dir = os.path.join(path_urc_bringup, "models")
+    urc_hw_model_dir = os.path.join(path_urc_hw_description, "models")
+    urc_hw_world_dir = os.path.join(path_urc_hw_description, "world")
+    gazebo_resource_path = os.pathsep.join(
+        [
+            urc_bringup_model_dir,
+            urc_hw_model_dir,
+            urc_hw_world_dir,
+            os.environ.get("GZ_SIM_RESOURCE_PATH", ""),
+        ]
+    )
+    gz_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")),
+        launch_arguments={"gz_args": ["-r ", world_path]}.items(),
+    )
+
+    set_gz_resource_path = SetEnvironmentVariable(
+        name="GZ_SIM_RESOURCE_PATH",
+        value=gazebo_resource_path,
+    )
+    set_ign_resource_path = SetEnvironmentVariable(
+        name="IGN_GAZEBO_RESOURCE_PATH",
+        value=gazebo_resource_path,
+    )
+    set_display = SetEnvironmentVariable(
+        name="DISPLAY",
+        value=os.environ.get("DISPLAY", ":1"),
+    )
 
     robot_urdf_file = ParameterValue(
         Command(["xacro ", walli_xacro_config, " use_sim:=", "true"]),
@@ -116,10 +181,6 @@ def generate_launch_description():
     )
 
     # Start Gazebo and immediately run the simulation (-r)
-    gz_sim = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")),
-        launch_arguments={"gz_args": ["-r ", world_path]}.items(),
-    )
 
     bridge = Node(
         package="ros_gz_bridge",
@@ -127,6 +188,15 @@ def generate_launch_description():
         name="ros_gz_bridge",
         output="screen",
         parameters=[{"config_file": LaunchConfiguration("bridge_yaml")}],
+    )
+
+    # ArUco detector using custom OpenCV Python node
+    aruco_detector_node = Node(
+        package="urc_bringup",
+        executable="aruco_detector.py",
+        name="aruco_detector",
+        output="screen",
+        parameters=[{"marker_size": 0.05}],
     )
 
     robot_state_publisher_node = Node(
@@ -245,6 +315,23 @@ def generate_launch_description():
         ],
     )
 
+    spawn_aruco_tag = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_aruco_tag")),
+        arguments=[
+            "-name", "aruco_tag_0",
+            "-x", aruco_tag_x,
+            "-y", aruco_tag_y,
+            "-z", aruco_tag_z,
+            "-R", "0.0",
+            "-P", "0.0",
+            "-Y", aruco_tag_yaw,
+            "-file", aruco_tag_sdf_path,
+        ],
+    )
+
     spawn_incline = Node(
         package="ros_gz_sim",
         executable="create",
@@ -336,9 +423,18 @@ def generate_launch_description():
             incline_x_arg,
             incline_y_arg,
             incline_slope_arg,
+            add_aruco_tag_arg,
+            aruco_tag_x_arg,
+            aruco_tag_y_arg,
+            aruco_tag_z_arg,
+            aruco_tag_yaw_arg,
+            set_gz_resource_path,
+            set_ign_resource_path,
+            set_display,
             gz_sim,
             bridge,
             robot_state_publisher_node,
+            aruco_detector_node,
             covariances_on_imu,
             covariances_on_gps,
             launch_ekf,
@@ -347,6 +443,7 @@ def generate_launch_description():
             rocker_effort_pid_node,
             spawn,
             spawn_cube,
+            spawn_aruco_tag,
             spawn_incline,
 
             # After robot spawn, start controller spawners on a fixed schedule

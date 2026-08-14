@@ -73,12 +73,22 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_GroundTruth
 )
 
-# Install launch files.
+# Install launch/config/model files and expose them to Gazebo resources.
 install(
   DIRECTORY
   launch
   config
+  models
   DESTINATION share/${PROJECT_NAME}/
+)
+
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/gz_sim_resource_path.dsv")
+
+# Install Python scripts
+install(PROGRAMS
+  scripts/aruco_detector.py
+  scripts/aruco_test_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # Install library
