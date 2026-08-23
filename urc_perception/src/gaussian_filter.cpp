@@ -1,4 +1,4 @@
-#include "GaussianFilter.hpp"
+#include "urc_perception/gaussian_filter.hpp"
 #include <pluginlib/class_list_macros.hpp>
 #include <rclcpp/rclcpp.hpp>
 

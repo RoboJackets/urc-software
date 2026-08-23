@@ -1,4 +1,4 @@
-#include "traversability_mapping.hpp"
+#include "urc_perception/traversability_mapping.hpp"
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
@@ -261,7 +261,7 @@ void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2
     const grid_map::Index src_index = *it;
 
     if (!filtered_local_map.isValid(src_index, "elevation") ||
-        !filtered_local_map.isValid(src_index, "traversability_inflated"))
+      !filtered_local_map.isValid(src_index, "traversability_inflated"))
     {
       continue;
     }
