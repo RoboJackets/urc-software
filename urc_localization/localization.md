@@ -4,7 +4,7 @@
 
 The `urc_localization` package provides configuration and launch files for rover state estimation using the **Extended Kalman Filter (EKF)** from the `robot_localization` package.  
 
-It fuses IMU, odometry, and (optionally) GPS inputs to estimate the rover’s position, orientation, and velocity in a consistent world frame.  
+It fuses IMU, odometry, and (optionally) GPS inputs to estimate the rover’s position, orientation, and velocity in a consistent world frame. It also provides the simulation ground-truth odometry adapter.
 
 This system includes the following modules:
 
@@ -31,9 +31,14 @@ This system includes the following modules:
 ```
 ├── CMakeLists.txt
 ├── config
-│   └── ekf.yaml
+│   └── ekf_redemption.yaml
 ├── launch
 │   └── ekf.launch.py
+├── include
+│   └── urc_localization
+│       └── ground_truth.hpp
+├── src
+│   └── ground_truth.cpp
 └── package.xml
 ```
 
@@ -42,7 +47,7 @@ This system includes the following modules:
 
 ### EKF Configuration
 
-- **ekf.yaml**  
+- **ekf_redemption.yaml**
   - Defines state estimation parameters for the rover.  
   - **Inputs**: IMU, odometry, and optional GPS topics.  
   - **Outputs**: Filtered state estimate (`/odometry/filtered`, `/tf`).  
@@ -50,7 +55,7 @@ This system includes the following modules:
 ### EKF Launch
 
 - **ekf.launch.py**  
-  - Starts the `robot_localization/ekf_node` with the parameters in `ekf.yaml`.  
+  - Starts the `robot_localization/ekf_node` with the parameters in `ekf_redemption.yaml`.
   - Provides a ready-to-use entry point for rover localization.  
 
 ---
@@ -68,7 +73,7 @@ This system includes the following modules:
 - `/odometry/filtered` (`nav_msgs/Odometry`) – EKF-fused odometry.  
 - `/tf` (`tf2_msgs/TFMessage`) – Transform tree updates for rover pose.  
 
-### Parameters (from `ekf.yaml`)
+### Parameters (from `ekf_redemption.yaml`)
 - `frequency` (`double`) – Filter update rate in Hz.  
 - `sensor_timeout` (`double`) – Timeout for dropping sensor data.  
 - `two_d_mode` (`bool`) – Restrict estimation to planar (x, y, yaw) if true.  

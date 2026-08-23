@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `urc_platform` package provides software nodes for interfacing with vehicle control and simulation systems. It includes joystick input handling, simulated GPS data processing, and twist command multiplexing for teleoperation.
+The `urc_platform` package provides software nodes for interfacing with vehicle control and simulation systems. It includes joystick input handling, simulated GPS data processing, twist command multiplexing, IMU conversion, and system heartbeat publication.
 
 This system includes the following modules:
 
@@ -17,6 +17,9 @@ This system includes the following modules:
 3. **Twist Multiplexer**  
    - Combines multiple velocity command inputs into a single output command.  
    - Ensures safe teleoperation by prioritizing sources.
+
+4. **Heartbeat Publisher**
+   - Publishes the rover software heartbeat.
 
 ---
 
@@ -34,9 +37,13 @@ This system includes the following modules:
 ```bash
 ├── CMakeLists.txt
 ├── config
-│   └── twist_mux.yaml
+│   ├── controller_config.yaml
+│   ├── twist_mux.yaml
+│   └── vectornav_imu.yaml
 ├── include
 │   ├── joystick_driver.hpp
+│   ├── heartbeat_publisher.hpp
+│   ├── imu_ned2enu.hpp
 │   ├── preprocessing.hpp
 │   ├── sim_gps_handler.hpp
 │   └── twist_mux.hpp
@@ -48,6 +55,8 @@ This system includes the following modules:
 ├── README.md
 ├── src
 │   ├── joystick_driver.cpp
+│   ├── heartbeat_publisher.cpp
+│   ├── imu_ned2enu.cpp
 │   ├── sim_gps_handler.cpp
 │   └── twist_mux.cpp
 └── test
@@ -154,4 +163,3 @@ Start JoyDrtive Node
 ```bash
 ros2 launch urc_platform joy_drive.launch.py
 ```
-

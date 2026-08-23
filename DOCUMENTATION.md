@@ -31,7 +31,7 @@ Full Installation Instructions  [URC Software README](../README.md).
 ### Autonomy & Perception
 - [bt.md](bt.md) – Behavior tree core package for task execution.  
 - [bt_nodes.md](bt_nodes.md) – Custom behavior tree nodes for autonomy.  
-- [navigation.md](navigation.md) – Navigation stack, including Nav2 configuration and nodes.  
+- [navigation.md](documents/navigation.md) – Navigation stack, including planning and control nodes.
 - [perception.md](perception.md) – Perception stack, including computer vision and detection nodes.  
 
 ---
@@ -73,4 +73,3 @@ Each markdown file follows a standardized structure to provide comprehensive inf
 - [Nav2 Documentation](https://navigation.ros.org/)
 
 _Last updated: 2025-08-19_
-

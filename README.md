@@ -17,7 +17,7 @@ Welcome to the RoboJackets/RoboNav software repo for the [University Rover Chall
 - **urc_arm_moveit_config**
   _Moveit config folder for rover arm_
 - **urc_bringup**
-  _Location of the universal launch file + heartbeat node_
+  _Launch composition and rover-level configuration_
 - **urc_controllers**
   _ros2-control controllers_
 - **urc_gazebo**
@@ -32,10 +32,14 @@ Welcome to the RoboJackets/RoboNav software repo for the [University Rover Chall
   _nanopb related files and settings_
 - **urc_msgs**
   _Custom ROS messages used in various packages_
-- **urc_platform**
-  _Manages our nanopb protocol buffers_
-- **urc_navigation**
-  _Collection of nodes that form our navigation stack_
+- **urc_nav_common**
+  _Shared navigation data and grid-map utilities_
+- **urc_path_planning**
+  _Global path-planning nodes and algorithms_
+- **urc_state_machine**
+  _Navigation coordination and state management_
+- **urc_trajectory_following**
+  _Path-following nodes and control algorithms_
 - **urc_perception**
   _Collection of nodes that form our perception stack_
 - **urc_platform**

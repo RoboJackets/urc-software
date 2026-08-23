@@ -6,28 +6,32 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
     pkg_urc_perception = get_package_share_directory("urc_perception")
-    pkg_trajectory_following = get_package_share_directory("trajectory_following")
+    pkg_trajectory_following = get_package_share_directory("urc_trajectory_following")
 
-    traversability_config = os.path.join(pkg_urc_perception, "config", "traversability_params.yaml")
-    trajectory_config = os.path.join(pkg_trajectory_following, "config", "pure_pursuit.yaml")
+    traversability_config = os.path.join(
+        pkg_urc_perception, "config", "traversability_params.yaml"
+    )
+    trajectory_config = os.path.join(
+        pkg_trajectory_following, "config", "pure_pursuit_config.yaml"
+    )
 
     state_machine_node = Node(
-        package="nav_testing",
-        executable="nav_testing_NavCoordinator",
+        package="urc_state_machine",
+        executable="urc_state_machine_NavCoordinator",
         name="nav_coordinator",
         output="screen",
     )
 
     path_planning_node = Node(
-        package="path_planning",
-        executable="path_planning_PlannerServer",
+        package="urc_path_planning",
+        executable="urc_path_planning_PlannerServer",
         name="planner_server",
         output="screen",
     )
 
     trajectory_following_node = Node(
-        package="trajectory_following",
-        executable="trajectory_following_FollowerActionServer",
+        package="urc_trajectory_following",
+        executable="urc_trajectory_following_FollowerActionServer",
         name="follower_action_server",
         parameters=[trajectory_config],
         output="screen",
