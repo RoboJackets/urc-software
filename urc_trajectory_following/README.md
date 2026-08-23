@@ -1,35 +1,56 @@
-## Trajectory Following
+# URC Trajectory Following
 
-This package exposes the `/navigate_to_waypoint` action server that, when called, commands the robot along the desired path. The request, response, and feedback definitions can be found [here](/urc_msgs/action/NavigateToWaypoint.action).
+`urc_trajectory_following` owns the `NavigateToWaypoint` action that turns a
+planned path into rover velocity commands. The current controller implementation
+is [Pure Pursuit](src/pure_pursuit/README.md).
 
->  **Note:** Currently, the server is set up to call an implementation of the pure pursuit algorithm to achieve this. However, it is also set up so that we can (somewhat) easily drop in another
->  path tracking implementation in the future. However, to do this correctly, this would require the creation of a `PathTrackingAlgorithm` interface and a refactor of how we set parameters.
+## Action behavior
 
-### Swerve Drive Support
+`urc_trajectory_following_FollowerActionServer` accepts two request forms:
 
-The trajectory follower now takes advantage of swerve drive capabilities for improved navigation:
+| Goal fields | Behavior |
+| --- | --- |
+| `has_goal: true` | Gets the current rover pose from TF, calls the `GeneratePlan` A* service, and follows the returned path |
+| `has_path: true` | Follows the supplied non-empty `nav_msgs/Path` without initial planning |
 
-* **In-place turning**: When the robot needs to change direction significantly, it will turn in place before moving forward, reducing path deviation.
-* **Holonomic motion**: The controller can command both forward/backward and lateral velocities simultaneously for more direct path following.
-* **Final heading alignment**: When goal heading enforcement is enabled, the robot will perform an in-place turn at the goal to achieve the desired final orientation.
+If both flags are set, the goal-based planning path takes precedence. A request
+with neither flag is rejected.
 
-To enable swerve drive features, set `enable_swerve_motion: true` in the configuration. The controller will fall back to diff drive behavior when this is disabled.
+During execution, the server publishes distance, planning state, and replan count
+as action feedback. It checks the controller's tracking point against the
+configured costmap layer and requests a new A* path when the cost exceeds the
+lethal threshold.
 
-The action server is set up to be configurable. See `config/pure_pursuit_config.yaml` for all of the available parameters. The default values are shown below.
+## Runtime contracts
 
-| Parameter | Default Value | Description |
-| --------- | ------------- | ----------- |
-| trajectory_controller | "pure_pursuit" | Trajectory controller selected by `TrajectoryFactory` |
-| lookahead_distance | 1.0 | Distance ahead on path to track (meters) |
-| desired_linear_velocity | 0.5 | Desired forward velocity (m/s) |
-| max_angular_velocity | 1.0 | Maximum turning rate (rad/s) |
-| heading_alignment_tolerance | 0.2 | Angular threshold for in-place turns (radians) |
-| enable_swerve_motion | true | Enable swerve drive features |
-| cmd_vel_topic | "/cmd_vel" | Topic for velocity commands |
-| odom_topic | "/odom" | Topic for odometry |
-| map_frame | "map" | Global coordinate frame |
-| goal_tolerance | 0.1 | Position tolerance for goal (meters) |
-| enforce_goal_heading | false | Require specific heading at goal |
-| goal_heading_tolerance | 0.1 | Heading tolerance at goal (radians) |
+- The action name is `navigate_to_waypoint`; the planning service is `plan`.
+- The server requires the configured map-to-base TF throughout execution.
+- `/costmap` must contain the configured layer, normally
+  `traversability_inflated`. A missing or unreadable cost is currently treated as
+  zero and therefore does not trigger replanning.
+- Velocity output may be `Twist` or `TwistStamped`, selected by
+  `cmd_vel_stamped`; its topic is configured by `cmd_vel_topic`.
+- Cancellation, completion, and handled planning failures publish a final
+  zero-velocity command.
+- Goal heading is enforced when requested by the action or enabled in the node
+  configuration.
 
-These default values will be used if the parameter is not defined in the specified config file.
+## Usage
+
+The normal entry point is the complete autonomy stack:
+
+```bash
+ros2 launch urc_bringup autonomy.launch.py
+```
+
+To start only the follower with its installed configuration:
+
+```bash
+ros2 launch urc_trajectory_following trajectory_following.launch.py
+```
+
+The standalone launch still requires TF and, for goal-based requests, the
+planner and traversability map. Runtime settings live in
+[`config/pure_pursuit_config.yaml`](config/pure_pursuit_config.yaml). Although
+the controller is selected through `TrajectoryFactory`, `pure_pursuit` is the
+only supported selection today.

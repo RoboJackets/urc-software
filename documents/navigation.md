@@ -1,156 +1,74 @@
-# URC Navigation
+# URC Navigation Architecture
 
-## Overview
+The rover uses a custom ROS 2 navigation stack built around a rolling Grid Map,
+an A* planning service, and a waypoint-following action. It is not a Nav2 planner
+plugin.
 
-The navigation stack provides autonomous rover navigation through four focused ROS 2 packages:
+## System flow
 
-1. **Path Planning (`urc_path_planning`)**  
-   - Implements a global planner using the A* algorithm.  
-   - Provides plans as a sequence of poses (`nav_msgs/Path`).  
-   - Integrated with Nav2 as an external planner service.  
-
-2. **Trajectory Following (`urc_trajectory_following`)**  
-   - Consumes planned paths and generates smooth velocity commands.  
-   - Ensures accurate and safe tracking of the planned trajectory.  
-   - Bridges the gap between high-level plans and rover motion control.  
-
-3. **State Machine (`urc_state_machine`)**
-   - Coordinates navigation goals and action results.
-
-4. **Navigation Common (`urc_nav_common`)**
-   - Provides shared grid-map access utilities.
-
-Together these packages form a lightweight navigation stack for the University Rover Challenge.
-
----
-
-## Features
-
-- **Custom Path Planning (A\*)**: Grid-based A* planner that generates collision-free paths on occupancy grid costmaps.  
-- **Trajectory Following**: Executes smooth and precise motion along planned paths.  
-- **ROS 2 Integration**: Implements standard ROS 2 publishers, subscribers, and services.  
-- **Simulation & Hardware Support**: Works in both Gazebo simulation and real rover hardware environments.  
-
-
-## Package Structure
-
-```
-├── urc_path_planning
-│   ├── CMakeLists.txt
-│   ├── include
-│   │   ├── astar.hpp
-│   │   └── planner_server.hpp
-│   ├── launch
-│   │   └── planning.launch.py
-│   ├── package.xml
-│   └── src
-│       ├── astar.cpp
-│       └── planner_server.cpp
-├── urc_trajectory_following
-│   ├── CMakeLists.txt
-│   ├── config
-│   │   └── pure_pursuit_config.yaml
-│   ├── include
-│   │   └── urc_trajectory_following
-│   ├── launch
-│   │   └── trajectory_following.launch.py
-│   ├── package.xml
-│   ├── README.md
-│   └── src
-├── urc_state_machine
-│   ├── include
-│   └── src
-└── urc_nav_common
-    ├── include
-    └── src
-
+```mermaid
+flowchart LR
+  PointCloud[Point cloud] --> Mapper[Traversability mapper]
+  Localization -->|global odometry| Mapper
+  Mapper --> Costmap["/costmap"]
+  Costmap --> Planner[A* planner]
+  Costmap --> Follower[Waypoint follower]
+  Waypoint --> Coordinator[NavCoordinator] --> Follower
+  Follower -->|GeneratePlan| Planner
+  Planner -->|nav_msgs/Path| Follower
+  Localization -->|map/base_link TF| Follower
+  Follower --> Command[Velocity command]
 ```
 
-### Components
+The interfaces separate route creation from rover motion:
 
-#### Path Planning (`urc_path_planning`)
+- `GeneratePlan` takes start and goal poses, runs A*, and returns a
+  `nav_msgs/Path`. It does not command the rover.
+- `NavigateToWaypoint` accepts either a goal or an existing path. For a goal, the
+  follower requests a plan first; it then tracks the path and publishes velocity
+  commands.
 
-- **AStar (`astar.hpp/cpp`)**
-  - Implements the grid-based A* search algorithm
-  - Operates directly on `OccupancyGrid` costmaps
-  - Produces a vector of poses (waypoints) forming the global path  
+## Package responsibilities
 
-- **PlannerServer (`planner_server.hpp/cpp`)**
-  - Wraps the A* planner in a ROS 2 node
-  - Provides a service interface for plan generation
-  - Subscribes to a costmap and publishes computed paths  
+| Package | Responsibility |
+| --- | --- |
+| [`urc_localization`](../urc_localization/README.md) | Provides global odometry and the `map`, `odom`, and `base_link` frame relationship |
+| [`urc_perception`](../urc_perception/README.md) | Converts terrain point clouds into the rolling `/costmap` Grid Map |
+| [`urc_state_machine`](../urc_state_machine/README.md) | Converts pose or GPS waypoint inputs into follower action goals and reports navigation state |
+| [`urc_path_planning`](../urc_path_planning/README.md) | Creates cost-weighted A* paths through `GeneratePlan` |
+| [`urc_trajectory_following`](../urc_trajectory_following/README.md) | Tracks paths, monitors traversal cost, replans when needed, and publishes velocity commands |
+| [`urc_nav_common`](../urc_nav_common/README.md) | Provides shared Grid Map lookup behavior for planning and following |
 
-#### Trajectory Following (`urc_trajectory_following`)
+## Runtime contracts
 
-- **FollowerActionServer (`follower_action_server.hpp/cpp`)**
-  - Implements a ROS 2 Action Server for trajectory following  
-  - Consumes planned paths (`nav_msgs/Path`) and generates velocity commands (`geometry_msgs/Twist`)  
-  - Interfaces with rover control to execute trajectories reliably  
+- Localization must provide a connected `map`-to-`base_link` TF tree. Point
+  clouds need a stamped sensor frame that can be transformed into `map`.
+- Planner poses, paths, and the costmap use `map` coordinates; request frames are
+  not transformed by the planner.
+- `/costmap` is `grid_map_msgs/msg/GridMap`; planning and following use its
+  `traversability_inflated` layer.
+- A goal-based navigation request requires both the `plan` service and
+  `navigate_to_waypoint` action server.
+- The follower can replan when its tracking point exceeds the configured lethal
+  cost. During this collision check, missing cost data is currently treated as
+  traversable.
+- Velocity topic and message type must match the downstream command-routing or
+  controller configuration before operating the rover.
 
-- **Pure Pursuit (`pure_pursuit/pure_pursuit.hpp/cpp`)**
-  - Implements the Pure Pursuit path tracking algorithm  
-  - Selects lookahead points along the path for smooth velocity generation  
-  - Configurable via `pure_pursuit_config.yaml`  
+## Launching
 
-- **Geometry Util (`geometry_util.hpp/cpp`)**
-  - Provides reusable geometric helper functions
-  - Supports Pure Pursuit calculations and general path-following logic
-
----
-## Planner_Server | Node
-
-### Subscriptions
-- `/costmap` (`nav_msgs/OccupancyGrid`)  
-  Costmap input used for planning.
-
-### Publishers
-- `/path` (`nav_msgs/Path`)  
-  Planned path published for visualization and debugging.
-
-### Services
-- `/plan` (`urc_msgs/srv/GeneratePlan`)  
-  - **Request**: Start pose and goal pose (`geometry_msgs/PoseStamped`)  
-  - **Response**: Path (`nav_msgs/Path`) and success/error code
-
----
-
-## Trajectory_Follower | Node
-
-### Subscriptions
-- `/trajectory` (`nav_msgs/Path`)  
-  Planned trajectory to follow.
-
-- `/odom` (`nav_msgs/Odometry`)  
-  Current robot pose and velocity feedback.
-
-### Publishers
-- `/cmd_vel` (`geometry_msgs/Twist`)  
-  Velocity commands for trajectory execution.
-
-### Actions
-- `follow_trajectory` (`urc_msgs/action/FollowTrajectory`)  
-  - **Goal**: Trajectory to follow (`nav_msgs/Path`)  
-  - **Feedback**: Progress along trajectory, current target pose  
-  - **Result**: Success/failure and error code
-
-### Parameters
-- `lookahead_distance` (double) – distance ahead on trajectory for control.  
-- `max_linear_speed` (double)  
-- `max_angular_speed` (double)  
-
----
-
-## Launch
-
-Start the planner server with:
+For simulation with localization, sensors, controllers, and autonomy:
 
 ```bash
-ros2 launch urc_path_planning planning.launch.py
+ros2 launch urc_bringup sim.launch.py autonomy:=true
 ```
 
-
-Start the trajectory_follower with:
+To start only the autonomy nodes:
 
 ```bash
-ros2 launch urc_trajectory_following trajectory_following.launch.py
+ros2 launch urc_bringup autonomy.launch.py
 ```
+
+The autonomy-only launch expects localization, point-cloud input, TF, and rover
+control to already be running. There is currently no complete physical-rover
+bringup launch.

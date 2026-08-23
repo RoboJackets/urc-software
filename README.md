@@ -1,97 +1,83 @@
-# urc-software [![CI Status Badge](https://github.com/RoboJackets/urc-software/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-software/actions)
+# URC Rover Software
 
-Welcome to the RoboJackets/RoboNav software repo for the [University Rover Challenge](https://urc.marssociety.org/) (URC)! This document will give you a brief description of the repo's layout and an overview of the repo.
+[![CI](https://github.com/RoboJackets/urc-rover/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-rover/actions/workflows/ci.yml)
 
-[![Static Badge](https://img.shields.io/badge/Software_Lead-Mrinal_Jain-EAAA00)](https://github.com/mrinalTheCoder)
+This repository contains the RoboJackets University Rover Challenge ROS 2
+software stack. It targets ROS 2 Humble on Ubuntu 22.04 and uses C++17, Python
+launch files, `ament_cmake`, and `colcon`.
 
-## Directory Structure
+## Quick start
 
-- **.github**
-  _CI pipeline and PR/issue templates_
-- **cmake**
-  _CMake files to aid with building_
-- **documents**
-  _Research, design, and documentation_
-- **external**
-  _Where all our submodules are located_
-- **urc_arm_moveit_config**
-  _Moveit config folder for rover arm_
-- **urc_bringup**
-  _Launch composition and rover-level configuration_
-- **urc_controllers**
-  _ros2-control controllers_
-- **urc_gazebo**
-  _Helper nodes used for simulation purposes_
-- **urc_hw**
-  _ros2-control hardware interface_
-- **urc_hw_description**
-  _URDF description for the rover_
-- **urc_manipulation**
-  _Collection of nodes used for the robotic arm_
-- **urc_nanopb**
-  _nanopb related files and settings_
-- **urc_msgs**
-  _Custom ROS messages used in various packages_
-- **urc_nav_common**
-  _Shared navigation data and grid-map utilities_
-- **urc_path_planning**
-  _Global path-planning nodes and algorithms_
-- **urc_state_machine**
-  _Navigation coordination and state management_
-- **urc_trajectory_following**
-  _Path-following nodes and control algorithms_
-- **urc_perception**
-  _Collection of nodes that form our perception stack_
-- **urc_platform**
-  _Nodes that are platform specific and used to communicate with the hardware, ie. IMU, joystick and motor controller_
+Create a workspace and clone the repository with its submodules:
 
-## Installation Instructions
-
-**Essential** <br />
-You will need to be using Ubuntu 22.04 to run ROS2. This can be accomplished with any of the following methods:
-
-- [Ubuntu 22.04: Native Installation or WSL (Windows/Linux)](documents/installation/ubuntu_installation.md) **Strongly recommended!**
-- [Docker Installation Instructions (Mac/Windows/Linux)](documents/installation/docker_installation.md) **Less viable, use for Apple Silicon**
-
-**Specific Features**
-
-- [XBox Controller Setup](documents/installation/controller_setup.md)
-- [Depth Camera Setup](documents/installation/camera_setup.md)
-- [ROS2 Control Gazebo Setup](documents/installation/ros2_control.md)
-- [Radio Communication Between Rover and Ground Station](documents/installation/radio_setup.md)
-
-## Helpful Resources
-
-- [Useful Commands: ROS2 Commands, Git Commands](documents/helpers/useful_commands.md)
-- [Design Presentation Requirements](documents/design/README.md)
-- [Drone Repository](https://github.com/RoboJackets/urc-drone)
-- [Firmware Repository](https://github.com/RoboJackets/urc-firmware/tree/master)
-
-## Team-Related Links
-
-- [Slack](https://robojackets.slack.com/)
-- [Google Drive](https://drive.google.com/drive/folders/1qZ3fwFvTRdvCWRLjbE44AmqxUnaBq8FP?usp=drive_link)
-- [Software Training](https://github.com/RoboJackets/software-training-old)
-
-## External Documentation and Background Reading
-
-- [ROS2 Humble Documentation](https://docs.ros.org/en/humble/index.html)
-- [MoveIt2 Documentation](https://moveit.picknik.ai/main/index.html)
-- [Nav2 Documentation](https://navigation.ros.org/)
-- [ROS2 Control Documentation](https://control.ros.org/master/index.html)
-
-## Common Issues
-
-#### NanoPB Not Building
-
-Fix (will only build after the last time):
-
+```bash
+mkdir -p rover_ws
+git clone --recurse-submodules https://github.com/RoboJackets/urc-rover.git rover_ws/src
+cd rover_ws
 ```
-colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/protoc-gen-nanopb
-colcon build --symlink-install ; chmod +x build/urc_nanopb/nanopb/generator/nanopb_generator.py
+
+Install dependencies and build from the workspace root:
+
+```bash
+source /opt/ros/humble/setup.bash
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
+source install/setup.bash
 ```
-Can also try downgrading/installing protobuf (described in error message):
+
+Start the rover simulation:
+
+```bash
+ros2 launch urc_bringup sim.launch.py
 ```
-pip install protoc==3.20
+
+Enable the autonomy stack when needed:
+
+```bash
+ros2 launch urc_bringup sim.launch.py autonomy:=true
 ```
+
+There is currently no single launch file for complete physical-rover bringup.
+
+## Repository map
+
+- [`urc_bringup`](urc_bringup/README.md) composes simulation, autonomy,
+  base-station, and rocker-control launches.
+- [`urc_hw`](urc_hw/README.md),
+  [`urc_controllers`](urc_controllers/README.md), and
+  [`urc_hw_description`](urc_hw_description/README.md) own hardware access,
+  ROS 2 control, and the rover model.
+- [`urc_localization`](urc_localization/README.md),
+  [`urc_perception`](urc_perception/README.md),
+  [`urc_path_planning`](urc_path_planning/README.md),
+  [`urc_state_machine`](urc_state_machine/README.md), and
+  [`urc_trajectory_following`](urc_trajectory_following/README.md) form the
+  autonomy stack.
+- [`urc_platform`](urc_platform/README.md), [`urc_msgs`](urc_msgs/README.md),
+  [`urc_nanopb`](urc_nanopb/README.md), and
+  [`urc_nav_common`](urc_nav_common/README.md) provide platform adapters and
+  shared interfaces.
+- `external` contains vendored submodules and should not be modified as normal
+  first-party code.
+
+## Setup and development
+
+- [Native Ubuntu installation](documents/installation/ubuntu_installation.md)
+- [Docker installation](documents/installation/docker_installation.md)
+- [Navigation architecture](documents/navigation.md)
+- [ROS 2 control integration](documents/installation/ros2_control.md)
+- [Useful development commands](documents/helpers/useful_commands.md)
+- [Common troubleshooting issues](documents/helpers/common_issues.md)
+
+Run build and test commands from `rover_ws`, not `rover_ws/src`:
+
+```bash
+colcon build --packages-up-to <package_name> --symlink-install
+colcon test --packages-select <package_name>
+colcon test-result --verbose
+```
+
+Source `install/setup.bash` again after rebuilding. Package manifests are the
+source of truth for dependencies; use `rosdep` rather than maintaining a manual
+package list.
