@@ -1,6 +1,6 @@
 # URC Rover Software
 
-[![CI](https://github.com/RoboJackets/urc-rover/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-rover/actions/workflows/ci.yml)
+[![CI](https://github.com/RoboJackets/urc-software/actions/workflows/ci.yml/badge.svg)](https://github.com/RoboJackets/urc-software/actions/workflows/ci.yml)
 
 This repository contains the RoboJackets University Rover Challenge ROS 2
 software stack. It targets ROS 2 Humble on Ubuntu 22.04 and uses C++17, Python
@@ -12,7 +12,7 @@ Create a workspace and clone the repository with its submodules:
 
 ```bash
 mkdir -p rover_ws
-git clone --recurse-submodules https://github.com/RoboJackets/urc-rover.git rover_ws/src
+git clone --recurse-submodules https://github.com/RoboJackets/urc-software.git rover_ws/src
 cd rover_ws
 ```
 

@@ -20,7 +20,7 @@ directories, then clone the rover repository:
 ```bash
 mkdir -p urc_container/rover_ws urc_container/drone_ws
 git clone --recurse-submodules \
-  https://github.com/RoboJackets/urc-rover.git \
+  https://github.com/RoboJackets/urc-software.git \
   urc_container/rover_ws/src
 cd urc_container
 ```
