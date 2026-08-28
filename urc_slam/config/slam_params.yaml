@@ -1,0 +1,22 @@
+slam_node:
+  ros__parameters:
+    imu_topic: /imu/data
+    lidar_topic: /scan/points
+    slam_odom_topic: /slam/odometry
+
+    map_frame: map
+    base_link_frame: base_link
+
+    keyframe:
+      translation_threshold_m: 0.5
+      rotation_threshold_rad: 0.174533
+
+    lidar_frontend:
+      voxel_size_m: 0.2
+      minimum_range_m: 1.0
+      maximum_range_m: 80.0
+      maximum_correspondence_distance_m: 2.0
+      maximum_iterations: 64
+      transformation_epsilon: 1.0e-6
+      fitness_epsilon: 1.0e-6
+      maximum_fitness_score: 0.5

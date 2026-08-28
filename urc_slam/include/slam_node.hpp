@@ -3,8 +3,7 @@
 
 #include <memory>
 #include <string>
-
-#include <gtsam/geometry/Pose3.h>
+#include <optional>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -13,26 +12,28 @@
 #include <tf2_ros/transform_broadcaster.h>
 
 #include "slam_backend.hpp"
-
+#include "lidar_frontend.hpp"
 
 namespace urc_slam {
-    class SlamNode: public rclcpp::Node {
+    class SlamNode : public rclcpp::Node {
         public:
             explicit SlamNode(
                 const rclcpp::NodeOptions &options = rclcpp::NodeOptions()
             );
 
         private:
-            void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+            LidarFrontend lidar_frontend;
+            LidarFrontend::Cloud::Ptr previous_keyframe_cloud;
+            double maximum_fitness_score;
+
             void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
             void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
-
-            gtsam::Pose3 poseFromOdom(const nav_msgs::msg::Odometry &msg) const;
             void publishOutputs(const rclcpp::Time &stamp);
 
             SlamBackend backend;
+            std::optional<rclcpp::Time> previous_imu_stamp;
+            std::size_t latest_keyframe_index = 0;
 
-            rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
             rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub;
             rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_sub;
 
@@ -42,14 +43,12 @@ namespace urc_slam {
             std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster;
 
             nav_msgs::msg::Path path_msg;
-            sensor_msgs::msg::Imu last_imu_msg;
-            sensor_msgs::msg::PointCloud2::SharedPtr last_lidar_msg;
 
-            std::string odom_topic;
+
+            std::string slam_odom_topic;
             std::string imu_topic;
             std::string lidar_topic;
             std::string map_frame;
-            std::string odom_frame;
             std::string base_link_frame;
 
     };
