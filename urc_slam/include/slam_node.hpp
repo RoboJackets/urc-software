@@ -26,6 +26,7 @@ namespace urc_slam {
             LidarFrontend::Cloud::Ptr previous_keyframe_cloud;
             double maximum_fitness_score;
 
+
             void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
             void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
             void publishOutputs(const rclcpp::Time &stamp);
@@ -34,6 +35,7 @@ namespace urc_slam {
             bool imu_integrated_since_keyframe = false;
             std::optional<rclcpp::Time> previous_imu_stamp;
             std::size_t latest_keyframe_index = 0;
+
 
             rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub;
             rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_sub;
@@ -52,6 +54,11 @@ namespace urc_slam {
             std::string map_frame;
             std::string base_link_frame;
 
+
+            LidarFrontend::Cloud::Ptr accumulated_map;
+            double map_voxel_size_m;
+            rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
+            void addKeyframeToMap(const LidarFrontend::Cloud::ConstPtr &cloud, const rclcpp::Time &stamp);
     };
 
 }

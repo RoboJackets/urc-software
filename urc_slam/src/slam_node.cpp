@@ -5,9 +5,12 @@
 #include <gtsam/navigation/NavState.h>
 
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/common/transforms.h>
+#include <pcl/filters/voxel_grid.h>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+
 
 namespace urc_slam {
     SlamNode::SlamNode(const rclcpp::NodeOptions &options)
@@ -38,7 +41,12 @@ namespace urc_slam {
                 gtsam::Vector6::Constant(1e-4)
             ),
             previous_imu_stamp(std::nullopt),
-            latest_keyframe_index(0)
+            latest_keyframe_index(0),
+            accumulated_map(new LidarFrontend::Cloud),
+            map_voxel_size_m(
+                declare_parameter<double>("map_voxel_size_m", 0.5)
+            )
+
     {
         imu_topic = declare_parameter<std::string>("imu_topic", "/imu/data");
         lidar_topic = declare_parameter<std::string>("lidar_topic", "/points");
@@ -88,6 +96,10 @@ namespace urc_slam {
 
         path_msg.header.frame_id = map_frame;
 
+        map_pub = create_publisher<sensor_msgs::msg::PointCloud2>(
+            "/slam/map_points",
+            rclcpp::QoS(1).reliable().transient_local()
+        );
     }
 
     void SlamNode::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg) {
@@ -153,6 +165,8 @@ namespace urc_slam {
             previous_keyframe_cloud = current_cloud;
             latest_keyframe_index = 0;
             imu_integrated_since_keyframe = false;
+
+            addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
             publishOutputs(rclcpp::Time(msg->header.stamp));
             return;
         }
@@ -210,6 +224,7 @@ namespace urc_slam {
         previous_keyframe_cloud = current_cloud;
         imu_integrated_since_keyframe = false;
 
+        addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
         publishOutputs(rclcpp::Time(msg->header.stamp));
     }
 
@@ -262,6 +277,35 @@ namespace urc_slam {
         transform_msg.transform.rotation = odometry_msg.pose.pose.orientation;
         tf_broadcaster->sendTransform(transform_msg);
     }
+
+    void SlamNode::addKeyframeToMap(
+        const LidarFrontend::Cloud::ConstPtr &cloud,
+        const rclcpp::Time &stamp
+    ) {
+        const gtsam::Pose3 map_T_base = backend.latestEstimate().pose();
+
+        // FIX FOR ACTUAL - base_T_lidar is identity rn
+        const gtsam::Pose3 map_T_lidar = map_T_base;
+
+        LidarFrontend::Cloud transformed_cloud;
+        pcl::transformPointCloud(*cloud, transformed_cloud, map_T_lidar.matrix());
+
+        *accumulated_map += transformed_cloud;
+        LidarFrontend::Cloud::Ptr filtered_map(new LidarFrontend::Cloud);
+        pcl::VoxelGrid<LidarFrontend::Point> voxel_filter;
+        voxel_filter.setInputCloud(accumulated_map);
+        voxel_filter.setLeafSize(map_voxel_size_m, map_voxel_size_m, map_voxel_size_m);
+        voxel_filter.filter(*filtered_map);
+
+        accumulated_map = filtered_map;
+
+        sensor_msgs::msg::PointCloud2 map_msg;
+        pcl::toROSMsg(*accumulated_map, map_msg);
+        map_msg.header.stamp = stamp;
+        map_msg.header.frame_id = map_frame;
+        map_pub->publish(map_msg);
+    }
+    
 }
 
 #include <rclcpp_components/register_node_macro.hpp>
