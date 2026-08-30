@@ -93,6 +93,18 @@ namespace urc_slam {
     void SlamNode::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg) {
         const rclcpp::Time current_stamp(msg->header.stamp);
 
+        const gtsam::Vector3 acceleration(
+            msg->linear_acceleration.x,
+            msg->linear_acceleration.y,
+            msg->linear_acceleration.z
+        );
+
+        const gtsam::Vector3 angular_velocity(
+            msg->angular_velocity.x,
+            msg->angular_velocity.y,
+            msg->angular_velocity.z
+        );
+
         if (!previous_imu_stamp.has_value()) {
             previous_imu_stamp = current_stamp;
             return;
@@ -101,37 +113,28 @@ namespace urc_slam {
         const double dt = (current_stamp - previous_imu_stamp.value()).seconds();
         previous_imu_stamp = current_stamp;
 
-        if (dt <= 0.0) {
+        if (dt <= 0.0 || dt > 0.1) {
             return;
         }
 
-        // Keyframe zero begins at first LiDAR cloud
         if (!previous_keyframe_cloud) {
             return;
         }
 
-        const gtsam::Vector3 measured_acceleration(
-            msg->linear_acceleration.x,
-            msg->linear_acceleration.y,
-            msg->linear_acceleration.z
-        );
-
-        const gtsam::Vector3 measured_angular_velocity(
-            msg->angular_velocity.x,
-            msg->angular_velocity.y,
-            msg->angular_velocity.z
-        );
-
         backend.integrateImuMeasurement(
-            measured_acceleration,
-            measured_angular_velocity,
+            acceleration,
+            angular_velocity,
             dt
         );
+
+        imu_integrated_since_keyframe = true;
     }  
 
     void SlamNode::lidarCallback(
         const sensor_msgs::msg::PointCloud2::SharedPtr msg
     ) {
+
+
         LidarFrontend::Cloud::Ptr raw_cloud(
             new LidarFrontend::Cloud
         );
@@ -149,7 +152,12 @@ namespace urc_slam {
         if (!previous_keyframe_cloud) {
             previous_keyframe_cloud = current_cloud;
             latest_keyframe_index = 0;
+            imu_integrated_since_keyframe = false;
             publishOutputs(rclcpp::Time(msg->header.stamp));
+            return;
+        }
+
+        if (!imu_integrated_since_keyframe) {
             return;
         }
 
@@ -166,7 +174,8 @@ namespace urc_slam {
         const LidarRegistrationResult registration = lidar_frontend.registerClouds(
             previous_keyframe_cloud,
             current_cloud,
-            imu_relative_guess
+            //imu_relative_guess
+            gtsam::Pose3()
         );
 
         if (!registration.converged) {
@@ -199,6 +208,7 @@ namespace urc_slam {
 
         latest_keyframe_index = current_index;
         previous_keyframe_cloud = current_cloud;
+        imu_integrated_since_keyframe = false;
 
         publishOutputs(rclcpp::Time(msg->header.stamp));
     }

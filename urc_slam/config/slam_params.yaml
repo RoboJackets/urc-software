@@ -1,6 +1,6 @@
 slam_node:
   ros__parameters:
-    imu_topic: /imu/data
+    imu_topic: /imu/fused
     lidar_topic: /scan/points
     slam_odom_topic: /slam/odometry
 
@@ -19,4 +19,4 @@ slam_node:
       maximum_iterations: 64
       transformation_epsilon: 1.0e-6
       fitness_epsilon: 1.0e-6
-      maximum_fitness_score: 0.5
+      maximum_fitness_score: 2.5

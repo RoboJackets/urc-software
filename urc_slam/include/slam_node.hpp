@@ -31,6 +31,7 @@ namespace urc_slam {
             void publishOutputs(const rclcpp::Time &stamp);
 
             SlamBackend backend;
+            bool imu_integrated_since_keyframe = false;
             std::optional<rclcpp::Time> previous_imu_stamp;
             std::size_t latest_keyframe_index = 0;
 
