@@ -24,6 +24,7 @@ namespace urc_slam {
         private:
             LidarFrontend lidar_frontend;
             LidarFrontend::Cloud::Ptr previous_keyframe_cloud;
+            gtsam::Pose3 last_lidar_relative_pose;
             double maximum_fitness_score;
 
 

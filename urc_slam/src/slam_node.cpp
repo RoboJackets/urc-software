@@ -27,6 +27,7 @@ namespace urc_slam {
                 
             ),
             previous_keyframe_cloud(nullptr),
+            last_lidar_relative_pose(gtsam::Pose3()),
             maximum_fitness_score(
                 declare_parameter<double>("lidar_frontend.maximum_fitness_score", 0.5)
             ),
@@ -188,8 +189,7 @@ namespace urc_slam {
         const LidarRegistrationResult registration = lidar_frontend.registerClouds(
             previous_keyframe_cloud,
             current_cloud,
-            //imu_relative_guess
-            gtsam::Pose3()
+            last_lidar_relative_pose
         );
 
         if (!registration.converged) {
@@ -203,6 +203,8 @@ namespace urc_slam {
             );
             return;
         }
+
+        last_lidar_relative_pose = registration.relative_pose;
 
         const std::size_t previous_index = latest_keyframe_index;
         const std::size_t current_index = previous_index + 1;
@@ -291,13 +293,12 @@ namespace urc_slam {
         pcl::transformPointCloud(*cloud, transformed_cloud, map_T_lidar.matrix());
 
         *accumulated_map += transformed_cloud;
-        LidarFrontend::Cloud::Ptr filtered_map(new LidarFrontend::Cloud);
-        pcl::VoxelGrid<LidarFrontend::Point> voxel_filter;
-        voxel_filter.setInputCloud(accumulated_map);
-        voxel_filter.setLeafSize(map_voxel_size_m, map_voxel_size_m, map_voxel_size_m);
-        voxel_filter.filter(*filtered_map);
-
-        accumulated_map = filtered_map;
+        // LidarFrontend::Cloud::Ptr filtered_map(new LidarFrontend::Cloud);
+        // pcl::VoxelGrid<LidarFrontend::Point> voxel_filter;
+        // voxel_filter.setInputCloud(accumulated_map);
+        // voxel_filter.setLeafSize(map_voxel_size_m, map_voxel_size_m, map_voxel_size_m);
+        // voxel_filter.filter(*filtered_map);
+        // accumulated_map = filtered_map;
 
         sensor_msgs::msg::PointCloud2 map_msg;
         pcl::toROSMsg(*accumulated_map, map_msg);
