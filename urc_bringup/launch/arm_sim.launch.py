@@ -4,6 +4,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     RegisterEventHandler,
+    SetEnvironmentVariable, 
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -19,8 +20,15 @@ from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+# turn off gravity to get arm to work
 
 def generate_launch_description():
+
+    ign_resource_path = SetEnvironmentVariable(
+        'IGN_GAZEBO_RESOURCE_PATH',
+        os.path.dirname(get_package_share_directory('cartesian_controller_simulation'))
+    )
+
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_bringup = get_package_share_directory("urc_bringup")
 
@@ -32,7 +40,7 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-        default_value="marsyard2020.sdf",
+        default_value="world.sdf",
         description="Name of the world file (not full path)",
     )
 
@@ -51,7 +59,8 @@ def generate_launch_description():
                 [
                     FindPackageShare("cartesian_controller_simulation"),
                     "urdf",
-                    "arm_gazebo.urdf.xacro",
+                    "simplifiedarm.urdf.xacro", #the cadded arm
+                    # "arm_gazebo.urdf.xacro", #basic geometry arm
                 ]
             ),
         ]
@@ -100,8 +109,8 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-name", "arm",
-            "-x", "-20",
-            "-y", "-15",
+            "-x", "0",
+            "-y", "0",
             "-z", "1.5",
             "-R", "0",
             "-P", "0",
@@ -111,16 +120,16 @@ def generate_launch_description():
     )
 
     # --- RViz ---
-    rviz_config = PathJoinSubstitution(
-        [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
-    )
-    rviz = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config],
-    )
+    # rviz_config = PathJoinSubstitution(
+    #     [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
+    # )
+    # rviz = Node(
+    #     package="rviz2",
+    #     executable="rviz2",
+    #     name="rviz2",
+    #     output="log",
+    #     arguments=["-d", rviz_config],
+    # )
 
     # --- Controller Spawners ---
     def controller_spawner(name, *args):
@@ -140,47 +149,57 @@ def generate_launch_description():
     )
 
     load_cartesian_motion_controller = Node(
-    package="controller_manager",
-    executable="spawner",
-    output="screen",
-    arguments=["cartesian_motion_controller", "--param-file", controller_config_file_dir],
-    remappings=[
-        ("/cartesian_motion_controller/target_frame", "/motion_control_handle/target_frame")
-    ],
-)
+        package="controller_manager",
+        executable="spawner",
+        output="screen",
+        arguments=["cartesian_motion_controller", "--param-file", controller_config_file_dir],
+        # remappings=[
+        #     ("/cartesian_motion_controller/target_frame", "/motion_control_handle/target_frame")
+        # ],
+    )   
+    
+    # Load joint_trajectory_controller as INACTIVE so we can switch between IK and FK
+    # Use: ros2 control switch_controller --activate joint_trajectory_controller --deactivate cartesian_motion_controller
+    load_joint_trajectory_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="screen",
+        arguments=["joint_trajectory_controller", "--inactive"],    
+    )
 
    # Inactive cartesian controllers
     
-    inactive_list = [
-        "motion_control_handle",
-        "joint_trajectory_controller",
-    ]
+    # inactive_list = [
+    #     # "motion_control_handle",
+    #     "joint_trajectory_controller",
+    # ]
 
-    inactive_spawners = [
-        controller_spawner(controller, "--inactive") for controller in inactive_list
-    ]
+    # inactive_spawners = [
+    #     controller_spawner(controller, "--inactive") for controller in inactive_list
+    # ]
 
-    relay = Node(
-        package="topic_tools",
-        executable="relay",
-        name="target_frame_relay",
-        arguments=[
-            "/motion_control_handle/target_frame",
-            "/cartesian_motion_controller/target_frame"
-        ],
-        output="screen",
-    )
+    # relay = Node(
+    #     package="topic_tools",
+    #     executable="relay",
+    #     name="target_frame_relay",
+    #     arguments=[
+    #         "/motion_control_handle/target_frame",
+    #         "/cartesian_motion_controller/target_frame"
+    #     ],
+    #     output="screen",
+    # )
 
 
     return LaunchDescription(
         [
+            ign_resource_path,
             sim_world_arg,
             bridge_yaml,
             gz_sim,
             bridge,
             robot_state_publisher_node,
-            rviz,
-            relay,
+            # rviz,
+            # relay,
             spawn,
             # Start joint_state_broadcaster AFTER robot spawn
             RegisterEventHandler(
@@ -189,12 +208,25 @@ def generate_launch_description():
                     on_exit=[load_joint_state_broadcaster],
                 )
             ),
-            # Start cartesian controllers AFTER joint_state_broadcaster
+
+            # Start cartesian_motion_controller (active by default for IK)
+            # joint_trajectory_controller is loaded as inactive for FK
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_state_broadcaster,
-                    on_exit=inactive_spawners + [load_cartesian_motion_controller],
+                    on_exit=[load_cartesian_motion_controller, load_joint_trajectory_controller],
                 )
             ),
+
+
+            # # Start cartesian controllers AFTER joint_state_broadcaster
+            # RegisterEventHandler(
+            #     event_handler=OnProcessExit(
+            #         target_action=load_joint_state_broadcaster,
+            #         on_exit=inactive_spawners + [load_cartesian_motion_controller],
+            #     )
+            # ),
+
+
         ]
     )
