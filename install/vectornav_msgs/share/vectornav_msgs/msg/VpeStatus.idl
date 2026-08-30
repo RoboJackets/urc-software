@@ -1,0 +1,31 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vectornav_msgs/msg/VpeStatus.msg
+// generated code does not contain a copyright notice
+
+
+module vectornav_msgs {
+  module msg {
+    @verbatim (language="comment", text=
+      "VectorNav VPE Status" "\n"
+      "UM001 - 4.7.1")
+    struct VpeStatus {
+      uint8 attitude_quality;
+
+      boolean gyro_saturation;
+
+      boolean gyro_saturation_recovery;
+
+      uint8 mag_disturbance;
+
+      boolean mag_saturation;
+
+      uint8 acc_disturbance;
+
+      boolean acc_saturation;
+
+      boolean known_mag_disturbance;
+
+      boolean known_accel_disturbance;
+    };
+  };
+};

@@ -1,0 +1,33 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from urc_msgs/action/FollowPath.action
+// generated code does not contain a copyright notice
+
+#include "nav_msgs/msg/Path.idl"
+#include "std_msgs/msg/Empty.idl"
+
+module urc_msgs {
+  module action {
+    @verbatim (language="comment", text=
+      "request definition")
+    struct FollowPath_Goal {
+      nav_msgs::msg::Path path;
+    };
+    module FollowPath_Result_Constants {
+      const uint16 SUCCESS = 0;
+      const uint16 FAILURE = 1;
+      const uint16 OBSTACLE_DETECTED = 2;
+    };
+    @verbatim (language="comment", text=
+      "response definition")
+    struct FollowPath_Result {
+      std_msgs::msg::Empty result;
+
+      uint16 error_code;
+    };
+    @verbatim (language="comment", text=
+      "feedback definition")
+    struct FollowPath_Feedback {
+      float distance_to_goal;
+    };
+  };
+};

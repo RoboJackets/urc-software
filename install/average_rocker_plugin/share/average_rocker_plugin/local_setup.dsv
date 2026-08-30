@@ -1,0 +1,4 @@
+source;share/average_rocker_plugin/environment/ament_prefix_path.sh
+source;share/average_rocker_plugin/environment/gz_sim_system_plugin_path.sh
+source;share/average_rocker_plugin/environment/path.sh
+source;share/average_rocker_plugin/environment/gz_sim_system_plugin_path.dsv

@@ -1,0 +1,10 @@
+follower_action_server:
+  ros__parameters:
+    lookahead_distance: 0.9
+    desired_linear_velocity: 0.5
+    lethal_cost_threshold: 10
+    cmd_vel_stamped: true
+    cmd_vel_topic: "/cmd_vel_autonomous"
+    odom_topic: "/rover_drivetrain_controller/odom"
+    map_frame: "map"
+    goal_tolerance: 0.1

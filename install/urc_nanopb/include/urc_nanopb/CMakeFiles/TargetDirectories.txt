@@ -1,0 +1,10 @@
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/uninstall.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/urc_nanopb_uninstall.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/urc_nanopb.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/test.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/edit_cache.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/rebuild_cache.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/list_install_components.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/install.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/install/local.dir
+/home/benitax/robonav/urc-software/build/urc_nanopb/CMakeFiles/install/strip.dir

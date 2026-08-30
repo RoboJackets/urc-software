@@ -1,0 +1,11 @@
+<library path="cartesian_controller_handles">
+
+  <class name="cartesian_controller_handles/MotionControlHandle"
+         type="cartesian_controller_handles::MotionControlHandle"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>
+      The CartesianControllerHandle exposes an interactive marker for end-effector control in Rviz.
+    </description>
+  </class>
+
+</library>

@@ -1,0 +1,2 @@
+heartbeat_publisher::HeartbeatPublisher;lib/liburc_bringup.so
+rover_pose_bridge::RoverPoseBridge;lib/liburc_bringup.so

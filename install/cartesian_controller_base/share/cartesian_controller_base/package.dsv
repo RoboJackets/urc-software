@@ -1,0 +1,11 @@
+source;share/cartesian_controller_base/hook/cmake_prefix_path.ps1
+source;share/cartesian_controller_base/hook/cmake_prefix_path.dsv
+source;share/cartesian_controller_base/hook/cmake_prefix_path.sh
+source;share/cartesian_controller_base/hook/ld_library_path_lib.ps1
+source;share/cartesian_controller_base/hook/ld_library_path_lib.dsv
+source;share/cartesian_controller_base/hook/ld_library_path_lib.sh
+source;share/cartesian_controller_base/local_setup.bash
+source;share/cartesian_controller_base/local_setup.dsv
+source;share/cartesian_controller_base/local_setup.ps1
+source;share/cartesian_controller_base/local_setup.sh
+source;share/cartesian_controller_base/local_setup.zsh

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>cartesian_motion_controller</name>
+  <version>0.0.0</version>
+  <description>The cartesian_motion_controller package</description>
+  <maintainer email="scherzin@fzi.de">scherzin</maintainer>
+  <license>BSD-3-Clause</license>
+  <url type="repository">https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers</url>
+  <author email="scherzin@fzi.de">Stefan Scherzinger</author>
+
+  <depend>rclcpp</depend>
+  <depend>cartesian_controller_base</depend>
+  <depend>controller_interface</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <controller_interface plugin="${prefix}/cartesian_motion_controller_plugin.xml"/>
+  </export>
+</package>

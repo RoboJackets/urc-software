@@ -1,0 +1,2 @@
+vectornav::Vectornav;lib/libvectornav_lib.so
+vectornav::VnSensorMsgs;lib/libvn_sensor_msgs_lib.so

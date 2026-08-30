@@ -1,0 +1,470 @@
+<?xml version="1.0"?>
+<robot>
+
+	<!-- ================================= -->
+	<!-- Define Gazebo tags for every link -->
+	<gazebo reference="base_link1">
+		<material>Gazebo/Red</material>
+	</gazebo>
+	
+	<gazebo reference="base_link2">
+		<material>Gazebo/White</material>
+	</gazebo>
+	
+	<gazebo reference="plate1">
+		<material>Gazebo/Black</material>
+	</gazebo>
+	
+	<gazebo reference="plate2">
+		<material>Gazebo/Blue</material>
+	</gazebo>
+	
+	<gazebo reference="cyl1">
+		<material>Gazebo/Gold</material>
+	</gazebo>
+	
+	<gazebo reference="cyl2">
+		<material>Gazebo/Gold</material>
+	</gazebo>
+	
+	<gazebo reference="cyl3">
+		<material>Gazebo/Gold</material>
+	</gazebo>
+	
+	<gazebo reference="cyl4">
+		<material>Gazebo/Gold</material>
+	</gazebo>
+	
+	<gazebo reference="arduino" />
+	
+	<!--
+	<gazebo reference="camera_link">
+		<sensor type="camera" name="camera1">
+			<update_rate>30</update_rate>
+			<camera name="head">
+				<horizontal_fov>1.3962634</horizontal_fov>
+				<image>
+					<width>800</width>
+					<height>800</height>
+					<format>R8G8B8</format>
+				</image>
+				<clip>
+					<near>0.02</near>
+					<far>300</far>
+				</clip>
+				<noise>
+					<type>gaussian</type>
+					<mean>0</mean>
+					<stddev>0.007</stddev>
+				</noise>
+			</camera>
+			
+			<plugin name="camera_controller" filename="libgazebo_ros_camera.so" >
+				<alwaysOn>true</alwaysOn>
+				<updateRate>0.0</updateRate>
+				<cameraName>Kwad/camera1</cameraName>
+				<imageTopicName>image_raw</imageTopicName>
+				<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+				<frameName>camera_link</frameName>
+				<hackBaseline>0.07</hackBaseline>
+				<distortionK1>0.0</distortionK1>
+				<distortionK2>0.0</distortionK2>
+				<distortionK3>0.0</distortionK3>
+				<distortionT1>0.0</distortionT1>
+				<distortionT2>0.0</distortionT2>
+			</plugin>
+		</sensor>
+    </gazebo>
+    -->
+    
+    <gazebo reference="cam/front">
+          <sensor name="front_sensor" type="camera">
+            <plugin name="front_sensor" filename="libgazebo_ros_camera.so">
+              <ros>
+                <namespace>/image</namespace>
+                <remapping>~/image_raw:=front_img</remapping>
+                <remapping>~/camera_info:=camera_info</remapping>
+              </ros>
+              <initial_orientation_as_reference>false</initial_orientation_as_reference>
+            </plugin>
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
+       
+            <camera name="cam/front">
+              <horizontal_fov>1.3962634</horizontal_fov>
+		<image>
+		<width>800</width>
+		<height>800</height>
+		<format>R8G8B8</format>
+		</image>
+		<clip>
+		<near>0.02</near>
+		<far>300</far>
+		</clip>
+		<noise>
+		<type>gaussian</type>
+		<mean>0</mean>
+		<stddev>0.007</stddev>
+		</noise>
+		</camera>      
+           </sensor>
+        </gazebo>
+        
+        <gazebo reference="cam/bottom">
+          <sensor name="bottom_sensor" type="camera">
+            <plugin name="bottom_sensor" filename="libgazebo_ros_camera.so">
+              <ros>
+              <!-- renamed so aruco detection works on bottom camera -->
+                <namespace>/image2</namespace>
+                <remapping>~/image_raw:=bottom_img</remapping>
+                <!-- probably redundant, but keeping it for now -->
+                <remapping>~/camera_info:=camera_info</remapping>
+              </ros>
+              <initial_orientation_as_reference>false</initial_orientation_as_reference>
+            </plugin>
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
+            
+            <camera name="cam/bottom">
+              <horizontal_fov>1.3962634</horizontal_fov>
+		<image>
+		<width>800</width>
+		<height>800</height>
+		<format>R8G8B8</format>
+		</image>
+		<clip>
+		<near>0.02</near>
+		<far>300</far>
+		</clip>
+		<noise>
+		<type>gaussian</type>
+		<mean>0</mean>
+		<stddev>0.007</stddev>
+		</noise>
+		</camera>
+           </sensor>
+        </gazebo>
+        
+					
+	<gazebo reference="prop_front_right">
+		<material>Gazebo/Black</material>
+	</gazebo>
+	
+	<gazebo reference="prop_front_left">
+		<material>Gazebo/Black</material>
+	</gazebo>
+	
+	<gazebo reference="prop_back_right">
+		<material>Gazebo/Black</material>
+	</gazebo>
+	
+	<gazebo reference="prop_back_left">
+		<material>Gazebo/Black</material>
+	</gazebo>
+	
+	<!-- ================================= -->
+	 
+	 
+ 	 <gazebo reference="gps">
+   	 <sensor name="gps" type="gps">
+     	 <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
+         	 <ros>
+            	<namespace>/gps</namespace>
+          	  <remapping>~/out:=data</remapping>
+        	  </ros>
+        	  <frame_name>gps</frame_name>
+        	</plugin>
+        	<always_on>true</always_on>
+       	 <updateRate>30</updateRate>
+    	</sensor>
+  	</gazebo>
+        
+  
+	<!-- ================================= -->
+	<!-- imu -->
+	
+	<gazebo reference="imu">
+    <sensor name="imu_sensor" type="imu">
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <ros>
+          <namespace>/imu</namespace>
+          <remapping>~/out:=data</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+     <imu>
+     	<angular_velocity>
+     	  <x>
+     	    <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>2e-4</stddev>
+              <bias_mean>0.0000075</bias_mean>
+              <bias_stddev>0.0000008</bias_stddev>
+            </noise>
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>1.7e-2</stddev>
+              <bias_mean>0.1</bias_mean>
+              <bias_stddev>0.001</bias_stddev>
+            </noise>
+          </z>
+        </linear_acceleration>
+      </imu>
+    </sensor>
+  </gazebo>
+	
+	
+	
+	
+	<!-- ================================= -->
+	
+	<!-- Define the lift-Drag plugin -->
+	<gazebo>
+		<!-- Provide a Positive Velocity -->
+		<plugin name="quad_prop1" filename="libLiftDragPlugin.so">
+			<a0>0.1</a0>
+			<cla>0.1</cla>
+			<cda>0.01</cda>
+			<cma>0.0</cma>
+			<alpha_stall>0.2</alpha_stall>
+			<cla_stall>-0.2</cla_stall>
+			<cda_stall>1.0</cda_stall>
+			<cma_stall>0.0</cma_stall>
+			<cp>0 0.5 0</cp>
+			<area>0.762</area>
+			<air_density>1.2041</air_density>
+			<forward>1 0 0</forward>
+			<upward>0 0 -1</upward>
+			<link_name>prop_front_right</link_name>
+			<control_joint>joint_front_right_prop</control_joint>
+		</plugin>
+	</gazebo>
+	
+	<gazebo>
+		<!-- Provide a Negative Velocity -->
+		<plugin name="quad_prop2" filename="libLiftDragPlugin.so">
+			<a0>0.1</a0>
+			<cla>0.1</cla>
+			<cda>0.01</cda>
+			<cma>0.0</cma>
+			<alpha_stall>0.2</alpha_stall>
+			<cla_stall>-0.2</cla_stall>
+			<cda_stall>1.0</cda_stall>
+			<cma_stall>0.0</cma_stall>
+			<cp>0 0.5 0</cp>
+			<area>0.762</area>
+			<air_density>1.2041</air_density>
+			<forward>1 0 0</forward>
+			<upward>0 0 1</upward>
+			<link_name>prop_front_left</link_name>
+			<control_joint>joint_front_left_prop</control_joint>
+		</plugin>
+	</gazebo>
+	
+	<gazebo>
+		<!-- Provide a Negative Velocity -->
+		<plugin name="quad_prop3" filename="libLiftDragPlugin.so">
+			<a0>0.1</a0>
+			<cla>0.1</cla>
+			<cda>0.01</cda>
+			<cma>0.0</cma>
+			<alpha_stall>0.2</alpha_stall>
+			<cla_stall>-0.2</cla_stall>
+			<cda_stall>1.0</cda_stall>
+			<cma_stall>0.0</cma_stall>
+			<cp>0 0.5 0</cp>
+			<area>0.762</area>
+			<air_density>1.2041</air_density>
+			<forward>1 0 0</forward>
+			<upward>0 0 1</upward>
+			<link_name>prop_back_right</link_name>
+			<control_joint>joint_back_right_prop</control_joint>
+		</plugin>
+	</gazebo>
+	
+	<gazebo>
+		<!-- Provide a Positive Velocity -->
+		<plugin name="quad_prop4" filename="libLiftDragPlugin.so">
+			<a0>0.1</a0>
+			<cla>0.1</cla>
+			<cda>0.01</cda>
+			<cma>0.0</cma>
+			<alpha_stall>0.2</alpha_stall>
+			<cla_stall>-0.2</cla_stall>
+			<cda_stall>1.0</cda_stall>
+			<cma_stall>0.0</cma_stall>
+			<cp>0 0.5 0</cp>
+			<area>0.762</area>
+			<air_density>1.2041</air_density>
+			<forward>1 0 0</forward>
+			<upward>0 0 -1</upward>
+			<link_name>prop_back_left</link_name>
+			<control_joint>joint_back_left_prop</control_joint>
+		</plugin>
+	</gazebo>
+	<!-- The command must be +-+- format inside "data: []" -->
+	<!--<gazebo>
+		<plugin name="quad_prop4" filename="libLiftDragPlugin.so">
+			<a0>0.1</a0>
+			<cla>0.1</cla>
+			<cda>0.01</cda>
+			<cma>0.0</cma>
+			<alpha_stall>0.2</alpha_stall>
+			<cla_stall>-0.2</cla_stall>
+			<cda_stall>1.0</cda_stall>
+			<cma_stall>0.0</cma_stall>
+			<cp>0 0.5 0</cp>
+			<area>0.762</area>
+			<air_density>1.2041</air_density>
+			<forward>1 0 0</forward>
+			<upward>0 0 1</upward>
+			<link_name>prop_back_left</link_name>
+			<control_joint>joint_back_left_prop</control_joint>
+		</plugin>
+	</gazebo>-->
+	
+	<!-- Load the gazebo_ros_control plugin -->
+	<gazebo>
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<robotNameSpace>/Kwad</robotNameSpace>
+			<robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+		</plugin>
+	</gazebo>
+	
+	<!-- ================================= -->
+	<!-- <gazebo>
+	  <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+		<updateRate>100.0</updateRate>
+		<robotNamespace>/</robotNamespace>
+		<leftFrontJoint>fl_joint</leftFrontJoint>
+		<rightFrontJoint>fr_joint</rightFrontJoint>
+		<leftRearJoint>bl_joint</leftRearJoint>
+		<rightRearJoint>br_joint</rightRearJoint>
+		<wheelSeparation>0.4</wheelSeparation>
+		<wheelDiameter>0.215</wheelDiameter>
+		<robotBaseFrame>base_link1</robotBaseFrame>
+		<torque>20</torque>
+		<topicName>cmd_vel</topicName>
+		<broadcastTF>false</broadcastTF>
+	  </plugin>
+	</gazebo> -->
+	
+	<gazebo>
+  <sensor type="camera" name="front_sensor">
+          <!-- Set always_on only sensor, not on plugin -->
+          <always_on>0</always_on>
+
+          <!-- Set update_rate only sensor, not on plugin -->
+          <update_rate>1</update_rate>
+
+          <!-- Use camera, not camera_triggered -->
+          <plugin name="front_sensor" filename="libgazebo_ros_camera.so">
+            <!-- Change namespace, camera name and topics so:
+                 * Images are published to: /custom_ns/custom_camera/custom_image
+                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
+            -->
+            <ros>
+              <namespace>/image</namespace>
+              <argument>~/image_raw:=front_img</argument>
+              <argument>~/camera_info:=front_info</argument>
+            </ros>
+
+            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+            <camera_name>front_camera</camera_name>
+
+            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+            <frame_name>front_tf</frame_name>
+
+            <hack_baseline>0.07</hack_baseline>
+            <distortionK1>0.0</distortionK1>
+	    <distortionK2>0.0</distortionK2>
+	    <distortionK3>0.0</distortionK3>
+	    <distortionT1>0.0</distortionT1>
+	    <distortionT2>0.0</distortionT2>
+
+
+          </plugin>
+        </sensor>
+
+
+  <sensor type="camera" name="bottom_sensor">
+          <!-- Set always_on only sensor, not on plugin -->
+          <always_on>0</always_on>
+
+          <!-- Set update_rate only sensor, not on plugin -->
+          <update_rate>1</update_rate>
+
+          <!-- Use camera, not camera_triggered -->
+          <plugin name="bottom_sensor" filename="libgazebo_ros_camera.so">
+            <!-- Change namespace, camera name and topics so:
+                 * Images are published to: /custom_ns/custom_camera/custom_image
+                 * Camera info is published to: /custom_ns/custom_camera/custom_info 
+            -->
+            <ros>
+              <namespace>/image</namespace>
+              <argument>~/image_raw:=bottom_img</argument>
+              <argument>~/camera_info:=bottom_info</argument>
+            </ros>
+
+            <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+            <camera_name>bottom_camera</camera_name>
+
+            <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+            <frame_name>bottom_tf</frame_name>
+
+            <hack_baseline>0.07</hack_baseline>
+            <distortionK1>0.0</distortionK1>
+	    <distortionK2>0.0</distortionK2>
+	    <distortionK3>0.0</distortionK3>
+	    <distortionT1>0.0</distortionT1>
+	    <distortionT2>0.0</distortionT2>
+
+
+
+          </plugin>
+        </sensor>
+          
+</gazebo>
+	
+</robot>

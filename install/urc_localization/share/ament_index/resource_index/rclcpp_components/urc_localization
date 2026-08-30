@@ -1,0 +1,2 @@
+gps_imu_localizer::GpsImuLocalizer;lib/liburc_localization.so
+covariances_on_imu::CovariancesOnImu;lib/liburc_localization.so

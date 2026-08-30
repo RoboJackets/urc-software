@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>cartesian_controller_base</name>
+  <version>0.0.0</version>
+  <description>The cartesian_controller_base package</description>
+  <maintainer email="scherzin@fzi.de">scherzin</maintainer>
+  <license>BSD-3-Clause</license>
+  <url type="repository">https://github.com/fzi-forschungszentrum-informatik/cartesian_controllers</url>
+  <author email="scherzin@fzi.de">Stefan Scherzinger</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>controller_interface</depend>
+  <depend>kdl_parser</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>realtime_tools</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <cartesian_controller_base plugin="${prefix}/ik_solver_plugin.xml"/>
+  </export>
+</package>

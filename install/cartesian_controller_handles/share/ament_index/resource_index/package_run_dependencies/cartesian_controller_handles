@@ -1,0 +1,1 @@
+cartesian_controller_base;controller_interface;geometry_msgs;interactive_markers;kdl_parser;pluginlib;rclcpp;urdf

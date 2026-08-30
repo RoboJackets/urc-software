@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+a640b72ac08a7b8a8b505662dfb26f9f CMakeFiles/urc_nanopb_uninstall
+f39bc05fca22773e0894f6d5cccf0b3b nanopb/generator/nanopb_generator.py
+7cd8f94ff13ba6ef0b407adb00efa845 nanopb/generator/proto/nanopb_pb2.py
+30ecba788923e4da8d2ba55bc022a072 urc.pb.c
