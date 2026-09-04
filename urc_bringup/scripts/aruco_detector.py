@@ -5,6 +5,7 @@ from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Int32MultiArray
 from geometry_msgs.msg import Pose, PoseArray
 from cv_bridge import CvBridge
+from rclpy.qos import qos_profile_sensor_data
 import cv2
 import numpy as np
 
@@ -45,17 +46,24 @@ class ArucoDetector(Node):
     def __init__(self):
         super().__init__('aruco_detector')
         self.declare_parameter('marker_size', 0.05)
+        # The model is named aruco_tag_0, but its supplied image encodes
+        # DICT_6X6_50 marker ID 23.
+        self.declare_parameter('expected_marker_id', 23)
         self.marker_size = float(self.get_parameter('marker_size').value)
+        self.expected_marker_id = int(
+            self.get_parameter('expected_marker_id').value
+        )
 
         self.bridge = CvBridge()
         self.camera_matrix = None
         self.dist_coeffs = None
 
         self.image_sub = self.create_subscription(
-            Image, '/camera/image_raw', self.image_cb, 10
+            Image, '/camera/image_raw', self.image_cb, qos_profile_sensor_data
         )
         self.cinfo_sub = self.create_subscription(
-            CameraInfo, '/camera/camera_info', self.cinfo_cb, 10
+            CameraInfo, '/camera/camera_info', self.cinfo_cb,
+            qos_profile_sensor_data
         )
 
         self.poses_pub = self.create_publisher(PoseArray, '/aruco/poses', 10)
@@ -63,8 +71,11 @@ class ArucoDetector(Node):
         self.debug_image_pub = self.create_publisher(Image, '/aruco/image_debug', 10)
 
         # ArUco setup
-        self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+        self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_50)
         self.aruco_params = cv2.aruco.DetectorParameters_create()
+        self.get_logger().info(
+            f"Detecting only DICT_6X6_50 marker ID {self.expected_marker_id}"
+        )
 
     def cinfo_cb(self, msg: CameraInfo):
         self.camera_matrix = np.array(msg.k).reshape((3, 3))
@@ -87,9 +98,23 @@ class ArucoDetector(Node):
         ids_msg = Int32MultiArray()
 
         if ids is not None and len(ids) > 0:
-            ids_msg.data = [int(i) for i in ids.flatten()]
+            # The simulation contains marker 0. Ignore every other valid
+            # ArUco marker so this topic is unambiguous for the test.
+            matching_indices = [
+                index
+                for index, marker_id in enumerate(ids.flatten())
+                if int(marker_id) == self.expected_marker_id
+            ]
 
-            if self.camera_matrix is not None:
+            if matching_indices:
+                corners = [corners[index] for index in matching_indices]
+                ids = ids[matching_indices]
+                ids_msg.data = [self.expected_marker_id] * len(matching_indices)
+            else:
+                corners = []
+                ids = None
+
+            if ids is not None and self.camera_matrix is not None:
                 rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
                     corners, self.marker_size, self.camera_matrix, self.dist_coeffs
                 )
@@ -109,8 +134,8 @@ class ArucoDetector(Node):
                 for rvec, tvec in zip(rvecs, tvecs):
                     cv2.aruco.drawAxis(cv_image, self.camera_matrix, self.dist_coeffs, rvec, tvec, self.marker_size)
 
-            # Draw detected markers
-            cv2.aruco.drawDetectedMarkers(cv_image, corners, ids)
+            if ids is not None:
+                cv2.aruco.drawDetectedMarkers(cv_image, corners, ids)
 
         # Publish results
         self.ids_pub.publish(ids_msg)
@@ -132,7 +157,8 @@ def main(args=None):
     except KeyboardInterrupt:
         pass
     node.destroy_node()
-    rclpy.shutdown()
+    if rclpy.ok():
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':

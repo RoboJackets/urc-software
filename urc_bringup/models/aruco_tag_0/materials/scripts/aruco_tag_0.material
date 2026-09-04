@@ -6,7 +6,7 @@ material aruco_tag_0/Marker
 		{
 			texture_unit
 			{
-				texture OLD_aruco_tag_one.jpg
+				texture 6x6_aruco_tag.png
 			}
 		}
 	}

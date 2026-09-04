@@ -1,23 +1,39 @@
-<?xml version='1.0'?>
-<sdf version='1.5'>
-    <model name='Model0'>
-        <static>true</static>
-        <link name='link'>
-            <collision name='collision'>
-                <pose>0 0 0 0 0 0</pose>
-                <geometry>
-                    <box>
-                        <size>0.1 0.1 0.01</size>
-                    </box>
-                </geometry>
-            </collision> 
-            <visual name='visual'> 
-                <geometry> 
-                    <mesh> 
-                        <uri>model://aruco_tag_0/meshes/larger_triangle_post.dae</uri>
-                    </mesh> 
-                </geometry> 
-            </visual> 
-        </link> 
-    </model> 
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <model name="aruco_tag_0">
+
+    <!-- Fixed ArUco marker: does not fall or interact with rover physics. -->
+    <static>true</static>
+
+    <link name="tag_link">
+
+      <visual name="aruco_tag_visual">
+
+        <geometry>
+          <box>
+            <!-- 50 cm x 50 cm marker, 2 mm thick for reliable detection at 4 m -->
+            <size>0.50 0.002 0.50</size>
+          </box>
+        </geometry>
+
+        <material>
+          <pbr>
+            <metal>
+              <!-- The generated DICT_6X6_50 marker, ID 23. -->
+              <albedo_map>
+                model://aruco_tag_0/materials/textures/6x6_aruco_tag.png
+              </albedo_map>
+              <metalness>0.0</metalness>
+              <roughness>1.0</roughness>
+            </metal>
+          </pbr>
+        </material>
+
+        <cast_shadows>false</cast_shadows>
+
+      </visual>
+
+    </link>
+
+  </model>
 </sdf>

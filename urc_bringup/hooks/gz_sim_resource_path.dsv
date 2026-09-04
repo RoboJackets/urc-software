@@ -1,2 +1,2 @@
-prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;share/@PROJECT_NAME@/models
-prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/@PROJECT_NAME@/models
+prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;share/urc_bringup/models
+prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/urc_bringup/models

@@ -22,13 +22,12 @@
       filename="ignition-gazebo-physics-system"
       name="ignition::gazebo::systems::Physics">
     </plugin>
-    <!--
-    <plugin
+   <!-- <plugin
       filename="ignition-gazebo-sensors-system"
       name="ignition::gazebo::systems::Sensors">
       <render_engine>ogre2</render_engine>
-    </plugin>
-    -->
+    </plugin> -->
+   
     <plugin
       filename="ignition-gazebo-scene-broadcaster-system"
       name="ignition::gazebo::systems::SceneBroadcaster">
@@ -42,12 +41,6 @@
       name="gz::sim::systems::Imu">
     </plugin>
     -->
-    <plugin name='gazebo_ros_state5' filename='libgazebo_ros_state.so'>
-      <ros>
-          <namespace>gazebo</namespace>
-      </ros>
-    </plugin>
-
     <light name="sun" type="directional">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 10 0 0 0</pose>
@@ -66,6 +59,22 @@
       <include>
         <uri>model://marsyard2020_terrain</uri>
       </include>
+    </model>
+
+    <!-- The imported Marsyard mesh is visual-only. This invisible plane is
+         its physical ground surface, so dynamic rover wheels have collision. -->
+    <model name="marsyard_collision_ground">
+      <static>true</static>
+      <link name="ground_link">
+        <collision name="ground_collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1000 1000</size>
+            </plane>
+          </geometry>
+        </collision>
+      </link>
     </model>
 
   </world>

@@ -103,7 +103,8 @@ def generate_launch_description():
 
     aruco_tag_x_arg = DeclareLaunchArgument(
         "aruco_tag_x",
-        default_value="4.0",
+        # The camera on this rover looks toward negative X at rover_yaw=0.
+        default_value="-4.0",
         description="X position for ArUco tag",
     )
 
@@ -115,17 +116,30 @@ def generate_launch_description():
 
     aruco_tag_z_arg = DeclareLaunchArgument(
         "aruco_tag_z",
-        default_value="0.25",
-        description="Z position for the base of the ArUco tag stand",
+        # Keep the visual above the uneven Marsyard surface. It is still in
+        # the camera's vertical field of view at the default 4 m distance.
+        default_value="2.0",
+        description="Z position for the marker base above the terrain",
     )
 
     aruco_tag_yaw_arg = DeclareLaunchArgument(
         "aruco_tag_yaw",
-        # The tag mesh's face is normal to its local Y axis.  Turn it towards
-        # the rover, which starts at the origin looking in +X.
+        # Face the marker toward the camera looking from negative X.
         default_value="-1.57079632679",
         description="Yaw of the ArUco tag in radians",
     )
+
+    rover_yaw_arg = DeclareLaunchArgument(
+        "rover_yaw",
+        default_value="0.0",
+        description="Yaw of the rover at spawn",
+    )
+
+    # rover_z_arg = DeclareLaunchArgument(
+    #     "rover_z",
+    #     default_value="0.60",
+    #     description="Rover base-link height at spawn; 0.60 m places its wheels on level ground",
+    # )
 
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
@@ -138,6 +152,8 @@ def generate_launch_description():
     aruco_tag_y = LaunchConfiguration("aruco_tag_y")
     aruco_tag_z = LaunchConfiguration("aruco_tag_z")
     aruco_tag_yaw = LaunchConfiguration("aruco_tag_yaw")
+    rover_yaw = LaunchConfiguration("rover_yaw")
+    # rover_z = LaunchConfiguration("rover_z")
     cube_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "large_cube.sdf")
     incline_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "incline_plane.sdf")
     aruco_tag_sdf_path = os.path.join(path_urc_bringup, "models", "aruco_tag_0", "model.sdf")
@@ -170,9 +186,13 @@ def generate_launch_description():
         name="IGN_GAZEBO_RESOURCE_PATH",
         value=gazebo_resource_path,
     )
+    set_fastdds_no_shm = SetEnvironmentVariable(
+        name="FASTDDS_BUILTIN_TRANSPORTS",
+        value="UDPv4",
+    )
     set_display = SetEnvironmentVariable(
         name="DISPLAY",
-        value=os.environ.get("DISPLAY", ":1"),
+        value=os.environ.get("DISPLAY") or ":1",
     )
 
     robot_urdf_file = ParameterValue(
@@ -196,7 +216,10 @@ def generate_launch_description():
         executable="aruco_detector.py",
         name="aruco_detector",
         output="screen",
-        parameters=[{"marker_size": 0.05}],
+        # OLD_aruco_tag_one.jpg is a DICT_6X6_50 marker whose encoded ID is 23.
+        # parameters=[{"marker_size": 0.05}],
+        # parameters=[{"marker_size": 0.20, "expected_marker_id": 23}],
+        parameters=[{"marker_size": 0.20}],
     )
 
     robot_state_publisher_node = Node(
@@ -291,9 +314,10 @@ def generate_launch_description():
             "-x", "0",
             "-y", "0",
             "-z", "2.0",
+            # "-z", rover_z,
             "-R", "0",
             "-P", "0",
-            "-Y", "0",
+            "-Y", rover_yaw,
             "-topic", "robot_description",
         ],
     )
@@ -330,6 +354,11 @@ def generate_launch_description():
             "-Y", aruco_tag_yaw,
             "-file", aruco_tag_sdf_path,
         ],
+    )
+
+    delayed_spawn_aruco = TimerAction(
+        period=5.0,
+        actions=[spawn_aruco_tag],
     )
 
     spawn_incline = Node(
@@ -428,8 +457,11 @@ def generate_launch_description():
             aruco_tag_y_arg,
             aruco_tag_z_arg,
             aruco_tag_yaw_arg,
+            rover_yaw_arg,
+            # rover_z_arg,
             set_gz_resource_path,
             set_ign_resource_path,
+            set_fastdds_no_shm,
             set_display,
             gz_sim,
             bridge,
@@ -443,7 +475,7 @@ def generate_launch_description():
             rocker_effort_pid_node,
             spawn,
             spawn_cube,
-            spawn_aruco_tag,
+            delayed_spawn_aruco,
             spawn_incline,
 
             # After robot spawn, start controller spawners on a fixed schedule
