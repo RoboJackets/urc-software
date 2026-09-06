@@ -104,7 +104,7 @@ def generate_launch_description():
     aruco_tag_x_arg = DeclareLaunchArgument(
         "aruco_tag_x",
         # The camera on this rover looks toward negative X at rover_yaw=0.
-        default_value="-4.0",
+        default_value="4.0",
         description="X position for ArUco tag",
     )
 
@@ -125,7 +125,7 @@ def generate_launch_description():
     aruco_tag_yaw_arg = DeclareLaunchArgument(
         "aruco_tag_yaw",
         # Face the marker toward the camera looking from negative X.
-        default_value="-1.57079632679",
+        default_value="1.57079632679",
         description="Yaw of the ArUco tag in radians",
     )
 

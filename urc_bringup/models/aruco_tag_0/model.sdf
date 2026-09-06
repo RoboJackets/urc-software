@@ -2,6 +2,78 @@
 <sdf version="1.8">
   <model name="aruco_tag_0">
 
+    <static>true</static>
+
+    <!-- Position of the tag in the world -->
+    <!-- x = 2 m in front of robot
+         y = 0
+         z = 0.5 m above ground -->
+    <!-- <pose>2 0 0.5 0 -1.5708 0</pose> -->
+
+    <link name="link">
+
+      <visual name="visual">
+        <geometry>
+          <plane>
+            <normal>0 1 0</normal>
+            <size>1.0 1.0</size>
+          </plane>
+        </geometry>
+
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>0 0 0 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>
+                model://aruco_tag_0/materials/textures/6x6_aruco_tag.png
+              </albedo_map>
+              <roughness>1.0</roughness>
+              <metalness>0.0</metalness>
+            </metal>
+          </pbr>
+        </material>
+
+      </visual>
+
+    </link>
+  </model>
+</sdf>
+
+
+
+
+
+<!-- <?xml version="1.0"?>
+<sdf version="1.8">
+<model name="aruco_tag_0">
+  <static>true</static>
+  <link name="link">
+    <visual name="visual">
+      <geometry>
+        <!-- Define a flat plane or thin box to act as your "screen" -->
+        <box>
+          <size>1.0 1.0 0.01</size>
+        </box>
+      </geometry>
+      <material>
+        <script>
+          <uri>model://aruco_tag_0/materials/scripts/aruco_tag_0.material</uri>
+          <uri>model://aruco_tag_0/materials/textures/6x6_aruco_tag.png</uri>
+        </script>
+      </material>
+    </visual>
+  </link>
+</model> -->
+
+
+
+
+<!-- <?xml version="1.0"?>
+<sdf version="1.8">
+  <model name="aruco_tag_0">
+
     <!-- Fixed ArUco marker: does not fall or interact with rover physics. -->
     <static>true</static>
 
@@ -36,4 +108,4 @@
     </link>
 
   </model>
-</sdf>
+</sdf> -->

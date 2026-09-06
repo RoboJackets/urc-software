@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <unit name="meter" meter="1"/>
+    <up_axis>Y_UP</up_axis>
+  </asset>
+  <library_images>
+    <image id="aruco_image" name="aruco_image">
+      <init_from>../materials/textures/6x6_aruco_tag.png</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="aruco_effect">
+      <profile_COMMON>
+        <newparam sid="aruco_surface">
+          <surface type="2D">
+            <init_from>aruco_image</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="aruco_sampler">
+          <sampler2D>
+            <source>aruco_surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <lambert>
+            <emission><color>0 0 0 1</color></emission>
+            <diffuse>
+              <texture texture="aruco_sampler" texcoord="UVMap"/>
+            </diffuse>
+            <ambient><color>1 1 1 1</color></ambient>
+          </lambert>
+        </technique>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="aruco_material" name="aruco_material">
+      <instance_effect url="#aruco_effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="aruco_geometry" name="aruco_geometry">
+      <mesh>
+        <source id="aruco_positions">
+          <float_array id="aruco_positions_array" count="12">-0.25 0 -0.25 0.25 0 -0.25 0.25 0 0.25 -0.25 0 0.25</float_array>
+          <technique_common>
+            <accessor source="#aruco_positions_array" count="4" stride="3">
+              <param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="aruco_normals">
+          <float_array id="aruco_normals_array" count="3">0 -1 0</float_array>
+          <technique_common><accessor source="#aruco_normals_array" count="1" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common>
+        </source>
+        <source id="aruco_uvs">
+          <float_array id="aruco_uvs_array" count="8">0 1 1 1 1 0 0 0</float_array>
+          <technique_common><accessor source="#aruco_uvs_array" count="4" stride="2"><param name="S" type="float"/><param name="T" type="float"/></accessor></technique_common>
+        </source>
+        <vertices id="aruco_vertices"><input semantic="POSITION" source="#aruco_positions"/></vertices>
+        <triangles material="aruco_material" count="2">
+          <input semantic="VERTEX" source="#aruco_vertices" offset="0"/>
+          <input semantic="NORMAL" source="#aruco_normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#aruco_uvs" offset="2" set="0"/>
+          <p>0 0 0 2 0 1 1 0 2 3 0 3</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="aruco_scene" name="aruco_scene">
+      <node id="aruco_node" name="aruco_node">
+        <instance_geometry url="#aruco_geometry">
+          <bind_material><technique_common><instance_material symbol="aruco_material" target="#aruco_material"><bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/></instance_material></technique_common></bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene><instance_visual_scene url="#aruco_scene"/></scene>
+</COLLADA>
