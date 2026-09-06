@@ -66,19 +66,78 @@ get_cwd() {
 container_name="urc_container"
 mount_dir=$(get_cwd)
 
+ros_dependencies=(
+    python3-colcon-common-extensions
+    python3-protobuf
+    python3-rosdep
+    ros-humble-behaviortree-cpp
+    ros-humble-controller-interface
+    ros-humble-diagnostic-updater
+    ros-humble-effort-controllers
+    ros-humble-filters
+    ros-humble-geodesy
+    ros-humble-geographic-msgs
+    ros-humble-grid-map-core
+    ros-humble-grid-map-cv
+    ros-humble-grid-map-filters
+    ros-humble-grid-map-msgs
+    ros-humble-grid-map-pcl
+    ros-humble-grid-map-ros
+    ros-humble-grid-map-rviz-plugin
+    ros-humble-grid-map-visualization
+    ros-humble-gz-ros2-control
+    ros-humble-hardware-interface
+    ros-humble-joint-state-broadcaster
+    ros-humble-joint-state-publisher
+    ros-humble-joint-state-publisher-gui
+    ros-humble-joint-trajectory-controller
+    ros-humble-librealsense2
+    ros-humble-realtime-tools
+    ros-humble-robot-localization
+    ros-humble-ros2-control
+    ros-humble-rosbridge-server
+    ros-humble-usb-cam
+)
+
+install_ros_dependencies() {
+    local missing_dependencies=()
+
+    for dependency in "${ros_dependencies[@]}"; do
+        if ! docker exec "$container_name" dpkg-query --status "$dependency" >/dev/null 2>&1; then
+            missing_dependencies+=("$dependency")
+        fi
+    done
+
+    if [[ ${#missing_dependencies[@]} -eq 0 ]]; then
+        echo "ROS dependencies are already installed."
+        return
+    fi
+
+    echo "Installing missing ROS dependencies..."
+    docker exec "$container_name" apt-get update
+    docker exec \
+        --env DEBIAN_FRONTEND=noninteractive \
+        "$container_name" \
+        apt-get install -y "${missing_dependencies[@]}"
+}
+
 # Function to start the container
 start_container() {
     # Check if the container is already running
-    if docker ps -q --filter "name=$container_name" | grep -q .; then
+    if docker ps -q --filter "name=^/${container_name}$" | grep -q .; then
         echo "Container $container_name is already running."
-        exit 1
+        install_ros_dependencies
+        return
     fi
 
     # Check if the container already exists
-    existing_container=$(docker ps -aq --filter name="$container_name")
+    existing_container=$(docker ps -aq --filter "name=^/${container_name}$")
     if [[ -n "$existing_container" ]]; then
         # Start the existing container
-        docker start "$container_name" >/dev/null 2>&1
+        if ! docker start "$container_name" >/dev/null; then
+            echo "Failed to start container $container_name."
+            exit 1
+        fi
         echo "Container $container_name started."
     else
         # Run the container and mount with additional options on first creation
@@ -86,6 +145,8 @@ start_container() {
         docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/home/ubuntu/urc_container" "$image_name:$image_tag"
         echo "Container $container_name pulled, created, and started"
     fi
+
+    install_ros_dependencies
 }
 
 # Function to stop the container
@@ -126,4 +187,3 @@ else
             ;;
     esac
 fi
-

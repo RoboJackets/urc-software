@@ -1,4 +1,4 @@
-#include "gps_imu_localizer.hpp"
+#include "urc_localization/gps_imu_localizer.hpp"
 
 namespace gps_imu_localizer
 {
@@ -24,7 +24,7 @@ GpsImuLocalizer::GpsImuLocalizer(const rclcpp::NodeOptions & options)
 
   set_base_subscriber_ = create_subscription<std_msgs::msg::Empty>(
     get_parameter("set_base_topic").as_string(), rclcpp::SystemDefaultsQoS(),
-    [this](const std_msgs::msg::Empty::SharedPtr msg) {
+    [this](const std_msgs::msg::Empty::SharedPtr) {
       base.first = odometry_msg_.pose.pose.position.x;
       base.second = odometry_msg_.pose.pose.position.y;
     }

@@ -27,6 +27,7 @@ add_library(${PROJECT_NAME} SHARED
   src/twist_mux.cpp
   src/sim_gps_handler.cpp
   src/imu_ned2enu.cpp
+  src/heartbeat_publisher.cpp
 )
 
 set(dependencies
@@ -72,11 +73,22 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_ImuNED2ENU
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_platform::HeartbeatPublisher"
+  EXECUTABLE ${PROJECT_NAME}_HeartbeatPublisher
+)
+
 # Install launch files.
 install(
   DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 # Install library
