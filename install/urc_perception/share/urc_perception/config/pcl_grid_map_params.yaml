@@ -1,5 +1,0 @@
-pcl_grid_map_extraction:
-  outlier_removal:
-    is_remove_outliers: true
-    mean_K: 50
-    stddev_threshold: 1.0
