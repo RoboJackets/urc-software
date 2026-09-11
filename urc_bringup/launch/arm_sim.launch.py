@@ -59,7 +59,8 @@ def generate_launch_description():
                 [
                     FindPackageShare("cartesian_controller_simulation"),
                     "urdf",
-                    "simplifiedarm.urdf.xacro", #the cadded arm
+                    "arm_updated.urdf.xacro"
+                    # "simplifiedarm.urdf.xacro", #first cadded arm
                     # "arm_gazebo.urdf.xacro", #basic geometry arm
                 ]
             ),

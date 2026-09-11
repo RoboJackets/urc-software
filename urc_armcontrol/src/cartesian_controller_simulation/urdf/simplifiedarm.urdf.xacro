@@ -15,6 +15,8 @@
 
         Inertial values updated from mech e SolidWorks export (Simplified_Arm.SLDASM).
         All joint origins, axes, and visuals remain from the original Gazebo URDF.
+
+        change mesh folders/filenames before using
         -->
 
         <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint_gz.urdf.xacro"/>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Simplified_Arm.SLDASM">
+  <link
+    name="base_lineara">
+    <inertial>
+      <origin
+        xyz="3.579E-06 0.22158 0.010673"
+        rpy="0 0 0" />
+      <mass
+        value="1.3141" />
+      <inertia
+        ixx="0.034947"
+        ixy="-1.0032E-07"
+        ixz="-4.9223E-09"
+        iyy="0.0025144"
+        iyz="3.7387E-07"
+        izz="0.037389" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="bicep_base">
+    <inertial>
+      <origin
+        xyz="-2.909E-05 0.072285 0.04786"
+        rpy="0 0 0" />
+      <mass
+        value="0.80928" />
+      <inertia
+        ixx="0.001288"
+        ixy="-2.9097E-08"
+        ixz="2.9394E-09"
+        iyy="0.0024023"
+        iyz="-3.1525E-09"
+        izz="0.0018264" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="forearm_prismatic"
+    type="prismatic">
+    <origin
+      xyz="0 0 0.03135"
+      rpy="0 0 0" />
+    <parent
+      link="base_lineara" />
+    <child
+      link="bicep_base" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0.5"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="bicep_link">
+    <inertial>
+      <origin
+        xyz="-8.0298E-05 0.028836 0.082763"
+        rpy="0 0 0" />
+      <mass
+        value="1.5004" />
+      <inertia
+        ixx="0.005463"
+        ixy="-3.5399E-07"
+        ixz="-1.6306E-05"
+        iyy="0.0069551"
+        iyz="-5.814E-07"
+        izz="0.001901" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="bicep_revolute"
+    type="continuous">
+    <origin
+      xyz="0 0.076091 0.12103"
+      rpy="0 0 0" />
+    <parent
+      link="bicep_base" />
+    <child
+      link="bicep_link" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="forearm_link">
+    <inertial>
+      <origin
+        xyz="-0.00011008 -0.025553 0.076716"
+        rpy="0 0 0" />
+      <mass
+        value="1.601" />
+      <inertia
+        ixx="0.0051728"
+        ixy="-2.2245E-06"
+        ixz="7.8401E-06"
+        iyy="0.0064253"
+        iyz="1.9188E-08"
+        izz="0.0018615" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="forearm_revolute"
+    type="continuous">
+    <origin
+      xyz="-0.00050763 0.068262 0.42862"
+      rpy="0 0 0" />
+    <parent
+      link="bicep_link" />
+    <child
+      link="forearm_link" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="diffw_forearm">
+    <inertial>
+      <origin
+        xyz="-1.4843E-05 5.7115E-06 0.0050339"
+        rpy="0 0 0" />
+      <mass
+        value="0.27656" />
+      <inertia
+        ixx="9.9333E-05"
+        ixy="5.7444E-09"
+        ixz="-5.0297E-08"
+        iyy="0.00012995"
+        iyz="5.1554E-10"
+        izz="9.7766E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="diffw_pitch"
+    type="revolute">
+    <origin
+      xyz="-0.00047153 -0.068263 0.39814"
+      rpy="0 0 0" />
+    <parent
+      link="forearm_link" />
+    <child
+      link="diffw_forearm" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="diffw_link">
+    <inertial>
+      <origin
+        xyz="4.5926E-06 1.4231E-06 0.0052114"
+        rpy="0 0 0" />
+      <mass
+        value="0.12065" />
+      <inertia
+        ixx="6.1339E-05"
+        ixy="8.9689E-10"
+        ixz="1.7613E-08"
+        iyy="6.1337E-05"
+        iyz="5.4578E-09"
+        izz="4.0162E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="diffw_yaw"
+    type="continuous">
+    <origin
+      xyz="-7.4828E-05 0 0.063182"
+      rpy="0 -0.0011843 0" />
+    <parent
+      link="diffw_forearm" />
+    <child
+      link="diffw_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>
