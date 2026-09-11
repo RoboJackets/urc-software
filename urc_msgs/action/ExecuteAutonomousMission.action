@@ -1,0 +1,38 @@
+# Goal
+# The search mode belongs to the complete mission and must persist across
+# navigation replans.
+uint8 SEARCH_NONE=0
+uint8 SEARCH_YOLO=1
+uint8 SEARCH_ARUCO_1=2
+uint8 SEARCH_ARUCO_2=3
+
+geometry_msgs/PoseStamped waypoint
+uint8 search_mode
+---
+# Result
+uint16 SUCCESS=0
+uint16 INVALID_REQUEST=1
+uint16 NAVIGATION_FAILED=2
+uint16 SEARCH_FAILED=3
+uint16 TARGET_NOT_FOUND=4
+uint16 APPROACH_FAILED=5
+uint16 CANCELED=6
+
+uint16 error_code
+string message
+
+bool has_bounding_box
+urc_msgs/DetectionBoundingBox bounding_box
+
+bool has_aruco_pose
+geometry_msgs/PoseStamped aruco_pose
+---
+# Feedback
+uint8 STATE_NAVIGATING=0
+uint8 STATE_SEARCHING=1
+uint8 STATE_PLANNING_APPROACH=2
+uint8 STATE_APPROACHING=3
+
+uint8 mission_state
+float32 distance_to_goal
+uint16 replan_count
