@@ -20,17 +20,6 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# Mujoco comes as a pre-built library package.
-# Extract this package somewhere and point CMake towards it during the build process.
-if(NOT DEFINED MUJOCO_DIR)
-        set(MUJOCO_DIR "$ENV{HOME}/mujoco-3.0.0") # CI setting
-        message(WARNING "MUJOCO_DIR not specified. Using default ${MUJOCO_DIR}")
-endif()
-set(MUJOCO_INCLUDE_DIRS ${MUJOCO_DIR}/include)
-set(MUJOCO_LIBRARIES
-        ${MUJOCO_DIR}/lib/libmujoco.so
-)
-
 # --------------------------------------------------------------------------------
 # Make sure that library relocation works for both build and install.
 # See here: https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
@@ -66,30 +55,7 @@ ament_target_dependencies(${PROJECT_NAME}
         rclcpp
 )
 
-target_link_libraries(${PROJECT_NAME}
-        mujoco_simulator
-)
-
 pluginlib_export_plugin_description_file(hardware_interface cartesian_controller_simulation.xml)
-
-#--------------------------------------------------------------------------------
-
-add_library(mujoco_simulator SHARED
-        src/mujoco_simulator.cpp
-)
-
-target_include_directories(mujoco_simulator PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-        ${MUJOCO_INCLUDE_DIRS}
-)
-
-# X11 OpenGL: link with libmujoco210.so, libglew.so, libGL.so
-target_link_libraries(mujoco_simulator PUBLIC
-        ${MUJOCO_LIBRARIES}
-)
-
-
 
 #--------------------------------------------------------------------------------
 # Install
@@ -103,12 +69,6 @@ install(
   DIRECTORY config etc launch urdf meshes
   DESTINATION share/${PROJECT_NAME}
 )
-
-install(
-  TARGETS ${PROJECT_NAME} mujoco_simulator
-  DESTINATION lib
-)
-
 
 #--------------------------------------------------------------------------------
 # Test

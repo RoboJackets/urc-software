@@ -60,8 +60,6 @@ def generate_launch_description():
                     FindPackageShare("cartesian_controller_simulation"),
                     "urdf",
                     "arm_updated.urdf.xacro"
-                    # "simplifiedarm.urdf.xacro", #first cadded arm
-                    # "arm_gazebo.urdf.xacro", #basic geometry arm
                 ]
             ),
         ]
@@ -154,9 +152,6 @@ def generate_launch_description():
         executable="spawner",
         output="screen",
         arguments=["cartesian_motion_controller", "--param-file", controller_config_file_dir],
-        # remappings=[
-        #     ("/cartesian_motion_controller/target_frame", "/motion_control_handle/target_frame")
-        # ],
     )   
     
     # Load joint_trajectory_controller as INACTIVE so we can switch between IK and FK
@@ -168,27 +163,6 @@ def generate_launch_description():
         arguments=["joint_trajectory_controller", "--inactive"],    
     )
 
-   # Inactive cartesian controllers
-    
-    # inactive_list = [
-    #     # "motion_control_handle",
-    #     "joint_trajectory_controller",
-    # ]
-
-    # inactive_spawners = [
-    #     controller_spawner(controller, "--inactive") for controller in inactive_list
-    # ]
-
-    # relay = Node(
-    #     package="topic_tools",
-    #     executable="relay",
-    #     name="target_frame_relay",
-    #     arguments=[
-    #         "/motion_control_handle/target_frame",
-    #         "/cartesian_motion_controller/target_frame"
-    #     ],
-    #     output="screen",
-    # )
 
 
     return LaunchDescription(
@@ -200,7 +174,6 @@ def generate_launch_description():
             bridge,
             robot_state_publisher_node,
             # rviz,
-            # relay,
             spawn,
             # Start joint_state_broadcaster AFTER robot spawn
             RegisterEventHandler(
@@ -217,16 +190,7 @@ def generate_launch_description():
                     target_action=load_joint_state_broadcaster,
                     on_exit=[load_cartesian_motion_controller, load_joint_trajectory_controller],
                 )
-            ),
-
-
-            # # Start cartesian controllers AFTER joint_state_broadcaster
-            # RegisterEventHandler(
-            #     event_handler=OnProcessExit(
-            #         target_action=load_joint_state_broadcaster,
-            #         on_exit=inactive_spawners + [load_cartesian_motion_controller],
-            #     )
-            # ),
+            )
 
 
         ]
