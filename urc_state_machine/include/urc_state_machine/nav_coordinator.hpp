@@ -1,12 +1,10 @@
 #ifndef NAV_COORDINATOR_HPP_
 #define NAV_COORDINATOR_HPP_
 
-#include <math.h>
 #include <memory>
+#include <string>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include <geographic_msgs/msg/geo_point.hpp>
-#include <geodesy/utm.h>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -52,8 +50,6 @@ private:
   void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
   void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
-  geometry_msgs::msg::PoseStamped convertGpsToMapWaypoint(
-    const urc_msgs::msg::Waypoint & waypoint);
 
   void handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle);
   void handleFeedback(
@@ -67,7 +63,7 @@ private:
   std::string errorTypeToString(ErrorType error_type) const;
   std::string stateToString(State state) const;
 
-  State state_;
+  State state_{State::IDLE};
   std::string follower_action_name_;
   bool cancel_on_new_waypoint_;
   std::string map_frame_id_;
@@ -83,7 +79,7 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
-  ErrorType last_error_;
+  ErrorType last_error_{ErrorType::NONE};
   std::string last_error_details_;
 };
 
