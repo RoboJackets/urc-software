@@ -125,6 +125,7 @@ def generate_launch_description():
     aruco_tag_yaw_arg = DeclareLaunchArgument(
         "aruco_tag_yaw",
         # Face the marker toward the camera looking from negative X.
+        # default_value="0.0",
         default_value="1.57079632679",
         description="Yaw of the ArUco tag in radians",
     )
@@ -219,7 +220,7 @@ def generate_launch_description():
         # OLD_aruco_tag_one.jpg is a DICT_6X6_50 marker whose encoded ID is 23.
         # parameters=[{"marker_size": 0.05}],
         # parameters=[{"marker_size": 0.20, "expected_marker_id": 23}],
-        parameters=[{"marker_size": 0.20}],
+        parameters=[{"marker_size": 0.50}],
     )
 
     robot_state_publisher_node = Node(

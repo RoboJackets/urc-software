@@ -38,17 +38,39 @@ class ArucoTestPublisher(Node):
         camera_info.p = [fx, 0.0, cx, 0.0, 0.0, fy, cy, 0.0, 0.0, 0.0, 1.0, 0.0]
         camera_info.header.frame_id = 'camera_link'
         return camera_info
-
+    
     def _make_marker_image(self) -> np.ndarray:
         image = np.ones((480, 640), dtype=np.uint8) * 255
-        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+
+        aruco_dict = cv2.aruco.getPredefinedDictionary(
+            cv2.aruco.DICT_6X6_50
+        )
+
         marker_size_pixels = 300
-        marker = cv2.aruco.drawMarker(aruco_dict, 0, marker_size_pixels)
+
+        marker = np.zeros(
+            (marker_size_pixels, marker_size_pixels),
+            dtype=np.uint8
+        )
+
+        cv2.aruco.drawMarker(
+            aruco_dict,
+            23,
+            marker_size_pixels,
+            marker,
+            1
+        )
+
         y = (image.shape[0] - marker_size_pixels) // 2
         x = (image.shape[1] - marker_size_pixels) // 2
-        image[y:y + marker_size_pixels, x:x + marker_size_pixels] = marker
-        return cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
 
+        image[
+            y:y + marker_size_pixels,
+            x:x + marker_size_pixels
+        ] = marker
+
+        return cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+    
     def publish_messages(self):
         now = self.get_clock().now().to_msg()
         self.camera_info.header.stamp = now
