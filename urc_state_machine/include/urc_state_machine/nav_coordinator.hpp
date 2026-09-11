@@ -10,8 +10,10 @@
 #include <std_msgs/msg/string.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+#include <urc_msgs/action/execute_autonomous_mission.hpp>
 #include <urc_msgs/action/navigate_to_waypoint.hpp>
 #include <urc_msgs/msg/waypoint.hpp>
+#include "urc_state_machine/mission_state_machine.hpp"
 
 namespace nav_coordinator
 {
@@ -24,6 +26,8 @@ public:
 private:
   using NavigateToWaypoint = urc_msgs::action::NavigateToWaypoint;
   using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateToWaypoint>;
+  using ExecuteMission = urc_msgs::action::ExecuteAutonomousMission;
+  using MissionGoalHandle = rclcpp_action::ServerGoalHandle<ExecuteMission>;
 
   enum class State
   {
@@ -51,11 +55,26 @@ private:
   void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
   void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
 
+  void initializeMissionActionServer();
+
   void handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle);
   void handleFeedback(
     GoalHandleNavigate::SharedPtr,
     const std::shared_ptr<const NavigateToWaypoint::Feedback> feedback);
   void handleResult(const GoalHandleNavigate::WrappedResult & result);
+  rclcpp_action::GoalResponse handleMissionGoal(
+    const rclcpp_action::GoalUUID & uuid,
+    std::shared_ptr<const ExecuteMission::Goal> goal);
+
+  rclcpp_action::CancelResponse handleMissionCancel(
+    std::shared_ptr<MissionGoalHandle> goal_handle);
+
+  void handleMissionAccepted(
+    std::shared_ptr<MissionGoalHandle> goal_handle);
+  void sendMissionNavigation();
+  void finishMissionNavigation(
+    const GoalHandleNavigate::WrappedResult & result);
+  void failMissionNavigation(const std::string & reason);
 
   void transitionTo(State new_state, const std::string & reason);
   void handleError(ErrorType error_type, const std::string & details);
@@ -64,6 +83,10 @@ private:
   std::string stateToString(State state) const;
 
   State state_{State::IDLE};
+  urc_state_machine::MissionStateMachine state_machine_;
+  // Mission and waypoint callbacks use the default mutually exclusive callback group.
+  bool mission_reserved_{false};
+  std::shared_ptr<MissionGoalHandle> active_mission_handle_;
   std::string follower_action_name_;
   bool cancel_on_new_waypoint_;
   std::string map_frame_id_;
@@ -75,6 +98,7 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
   rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_waypoint_subscriber_;
   rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
+  rclcpp_action::Server<ExecuteMission>::SharedPtr mission_server_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

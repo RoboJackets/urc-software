@@ -28,6 +28,9 @@ add_library(${PROJECT_NAME} SHARED
   src/gps_waypoint_conversion.cpp
   src/follower_navigation.cpp
   src/coordinator_state.cpp
+  src/mission_state_machine.cpp
+  src/mission_action.cpp
+  src/mission_navigation.cpp
 )
 
 set(dependencies

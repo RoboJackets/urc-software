@@ -21,6 +21,15 @@ waypoint -> NavCoordinator -> NavigateToWaypoint -> GeneratePlan -> path followi
 
 ## State and failure behavior
 
+The mission action server (`mission_action_name`, default
+`execute_autonomous_mission`) currently accepts only `SEARCH_NONE`, with a finite
+waypoint in the configured map frame and a unit quaternion. It rejects requests
+while navigation is busy or the follower server is unavailable. Accepted missions
+return `SUCCESS` on arrival or `NAVIGATION_FAILED` if navigation fails. Waypoint
+topics are ignored during a mission. Search, mission feedback, cancellation, and
+mission replacement are not implemented yet. Building requires ROB-41's
+`urc_msgs` interfaces.
+
 The coordinator publishes `IDLE`, `WAITING_FOR_SERVER`, `SENDING_GOAL`,
 `TRACKING_GOAL`, `SUCCEEDED`, `FAILED`, or `CANCELED` on
 `nav_coordinator_state`, together with its latest error classification.

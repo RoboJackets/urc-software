@@ -7,6 +7,10 @@ namespace nav_coordinator
 {
 void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
+  if (mission_reserved_) {
+    return;
+  }
+
   active_waypoint_ = *msg;
   RCLCPP_INFO(
     get_logger(), "Received waypoint: frame=%s x=%.3f y=%.3f",
@@ -25,6 +29,10 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
 
 void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
 {
+  if (mission_reserved_) {
+    return;
+  }
+
   geometry_msgs::msg::PoseStamped converted_waypoint;
   try {
     converted_waypoint = convertGpsToMapWaypoint(

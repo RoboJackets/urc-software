@@ -36,6 +36,8 @@ NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
     rclcpp::SystemDefaultsQoS(),
     std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
 
+  initializeMissionActionServer();
+
   RCLCPP_INFO(
     get_logger(),
     "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
