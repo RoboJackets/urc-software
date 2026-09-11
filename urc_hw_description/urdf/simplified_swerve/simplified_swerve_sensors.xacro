@@ -206,7 +206,7 @@
     <link name="camera_link">
       <inertial>
         <mass value="0.01"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0.4" rpy="0 0 0"/>
         <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
       </inertial>
 
@@ -218,7 +218,7 @@
       </collision>
 
       <visual name="camera_visual">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0.4" rpy="0 0 0"/>
         <geometry>
           <box size="0.05 0.05 0.05"/>
         </geometry>
@@ -230,13 +230,13 @@
       <parent link="base_link"/>
       <child link="camera_link"/>
       <!-- Slightly above base so it's easy to visualize -->
-    <origin xyz="0.2 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.4" rpy="0 0 0"/>
     </joint>
 
     <gazebo reference="camera_link">
       <sensor name="camera" type="camera">
         <!-- Face the camera toward negative X, where the test marker is spawned. -->
-        <pose>0 0 0 0 0 3.14159265359</pose>
+        <pose>1 0 0 0 0 0</pose>
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>true</visualize>
