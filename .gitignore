@@ -29,9 +29,11 @@ dist/
 downloads/
 eggs/
 .eggs/
+install/
 lib/*
 !WebViewer/lib/*
 lib64/
+log/
 parts/
 sdist/
 var/
@@ -175,3 +177,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/external/AMENT_IGNORE
 _codeql_detected_source_root
+

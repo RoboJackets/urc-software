@@ -3,26 +3,6 @@
 
 ### Instructions to get set up:
 
-Install Mujuco 3.0.0 to /home/[user] (preferred) or /root directory using wget:
-```
-cd /home/[user]
-wget https://github.com/google-deepmind/mujoco/releases/download/3.0.0/mujoco-3.0.0-linux-x86_64.tar.gz
-```
-
-**This is a link to the mujuco releases <https://github.com/google-deepmind/mujoco/releases>**
-
-Extract from tar:
-```
-tar -xzvf mujoco-3.0.0-linux-x86_64.tar.gz
-```
-
-Copy install and bin files to /usr/local:
-```
-sudo cp -r mujoco-3.0.0/include/mujoco /usr/local/include/
-sudo cp -P mujoco-3.0.0/lib/libmujoco.so* /usr/local/lib/
-sudo ldconfig
-```
-
 ## If using WSL Ubuntu 22.04, follow these steps to connect an xbox series x controller:
 
 In **(powershell)**:
