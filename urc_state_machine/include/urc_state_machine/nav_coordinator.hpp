@@ -13,7 +13,8 @@
 #include <urc_msgs/action/execute_autonomous_mission.hpp>
 #include <urc_msgs/action/navigate_to_waypoint.hpp>
 #include <urc_msgs/msg/waypoint.hpp>
-#include "urc_state_machine/mission_state_machine.hpp"
+#include "urc_state_machine/active_mission.hpp"
+#include "urc_state_machine/mission_state.hpp"
 
 namespace nav_coordinator
 {
@@ -28,17 +29,6 @@ private:
   using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateToWaypoint>;
   using ExecuteMission = urc_msgs::action::ExecuteAutonomousMission;
   using MissionGoalHandle = rclcpp_action::ServerGoalHandle<ExecuteMission>;
-
-  enum class State
-  {
-    IDLE,
-    WAITING_FOR_SERVER,
-    SENDING_GOAL,
-    TRACKING_GOAL,
-    SUCCEEDED,
-    FAILED,
-    CANCELED
-  };
 
   enum class ErrorType
   {
@@ -74,19 +64,17 @@ private:
   void sendMissionNavigation();
   void finishMissionNavigation(
     const GoalHandleNavigate::WrappedResult & result);
+  void finishCanceledMission();
   void failMissionNavigation(const std::string & reason);
 
-  void transitionTo(State new_state, const std::string & reason);
+  void transitionTo(urc_state_machine::MissionState new_state, const std::string & reason);
   void handleError(ErrorType error_type, const std::string & details);
   void publishState();
   std::string errorTypeToString(ErrorType error_type) const;
-  std::string stateToString(State state) const;
+  std::string stateToString(urc_state_machine::MissionState state) const;
 
-  State state_{State::IDLE};
-  urc_state_machine::MissionStateMachine state_machine_;
-  // Mission and waypoint callbacks use the default mutually exclusive callback group.
-  bool mission_reserved_{false};
-  std::shared_ptr<MissionGoalHandle> active_mission_handle_;
+  urc_state_machine::MissionState state_{urc_state_machine::MissionState::IDLE};
+  std::shared_ptr<urc_state_machine::ActiveMission> active_mission_;
   std::string follower_action_name_;
   bool cancel_on_new_waypoint_;
   std::string map_frame_id_;

@@ -56,39 +56,37 @@ rclcpp_action::GoalResponse NavCoordinator::handleMissionGoal(
     return rclcpp_action::GoalResponse::REJECT;
   }
 
-  if (mission_reserved_ || active_goal_handle_ ||
-    state_ == State::WAITING_FOR_SERVER || state_ == State::SENDING_GOAL ||
-    state_ == State::TRACKING_GOAL || !follower_client_->action_server_is_ready())
-  {
+  if (active_mission_ || active_goal_handle_ || !follower_client_->action_server_is_ready()) {
     return rclcpp_action::GoalResponse::REJECT;
   }
 
-  mission_reserved_ = true;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
 rclcpp_action::CancelResponse NavCoordinator::handleMissionCancel(
-  std::shared_ptr<MissionGoalHandle>)
+  std::shared_ptr<MissionGoalHandle> goal_handle)
 {
-  // TODO: Accept cancellation once active-operation stopping is implemented.
-  return rclcpp_action::CancelResponse::REJECT;
+  if (!active_mission_ || active_mission_->goal_handle != goal_handle) {
+    return rclcpp_action::CancelResponse::REJECT;
+  }
+
+  active_mission_->cancellation_requested = true;
+  if (active_goal_handle_) {
+    follower_client_->async_cancel_goal(active_goal_handle_);
+  }
+
+  return rclcpp_action::CancelResponse::ACCEPT;
 }
 
 void NavCoordinator::handleMissionAccepted(
   std::shared_ptr<MissionGoalHandle> goal_handle)
 {
-  active_mission_handle_ = goal_handle;
-  active_waypoint_ = goal_handle->get_goal()->waypoint;
+  active_mission_ = std::make_shared<urc_state_machine::ActiveMission>();
+  active_mission_->goal_handle = goal_handle;
+  active_mission_->original_waypoint = goal_handle->get_goal()->waypoint;
+  active_mission_->search_mode = urc_state_machine::SearchMode::NONE;
   last_error_ = ErrorType::NONE;
   last_error_details_.clear();
-
-  const auto transition = state_machine_.start(urc_state_machine::SearchMode::NONE);
-  if (!transition.accepted ||
-    transition.command != urc_state_machine::MissionCommand::NAVIGATE_TO_WAYPOINT)
-  {
-    failMissionNavigation("Mission state machine could not start navigation.");
-    return;
-  }
 
   sendMissionNavigation();
 }

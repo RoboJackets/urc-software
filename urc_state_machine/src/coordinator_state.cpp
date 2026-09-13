@@ -2,7 +2,9 @@
 
 namespace nav_coordinator
 {
-void NavCoordinator::transitionTo(State new_state, const std::string & reason)
+void NavCoordinator::transitionTo(
+  urc_state_machine::MissionState new_state,
+  const std::string & reason)
 {
   if (state_ == new_state) {
     return;
@@ -68,22 +70,26 @@ std::string NavCoordinator::errorTypeToString(ErrorType error_type) const
   }
 }
 
-std::string NavCoordinator::stateToString(State state) const
+std::string NavCoordinator::stateToString(urc_state_machine::MissionState state) const
 {
   switch (state) {
-    case State::IDLE:
+    case urc_state_machine::MissionState::IDLE:
       return "IDLE";
-    case State::WAITING_FOR_SERVER:
-      return "WAITING_FOR_SERVER";
-    case State::SENDING_GOAL:
-      return "SENDING_GOAL";
-    case State::TRACKING_GOAL:
-      return "TRACKING_GOAL";
-    case State::SUCCEEDED:
+    case urc_state_machine::MissionState::NAVIGATING:
+      return "NAVIGATING";
+    case urc_state_machine::MissionState::SEARCHING_YOLO:
+      return "SEARCHING_YOLO";
+    case urc_state_machine::MissionState::SEARCHING_ARUCO:
+      return "SEARCHING_ARUCO";
+    case urc_state_machine::MissionState::CALCULATING_APPROACH:
+      return "CALCULATING_APPROACH";
+    case urc_state_machine::MissionState::NAVIGATING_TO_ARUCO:
+      return "NAVIGATING_TO_ARUCO";
+    case urc_state_machine::MissionState::SUCCEEDED:
       return "SUCCEEDED";
-    case State::FAILED:
+    case urc_state_machine::MissionState::FAILED:
       return "FAILED";
-    case State::CANCELED:
+    case urc_state_machine::MissionState::CANCELED:
       return "CANCELED";
     default:
       return "UNKNOWN";

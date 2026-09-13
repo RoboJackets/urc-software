@@ -7,7 +7,7 @@ namespace nav_coordinator
 {
 void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
-  if (mission_reserved_) {
+  if (active_mission_) {
     return;
   }
 
@@ -19,7 +19,9 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
     active_waypoint_.pose.position.y);
 
   if (active_goal_handle_ && cancel_on_new_waypoint_) {
-    transitionTo(State::CANCELED, "canceling current goal due to new waypoint");
+    transitionTo(
+      urc_state_machine::MissionState::CANCELED,
+      "canceling current goal due to new waypoint");
     follower_client_->async_cancel_goal(active_goal_handle_);
     active_goal_handle_.reset();
   }
@@ -29,7 +31,7 @@ void NavCoordinator::handleWaypoint(const geometry_msgs::msg::PoseStamped::Share
 
 void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg)
 {
-  if (mission_reserved_) {
+  if (active_mission_) {
     return;
   }
 
@@ -42,7 +44,9 @@ void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr 
     handleError(
       ErrorType::PLANNER_FAILURE,
       std::string("Cannot process GPS waypoint: ") + ex.what());
-    transitionTo(State::FAILED, "gps waypoint rejected - transform unavailable");
+    transitionTo(
+      urc_state_machine::MissionState::FAILED,
+      "gps waypoint rejected - transform unavailable");
     return;
   }
 
@@ -58,7 +62,9 @@ void NavCoordinator::handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr 
     active_waypoint_.pose.position.y);
 
   if (active_goal_handle_ && cancel_on_new_waypoint_) {
-    transitionTo(State::CANCELED, "canceling current goal due to new GPS waypoint");
+    transitionTo(
+      urc_state_machine::MissionState::CANCELED,
+      "canceling current goal due to new GPS waypoint");
     follower_client_->async_cancel_goal(active_goal_handle_);
     active_goal_handle_.reset();
   }

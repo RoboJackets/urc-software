@@ -7,12 +7,11 @@ namespace nav_coordinator
 {
 void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint)
 {
-  transitionTo(State::WAITING_FOR_SERVER, "checking follower action server");
   if (!follower_client_->wait_for_action_server(std::chrono::seconds(2))) {
     handleError(
       ErrorType::SERVER_UNAVAILABLE,
       "Follower action server '" + follower_action_name_ + "' not available.");
-    transitionTo(State::FAILED, "follower action server unavailable");
+    transitionTo(urc_state_machine::MissionState::FAILED, "follower action server unavailable");
     return;
   }
 
@@ -22,7 +21,7 @@ void NavCoordinator::sendFollowerGoal(const geometry_msgs::msg::PoseStamped & wa
   goal_msg.has_path = false;
   goal_msg.enforce_goal_heading = false;
 
-  transitionTo(State::SENDING_GOAL, "forwarding waypoint to follower");
+  transitionTo(urc_state_machine::MissionState::NAVIGATING, "forwarding waypoint to follower");
 
   rclcpp_action::Client<NavigateToWaypoint>::SendGoalOptions options;
   options.goal_response_callback = std::bind(
@@ -39,12 +38,11 @@ void NavCoordinator::handleGoalResponse(const GoalHandleNavigate::SharedPtr & go
 {
   if (!goal_handle) {
     handleError(ErrorType::FOLLOWER_FAILURE, "Follower action server rejected the goal.");
-    transitionTo(State::FAILED, "follower rejected goal");
+    transitionTo(urc_state_machine::MissionState::FAILED, "follower rejected goal");
     return;
   }
 
   active_goal_handle_ = goal_handle;
-  transitionTo(State::TRACKING_GOAL, "follower accepted goal");
 }
 
 void NavCoordinator::handleFeedback(
@@ -64,7 +62,7 @@ void NavCoordinator::handleResult(const GoalHandleNavigate::WrappedResult & resu
 
   if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
     if (result.result->error_code == NavigateToWaypoint::Result::SUCCESS) {
-      transitionTo(State::SUCCEEDED, "follower reported success");
+      transitionTo(urc_state_machine::MissionState::SUCCEEDED, "follower reported success");
       return;
     }
 
@@ -84,25 +82,25 @@ void NavCoordinator::handleResult(const GoalHandleNavigate::WrappedResult & resu
           "Follower finished with error_code=" + std::to_string(result.result->error_code));
         break;
     }
-    transitionTo(State::FAILED, "follower finished with error");
+    transitionTo(urc_state_machine::MissionState::FAILED, "follower finished with error");
     return;
   }
 
   if (result.code == rclcpp_action::ResultCode::ABORTED) {
     handleError(ErrorType::FOLLOWER_FAILURE, "Follower aborted goal.");
-    transitionTo(State::FAILED, "follower aborted goal");
+    transitionTo(urc_state_machine::MissionState::FAILED, "follower aborted goal");
     return;
   }
 
   if (result.code == rclcpp_action::ResultCode::CANCELED) {
-    transitionTo(State::CANCELED, "follower canceled goal");
+    transitionTo(urc_state_machine::MissionState::CANCELED, "follower canceled goal");
     return;
   }
 
   handleError(
     ErrorType::UNKNOWN_ERROR,
     "Unknown follower result code: " + std::to_string(static_cast<int>(result.code)));
-  transitionTo(State::FAILED, "unknown follower result code");
+  transitionTo(urc_state_machine::MissionState::FAILED, "unknown follower result code");
 }
 
 }
