@@ -45,6 +45,12 @@ namespace urc_slam {
                 std::size_t to_index,
                 const gtsam::Pose3 &relative_pose
             );
+
+            void addGpsFactor(
+                std::size_t index,
+                const gtsam::Point3 &position,
+                const gtsam::Matrix3 &covariance
+            );
             
             // Adds a raw imu sample to the preintegrator
             // Every time an imu measurement arrives, accumulate it into
@@ -57,10 +63,11 @@ namespace urc_slam {
             
             // Returns the backend's best estimate of robot state
             gtsam::NavState latestEstimate() const;
+            gtsam::Pose3 poseAt(std::size_t index) const;
 
             gtsam::Pose3 predictedRelativePose() const;
         private:
-            
+            void optimize();
             // Factor graph symbols
             gtsam::Symbol poseKey(std::size_t index) const;
             gtsam::Symbol velocityKey(std::size_t index) const;

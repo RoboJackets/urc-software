@@ -6,6 +6,7 @@
 #include <gtsam/nonlinear/ISAM2Params.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/PriorFactor.h>
+#include <gtsam/navigation/GPSFactor.h>
 #include <gtsam/navigation/ImuBias.h>
 #include <gtsam/navigation/ImuFactor.h>
 #include <gtsam/navigation/PreintegrationParams.h>
@@ -205,6 +206,16 @@ namespace urc_slam {
 
     }
 
+    void SlamBackend::addGpsFactor(
+        std::size_t index,
+        const gtsam::Point3 &position,
+        const gtsam::Matrix3 &covariance
+    ) {
+        const auto noise = gtsam::noiseModel::Gaussian::Covariance(covariance);
+        new_factors.add(gtsam::GPSFactor(poseKey(index), position, noise));
+        optimize();
+    }
+
     void SlamBackend::addLidarFactor(
         std::size_t from_index,
         std::size_t to_index,
@@ -219,7 +230,11 @@ namespace urc_slam {
                 lidar_noise
             )
         );
+        optimize();
+        
+    }
 
+    void SlamBackend::optimize() {
         isam.update(new_factors, new_values);
         estimate = isam.calculateEstimate();
 
@@ -254,6 +269,10 @@ namespace urc_slam {
     }
 
     
+    gtsam::Pose3 SlamBackend::poseAt(std::size_t index) const {
+        return estimate.at<gtsam::Pose3>(poseKey(index));
+    }
+
     gtsam::NavState SlamBackend::latestEstimate() const {
         const gtsam::Pose3 pose = estimate.at<gtsam::Pose3>(
             poseKey(latest_index)

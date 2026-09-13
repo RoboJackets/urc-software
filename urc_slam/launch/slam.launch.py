@@ -12,6 +12,20 @@ def generate_launch_description():
         "slam_params.yaml",
     )
 
+    navsat_node = Node(
+        package = "robot_localization",
+        executable = "navsat_transform_node",
+        name = "slam_navsat_transform",
+        output = "screen",
+        parameters = [parameters_file],
+        remappings = [
+            ("gps/fix", "/gps"),
+            ("imu", "/imu/fused"),
+            ("odometry/filtered", "/slam/odometry"),
+            ("odometry/gps", "/slam/gps_odometry"),
+        ],
+    )
+
     slam_node = Node(
         package="urc_slam",
         executable="SlamNode",
@@ -22,4 +36,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         slam_node,
+        navsat_node,
     ])

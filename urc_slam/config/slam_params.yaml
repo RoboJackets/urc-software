@@ -1,5 +1,6 @@
 slam_node:
   ros__parameters:
+    use_sim_time: true
     imu_topic: /imu/fused
     lidar_topic: /scan/points
     slam_odom_topic: /slam/odometry
@@ -20,3 +21,17 @@ slam_node:
       transformation_epsilon: 1.0e-6
       fitness_epsilon: 1.0e-6
       maximum_fitness_score: 2.5
+
+slam_navsat_transform:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 10.0
+    delay: 0.0
+    zero_altitude: false
+    magnetic_declination_radians: 0.0
+    yaw_offset: 0.0
+    use_odometry_yaw: false
+    wait_for_datum: false
+    publish_filtered_gps: false
+    broadcast_utm_transform: false
+    broadcast_cartesian_transform: false
