@@ -21,9 +21,17 @@ waypoint -> NavCoordinator -> NavigateToWaypoint -> GeneratePlan -> path followi
 
 ## State and failure behavior
 
-The coordinator publishes `IDLE`, `WAITING_FOR_SERVER`, `SENDING_GOAL`,
-`TRACKING_GOAL`, `SUCCEEDED`, `FAILED`, or `CANCELED` on
-`nav_coordinator_state`, together with its latest error classification.
+The mission action server (`mission_action_name`, default
+`execute_autonomous_mission`) currently accepts only `SEARCH_NONE`, with a finite
+waypoint in the configured map frame and a unit quaternion. It rejects requests
+while navigation is busy or the follower server is unavailable. Accepted missions
+return `SUCCESS` on arrival, `NAVIGATION_FAILED` if navigation fails, or `CANCELED`
+after the active navigation goal stops. Waypoint topics and new mission requests
+are rejected while a mission is active. Search and mission feedback are not
+implemented yet.
+
+The coordinator publishes its autonomous mission state on `nav_coordinator_state`,
+together with its latest error classification.
 
 By default, a new waypoint cancels the active follower goal before being sent.
 Missing UTM-to-map transforms, an unavailable follower action server, rejected

@@ -5,6 +5,7 @@ include(../cmake/default_settings.cmake)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
@@ -23,9 +24,16 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/nav_coordinator.cpp
+  src/waypoint_requests.cpp
+  src/gps_waypoint_conversion.cpp
+  src/follower_navigation.cpp
+  src/coordinator_state.cpp
+  src/mission_action.cpp
+  src/mission_navigation.cpp
 )
 
 set(dependencies
+  builtin_interfaces
   rclcpp
   rclcpp_action
   rclcpp_components
