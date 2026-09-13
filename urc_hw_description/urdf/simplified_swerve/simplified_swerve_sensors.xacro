@@ -3,10 +3,6 @@
 <gazebo>
  <plugin filename="libignition-gazebo-imu-system"
             name="ignition::gazebo::systems::Imu"/>
-<plugin filename="ignition-gazebo-sensors-system"
-            name="ignition::gazebo::systems::Sensors">
-      <render_engine>ogre2</render_engine>
-    </plugin>
      <plugin filename="ignition-gazebo-navsat-system" name="ignition::gazebo::systems::NavSat"/>
 </gazebo>
 
@@ -206,7 +202,7 @@
     <link name="camera_link">
       <inertial>
         <mass value="0.01"/>
-        <origin xyz="0 0 0.4" rpy="0 0 0"/>
+        <origin xyz="0 0 0.3" rpy="0 0 0"/>
         <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
       </inertial>
 
@@ -218,7 +214,7 @@
       </collision>
 
       <visual name="camera_visual">
-        <origin xyz="0 0 0.4" rpy="0 0 0"/>
+        <origin xyz="0 0 0.3" rpy="0 0 0"/>
         <geometry>
           <box size="0.05 0.05 0.05"/>
         </geometry>
@@ -230,7 +226,7 @@
       <parent link="base_link"/>
       <child link="camera_link"/>
       <!-- Slightly above base so it's easy to visualize -->
-    <origin xyz="0 0 0.4" rpy="0 0 0"/>
+    <origin xyz="0 0 0.3" rpy="0 0 0"/>
     </joint>
 
     <gazebo reference="camera_link">

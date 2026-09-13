@@ -23,9 +23,9 @@
 
           <pbr>
             <metal>
-              <albedo_map>
-                model://aruco_tag_0/materials/textures/6x6_aruco_tag.png
-              </albedo_map>
+              <!-- The simulated marker image. Its encoded ID is determined
+                   from the camera image by aruco_detector.py. -->
+              <albedo_map>model://aruco_tag_0/materials/textures/6x6_aruco_tag.png</albedo_map>
               <metalness>0.0</metalness>
               <roughness>1.0</roughness>
             </metal>

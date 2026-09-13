@@ -217,9 +217,7 @@ def generate_launch_description():
         executable="aruco_detector.py",
         name="aruco_detector",
         output="screen",
-        # OLD_aruco_tag_one.jpg is a DICT_6X6_50 marker whose encoded ID is 23.
-        # parameters=[{"marker_size": 0.05}],
-        # parameters=[{"marker_size": 0.20, "expected_marker_id": 23}],
+        # Marker IDs are identified directly from the camera image; no ID filter.
         parameters=[{"marker_size": 0.50}],
     )
 
