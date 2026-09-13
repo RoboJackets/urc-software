@@ -41,6 +41,19 @@ void NavCoordinator::sendMissionNavigation()
         follower_client_->async_cancel_goal(handle);
       }
     };
+  options.feedback_callback = [this, mission](
+    GoalHandleNavigate::SharedPtr,
+    const std::shared_ptr<const NavigateToWaypoint::Feedback> feedback) {
+      if (active_mission_ != mission) {
+        return;
+      }
+
+      auto mission_feedback = std::make_shared<ExecuteMission::Feedback>();
+      mission_feedback->mission_state = ExecuteMission::Feedback::STATE_NAVIGATING;
+      mission_feedback->distance_to_goal = feedback->distance_to_goal;
+      mission_feedback->replan_count = feedback->replan_count;
+      mission->goal_handle->publish_feedback(mission_feedback);
+    };
   options.result_callback = [this, mission](
     const GoalHandleNavigate::WrappedResult & result) {
       if (active_mission_ != mission) {
