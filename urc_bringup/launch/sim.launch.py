@@ -1,10 +1,20 @@
 import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, TimerAction
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    RegisterEventHandler,
+    TimerAction,
+)
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, PythonExpression
+from launch.substitutions import (
+    LaunchConfiguration,
+    Command,
+    PathJoinSubstitution,
+    PythonExpression,
+)
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -15,7 +25,9 @@ def generate_launch_description():
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
 
-    controller_config_file_dir = os.path.join(path_urc_bringup, "config", "test_controllers.yaml")
+    controller_config_file_dir = os.path.join(
+        path_urc_bringup, "config", "test_controllers.yaml"
+    )
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
@@ -32,7 +44,6 @@ def generate_launch_description():
         ),
         description="Path to xacro file",
     )
-
 
     bridge_yaml = DeclareLaunchArgument(
         "bridge_yaml",
@@ -101,8 +112,12 @@ def generate_launch_description():
     incline_x = LaunchConfiguration("incline_x")
     incline_y = LaunchConfiguration("incline_y")
     incline_slope = LaunchConfiguration("incline_slope")
-    cube_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "large_cube.sdf")
-    incline_sdf_path = os.path.join(path_urc_hw_description, "world", "obstacles", "incline_plane.sdf")
+    cube_sdf_path = os.path.join(
+        path_urc_hw_description, "world", "obstacles", "large_cube.sdf"
+    )
+    incline_sdf_path = os.path.join(
+        path_urc_hw_description, "world", "obstacles", "incline_plane.sdf"
+    )
     incline_pitch_rad = PythonExpression(
         ["-float(", incline_slope, ") * 3.141592653589793 / 180.0"]
     )
@@ -116,7 +131,9 @@ def generate_launch_description():
 
     # Start Gazebo and immediately run the simulation (-r)
     gz_sim = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")),
+        PythonLaunchDescriptionSource(
+            os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
+        ),
         launch_arguments={"gz_args": ["-r ", world_path]}.items(),
     )
 
@@ -151,8 +168,8 @@ def generate_launch_description():
     )
 
     ground_truth = Node(
-        package="urc_bringup",
-        executable="urc_bringup_GroundTruth",
+        package="urc_localization",
+        executable="urc_localization_GroundTruth",
         name="ground_truth",
         parameters=[
             {
@@ -186,12 +203,9 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("autonomy")),
     )
 
-
-   
-
     rocker_tf_broadcaster = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RockerTfBroadcaster",
+        package="urc_controllers",
+        executable="urc_controllers_RockerTfBroadcaster",
         name="rocker_tf_broadcaster",
         parameters=[
             {
@@ -291,8 +305,8 @@ def generate_launch_description():
     )
 
     rocker_effort_pid_node = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RockerEffortPid",
+        package="urc_controllers",
+        executable="urc_controllers_RockerEffortPid",
         name="rocker_effort_pid",
         parameters=[
             {
@@ -345,7 +359,12 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=spawn,
-                    on_exit=[delayed_load_jsb, delayed_load_swerve, delayed_load_rocker, ground_truth],
+                    on_exit=[
+                        delayed_load_jsb,
+                        delayed_load_swerve,
+                        delayed_load_rocker,
+                        ground_truth,
+                    ],
                 )
             ),
         ]

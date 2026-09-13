@@ -14,12 +14,14 @@ find_package(nav_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BatteryInfo.msg"
+  "msg/DetectionBoundingBox.msg"
   "msg/StatusLightCommand.msg"
   "msg/Waypoint.msg"
   "msg/GridLocation.msg"
   "msg/OrientationPoses.msg"
   "srv/GeneratePlan.srv"
   "msg/RoverPoses.msg"
+  "action/ExecuteAutonomousMission.action"
   "action/NavigateToWaypoint.action"
 
   DEPENDENCIES

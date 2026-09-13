@@ -1,8 +1,6 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
     map_to_base_link_tf = Node(
@@ -12,11 +10,10 @@ def generate_launch_description():
         output="screen",
     )
 
-
     sick_node = Node(
-        package = "sick_scan_xd",
-        executable = "sick_generic_caller",
-        parameters = [
+        package="sick_scan_xd",
+        executable="sick_generic_caller",
+        parameters=[
             {
                 "hostname": "192.168.1.10",
                 "udp_receiver_ip": "192.168.1.3",
@@ -36,11 +33,10 @@ def generate_launch_description():
                 )
             }
         ],
-        output = "screen",
+        output="screen",
     )
 
     return LaunchDescription([
         map_to_base_link_tf,
         sick_node,
     ])
-

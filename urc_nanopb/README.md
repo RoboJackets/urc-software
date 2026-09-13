@@ -1,11 +1,37 @@
-## URC Nanopb
+# URC Nanopb
 
-[Nanopb](https://github.com/nanopb/nanopb) is a Protocol Buffers implementation designed to efficiently package/encapsulate messages for communication with the [urc_firmware stack](https://github.com/RoboJackets/urc-firmware). It is a submodule of this repo, and the .proto messages it will use are defined in the /proto directory of this package.
+`urc_nanopb` provides the lightweight Protocol Buffers types used to communicate
+between rover software and microcontroller firmware. It exports a library for
+other ROS packages and has no runtime nodes.
 
+## Build contract
 
-This package...
-1. Uses nanopb to convert the .proto files into cpp/hpp files
-2. Creates a library with those files and any other necessary nanopb files
-3. Makes all those files accessible in the `urc_nanopb` package
+[`proto/urc.proto`](proto/urc.proto) is the authoritative rover protocol schema.
+During a workspace build, CMake uses the vendored Nanopb generator to create
+`urc.pb.h` and `urc.pb.c`, compiles them into a shared library, and installs the
+generated header as `urc_nanopb/urc.pb.h`.
 
+Consumers declare a dependency on `urc_nanopb`, link its exported library, and
+include the generated header:
+
+```cpp
+#include <urc_nanopb/urc.pb.h>
+```
+
+## Protocol areas
+
+The schema includes messages for drivetrain commands and feedback, status-light
+commands, battery telemetry, arm control, IMU data, and science-module control.
+The drivetrain, status-light, and battery interfaces are used by `urc_hw`.
+
+## Changing the protocol
+
+- Update `urc.proto` and the corresponding firmware together.
+- Preserve field numbers and wire compatibility; do not reuse removed field
+  numbers for different data.
+- Rebuild the workspace after schema changes. Generated Nanopb files are build
+  outputs and should not be edited or committed.
+
+The matching microcontroller implementation lives in the
+[URC firmware repository](https://github.com/RoboJackets/urc-firmware).
 

@@ -17,6 +17,7 @@ find_package(geographic_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
 
 include_directories(
@@ -24,9 +25,9 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/gps_imu_localizer.cpp
   src/covariances_on_imu.cpp
   src/covariances_on_gps.cpp
+  src/ground_truth.cpp
 )
 
 set(dependencies
@@ -40,20 +41,15 @@ set(dependencies
   geometry_msgs
   tf2
   tf2_ros
+  tf2_msgs
   laser_geometry
-  
+
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
-
-rclcpp_components_register_node(
-  ${PROJECT_NAME}
-  PLUGIN "gps_imu_localizer::GpsImuLocalizer"
-  EXECUTABLE ${PROJECT_NAME}_GpsImuLocalizer
-)
 
 rclcpp_components_register_node(
   ${PROJECT_NAME}
@@ -67,12 +63,23 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_CovariancesOnGps
 )
 
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_localization::GroundTruth"
+  EXECUTABLE ${PROJECT_NAME}_GroundTruth
+)
+
 # Install launch files.
 install(
   DIRECTORY
   launch
   config
   DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
 
 install(TARGETS

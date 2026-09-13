@@ -12,7 +12,10 @@ find_package(hardware_interface REQUIRED)
 find_package(realtime_tools REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(urc_hw REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(urc_nanopb REQUIRED)
@@ -30,6 +33,8 @@ add_library(
   src/status_light_controller.cpp
   src/bms_broadcaster.cpp
   src/swerve_drive_controller.cpp
+  src/rocker_effort_pid.cpp
+  src/rocker_tf_broadcaster.cpp
   include/urc_controllers/status_light_controller.hpp
   include/urc_controllers/bms_broadcaster.hpp
   include/urc_controllers/swerve_drive_controller.hpp
@@ -47,7 +52,10 @@ ament_target_dependencies(
   realtime_tools
   pluginlib
   rclcpp
+  rclcpp_components
   rclcpp_lifecycle
+  sensor_msgs
+  std_msgs
   urc_hw
   urc_nanopb
   urc_msgs
@@ -61,6 +69,18 @@ ament_target_dependencies(
 
 target_compile_definitions(urc_controllers PRIVATE "urc_hw_BUILDING_LIBRARY")
 pluginlib_export_plugin_description_file(controller_interface urc_controllers.xml)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_controllers::RockerEffortPid"
+  EXECUTABLE ${PROJECT_NAME}_RockerEffortPid
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "urc_controllers::RockerTfBroadcaster"
+  EXECUTABLE ${PROJECT_NAME}_RockerTfBroadcaster
+)
 
 
 install(
@@ -87,7 +107,10 @@ ament_export_dependencies(
   hardware_interface
   pluginlib
   rclcpp
+  rclcpp_components
   rclcpp_lifecycle
+  sensor_msgs
+  std_msgs
   urc_hw
   urc_nanopb
   urc_msgs

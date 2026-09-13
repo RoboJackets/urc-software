@@ -13,12 +13,18 @@
   <depend>hardware_interface</depend>
   <depend>realtime_tools</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>rclcpp_lifecycle</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>urc_hw</depend>
   <depend>urc_nanopb</depend>
   <depend>urc_msgs</depend>
   <depend>joint_trajectory_controller</depend>
   <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
   <depend>ros2_control</depend>
 
   <build_depend>pluginlib</build_depend>
