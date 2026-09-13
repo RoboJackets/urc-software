@@ -1,0 +1,93 @@
+#ifndef SLAM_NODE_HPP_
+#define SLAM_NODE_HPP_
+
+#include <memory>
+#include <string>
+#include <optional>
+#include <deque>
+#include <vector>
+#include <nav_msgs/msg/odometry.hpp>
+#include <nav_msgs/msg/path.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/imu.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tf2_ros/transform_broadcaster.h>
+
+#include "slam_backend.hpp"
+#include "lidar_frontend.hpp"
+
+namespace urc_slam {
+    class SlamNode : public rclcpp::Node {
+        public:
+            explicit SlamNode(
+                const rclcpp::NodeOptions &options = rclcpp::NodeOptions()
+            );
+
+        private:
+            LidarFrontend lidar_frontend;
+            LidarFrontend::Cloud::Ptr previous_keyframe_cloud;
+            std::vector<LidarFrontend::Cloud::ConstPtr> keyframe_clouds;
+            gtsam::Pose3 last_lidar_relative_pose;
+            double maximum_fitness_score;
+
+
+            void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
+            void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+            void gpsCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+            void processGPSMeasurements();
+            void publishOutputs(const rclcpp::Time &stamp);
+            void rebuildMap();
+
+
+
+            SlamBackend backend;
+            bool imu_integrated_since_keyframe = false;
+            std::optional<rclcpp::Time> previous_imu_stamp;
+            std::size_t latest_keyframe_index = 0;
+
+            struct KeyframeStamp {
+                std::size_t index;
+                rclcpp::Time stamp;
+            };
+
+            std::deque<KeyframeStamp> keyframe_stamps;
+
+
+            rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub;
+            rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_sub;
+            rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr gps_sub;
+
+            rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr slam_odom_pub;
+            rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub;
+
+            std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster;
+
+            nav_msgs::msg::Path path_msg;
+
+            struct MatchedGPS {
+                std::size_t keyframe_index;
+                nav_msgs::msg::Odometry measurement;
+            };
+            std::deque<nav_msgs::msg::Odometry> gps_buffer;
+            std::optional<rclcpp::Time> last_accepted_gps_stamp;
+            std::deque<MatchedGPS> matched_gps;
+            double gps_time_tolerance_sec = 0.1;
+            
+            
+
+            std::string slam_odom_topic;
+            std::string imu_topic;
+            std::string lidar_topic;
+            std::string gps_topic;
+            std::string map_frame;
+            std::string base_link_frame;
+
+
+            LidarFrontend::Cloud::Ptr accumulated_map;
+            double map_voxel_size_m;
+            rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
+            void addKeyframeToMap(const LidarFrontend::Cloud::ConstPtr &cloud, const rclcpp::Time &stamp);
+    };
+
+}
+#endif

@@ -24,7 +24,6 @@ def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_localization = get_package_share_directory("urc_localization")
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
@@ -197,12 +196,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    launch_ekf = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(path_urc_localization, "launch", "ekf.launch.py")
-        )
-    )
-
     launch_autonomy = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
@@ -355,7 +348,6 @@ def generate_launch_description():
             robot_state_publisher_node,
             covariances_on_imu,
             covariances_on_gps,
-            launch_ekf,
             launch_autonomy,
             rocker_tf_broadcaster,
             rocker_effort_pid_node,
