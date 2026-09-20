@@ -9,7 +9,7 @@
         joint origins matching the CAD assembly mates. The ros2_control
         block and gz_ros2_control gazebo plugin are carried over from the
         original hand-written Gazebo xacro, with joint/link names renamed
-        to match controller_manager_arm.yaml (joint1..joint5, base_link,
+        to match controller_manager_arm.yaml (joint1..joint5, arm_base_link,
         link1..link5, tool0).
 
         Joint mapping (SolidWorks name -> controller name):
@@ -20,7 +20,7 @@
           diffw_yaw         -> joint5   (wrist roll)
 
         Link mapping:
-          base_lineara -> base_link
+          base_lineara -> arm_base_link
           bicep_base   -> link1
           bicep_link   -> link2
           forearm_link -> link3
@@ -67,20 +67,21 @@
 
         </ros2_control>
 
-        <!-- Gazebo plugin to load controller manager -->
+        <!-- UNCOMMENT IF ONLY ARM SIM NEEDED -->
+        <!-- Gazebo plugin to load controller manager
         <gazebo>
                 <plugin filename="gz_ros2_control-system"
                         name="gz_ros2_control::GazeboSimROS2ControlPlugin">
                         <parameters>$(find cartesian_controller_simulation)/config/controller_manager_arm.yaml</parameters>
                 </plugin>
-        </gazebo>
+        </gazebo> -->
 
         <material name="base">
                 <color rgba="0.79216 0.81961 0.93333 1" />
         </material>
 
-        <!-- ================= base_link (was base_lineara) ================= -->
-        <link name="base_link">
+        <!-- ================= arm_base_link (was base_lineara) ================= -->
+        <link name="arm_base_link">
                 <inertial>
                         <origin xyz="3.579E-06 0.22158 0.010673" rpy="0 0 0" />
                         <mass value="1.3141" />
@@ -128,7 +129,7 @@
         <!-- joint1: base slide (was forearm_prismatic) -->
         <joint name="joint1" type="prismatic">
                 <origin xyz="0 0 0.03135" rpy="0 0 0" />
-                <parent link="base_link" />
+                <parent link="arm_base_link" />
                 <child link="link1" />
                 <axis xyz="0 1 0" />
                 <limit lower="0" upper="0.5" effort="100" velocity="1.0" />
@@ -368,7 +369,7 @@
         <!-- Gazebo per-link material tags                                      -->
         <!-- ================================================================= -->
 
-        <gazebo reference="base_link">
+        <gazebo reference="arm_base_link">
                 <self_collide>true</self_collide>
         </gazebo>
         <gazebo reference="link1">
