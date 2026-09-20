@@ -1,189 +1,73 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-##############
-# Repo Setup #
-##############
+repository_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+compose_file="${repository_directory}/docker/docker-compose.yml"
+project_name="urc-software"
+command="${1:-start}"
 
-# Check if Git is installed
-if ! command -v git &> /dev/null; then
-    echo "Git is not installed. Please install Git and try again."
-    exit 1
-fi
-
-# Function to clone repository
-clone_repository() {
-    local repository_url="$1"
-    local destination_directory="$2"
-    if [[ -z "$(ls -A "$destination_directory")" ]]; then
-        if ! git clone "$repository_url" "$destination_directory"; then
-            echo "Failed to clone the repository."
-            exit 1
-        fi
-    else
-        echo "Destination directory '$destination_directory' likely contains repo already (not empty). Skipping cloning."
+require_docker() {
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "Docker is not installed or is not on PATH." >&2
+        exit 1
     fi
-}
 
-# Determine the platform
-platform=$(uname)
-if [[ "$platform" == "Darwin" || "$platform" == "Linux" || "$platform" == *"MINGW"* || "$platform" == *"MSYS"* ]]; then
-    clone_repository "https://github.com/RoboJackets/urc-rover.git" "rover_ws/src"
-    clone_repository "https://github.com/RoboJackets/urc-drone.git" "drone_ws/src"
-else
-    echo "Unsupported platform: $platform"
-    exit 1
-fi
-
-
-#################
-# Docker Setup  #
-#################
-
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    echo "Docker is not installed. Please install Docker and try again."
-    exit 1
-fi
-
-# Set up image name + tag
-image_name="tiryoh/ros2-desktop-vnc"
-image_tag="humble"
-
-# Function to get the current working directory
-get_cwd() {
-    if [[ "$(uname -s)" == "Darwin" || "$(uname -s)" == "Linux" ]]; then
-        echo "$(pwd)"
-    elif [[ "$(uname -s)" == *"MINGW"* || "$(uname -s)" == *"MSYS"* ]]; then
-        dir="$(dirname "$(readlink -f "$BASH_SOURCE")" | sed 's/^[A-Za-z]://')"
-        echo "/$(echo "$dir" | sed 's/\\/\//g' | sed 's/://')"
-    else
-        echo "Unsupported platform: $(uname -s)"
+    if ! docker compose version >/dev/null 2>&1; then
+        echo "Docker Compose is unavailable. Install Docker Desktop or the Docker Compose plugin." >&2
         exit 1
     fi
 }
 
-# Set up container name + location
-container_name="urc_container"
-mount_dir=$(get_cwd)
-
-ros_dependencies=(
-    python3-colcon-common-extensions
-    python3-protobuf
-    python3-rosdep
-    ros-humble-behaviortree-cpp
-    ros-humble-controller-interface
-    ros-humble-diagnostic-updater
-    ros-humble-effort-controllers
-    ros-humble-filters
-    ros-humble-geodesy
-    ros-humble-geographic-msgs
-    ros-humble-grid-map-core
-    ros-humble-grid-map-cv
-    ros-humble-grid-map-filters
-    ros-humble-grid-map-msgs
-    ros-humble-grid-map-pcl
-    ros-humble-grid-map-ros
-    ros-humble-grid-map-rviz-plugin
-    ros-humble-grid-map-visualization
-    ros-humble-gz-ros2-control
-    ros-humble-hardware-interface
-    ros-humble-joint-state-broadcaster
-    ros-humble-joint-state-publisher
-    ros-humble-joint-state-publisher-gui
-    ros-humble-joint-trajectory-controller
-    ros-humble-librealsense2
-    ros-humble-realtime-tools
-    ros-humble-robot-localization
-    ros-humble-ros2-control
-    ros-humble-rosbridge-server
-    ros-humble-usb-cam
-)
-
-install_ros_dependencies() {
-    local missing_dependencies=()
-
-    for dependency in "${ros_dependencies[@]}"; do
-        if ! docker exec "$container_name" dpkg-query --status "$dependency" >/dev/null 2>&1; then
-            missing_dependencies+=("$dependency")
-        fi
-    done
-
-    if [[ ${#missing_dependencies[@]} -eq 0 ]]; then
-        echo "ROS dependencies are already installed."
-        return
-    fi
-
-    echo "Installing missing ROS dependencies..."
-    docker exec "$container_name" apt-get update
-    docker exec \
-        --env DEBIAN_FRONTEND=noninteractive \
-        "$container_name" \
-        apt-get install -y "${missing_dependencies[@]}"
+compose() {
+    docker compose --project-name "${project_name}" --file "${compose_file}" "$@"
 }
 
-# Function to start the container
 start_container() {
-    # Check if the container is already running
-    if docker ps -q --filter "name=^/${container_name}$" | grep -q .; then
-        echo "Container $container_name is already running."
-        install_ros_dependencies
-        return
+    require_docker
+
+    if [[ "$(uname -s)" == "Linux" ]]; then
+        export USER_UID="${USER_UID:-$(id -u)}"
+        export USER_GID="${USER_GID:-$(id -g)}"
     fi
 
-    # Check if the container already exists
-    existing_container=$(docker ps -aq --filter "name=^/${container_name}$")
-    if [[ -n "$existing_container" ]]; then
-        # Start the existing container
-        if ! docker start "$container_name" >/dev/null; then
-            echo "Failed to start container $container_name."
-            exit 1
-        fi
-        echo "Container $container_name started."
-    else
-        # Run the container and mount with additional options on first creation
-        docker pull --platform=linux/amd64 "$image_name:$image_tag"
-        docker run -p 6060:80 --shm-size=512m --security-opt seccomp=unconfined -d --name "$container_name" -v "$mount_dir:/home/ubuntu/urc_container" "$image_name:$image_tag"
-        echo "Container $container_name pulled, created, and started"
-    fi
+    echo "Building and starting the URC TigerVNC development container..."
+    compose up --build --detach
 
-    install_ros_dependencies
+    echo
+    echo "Container is running."
+    echo "TigerVNC address: localhost:${VNC_HOST_PORT:-5901}"
+    echo "TigerVNC password: ${VNC_PASSWORD:-ros}"
+    echo "Open Terminal Emulator in the desktop to work in /workspace/rover_ws."
+    echo "Run '$0 shell' for a host-terminal shell in the container."
 }
 
-# Function to stop the container
-stop_container() {
-    # Stop the container
-    docker stop "$container_name" >/dev/null 2>&1
-    echo "Container $container_name stopped"
-}
-
-# Function to display usage instructions
-display_usage() {
-    echo "Usage: $0 [start|stop|help]"
-    echo "  start   : Start the container (default behavior if no argument is provided)"
-    echo "  stop    : Stop the container"
-    echo "  help    : Display this help message"
-}
-
-# Check if a command-line argument is provided
-if [[ $# -eq 0 ]]; then
-    # No argument provided, start the container by default
-    start_container
-else
-    # Check the command-line argument
-    case "$1" in
-        start)
-            start_container
-            ;;
-        stop)
-            stop_container
-            ;;
-        help)
-            display_usage
-            ;;
-        *)
-            echo "Unrecognized command: $1"
-            display_usage
-            exit 1
-            ;;
-    esac
-fi
+case "${command}" in
+    start)
+        start_container
+        ;;
+    stop)
+        require_docker
+        compose down
+        ;;
+    restart)
+        require_docker
+        compose down
+        start_container
+        ;;
+    shell)
+        require_docker
+        compose exec urc-development bash
+        ;;
+    logs)
+        require_docker
+        compose logs --follow
+        ;;
+    help|-h|--help)
+        echo "Usage: $0 [start|stop|restart|shell|logs|help]"
+        ;;
+    *)
+        echo "Unrecognized command: ${command}" >&2
+        echo "Usage: $0 [start|stop|restart|shell|logs|help]" >&2
+        exit 1
+        ;;
+esac

@@ -8,7 +8,12 @@ launch files, `ament_cmake`, and `colcon`.
 
 ## Quick start
 
-Create a workspace and clone the repository with its submodules:
+For a consistent Docker development environment on macOS, Windows, or Linux,
+including an XFCE desktop over TigerVNC, follow the
+[Docker installation guide](documents/installation/docker_installation.md).
+
+For a native ROS 2 installation, create a workspace and clone the repository
+with its submodules:
 
 ```bash
 mkdir -p rover_ws

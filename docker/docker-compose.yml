@@ -1,19 +1,40 @@
-version: "3.9"
-
 services:
-  ros-desktop:
-    image: osrf/ros:humble-desktop
-    container_name: ros_desktop
+  urc-development:
+    platform: linux/amd64
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    image: urc-ros2-humble-tigervnc:latest
+    init: true
+    environment:
+      VNC_PASSWORD: ${VNC_PASSWORD:-ros}
+      VNC_GEOMETRY: ${VNC_GEOMETRY:-1280x800}
+      VNC_DEPTH: ${VNC_DEPTH:-24}
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
+      RMW_IMPLEMENTATION: ${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+      QT_X11_NO_MITSHM: "1"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    ports:
+      - "${VNC_BIND_ADDRESS:-127.0.0.1}:${VNC_HOST_PORT:-5901}:5901"
+    volumes:
+      - ..:/workspace/rover_ws/src
+      - urc-build:/workspace/rover_ws/build
+      - urc-install:/workspace/rover_ws/install
+      - urc-log:/workspace/rover_ws/log
+    shm_size: "1gb"
     stdin_open: true
     tty: true
-    environment:
-      - DISPLAY=${DISPLAY}
-    volumes:
-      # Workspace
-      - ..:/home/rover_ws/src
-      # X11 socket (Linux/WSL2 only, ignored elsewhere)
-      - ${XSOCK:-/tmp/.X11-unix}:${XSOCK:-/tmp/.X11-unix}
-      # Xauthority (Linux only, ignored elsewhere)
-      - ${XAUTH:-$HOME/.Xauthority}:/root/.Xauthority:rw
-    privileged: ${PRIVILEGED:-false}
-    network_mode: ${NETWORK_MODE:-bridge}
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -x Xtigervnc >/dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  urc-build:
+  urc-install:
+  urc-log:
