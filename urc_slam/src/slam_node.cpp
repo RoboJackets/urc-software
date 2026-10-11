@@ -20,6 +20,7 @@
 namespace {
     //About 5 s of imu history at 100 Hz
     constexpr std::size_t kMaximumImuBufferSize = 500;
+    constexpr double kUnitQuaternionTolerance = 1e-3;
 }
 
 namespace urc_slam {
@@ -60,13 +61,16 @@ namespace urc_slam {
         map_frame = declare_parameter<std::string>("map_frame", "map");
         base_link_frame = declare_parameter<std::string>("base_link_frame", "base_link");
 
-        backend.initialize(
-            gtsam::NavState(
-                gtsam::Pose3(),
-                gtsam::Vector3::Zero()
-            ),
-            gtsam::imuBias::ConstantBias()
-        );
+        // Identity initialization disabled: the backend is now initialized at the
+        // first keyframe from the IMU's roll and pitch, so gravity does not leak
+        // into the IMU prediction when the rover starts tilted.
+        // backend.initialize(
+        //     gtsam::NavState(
+        //         gtsam::Pose3(),
+        //         gtsam::Vector3::Zero()
+        //     ),
+        //     gtsam::imuBias::ConstantBias()
+        // );
 
         imu_sub = create_subscription<sensor_msgs::msg::Imu>(
             imu_topic,
@@ -137,6 +141,17 @@ namespace urc_slam {
             imu_buffer.pop_front();
         }
 
+        // Stored to initialize the starting orientation from gravity
+        const gtsam::Quaternion orientation(
+            msg->orientation.w,
+            msg->orientation.x,
+            msg->orientation.y,
+            msg->orientation.z
+        );
+        if (std::abs(orientation.norm() - 1.0) < kUnitQuaternionTolerance) {
+            latest_imu_orientation = gtsam::Rot3(orientation.normalized());
+        }
+
     }
 
     bool SlamNode::integrateImuUntil(const rclcpp::Time &stamp) {
@@ -201,6 +216,27 @@ namespace urc_slam {
 
         // First cloud is keyframe zero
         if (!previous_keyframe_cloud) {
+            // Initialize from IMU roll and pitch instead of identity so the
+            // starting orientation is gravity-aligned. Yaw stays zero to keep
+            // the map frame anchored to the starting heading.
+            if (!latest_imu_orientation) {
+                RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 1000,
+                    "Waiting for IMU orientation to initialize SLAM");
+                return;
+            }
+            const gtsam::Rot3 initial_rotation = gtsam::Rot3::Ypr(
+                0.0,
+                latest_imu_orientation->pitch(),
+                latest_imu_orientation->roll()
+            );
+            backend.initialize(
+                gtsam::NavState(
+                    gtsam::Pose3(initial_rotation, gtsam::Point3::Zero()),
+                    gtsam::Vector3::Zero()
+                ),
+                gtsam::imuBias::ConstantBias()
+            );
+
             previous_keyframe_cloud = current_cloud;
             latest_keyframe_index = 0;
             discardImuUntil(scan_stamp);

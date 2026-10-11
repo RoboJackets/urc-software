@@ -56,6 +56,7 @@ namespace urc_slam {
                 gtsam::Vector3 angular_velocity;
             };
             std::deque<ImuSample> imu_buffer;
+            std::optional<gtsam::Rot3> latest_imu_orientation;
 
             std::deque<KeyframeStamp> keyframe_stamps;
 
