@@ -13,11 +13,14 @@
 
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/common/transforms.h>
-#include <pcl/filters/voxel_grid.h>
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 
+namespace {
+    //About 5 s of imu history at 100 Hz
+    constexpr std::size_t kMaximumImuBufferSize = 500;
+}
 
 namespace urc_slam {
     SlamNode::SlamNode(const rclcpp::NodeOptions &options)
@@ -29,31 +32,25 @@ namespace urc_slam {
                 declare_parameter<double>("lidar_frontend.maximum_correspondence_distance_m", 2.0),
                 declare_parameter<int>("lidar_frontend.maximum_iterations", 64),
                 declare_parameter<double>("lidar_frontend.transformation_epsilon", 1e-6),
-                declare_parameter<double>("lidar_frontend.fitness_epsilon", 1e-6),
                 gtsam::Pose3()
                 
             ),
             previous_keyframe_cloud(nullptr),
-            last_lidar_relative_pose(gtsam::Pose3()),
             maximum_fitness_score(
-                declare_parameter<double>("lidar_frontend.maximum_fitness_score", 0.5)
+                declare_parameter<double>("lidar_frontend.maximum_fitness_score", 0.3)
             ),
             backend(
                 declare_parameter<double>("keyframe.translation_threshold_m", 0.5),
                 declare_parameter<double>("keyframe.rotation_threshold_rad", 0.174533),
                 gtsam::Vector6::Constant(0.1),
                 gtsam::Vector3::Constant(1.0),
-                gtsam::Vector6::Constant(1.0),
                 gtsam::Vector6::Constant(0.2),
                 gtsam::Vector6::Constant(1e-3),
                 gtsam::Vector6::Constant(1e-4)
             ),
             previous_imu_stamp(std::nullopt),
             latest_keyframe_index(0),
-            accumulated_map(new LidarFrontend::Cloud),
-            map_voxel_size_m(
-                declare_parameter<double>("map_voxel_size_m", 0.5)
-            )
+            accumulated_map(new LidarFrontend::Cloud)
 
     {
         imu_topic = declare_parameter<std::string>("imu_topic", "/imu/data");
@@ -122,44 +119,66 @@ namespace urc_slam {
     }
 
     void SlamNode::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg) {
-        const rclcpp::Time current_stamp(msg->header.stamp);
+        imu_buffer.push_back({
+            rclcpp::Time(msg->header.stamp),
+            gtsam::Vector3(
+                msg->linear_acceleration.x,
+                msg->linear_acceleration.y,
+                msg->linear_acceleration.z
+            ),
+            gtsam::Vector3(
+                msg->angular_velocity.x,
+                msg->angular_velocity.y,
+                msg->angular_velocity.z
+            )
+        });
 
-        const gtsam::Vector3 acceleration(
-            msg->linear_acceleration.x,
-            msg->linear_acceleration.y,
-            msg->linear_acceleration.z
-        );
-
-        const gtsam::Vector3 angular_velocity(
-            msg->angular_velocity.x,
-            msg->angular_velocity.y,
-            msg->angular_velocity.z
-        );
-
-        if (!previous_imu_stamp.has_value()) {
-            previous_imu_stamp = current_stamp;
-            return;
+        while (imu_buffer.size() > kMaximumImuBufferSize) {
+            imu_buffer.pop_front();
         }
 
-        const double dt = (current_stamp - previous_imu_stamp.value()).seconds();
-        previous_imu_stamp = current_stamp;
+    }
 
-        if (dt <= 0.0 || dt > 0.1) {
-            return;
+    bool SlamNode::integrateImuUntil(const rclcpp::Time &stamp) {
+        if (imu_buffer.empty() || imu_buffer.back().stamp < stamp) {
+            return false;
         }
 
-        if (!previous_keyframe_cloud) {
-            return;
+        while (!imu_buffer.empty() && imu_buffer.front().stamp <= stamp) {
+            const ImuSample sample = imu_buffer.front();
+            imu_buffer.pop_front();
+
+            const double dt = (sample.stamp - previous_imu_stamp.value()).seconds();
+            previous_imu_stamp = sample.stamp;
+
+            if (dt <= 0 || dt > 0.1) {
+                continue;
+            }
+            backend.integrateImuMeasurement(
+                sample.acceleration, sample.angular_velocity, dt
+            );
         }
 
-        backend.integrateImuMeasurement(
-            acceleration,
-            angular_velocity,
-            dt
-        );
 
-        imu_integrated_since_keyframe = true;
-    }  
+        const double remaining_dt = (stamp - previous_imu_stamp.value()).seconds();
+        if (remaining_dt > 0.0) {
+            const ImuSample &next = imu_buffer.front();
+            backend.integrateImuMeasurement(
+                next.acceleration, next.angular_velocity, remaining_dt
+            );
+        }
+        previous_imu_stamp = stamp;
+
+
+        return true;
+    }
+
+    void SlamNode::discardImuUntil(const rclcpp::Time &stamp) {
+        while (!imu_buffer.empty() && imu_buffer.front().stamp <= stamp) {
+            imu_buffer.pop_front();
+        }
+        previous_imu_stamp = stamp;
+    }
 
     void SlamNode::lidarCallback(
         const sensor_msgs::msg::PointCloud2::SharedPtr msg
@@ -178,12 +197,13 @@ namespace urc_slam {
             RCLCPP_WARN(get_logger(), "Discarding empty LiDAR cloud");
             return;
         }
+        const rclcpp::Time scan_stamp(msg->header.stamp);
 
         // First cloud is keyframe zero
         if (!previous_keyframe_cloud) {
             previous_keyframe_cloud = current_cloud;
             latest_keyframe_index = 0;
-            imu_integrated_since_keyframe = false;
+            discardImuUntil(scan_stamp);
 
             keyframe_clouds.push_back(current_cloud);
             keyframe_stamps.push_back({
@@ -195,7 +215,9 @@ namespace urc_slam {
             return;
         }
 
-        if (!imu_integrated_since_keyframe) {
+        if (!integrateImuUntil(scan_stamp)) {
+            RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 1000,
+                "Waiting for IMU data to reach the LiDAR scan stamp");
             return;
         }
 
@@ -212,7 +234,7 @@ namespace urc_slam {
         const LidarRegistrationResult registration = lidar_frontend.registerClouds(
             previous_keyframe_cloud,
             current_cloud,
-            last_lidar_relative_pose
+            imu_relative_guess
         );
 
         if (!registration.converged) {
@@ -227,35 +249,30 @@ namespace urc_slam {
             return;
         }
 
-        last_lidar_relative_pose = registration.relative_pose;
 
         const std::size_t previous_index = latest_keyframe_index;
         const std::size_t current_index = previous_index + 1;
 
-        // Convert icp relative transform to global pose
-        const gtsam::Pose3 current_global_pose = backend.latestEstimate().pose().compose(
-            registration.relative_pose
-        );
 
         // Stage imu state, then optimize with LiDAR constraint
-        backend.addKeyframe(current_global_pose);
+        backend.addImuKeyframe();
         backend.addLidarFactor(
             previous_index,
             current_index,
             registration.relative_pose
         );
+        backend.optimize();
 
         latest_keyframe_index = current_index;
         previous_keyframe_cloud = current_cloud;
-        imu_integrated_since_keyframe = false;
 
         keyframe_clouds.push_back(current_cloud);
         keyframe_stamps.push_back({
-            current_index, rclcpp::Time(msg->header.stamp)
+            current_index, scan_stamp
         });
-        addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
+        addKeyframeToMap(current_cloud, scan_stamp);
         processGPSMeasurements();
-        publishOutputs(rclcpp::Time(msg->header.stamp));
+        publishOutputs(scan_stamp);
     }
 
     void SlamNode::gpsCallback(nav_msgs::msg::Odometry::SharedPtr msg) {
@@ -356,10 +373,13 @@ namespace urc_slam {
             );
 
             matched_gps.pop_front();
+
         }
         if (has_gps_updates) {
+            backend.optimize();
             rebuildMap();
             publishOutputs(keyframe_stamps.back().stamp);
+
         }
     }
 
@@ -472,12 +492,6 @@ namespace urc_slam {
         pcl::transformPointCloud(*cloud, transformed_cloud, map_T_lidar.matrix());
 
         *accumulated_map += transformed_cloud;
-        // LidarFrontend::Cloud::Ptr filtered_map(new LidarFrontend::Cloud);
-        // pcl::VoxelGrid<LidarFrontend::Point> voxel_filter;
-        // voxel_filter.setInputCloud(accumulated_map);
-        // voxel_filter.setLeafSize(map_voxel_size_m, map_voxel_size_m, map_voxel_size_m);
-        // voxel_filter.filter(*filtered_map);
-        // accumulated_map = filtered_map;
 
         sensor_msgs::msg::PointCloud2 map_msg;
         pcl::toROSMsg(*accumulated_map, map_msg);

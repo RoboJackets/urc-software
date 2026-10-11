@@ -19,8 +19,7 @@ slam_node:
       maximum_correspondence_distance_m: 2.0
       maximum_iterations: 64
       transformation_epsilon: 1.0e-6
-      fitness_epsilon: 1.0e-6
-      maximum_fitness_score: 2.5
+      maximum_fitness_score: 0.3
 
 slam_navsat_transform:
   ros__parameters:

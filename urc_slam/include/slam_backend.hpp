@@ -19,12 +19,10 @@ namespace urc_slam {
 
     class SlamBackend {
         public:
-            // Constructor
             SlamBackend(double keyframe_translation_threshold_m,
                 double keyframe_rotation_threshold_rad,
                 const gtsam::Vector6 &pose_prior_sigmas,
                 const gtsam::Vector3 &velocity_prior_sigmas,
-                const gtsam::Vector6 &odom_sigmas,
                 const gtsam::Vector6 &lidar_sigmas,
                 const gtsam::Vector6 &bias_prior_sigmas,
                 const gtsam::Vector6 &bias_between_sigmas
@@ -38,7 +36,7 @@ namespace urc_slam {
             bool shouldCreateKeyframe(const gtsam::Pose3 &measured_pose) const;
             
             //Adds node to graph
-            void addKeyframe(const gtsam::Pose3 &measured_pose);
+            void addImuKeyframe();
 
             void addLidarFactor(
                 std::size_t from_index,
@@ -52,9 +50,8 @@ namespace urc_slam {
                 const gtsam::Matrix3 &covariance
             );
             
-            // Adds a raw imu sample to the preintegrator
-            // Every time an imu measurement arrives, accumulate it into
-            //  a compressed IMU measurement between current and next frame
+            // Accumulates one IMU sample into the preintegrated measurement
+            // since the last keyframe
             void integrateImuMeasurement(
                 const gtsam::Vector3 &measured_acc,
                 const gtsam::Vector3 &measured_omega,
@@ -66,20 +63,19 @@ namespace urc_slam {
             gtsam::Pose3 poseAt(std::size_t index) const;
 
             gtsam::Pose3 predictedRelativePose() const;
-        private:
             void optimize();
+        private:
+
             // Factor graph symbols
             gtsam::Symbol poseKey(std::size_t index) const;
             gtsam::Symbol velocityKey(std::size_t index) const;
             gtsam::Symbol biasKey(std::size_t index) const;
 
-            // Translation distance
             double translationDistance(
                 const gtsam::Pose3 &a,
                 const gtsam::Pose3 &b
             ) const;
             
-            // Rotation Distance
             double rotationDistance(
                 const gtsam::Pose3 &a,
                 const gtsam::Pose3 &b
@@ -93,7 +89,6 @@ namespace urc_slam {
 
             gtsam::SharedNoiseModel pose_prior_noise;
             gtsam::SharedNoiseModel velocity_prior_noise;
-            gtsam::SharedNoiseModel odom_noise;
             gtsam::SharedNoiseModel lidar_noise;
             gtsam::SharedNoiseModel bias_prior_noise;
             gtsam::SharedNoiseModel bias_between_noise;
@@ -108,7 +103,6 @@ namespace urc_slam {
 
             double keyframe_translation_threshold_m;
             double keyframe_rotation_threshold_rad;
-            gtsam::Pose3 last_measured_pose;
             gtsam::Pose3 last_estimated_pose;
             gtsam::Vector3 last_estimated_velocity;
             gtsam::imuBias::ConstantBias last_estimated_bias;

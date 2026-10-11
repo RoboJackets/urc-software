@@ -27,7 +27,6 @@ namespace urc_slam {
                 double maximum_correspondence_distance_m,
                 int maximum_iterations,
                 double transformation_epsilon,
-                double fitness_epsilon,
                 const gtsam::Pose3 &base_T_lidar
             );
 
@@ -47,7 +46,6 @@ namespace urc_slam {
             double maximum_correspondence_distance_m_;
             int maximum_iterations_;
             double transformation_epsilon_;
-            double fitness_epsilon_;
 
             // Convert between base link and Lidar frame
             gtsam::Pose3 base_T_lidar_;
