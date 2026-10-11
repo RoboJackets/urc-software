@@ -16,6 +16,8 @@ find_package(std_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urc_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(vision_msgs REQUIRED)
 
 include_directories(
   include
@@ -30,6 +32,9 @@ add_library(${PROJECT_NAME} SHARED
   src/coordinator_state.cpp
   src/mission_action.cpp
   src/mission_navigation.cpp
+  src/yolo_search.cpp
+  src/spiral_search_pattern.cpp
+  src/detection_confirmation.cpp
 )
 
 set(dependencies
@@ -44,6 +49,8 @@ set(dependencies
   tf2_geometry_msgs
   tf2_ros
   urc_msgs
+  vision_msgs
+  sensor_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}

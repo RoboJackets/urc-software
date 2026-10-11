@@ -46,11 +46,25 @@ void NavCoordinator::initializeMissionActionServer()
       std::placeholders::_1));
 }
 
+// Made a method to check and see whether search mode is valid.
+std::optional<urc_state_machine::SearchMode> checkSearchMode(std::uint8_t search_mode)
+{
+  using Goal = urc_msgs::action::ExecuteAutonomousMission::Goal;
+  switch (search_mode) {
+    case Goal::SEARCH_NONE:
+      return urc_state_machine::SearchMode::NONE;
+    case Goal::SEARCH_YOLO:
+      return urc_state_machine::SearchMode::YOLO;
+    default:
+      return std::nullopt;
+  }
+}
+
 rclcpp_action::GoalResponse NavCoordinator::handleMissionGoal(
   const rclcpp_action::GoalUUID &,
   std::shared_ptr<const ExecuteMission::Goal> goal)
 {
-  if (!goal || goal->search_mode != ExecuteMission::Goal::SEARCH_NONE ||
+  if (!goal || !checkSearchMode(goal->search_mode) ||
     goal->waypoint.header.frame_id != map_frame_id_ || !hasValidPose(goal->waypoint.pose))
   {
     return rclcpp_action::GoalResponse::REJECT;
@@ -84,11 +98,14 @@ void NavCoordinator::handleMissionAccepted(
   active_mission_ = std::make_shared<urc_state_machine::ActiveMission>();
   active_mission_->goal_handle = goal_handle;
   active_mission_->original_waypoint = goal_handle->get_goal()->waypoint;
-  active_mission_->search_mode = urc_state_machine::SearchMode::NONE;
+
+  // We check if the goal is a supproted one if not set it to NONE 
+  active_mission_->search_mode = checkSearchMode(goal_handle->get_goal()->search_mode).value_or(urc_state_machine::SearchMode::NONE);
   last_error_ = ErrorType::NONE;
   last_error_details_.clear();
 
-  sendMissionNavigation();
+  startMissionNavigation();
+
 }
 
 }
