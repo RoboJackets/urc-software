@@ -39,17 +39,23 @@
 
         <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint_gz.urdf.xacro"/>
 
+        <!-- Uniform physical scale relative to the CAD export (metres).
+             Constant density: mass scales with s^3 and inertia with s^5.
+             The rover mount and angular joint limits are independent of scale. -->
+        <xacro:arg name="arm_scale" default="0.5" />
+        <xacro:property name="arm_scale" value="${float('$(arg arm_scale)')}" />
+
         <!-- ROS2 control interfaces -->
         <ros2_control name="cartesian_controller_simulation" type="system">
 
                 <joint name="joint1"> <!-- base slide - prismatic -->
                         <command_interface name="position">
                                 <param name="min">0</param>
-                                <param name="max">0.5</param>
+                                <param name="max">${0.5 * arm_scale}</param>
                         </command_interface>
                         <command_interface name="velocity">
-                                <param name="min">-1</param>
-                                <param name="max">1</param>
+                                <param name="min">${-arm_scale}</param>
+                                <param name="max">${arm_scale}</param>
                         </command_interface>
                         <state_interface name="position"/>
                         <state_interface name="velocity"/>
@@ -68,8 +74,8 @@
         </ros2_control>
 
         <!-- UNCOMMENT IF ONLY ARM SIM NEEDED -->
-        <!-- Gazebo plugin to load controller manager
-        <gazebo>
+        <!-- Gazebo plugin to load controller manager -->
+        <!-- <gazebo>
                 <plugin filename="gz_ros2_control-system"
                         name="gz_ros2_control::GazeboSimROS2ControlPlugin">
                         <parameters>$(find cartesian_controller_simulation)/config/controller_manager_arm.yaml</parameters>
@@ -83,22 +89,22 @@
         <!-- ================= arm_base_link (was base_lineara) ================= -->
         <link name="arm_base_link">
                 <inertial>
-                        <origin xyz="3.579E-06 0.22158 0.010673" rpy="0 0 0" />
-                        <mass value="1.3141" />
-                        <inertia ixx="0.034947" ixy="-1.0032E-07" ixz="-4.9223E-09"
-                                 iyy="0.0025144" iyz="3.7387E-07" izz="0.037389" />
+                        <origin xyz="${3.579E-06 * arm_scale} ${0.22158 * arm_scale} ${0.010673 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${1.3141 * arm_scale**3}" />
+                        <inertia ixx="${0.034947 * arm_scale**5}" ixy="${-1.0032E-07 * arm_scale**5}" ixz="${-4.9223E-09 * arm_scale**5}"
+                                 iyy="${0.0025144 * arm_scale**5}" iyz="${3.7387E-07 * arm_scale**5}" izz="${0.037389 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/base_lineara.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
@@ -106,150 +112,150 @@
         <!-- ================= link1 (was bicep_base) ================= -->
         <link name="link1">
                 <inertial>
-                        <origin xyz="-2.909E-05 0.072285 0.04786" rpy="0 0 0" />
-                        <mass value="0.80928" />
-                        <inertia ixx="0.001288" ixy="-2.9097E-08" ixz="2.9394E-09"
-                                 iyy="0.0024023" iyz="-3.1525E-09" izz="0.0018264" />
+                        <origin xyz="${-2.909E-05 * arm_scale} ${0.072285 * arm_scale} ${0.04786 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${0.80928 * arm_scale**3}" />
+                        <inertia ixx="${0.001288 * arm_scale**5}" ixy="${-2.9097E-08 * arm_scale**5}" ixz="${2.9394E-09 * arm_scale**5}"
+                                 iyy="${0.0024023 * arm_scale**5}" iyz="${-3.1525E-09 * arm_scale**5}" izz="${0.0018264 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_base.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
 
         <!-- joint1: base slide (was forearm_prismatic) -->
         <joint name="joint1" type="prismatic">
-                <origin xyz="0 0 0.03135" rpy="0 0 0" />
+                <origin xyz="0 0 ${0.03135 * arm_scale}" rpy="0 0 0" />
                 <parent link="arm_base_link" />
                 <child link="link1" />
                 <axis xyz="0 1 0" />
-                <limit lower="0" upper="0.5" effort="100" velocity="1.0" />
+                <limit lower="0" upper="${0.5 * arm_scale}" effort="100" velocity="${arm_scale}" />
         </joint>
 
         <!-- ================= link2 (was bicep_link) ================= -->
         <link name="link2">
                 <inertial>
-                        <origin xyz="-8.0298E-05 0.028836 0.082763" rpy="0 0 0" />
-                        <mass value="1.5004" />
-                        <inertia ixx="0.005463" ixy="-3.5399E-07" ixz="-1.6306E-05"
-                                 iyy="0.0069551" iyz="-5.814E-07" izz="0.001901" />
+                        <origin xyz="${-8.0298E-05 * arm_scale} ${0.028836 * arm_scale} ${0.082763 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${1.5004 * arm_scale**3}" />
+                        <inertia ixx="${0.005463 * arm_scale**5}" ixy="${-3.5399E-07 * arm_scale**5}" ixz="${-1.6306E-05 * arm_scale**5}"
+                                 iyy="${0.0069551 * arm_scale**5}" iyz="${-5.814E-07 * arm_scale**5}" izz="${0.001901 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/bicep_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
 
         <!-- joint2: shoulder pitch (was bicep_revolute) -->
         <joint name="joint2" type="revolute">
-                <origin xyz="0 0.076091 0.12103" rpy="0 0 0" />
+                <origin xyz="0 ${0.076091 * arm_scale} ${0.12103 * arm_scale}" rpy="0 0 0" />
                 <parent link="link1" />
                 <child link="link2" />
                 <axis xyz="0 1 0" />
-                <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="1.0" velocity="10.0" />
+                <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="30.0" velocity="10.0" />
         </joint>
 
         <!-- ================= link3 (was forearm_link) ================= -->
         <link name="link3">
                 <inertial>
-                        <origin xyz="-0.00011008 -0.025553 0.076716" rpy="0 0 0" />
-                        <mass value="1.601" />
-                        <inertia ixx="0.0051728" ixy="-2.2245E-06" ixz="7.8401E-06"
-                                 iyy="0.0064253" iyz="1.9188E-08" izz="0.0018615" />
+                        <origin xyz="${-0.00011008 * arm_scale} ${-0.025553 * arm_scale} ${0.076716 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${1.601 * arm_scale**3}" />
+                        <inertia ixx="${0.0051728 * arm_scale**5}" ixy="${-2.2245E-06 * arm_scale**5}" ixz="${7.8401E-06 * arm_scale**5}"
+                                 iyy="${0.0064253 * arm_scale**5}" iyz="${1.9188E-08 * arm_scale**5}" izz="${0.0018615 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/forearm_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
 
         <!-- joint3: elbow pitch (was forearm_revolute) -->
         <joint name="joint3" type="revolute">
-                <origin xyz="-0.00050763 0.068262 0.42862" rpy="0 0 0" />
+                <origin xyz="${-0.00050763 * arm_scale} ${0.068262 * arm_scale} ${0.42862 * arm_scale}" rpy="0 0 0" />
                 <parent link="link2" />
                 <child link="link3" />
                 <axis xyz="0 1 0" />
-                <limit lower="${-pi}" upper="${pi}" effort="1.0" velocity="10.0" />
+                <limit lower="${-pi}" upper="${pi}" effort="30.0" velocity="10.0" />
         </joint>
 
         <!-- ================= link4 (was diffw_forearm) ================= -->
         <link name="link4">
                 <inertial>
-                        <origin xyz="-1.4843E-05 5.7115E-06 0.0050339" rpy="0 0 0" />
-                        <mass value="0.27656" />
-                        <inertia ixx="9.9333E-05" ixy="5.7444E-09" ixz="-5.0297E-08"
-                                 iyy="0.00012995" iyz="5.1554E-10" izz="9.7766E-05" />
+                        <origin xyz="${-1.4843E-05 * arm_scale} ${5.7115E-06 * arm_scale} ${0.0050339 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${0.27656 * arm_scale**3}" />
+                        <inertia ixx="${9.9333E-05 * arm_scale**5}" ixy="${5.7444E-09 * arm_scale**5}" ixz="${-5.0297E-08 * arm_scale**5}"
+                                 iyy="${0.00012995 * arm_scale**5}" iyz="${5.1554E-10 * arm_scale**5}" izz="${9.7766E-05 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_forearm.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
 
         <!-- joint4: wrist pitch (was diffw_pitch) -->
         <joint name="joint4" type="revolute">
-                <origin xyz="-0.00047153 -0.068263 0.39814" rpy="0 0 0" />
+                <origin xyz="${-0.00047153 * arm_scale} ${-0.068263 * arm_scale} ${0.39814 * arm_scale}" rpy="0 0 0" />
                 <parent link="link3" />
                 <child link="link4" />
                 <axis xyz="0 1 0" />
-                <limit lower="-1.57" upper="1.57" effort="1.0" velocity="10.0" />
+                <limit lower="-1.57" upper="1.57" effort="8.0" velocity="10.0" />
         </joint>
 
         <!-- ================= link5 (was diffw_link) ================= -->
         <link name="link5">
                 <inertial>
-                        <origin xyz="4.5926E-06 1.4231E-06 0.0052114" rpy="0 0 0" />
-                        <mass value="0.12065" />
-                        <inertia ixx="6.1339E-05" ixy="8.9689E-10" ixz="1.7613E-08"
-                                 iyy="6.1337E-05" iyz="5.4578E-09" izz="4.0162E-05" />
+                        <origin xyz="${4.5926E-06 * arm_scale} ${1.4231E-06 * arm_scale} ${0.0052114 * arm_scale}" rpy="0 0 0" />
+                        <mass value="${0.12065 * arm_scale**3}" />
+                        <inertia ixx="${6.1339E-05 * arm_scale**5}" ixy="${8.9689E-10 * arm_scale**5}" ixz="${1.7613E-08 * arm_scale**5}"
+                                 iyy="${6.1337E-05 * arm_scale**5}" iyz="${5.4578E-09 * arm_scale**5}" izz="${4.0162E-05 * arm_scale**5}" />
                 </inertial>
                 <visual>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                         <material name="base" />
                 </visual>
                 <collision>
                         <origin xyz="0 0 0" rpy="0 0 0" />
                         <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
+                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" scale="${arm_scale} ${arm_scale} ${arm_scale}" />
                         </geometry>
                 </collision>
         </link>
@@ -258,11 +264,11 @@
         <!-- NOTE: unconfirmed whether this SolidWorks joint is actually the -->
         <!-- wrist roll motion; verify against the physical arm. -->
         <joint name="joint5" type="revolute">
-                <origin xyz="-7.4828E-05 0 0.063182" rpy="0 -0.0011843 0" />
+                <origin xyz="${-7.4828E-05 * arm_scale} 0 ${0.063182 * arm_scale}" rpy="0 -0.0011843 0" />
                 <parent link="link4" />
                 <child link="link5" />
                 <axis xyz="0 0 1" />
-                <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="1.0" velocity="2.0" />
+                <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="8.0" velocity="2.0" />
         </joint>
 
         <!-- ================================================================= -->

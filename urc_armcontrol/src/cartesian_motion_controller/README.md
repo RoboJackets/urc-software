@@ -74,7 +74,7 @@ controller_manager:
 cartesian_motion_controller:
   ros__parameters:
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "arm_base_link"
     joints:
       - joint1
       - joint2

@@ -1,9 +1,11 @@
 import os
 from launch import LaunchDescription
 from launch.actions import (
+    AppendEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     RegisterEventHandler,
+    TimerAction
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -18,9 +20,17 @@ def generate_launch_description():
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
     path_urc_localization = get_package_share_directory("urc_localization")
+    path_arm = get_package_share_directory("cartesian_controller_simulation")
+
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
+    )
+
+    ## tells gazebo where arm urdf is 
+    set_arm_resource_path = AppendEnvironmentVariable(
+        "IGN_GAZEBO_RESOURCE_PATH",
+        os.path.dirname(path_arm),
     )
 
     sim_world_arg = DeclareLaunchArgument(
@@ -34,9 +44,15 @@ def generate_launch_description():
         default_value=os.path.join(
             path_urc_hw_description,
             "urdf/simplified_swerve",
-            "simplified_swerve.urdf.xacro",
+            "simplified_swerve_arm.urdf.xacro",
         ),
         description="Path to xacro file",
+    )
+
+    arm_scale_arg = DeclareLaunchArgument(
+        "arm_scale",
+        default_value="0.5",
+        description="Uniform arm size relative to CAD (1.0 is original size)",
     )
 
     bridge_yaml = DeclareLaunchArgument(
@@ -59,6 +75,8 @@ def generate_launch_description():
                 walli_xacro_config,
                 " use_sim:=",
                 "true",
+                " arm_scale:=",
+                LaunchConfiguration("arm_scale"),
             ]
         ),
         value_type=str,
@@ -68,7 +86,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
         ),
-        launch_arguments={"gz_args": world_path}.items(),
+        launch_arguments={"gz_args": ["-r ", world_path]}.items(),
     )
 
     bridge = Node(
@@ -159,9 +177,30 @@ def generate_launch_description():
         ],
     )
 
+    load_cartesian_motion_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="screen",
+        arguments=["cartesian_motion_controller", "--inactive", "--param-file", controller_config_file_dir],
+        # remappings=[
+        #     ("/cartesian_motion_controller/target_frame", "/motion_control_handle/target_frame")
+        # ],
+    )   
+
+    # Load joint_trajectory_controller as INACTIVE so we can switch between IK and FK
+    # Use: ros2 control switch_controller --activate joint_trajectory_controller --deactivate cartesian_motion_controller
+    load_joint_trajectory_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        output="screen",
+        arguments=["joint_trajectory_controller", "--inactive"],    
+    )
+
     return LaunchDescription(
         [
+            set_arm_resource_path,
             sim_world_arg,
+            arm_scale_arg,
             walli_xacro,
             bridge_yaml,
             gz_sim,
@@ -174,14 +213,14 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=spawn,
-                    on_exit=[load_joint_state_broadcaster],
+                    on_exit=[TimerAction(period=5.0, actions=[load_joint_state_broadcaster])],
                 )
             ),
             # Start swerve controller AFTER joint_state_broadcaster
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_state_broadcaster,
-                    on_exit=[load_swerve_controller],
+                    on_exit=[load_swerve_controller, load_cartesian_motion_controller, load_joint_trajectory_controller],
                 )
             ),
         ]

@@ -617,12 +617,6 @@
         <forceConstant>100.0</forceConstant>
       </plugin>
       
-      <!-- Average Rocker Position: keeps base_link level at average of left/right rocker heights -->
-      <plugin name="leo_gz::AverageRockerPosition" filename="libleo_gz_average_rocker_plugin.so">
-        <rocker_left_joint>L_Rocker_Joint</rocker_left_joint>
-        <rocker_right_joint>R_Rocker_Joint</rocker_right_joint>
-        <base_link>base_link</base_link>
-      </plugin>
     </gazebo>
 
   

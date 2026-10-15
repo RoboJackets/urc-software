@@ -66,13 +66,13 @@
   </xacro:if>
 
   <!-- After the existing includes, add: -->
-<xacro:include filename="$(find cartesian_controller_simulation)/urdf/arm.urdf.xacro" />
+<xacro:include filename="$(find cartesian_controller_simulation)/urdf/arm_updated.urdf.xacro" />
 
 <!-- Add a fixed joint to attach the arm to the rover's base_link -->
 <joint name="arm_mount_joint" type="fixed">
   <parent link="base_link"/>
   <child link="arm_base_link"/>
-  <origin xyz="0.3 0 0.1" rpy="0 0 0"/>  <!-- Adjust position as needed -->
+  <origin xyz="0.3 0 0" rpy="0 0 0"/>  <!-- Adjust position as needed -->
 </joint>
 
 </robot>

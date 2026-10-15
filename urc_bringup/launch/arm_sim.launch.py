@@ -40,8 +40,15 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-        default_value="world.sdf",
+        # default_value="world.sdf",
+        default_value="marsyard2020.sdf",
         description="Name of the world file (not full path)",
+    )
+
+    arm_scale_arg = DeclareLaunchArgument(
+        "arm_scale",
+        default_value="0.5",
+        description="Uniform arm size relative to CAD (1.0 is original size)",
     )
 
     bridge_yaml = DeclareLaunchArgument(
@@ -63,6 +70,8 @@ def generate_launch_description():
                     # "arm_gazebo.urdf.xacro", #basic geometry arm
                 ]
             ),
+            " arm_scale:=",
+            LaunchConfiguration("arm_scale"),
         ]
     )
 
@@ -111,7 +120,7 @@ def generate_launch_description():
             "-name", "arm",
             "-x", "0",
             "-y", "0",
-            "-z", "1.5",
+            "-z", "50",
             "-R", "0",
             "-P", "0",
             "-Y", "0",
@@ -120,16 +129,16 @@ def generate_launch_description():
     )
 
     # --- RViz ---
-    # rviz_config = PathJoinSubstitution(
-    #     [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
-    # )
-    # rviz = Node(
-    #     package="rviz2",
-    #     executable="rviz2",
-    #     name="rviz2",
-    #     output="log",
-    #     arguments=["-d", rviz_config],
-    # )
+    rviz_config = PathJoinSubstitution(
+        [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
+    )
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="log",
+        arguments=["-d", rviz_config],
+    )
 
     # --- Controller Spawners ---
     def controller_spawner(name, *args):
@@ -194,11 +203,12 @@ def generate_launch_description():
         [
             ign_resource_path,
             sim_world_arg,
+            arm_scale_arg,
             bridge_yaml,
             gz_sim,
             bridge,
             robot_state_publisher_node,
-            # rviz,
+            rviz,
             # relay,
             spawn,
             # Start joint_state_broadcaster AFTER robot spawn
