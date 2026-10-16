@@ -168,6 +168,16 @@ namespace urc_slam {
             )
         );
 
+        new_factors.add(
+            gtsam::BetweenFactor(
+                poseKey(previous_index),
+                velocityKey(previous_index),
+                poseKey(new_index),
+                velocityKey(new_index),
+                odom_noise;
+            )
+        );
+
         // Model IMU bias as slowly changing between keyframes
         new_factors.add(
             gtsam::BetweenFactor<gtsam::imuBias::ConstantBias>(
