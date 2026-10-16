@@ -59,8 +59,9 @@ void NavCoordinator::command(const Command & input)
   {
     return;
   }
-  const auto source = input.command == Command::FOLLOW ? Command::GESTURE : Command::REMOTE;
-  if (input.source != source) {
+  const bool allowed_source = input.source == Command::REMOTE ||
+    (input.command == Command::FOLLOW && input.source == Command::GESTURE);
+  if (!allowed_source) {
     return;
   }
   // Commands are events, never stored for a future phase or replayed after a retry.

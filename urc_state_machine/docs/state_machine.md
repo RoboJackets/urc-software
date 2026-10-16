@@ -52,7 +52,7 @@ target. Use the direct waypoint input for navigation without marker search.
 | --- | --- | --- |
 | IDLE | Valid accepted astronaut goal | GO_TO_ASTRONAUT |
 | GO_TO_ASTRONAUT | Navigation succeeds and distance to the supplied initial waypoint ≤ 3 m by default | WAIT_FOLLOW |
-| WAIT_FOLLOW | Fresh FOLLOW command from the gesture source | FOLLOWING |
+| WAIT_FOLLOW | Fresh FOLLOW command from GESTURE or REMOTE | FOLLOWING |
 | FOLLOWING | Person stationary for the configured duration, distance ≤ 3 m, navigation stopped | WAIT_STAY |
 | FOLLOWING or WAIT_STAY | STAY command from remote; cancellation completes | STAYING |
 | WAIT_STAY | Person moves again or leaves the arrival radius | FOLLOWING |
@@ -68,12 +68,9 @@ tracking is not required: the astronaut can walk away before commanding FETCH.
 A brief pause during FOLLOWING does not permanently disable following; WAIT_STAY
 returns to FOLLOWING until the explicit STAY command is received.
 
-The drawing describes reaching the *astronaut* within 3 m at the initial phase,
-then waiting while they move over 20 m away. The current initial guard measures
-the waypoint rather than a tracked person, and no 20 m walk-away guard exists.
-`STAYING` follows navigation cancellation and sends no tracking goals; `FETCH`
-can arrive without a measured walk-away. These are implementation gaps relative
-to the drawing, not additional state transitions.
+The initial distance check uses the supplied waypoint, which must represent the
+provided GNSS location. STAYING holds until the next valid command; it does not
+require distance tracking while the astronaut walks away.
 
 ### Following and coming
 

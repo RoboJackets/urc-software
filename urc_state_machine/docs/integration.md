@@ -53,8 +53,11 @@ the URC 4x4 configuration.
 
 | Topic | Type | Required producer behavior |
 | --- | --- | --- |
-| `/command` | `urc_msgs/AstronautCommand` | Timestamp each new command; FOLLOW source GESTURE, all other sources REMOTE |
+| `/command` | `urc_msgs/AstronautCommand` | Timestamp each new command; FOLLOW accepts GESTURE or REMOTE, all other commands require REMOTE |
 | `/astronaut/pose` | `geometry_msgs/PoseStamped` | Track the selected astronaut consistently, with valid pose, frame, and capture timestamp |
+
+REMOTE commands must originate from the astronaut's device. Operator intervention
+is separate from normal astronaut commands; mission action cancellation is available.
 
 Gesture recognition, person tracking, and remote command producers are external
 to this package. They must publish these message types with recent timestamps.

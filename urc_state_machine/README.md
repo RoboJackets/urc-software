@@ -42,7 +42,7 @@ an approach → drive toward the marker → verify distance within 1 m → succe
 Search motion is a placeholder for the incoming spiral-search node. Without a
 matching detection, the search phase times out.
 
-**Astronaut:** drive to the rendezvous waypoint → gesture FOLLOW → follow the
+**Astronaut:** drive to the rendezvous waypoint → gesture or remote FOLLOW → follow the
 tracked person → wait when they stop nearby → remote STAY → FETCH → grasp
 confirmation → COME → return within 3 m → GIVE → release confirmation → succeed.
 Fetch and give currently support simulated completion only.

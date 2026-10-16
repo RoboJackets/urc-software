@@ -43,7 +43,9 @@ requests are rejected before execution and have no action result. Definitions in
 for transition conditions, result handling, and integration requirements.
 
 `AstronautCommand` includes a timestamp, command enum, and source enum. FOLLOW
-requires GESTURE; the other commands require REMOTE. `ArucoDetection` bundles a
+accepts GESTURE or REMOTE as a fallback; the other commands require REMOTE.
+REMOTE means the astronaut's device, rather than a C2 operator intervention.
+`ArucoDetection` bundles a
 marker ID with its timestamped pose, preventing mismatched ID/pose observations.
 
 **Migration:** `ExecuteAutonomousMission.search_mode`, SEARCH_NONE/YOLO modes,
