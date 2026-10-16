@@ -1,6 +1,13 @@
 <?xml version="1.0" ?>
 <sdf version="1.8">
   <world name="leo_marsyard">
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>38.3730</latitude_deg>
+      <longitude_deg>110.7140</longitude_deg>
+      <elevation>0.0</elevation>
+      <heading_deg>0.0</heading_deg>
+    </spherical_coordinates>
     <physics name="1ms" type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>

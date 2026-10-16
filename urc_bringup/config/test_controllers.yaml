@@ -26,6 +26,9 @@ controller_manager:
     joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+    rocker_effort_controller:
+      type: forward_command_controller/ForwardCommandController
+
 position_controller:
   ros__parameters:
     joints:
@@ -48,7 +51,6 @@ swerve_controller:
     module_y: 0.307978
     wheel_radius: 0.119888
 
-    ##comment out this to bottom if you dont want arm
 
 cartesian_motion_controller:
   ros__parameters:
@@ -106,3 +108,9 @@ joint_trajectory_controller:
     state_interfaces:
       - position
       - velocity
+rocker_effort_controller:
+  ros__parameters:
+    joints:
+      - L_Rocker_Joint
+      - R_Rocker_Joint
+    interface_name: effort

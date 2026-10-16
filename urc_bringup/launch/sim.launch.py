@@ -5,11 +5,20 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     RegisterEventHandler,
-    TimerAction
+    TimerAction,
+    EmitEvent,
+    LogInfo,
 )
 from launch.event_handlers import OnProcessExit
+from launch.events import Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.conditions import IfCondition
+from launch.substitutions import (
+    LaunchConfiguration,
+    Command,
+    PathJoinSubstitution,
+    PythonExpression,
+)
 from launch_ros.descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
@@ -19,15 +28,12 @@ def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_localization = get_package_share_directory("urc_localization")
     path_arm = get_package_share_directory("cartesian_controller_simulation")
-
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
     )
 
-    ## tells gazebo where arm urdf is 
     set_arm_resource_path = AppendEnvironmentVariable(
         "IGN_GAZEBO_RESOURCE_PATH",
         os.path.dirname(path_arm),
@@ -61,12 +67,78 @@ def generate_launch_description():
         description="bridge YAML config",
     )
 
+    spawn_rocker_effort = DeclareLaunchArgument(
+        "spawn_rocker_effort_controller",
+        default_value="true",
+        description="Enable the rocker effort controller and pitch PID loop",
+    )
+
+    autonomy_arg = DeclareLaunchArgument(
+        "autonomy",
+        default_value="false",
+        description="Launch autonomy nodes",
+    )
+
+    add_cube_arg = DeclareLaunchArgument(
+        "add_cube",
+        default_value="false",
+        description="Spawn a large cube obstacle in front of the rover",
+    )
+
+    cube_x_arg = DeclareLaunchArgument(
+        "cube_x",
+        default_value="8.0",
+        description="X position for front cube obstacle (used when add_cube is true)",
+    )
+
+    cube_y_arg = DeclareLaunchArgument(
+        "cube_y",
+        default_value="0.0",
+        description="Y position for front cube obstacle (used when add_cube is true)",
+    )
+
+    add_incline_arg = DeclareLaunchArgument(
+        "add_incline",
+        default_value="false",
+        description="Spawn an inclined plane obstacle",
+    )
+
+    incline_x_arg = DeclareLaunchArgument(
+        "incline_x",
+        default_value="2.0",
+        description="X position for incline obstacle (used when add_incline is true)",
+    )
+
+    incline_y_arg = DeclareLaunchArgument(
+        "incline_y",
+        default_value="0.0",
+        description="Y position for incline obstacle (used when add_incline is true)",
+    )
+
+    incline_slope_arg = DeclareLaunchArgument(
+        "incline_slope",
+        default_value="15.0",
+        description="Incline slope in degrees (used when add_incline is true)",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
-
-    world_path = PathJoinSubstitution(
-        [path_urc_hw_description, "world", world_filename]
+    cube_x = LaunchConfiguration("cube_x")
+    cube_y = LaunchConfiguration("cube_y")
+    incline_x = LaunchConfiguration("incline_x")
+    incline_y = LaunchConfiguration("incline_y")
+    incline_slope = LaunchConfiguration("incline_slope")
+    cube_sdf_path = os.path.join(
+        path_urc_hw_description, "world", "obstacles", "large_cube.sdf"
     )
+    incline_sdf_path = os.path.join(
+        path_urc_hw_description, "world", "obstacles", "incline_plane.sdf"
+    )
+    incline_pitch_rad = PythonExpression(
+        ["-float(", incline_slope, ") * 3.141592653589793 / 180.0"]
+    )
+
+    world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
 
     robot_urdf_file = ParameterValue(
         Command(
@@ -82,6 +154,7 @@ def generate_launch_description():
         value_type=str,
     )
 
+    # Start Gazebo and immediately run the simulation (-r)
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(path_ros_gazebo_sim, "launch", "gz_sim.launch.py")
@@ -101,7 +174,7 @@ def generate_launch_description():
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
-        parameters=[{"robot_description": robot_urdf_file}],
+        parameters=[{"robot_description": robot_urdf_file, "use_sim_time": True}],
         output="screen",
     )
 
@@ -111,6 +184,7 @@ def generate_launch_description():
         name="covariances_on_imu",
         parameters=[
             {
+                "use_sim_time": True,
                 "imu_input_topic": "/imu/data_raw",
                 "imu_output_topic": "/imu/fused",
             }
@@ -118,17 +192,56 @@ def generate_launch_description():
         output="screen",
     )
 
-    rover_pose_bridge = Node(
-        package="urc_bringup",
-        executable="urc_bringup_RoverPoseBridge",
-        name="rover_pose_bridge",
+    ground_truth = Node(
+        package="urc_localization",
+        executable="urc_localization_GroundTruth",
+        name="ground_truth",
         parameters=[
             {
-                "tf_topic": "/ground_truth_pose",
-                "rover_pos_topic": "/rover_ground_truth",
                 "use_sim_time": True,
+                "target_child_frame": "walli",
+                "odom_frame_id": "map",
+                "base_frame_id": "walli",
             }
         ],
+        output="screen",
+    )
+
+    covariances_on_gps = Node(
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnGps",
+        name="covariances_on_gps",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "gps_input_topic": "/gps",
+                "gps_output_topic": "/gps/covariances",
+            }
+        ],
+        output="screen",
+    )
+
+    launch_autonomy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
+        ),
+        condition=IfCondition(LaunchConfiguration("autonomy")),
+    )
+
+    rocker_config = os.path.join(path_urc_bringup, "config", "rocker_control.yaml")
+    rocker_tf_broadcaster = Node(
+        package="urc_controllers",
+        executable="urc_controllers_RockerTfBroadcaster",
+        name="rocker_tf_broadcaster",
+        parameters=[rocker_config],
+        condition=IfCondition(LaunchConfiguration("spawn_rocker_effort_controller")),
+        output="screen",
+    )
+    rocker_effort_pid_node = Node(
+        package="urc_controllers",
+        executable="urc_controllers_RockerEffortPid",
+        name="rocker_effort_pid",
+        parameters=[rocker_config],
         output="screen",
     )
 
@@ -137,64 +250,89 @@ def generate_launch_description():
         executable="create",
         output="screen",
         arguments=[
-            "-name",
-            "walli",
-            "-x",
-            "-20",
-            "-y",
-            "-15",
-            "-z",
-            "1.5",
-            "-R",
-            "0",
-            "-P",
-            "0",
-            "-Y",
-            "0",
-            "-topic",
-            "robot_description",
+            "-name", "walli",
+            "-x", "0",
+            "-y", "0",
+            "-z", "2.0",
+            "-R", "0",
+            "-P", "0",
+            "-Y", "0",
+            "-topic", "robot_description",
         ],
     )
 
-    # --- Controller Spawners ---
-    load_joint_state_broadcaster = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--param-file",
-            controller_config_file_dir,
-        ],
-    )
-
-    load_swerve_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "swerve_controller",
-            "--param-file",
-            controller_config_file_dir,
-        ],
-    )
-
-    load_cartesian_motion_controller = Node(
-        package="controller_manager",
-        executable="spawner",
+    spawn_cube = Node(
+        package="ros_gz_sim",
+        executable="create",
         output="screen",
-        arguments=["cartesian_motion_controller", "--inactive", "--param-file", controller_config_file_dir],
-        # remappings=[
-        #     ("/cartesian_motion_controller/target_frame", "/motion_control_handle/target_frame")
-        # ],
-    )   
-
-    # Load joint_trajectory_controller as INACTIVE so we can switch between IK and FK
-    # Use: ros2 control switch_controller --activate joint_trajectory_controller --deactivate cartesian_motion_controller
-    load_joint_trajectory_controller = Node(
-        package="controller_manager",
-        executable="spawner",
-        output="screen",
-        arguments=["joint_trajectory_controller", "--inactive"],    
+        condition=IfCondition(LaunchConfiguration("add_cube")),
+        arguments=[
+            "-name", "cube_obstacle",
+            "-x", cube_x,
+            "-y", cube_y,
+            "-z", "1.0",
+            "-R", "0.0",
+            "-P", "0.0",
+            "-Y", "0.0",
+            "-file", cube_sdf_path,
+        ],
     )
+
+    spawn_incline = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_incline")),
+        arguments=[
+            "-name", "incline_obstacle",
+            "-x", incline_x,
+            "-y", incline_y,
+            "-z", "0.3",
+            "-R", "0.0",
+            "-P", incline_pitch_rad,
+            "-Y", "0.0",
+            "-file", incline_sdf_path,
+        ],
+    )
+
+    def controller_spawner(name, inactive=False, **kwargs):
+        arguments = [
+            name,
+            "--param-file", controller_config_file_dir,
+            "--controller-manager-timeout", "120",
+            "--service-call-timeout", "120",
+            "--switch-timeout", "60",
+        ]
+        if inactive:
+            arguments.append("--inactive")
+        return Node(
+            package="controller_manager",
+            executable="spawner",
+            arguments=arguments,
+            output="screen",
+            **kwargs,
+        )
+
+    load_joint_state_broadcaster = controller_spawner("joint_state_broadcaster")
+    load_swerve_controller = controller_spawner("swerve_controller")
+    load_cartesian_motion_controller = controller_spawner(
+        "cartesian_motion_controller"
+    )
+    load_joint_trajectory_controller = controller_spawner(
+        "joint_trajectory_controller", inactive=True
+    )
+    load_rocker_effort_controller = controller_spawner(
+        "rocker_effort_controller",
+        condition=IfCondition(LaunchConfiguration("spawn_rocker_effort_controller")),
+    )
+
+    def after_success(actions):
+        def on_exit(event, context):
+            if event.returncode == 0:
+                return actions
+            reason = "Simulation startup failed; inspect the preceding spawn/controller error"
+            return [LogInfo(msg=reason), EmitEvent(event=Shutdown(reason=reason))]
+        return on_exit
 
     return LaunchDescription(
         [
@@ -203,24 +341,50 @@ def generate_launch_description():
             arm_scale_arg,
             walli_xacro,
             bridge_yaml,
+            spawn_rocker_effort,
+            autonomy_arg,
+            add_cube_arg,
+            cube_x_arg,
+            cube_y_arg,
+            add_incline_arg,
+            incline_x_arg,
+            incline_y_arg,
+            incline_slope_arg,
             gz_sim,
             bridge,
             robot_state_publisher_node,
             covariances_on_imu,
-            rover_pose_bridge,
+            covariances_on_gps,
+            launch_autonomy,
             spawn,
-            # Start joint_state_broadcaster AFTER robot spawn
+            spawn_cube,
+            spawn_incline,
+
             RegisterEventHandler(
-                event_handler=OnProcessExit(
+                OnProcessExit(
                     target_action=spawn,
-                    on_exit=[TimerAction(period=5.0, actions=[load_joint_state_broadcaster])],
+                    on_exit=after_success([
+                        TimerAction(period=5.0, actions=[load_joint_state_broadcaster]),
+                        ground_truth,
+                    ]),
                 )
             ),
-            # Start swerve controller AFTER joint_state_broadcaster
             RegisterEventHandler(
-                event_handler=OnProcessExit(
+                OnProcessExit(
                     target_action=load_joint_state_broadcaster,
-                    on_exit=[load_swerve_controller, load_cartesian_motion_controller, load_joint_trajectory_controller],
+                    on_exit=after_success([
+                        load_swerve_controller,
+                        load_cartesian_motion_controller,
+                        load_joint_trajectory_controller,
+                        load_rocker_effort_controller,
+                        rocker_tf_broadcaster,
+                    ]),
+                )
+            ),
+            RegisterEventHandler(
+                OnProcessExit(
+                    target_action=load_rocker_effort_controller,
+                    on_exit=after_success([rocker_effort_pid_node]),
                 )
             ),
         ]

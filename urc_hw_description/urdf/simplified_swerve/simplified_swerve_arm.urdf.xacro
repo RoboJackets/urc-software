@@ -72,7 +72,7 @@
 <joint name="arm_mount_joint" type="fixed">
   <parent link="base_link"/>
   <child link="arm_base_link"/>
-  <origin xyz="0.3 0 0" rpy="0 0 0"/>  <!-- Adjust position as needed -->
+  <origin xyz="0.3 -0.15 0" rpy="0 0 0"/>  <!-- Adjust position as needed -->
 </joint>
 
 </robot>
