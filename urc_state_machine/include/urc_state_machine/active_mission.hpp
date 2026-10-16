@@ -1,39 +1,34 @@
 #ifndef URC_STATE_MACHINE__ACTIVE_MISSION_HPP_
 #define URC_STATE_MACHINE__ACTIVE_MISSION_HPP_
-
-#include <memory>
+#include <cstdint>
+#include <chrono>
 #include <optional>
-
+#include <string>
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
-#include <urc_msgs/action/execute_autonomous_mission.hpp>
-#include <urc_msgs/msg/detection_bounding_box.hpp>
-
 #include "urc_state_machine/mission_state.hpp"
 
 namespace urc_state_machine
 {
-
-enum class NavigationLeg
-{
-  INITIAL_WAYPOINT,
-  ARUCO_APPROACH
-};
-
+using MissionClock = std::chrono::steady_clock;
+// One mission owns this context and the follower until its stop barrier has completed.
+// Retry state survives phase re-entry; action handles stay in the ROS node.
 struct ActiveMission
 {
-  using ExecuteMission = urc_msgs::action::ExecuteAutonomousMission;
-  using MissionGoalHandle = rclcpp_action::ServerGoalHandle<ExecuteMission>;
-
-  std::shared_ptr<MissionGoalHandle> goal_handle;
-  geometry_msgs::msg::PoseStamped original_waypoint;
-  SearchMode search_mode{SearchMode::NONE};
-  NavigationLeg navigation_leg{NavigationLeg::INITIAL_WAYPOINT};
-  std::optional<urc_msgs::msg::DetectionBoundingBox> bounding_box;
-  std::optional<geometry_msgs::msg::PoseStamped> aruco_pose;
-  bool cancellation_requested{false};
+  MissionKind kind{MissionKind::NONE};
+  State state{State::IDLE};
+  State resume{State::IDLE};
+  State after_stop{State::IDLE};
+  geometry_msgs::msg::PoseStamped waypoint;
+  std::optional<geometry_msgs::msg::PoseStamped> marker;
+  std::optional<geometry_msgs::msg::PoseStamped> navigation_goal;
+  int marker_id{0};
+  int retries{0};
+  uint16_t error_code{0};
+  std::string reason;
+  MissionClock::time_point phase_started{MissionClock::now()};
+  MissionClock::time_point last_goal_update{MissionClock::now()};
+  bool operation_started{false};
+  bool navigation_reached{false};
 };
-
 }  // namespace urc_state_machine
-
-#endif  // URC_STATE_MACHINE__ACTIVE_MISSION_HPP_
+#endif

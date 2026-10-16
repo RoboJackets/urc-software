@@ -1,55 +1,76 @@
-# URC State Machine
+# Mission coordinator
 
-`urc_state_machine` coordinates high-level waypoint requests with the trajectory
-follower. It does not generate paths or command drivetrain velocity directly.
+`NavCoordinator` runs one route mission, astronaut mission, or standalone waypoint
+at a time. It decides what the rover should do next. The follower handles driving,
+and the planner computes paths.
 
-## Navigation flow
-
-`urc_state_machine_NavCoordinator` accepts either:
-
-- a map-frame `geometry_msgs/msg/PoseStamped` on `/nav/waypoint`, or
-- a latitude/longitude `urc_msgs/msg/Waypoint` on `/waypoint`.
-
-GPS waypoints are converted to UTM and transformed from `utm` into `map`. The
-coordinator then sends a goal-based `NavigateToWaypoint` action request. The
-trajectory follower calls the A* planning service, follows the returned path,
-and reports feedback and completion to the coordinator.
+## How the system fits together
 
 ```text
-waypoint -> NavCoordinator -> NavigateToWaypoint -> GeneratePlan -> path following
+Mission action goal → NavCoordinator → NavigateToWaypoint → Follower → cmd_vel
+                                                           ↓
+                                                   GeneratePlan / A*
+
+Commands, astronaut poses, marker detections, and rover TF → NavCoordinator
+NavCoordinator → mission feedback, state topic, and final action result
 ```
 
-## State and failure behavior
+One mission can contain several navigation goals. The mission action remains
+active until the whole sequence succeeds, fails, or is canceled.
 
-The mission action server (`mission_action_name`, default
-`execute_autonomous_mission`) currently accepts only `SEARCH_NONE`, with a finite
-waypoint in the configured map frame and a unit quaternion. It rejects requests
-while navigation is busy or the follower server is unavailable. Accepted missions
-return `SUCCESS` on arrival, `NAVIGATION_FAILED` if navigation fails, or `CANCELED`
-after the active navigation goal stops. Waypoint topics and new mission requests
-are rejected while a mission is active. Search and mission feedback are not
-implemented yet.
+Inside the coordinator, the normal flow is:
 
-The coordinator publishes its autonomous mission state on `nav_coordinator_state`,
-together with its latest error classification.
+```text
+Event → transitionOn() → changeState()
+                              ↓
+Timer → updateMission() → updateCurrentState() → current state's function
+                                                   ↓
+                                     Start once, then check progress
+                                                   ↓
+                                             Next event
+```
 
-By default, a new waypoint cancels the active follower goal before being sent.
-Missing UTM-to-map transforms, an unavailable follower action server, rejected
-goals, planning failures, and follower failures transition the coordinator to
-`FAILED`.
+The constructor in `src/nav_coordinator.cpp` sets up the timer and subscriptions.
+ROS calls them when the timer fires or a message arrives. The methods spread
+across `src/ros/` and `src/missions/` all belong to the same `NavCoordinator`
+object. `NavigationClient` and `AstronautTracking` are components it owns.
 
-## Usage
+## Mission sequences
 
-The coordinator is started as part of the autonomy stack:
+**Route:** drive to the supplied waypoint → wait for marker 1 or 2 → calculate
+an approach → drive toward the marker → verify distance within 1 m → succeed.
+Search motion is a placeholder for the incoming spiral-search node. Without a
+matching detection, the search phase times out.
+
+**Astronaut:** drive to the rendezvous waypoint → gesture FOLLOW → follow the
+tracked person → wait when they stop nearby → remote STAY → FETCH → grasp
+confirmation → COME → return within 3 m → GIVE → release confirmation → succeed.
+Fetch and give currently support simulated completion only.
+
+## Where to read next
+
+- [Files and functions](docs/code_guide.md): every package file, what its functions do, and example call flows.
+- [States and recovery](docs/state_machine.md): exact transition conditions and differences from the architecture drawing.
+- [Inputs and integration](docs/integration.md): topics, frames, and external nodes needed to run missions.
+
+## Running
 
 ```bash
 ros2 launch urc_bringup autonomy.launch.py
 ```
 
-It is also available as the `urc_state_machine_NavCoordinator` executable and a
-composable ROS 2 component. This package has no standalone launch file.
+This starts the coordinator, planner, follower, traversability mapper, and Grid
+Map visualization. Sensor sources, localization, and astronaut input publishers
+must be running separately. Settings live in [config/mission.yaml](config/mission.yaml).
 
-The input topics, follower action name, replacement-goal behavior, and map/UTM
-frame names are parameters. Pose waypoints must already use coordinates accepted
-by the follower and planner; only GPS waypoints are transformed by the
-coordinator.
+To exercise fetch/give without an arm, add `tool_placeholder_success:=true`.
+The default is `false`, which fails those phases explicitly with `TOOL_FAILED`.
+
+Send route goals to `/execute_autonomous_mission` using
+`urc_msgs/action/ExecuteAutonomousMission` with a map `waypoint` and `marker_id`
+1 or 2. Send astronaut goals to `/execute_astronaut_mission` using
+`urc_msgs/action/ExecuteAstronautMission` with the initial map `waypoint`.
+Standalone navigation uses `/nav/waypoint` (map pose) or `/waypoint` (GPS).
+
+The route action uses `marker_id`; clients using the old `search_mode` interface
+must be rebuilt. Use standalone waypoints for travel without marker detection.

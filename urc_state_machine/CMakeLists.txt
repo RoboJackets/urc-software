@@ -24,12 +24,22 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/nav_coordinator.cpp
-  src/waypoint_requests.cpp
-  src/gps_waypoint_conversion.cpp
-  src/follower_navigation.cpp
-  src/coordinator_state.cpp
-  src/mission_action.cpp
-  src/mission_navigation.cpp
+  src/ros/mission_parameters.cpp
+  src/fsm/mission_state.cpp
+  src/fsm/route_fsm.cpp
+  src/fsm/astronaut_fsm.cpp
+  src/navigation/navigation_client.cpp
+  src/navigation/mission_geometry.cpp
+  src/navigation/astronaut_tracking.cpp
+  src/ros/mission_actions.cpp
+  src/ros/mission_inputs.cpp
+  src/missions/mission_execution.cpp
+  src/missions/route_mission.cpp
+  src/missions/astronaut_mission.cpp
+  src/missions/mission_recovery.cpp
+  src/missions/mission_completion.cpp
+  src/ros/waypoint_requests.cpp
+  src/navigation/gps_waypoint_conversion.cpp
 )
 
 set(dependencies
@@ -86,5 +96,7 @@ ament_export_include_directories(include)
 
 ament_export_libraries(${PROJECT_NAME})
 ament_export_dependencies(${dependencies})
+
+install(DIRECTORY config docs DESTINATION share/${PROJECT_NAME})
 
 ament_package()

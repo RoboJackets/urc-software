@@ -133,4 +133,6 @@ ament_export_include_directories(include)
 ament_export_libraries(gaussian_filter)
 ament_export_dependencies(${dependencies})
 pluginlib_export_plugin_description_file(filters filter_plugins.xml)
+install(PROGRAMS scripts/aruco_detector.py DESTINATION lib/${PROJECT_NAME})
+
 ament_package()
