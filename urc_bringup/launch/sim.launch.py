@@ -216,9 +216,14 @@ def generate_launch_description():
         package="urc_bringup",
         executable="aruco_detector.py",
         name="aruco_detector",
-        output="screen",
+        output="log",
         # Marker IDs are identified directly from the camera image; no ID filter.
-        parameters=[{"marker_size": 0.50}],
+        parameters=[
+            {
+                "marker_size": 0.50,
+                "use_sim_time": True,
+            }
+        ],
     )
 
     robot_state_publisher_node = Node(

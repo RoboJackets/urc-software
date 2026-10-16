@@ -22,7 +22,10 @@
   <exec_depend>cv_bridge</exec_depend>
   <exec_depend>image_transport</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>opencv-python</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>tf2_geometry_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
   <depend>grid_map_rviz_plugin</depend>
 
   <test_depend>ament_lint_auto</test_depend>

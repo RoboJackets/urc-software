@@ -5,10 +5,13 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Int32MultiArray
-from geometry_msgs.msg import Pose, PoseArray, PoseStamped
+from geometry_msgs.msg import PoseArray, PoseStamped
 
 from cv_bridge import CvBridge
 from rclpy.qos import qos_profile_sensor_data
+from rclpy.time import Time
+from tf2_geometry_msgs import do_transform_pose_stamped
+from tf2_ros import Buffer, TransformException, TransformListener
 
 import cv2
 import numpy as np
@@ -66,6 +69,7 @@ class ArucoDetector(Node):
 
         # Parameters
         self.declare_parameter('marker_size', 0.05)
+        self.declare_parameter('target_frame', 'odom')
 
         # DICT_6X6_50 marker ID used by the simulated tag
         self.declare_parameter('expected_marker_id', 23)
@@ -82,6 +86,12 @@ class ArucoDetector(Node):
 
         self.camera_matrix = None
         self.dist_coeffs = None
+        self.target_frame = str(
+            self.get_parameter('target_frame').value
+        )
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.tf_warning_logged = False
 
         # ---------------------------------------------------------
         # Subscribers
@@ -194,7 +204,8 @@ class ArucoDetector(Node):
         )
 
         pose_array = PoseArray()
-        pose_array.header = msg.header
+        pose_array.header.stamp = msg.header.stamp
+        pose_array.header.frame_id = self.target_frame
 
         ids_msg = Int32MultiArray()
 
@@ -257,32 +268,40 @@ class ArucoDetector(Node):
                             rvec_to_quaternion(rvec[0])
                         )
 
-                        # -----------------------------------------
-                        # Pose message
-                        # -----------------------------------------
+                        camera_pose = PoseStamped()
+                        camera_pose.header = msg.header
+                        camera_pose.pose.position.x = x
+                        camera_pose.pose.position.y = y
+                        camera_pose.pose.position.z = z
+                        camera_pose.pose.orientation.x = float(qx)
+                        camera_pose.pose.orientation.y = float(qy)
+                        camera_pose.pose.orientation.z = float(qz)
+                        camera_pose.pose.orientation.w = float(qw)
 
-                        pose = Pose()
+                        try:
+                            transform = self.tf_buffer.lookup_transform(
+                                self.target_frame,
+                                msg.header.frame_id,
+                                Time.from_msg(msg.header.stamp)
+                            )
+                            pose_stamped = do_transform_pose_stamped(
+                                camera_pose,
+                                transform
+                            )
+                        except TransformException as e:
+                            if not self.tf_warning_logged:
+                                self.get_logger().warning(
+                                    f'Cannot transform ArUco pose from '
+                                    f'{msg.header.frame_id} to '
+                                    f'{self.target_frame}: {e}'
+                                )
+                                self.tf_warning_logged = True
+                            continue
 
-                        pose.position.x = x
-                        pose.position.y = y
-                        pose.position.z = z
-
-                        pose.orientation.x = float(qx)
-                        pose.orientation.y = float(qy)
-                        pose.orientation.z = float(qz)
-                        pose.orientation.w = float(qw)
+                        self.tf_warning_logged = False
+                        pose = pose_stamped.pose
 
                         pose_array.poses.append(pose)
-
-                        # -----------------------------------------
-                        # PoseStamped
-                        # -----------------------------------------
-
-                        pose_stamped = PoseStamped()
-
-                        pose_stamped.header = msg.header
-
-                        pose_stamped.pose = pose
 
                         self.pose_pub.publish(
                             pose_stamped
@@ -294,14 +313,15 @@ class ArucoDetector(Node):
 
                         self.get_logger().info(
                             f'ArUco {self.expected_marker_id} pose: '
-                            f'x={x:.3f} m, '
-                            f'y={y:.3f} m, '
-                            f'z={z:.3f} m | '
+                            f'x={pose.position.x:.3f} m, '
+                            f'y={pose.position.y:.3f} m, '
+                            f'z={pose.position.z:.3f} m in '
+                            f'{self.target_frame} | '
                             f'quaternion='
-                            f'({qx:.3f}, '
-                            f'{qy:.3f}, '
-                            f'{qz:.3f}, '
-                            f'{qw:.3f})'
+                            f'({pose.orientation.x:.3f}, '
+                            f'{pose.orientation.y:.3f}, '
+                            f'{pose.orientation.z:.3f}, '
+                            f'{pose.orientation.w:.3f})'
                         )
 
                         # -----------------------------------------
