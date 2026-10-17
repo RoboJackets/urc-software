@@ -19,10 +19,10 @@ for their current defaults.
 
 ## Model Contracts
 
-The xacro defines the rover links, rocker and swerve joints, sensor frames, and
-`ros2_control` interfaces. With `use_sim:=true`, it selects
-`gz_ros2_control/GazeboSimSystem`; otherwise it selects
-`urc_hw/RoverDrivetrain`.
+The xacro defines the rover links, rocker and swerve joints, sensor frames, the
+rear status light link (`status_light_link`), and `ros2_control` interfaces.
+With `use_sim:=true`, it selects `gz_ros2_control/GazeboSimSystem`; otherwise
+it selects `urc_hw/RoverDrivetrain`.
 
 Joint names, frame names, limits, dimensions, and units are shared contracts
 with controllers, localization, and launch files. Update those consumers with
