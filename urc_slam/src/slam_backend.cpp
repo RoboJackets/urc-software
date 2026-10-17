@@ -168,16 +168,6 @@ namespace urc_slam {
             )
         );
 
-        new_factors.add(
-            gtsam::BetweenFactor(
-                poseKey(previous_index),
-                velocityKey(previous_index),
-                poseKey(new_index),
-                velocityKey(new_index),
-                odom_noise;
-            )
-        );
-
         // Model IMU bias as slowly changing between keyframes
         new_factors.add(
             gtsam::BetweenFactor<gtsam::imuBias::ConstantBias>(
@@ -242,6 +232,43 @@ namespace urc_slam {
         );
         optimize();
         
+    }
+
+    void SlamBackend::addOdometryPoseFactor(
+        std::size_t previous_index,
+        std::size_t post_index,
+        const gtsam::Pose3 &pose_change
+    ) {
+        new_factors.add(
+            gtsam::BetweenFactor<gtsam::Pose3>(
+                poseKey(previous_index),
+                poseKey(post_index),
+                pose_change,
+                odom_noise
+            )
+        );
+        optimize();
+    }
+
+    void SlamBackend::addOdometryVelocityFactor(
+        std::size_t previous_index,
+        std::size_t post_index,
+        const gtsam::Vector3 &velocity_change
+    ) {
+        // A Vector3 factor needs a 3-dimensional model: take the translation
+        // block (last three; pose sigmas are rotation then translation) of odom_noise
+        const auto odom_sigmas =
+            boost::dynamic_pointer_cast<gtsam::noiseModel::Diagonal>(odom_noise)->sigmas();
+
+        new_factors.add(
+            gtsam::BetweenFactor<gtsam::Vector3>(
+                velocityKey(previous_index),
+                velocityKey(post_index),
+                velocity_change,
+                gtsam::noiseModel::Diagonal::Sigmas(odom_sigmas.tail<3>())
+            )
+        );
+        optimize();
     }
 
     void SlamBackend::optimize() {

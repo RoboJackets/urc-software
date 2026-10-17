@@ -20,6 +20,26 @@
 
 
 namespace urc_slam {
+    namespace {
+        constexpr std::size_t maximum_odom_buffer_size = 200;
+        constexpr double minimum_quaternion_norm = 1e-6;
+
+        gtsam::Pose3 odometryPose(const nav_msgs::msg::Odometry &msg) {
+            const auto &p = msg.pose.pose.position;
+            const auto &q = msg.pose.pose.orientation;
+            return gtsam::Pose3(
+                gtsam::Rot3::Quaternion(q.w, q.x, q.y, q.z),
+                gtsam::Point3(p.x, p.y, p.z)
+            );
+        }
+
+        // Twist is expressed in the child frame; rotate it into the odometry frame
+        gtsam::Vector3 odometryVelocity(const nav_msgs::msg::Odometry &msg) {
+            const auto &v = msg.twist.twist.linear;
+            return odometryPose(msg).rotation().rotate(gtsam::Vector3(v.x, v.y, v.z));
+        }
+    }
+
     SlamNode::SlamNode(const rclcpp::NodeOptions &options)
         :   rclcpp::Node("slam_node", options),   
             lidar_frontend(
@@ -59,6 +79,8 @@ namespace urc_slam {
         imu_topic = declare_parameter<std::string>("imu_topic", "/imu/data");
         lidar_topic = declare_parameter<std::string>("lidar_topic", "/points");
         gps_topic = declare_parameter<std::string>("gps_topic", "/slam/gps_odometry");
+        odom_topic = declare_parameter<std::string>("wheel_odom_topic", "/wheel/odom");
+        odom_time_tolerance_sec = declare_parameter<double>("wheel_odom_time_tolerance_sec", 0.1);
         slam_odom_topic = declare_parameter<std::string>("slam_odom_topic", "/slam/odometry");
         map_frame = declare_parameter<std::string>("map_frame", "map");
         base_link_frame = declare_parameter<std::string>("base_link_frame", "base_link");
@@ -76,6 +98,16 @@ namespace urc_slam {
             rclcpp::SensorDataQoS(),
             std::bind(
                 &SlamNode::imuCallback,
+                this,
+                std::placeholders::_1
+            )
+        );
+
+        odom_sub = create_subscription<nav_msgs::msg::Odometry>(
+            odom_topic,
+            rclcpp::SensorDataQoS(),
+            std::bind(
+                &SlamNode::odomCallback,
                 this,
                 std::placeholders::_1
             )
@@ -358,6 +390,106 @@ namespace urc_slam {
             matched_gps.pop_front();
         }
         if (has_gps_updates) {
+            rebuildMap();
+            publishOutputs(keyframe_stamps.back().stamp);
+        }
+    }
+
+    void SlamNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
+        const auto &p = msg->pose.pose.position;
+        const auto &q = msg->pose.pose.orientation;
+        const auto &v = msg->twist.twist.linear;
+        const double quaternion_norm = std::sqrt(
+            q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z
+        );
+
+        if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z) ||
+            !std::isfinite(v.x) || !std::isfinite(v.y) || !std::isfinite(v.z) ||
+            !std::isfinite(quaternion_norm) || quaternion_norm < minimum_quaternion_norm) {
+            return;
+        }
+
+        // Keep timestamps strictly increasing; discard duplicates
+        const rclcpp::Time stamp(msg->header.stamp);
+        if (last_accepted_odom_stamp && stamp <= *last_accepted_odom_stamp) {
+            return;
+        }
+
+        odom_buffer.push_back(*msg);
+        last_accepted_odom_stamp = stamp;
+        while (odom_buffer.size() > maximum_odom_buffer_size) {
+            odom_buffer.pop_front();
+        }
+
+        processOdometry();
+    }
+
+    void SlamNode::matchBufferedOdometry() {
+        while (!odom_buffer.empty()) {
+            const auto &odom = odom_buffer.front();
+            const rclcpp::Time odom_stamp(odom.header.stamp);
+
+            // Wait until keyframes bracket this measurement's time
+            if (odom_stamp > keyframe_stamps.back().stamp) {
+                break;
+            }
+
+            double best_dt = std::numeric_limits<double>::infinity();
+            std::size_t best_index = 0;
+
+            for (const auto &keyframe : keyframe_stamps) {
+                const double dt = std::abs((keyframe.stamp - odom_stamp).seconds());
+
+                if (dt < best_dt) {
+                    best_dt = dt;
+                    best_index = keyframe.index;
+                }
+            }
+
+            if (best_dt <= odom_time_tolerance_sec) {
+                matched_odom.push_back({best_index, odom});
+            }
+
+            odom_buffer.pop_front();
+        }
+    }
+
+    void SlamNode::processOdometry() {
+        if (keyframe_stamps.empty()) {
+            return;
+        }
+
+        matchBufferedOdometry();
+
+        bool has_odom_updates = false;
+        while (matched_odom.size() >= 2) {
+            const auto &previous = matched_odom[0];
+            const auto &post = matched_odom[1];
+
+            // Two measurements on one keyframe constrain nothing; keep the earlier
+            if (post.keyframe_index <= previous.keyframe_index) {
+                matched_odom.erase(matched_odom.begin() + 1);
+                continue;
+            }
+
+            const gtsam::Pose3 pose_change = odometryPose(previous.measurement).between(
+                odometryPose(post.measurement)
+            );
+            const gtsam::Vector3 velocity_change =
+                odometryVelocity(post.measurement) - odometryVelocity(previous.measurement);
+
+            backend.addOdometryPoseFactor(
+                previous.keyframe_index, post.keyframe_index, pose_change
+            );
+            backend.addOdometryVelocityFactor(
+                previous.keyframe_index, post.keyframe_index, velocity_change
+            );
+
+            matched_odom.pop_front();
+            has_odom_updates = true;
+        }
+
+        if (has_odom_updates) {
             rebuildMap();
             publishOutputs(keyframe_stamps.back().stamp);
         }

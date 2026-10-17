@@ -35,6 +35,9 @@ namespace urc_slam {
             void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
             void gpsCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
             void processGPSMeasurements();
+            void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+            void matchBufferedOdometry();
+            void processOdometry();
             void publishOutputs(const rclcpp::Time &stamp);
             void rebuildMap();
 
@@ -59,6 +62,7 @@ namespace urc_slam {
 
             rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr slam_odom_pub;
             rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub;
+            rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
 
             std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster;
 
@@ -72,13 +76,22 @@ namespace urc_slam {
             std::optional<rclcpp::Time> last_accepted_gps_stamp;
             std::deque<MatchedGPS> matched_gps;
             double gps_time_tolerance_sec = 0.1;
-            
-            
+
+            struct MatchedOdometry {
+                std::size_t keyframe_index;
+                nav_msgs::msg::Odometry measurement;
+            };
+            std::deque<nav_msgs::msg::Odometry> odom_buffer;
+            std::optional<rclcpp::Time> last_accepted_odom_stamp;
+            std::deque<MatchedOdometry> matched_odom;
+            double odom_time_tolerance_sec;
+
 
             std::string slam_odom_topic;
             std::string imu_topic;
             std::string lidar_topic;
             std::string gps_topic;
+            std::string odom_topic;
             std::string map_frame;
             std::string base_link_frame;
 

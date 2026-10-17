@@ -52,6 +52,21 @@ namespace urc_slam {
                 const gtsam::Matrix3 &covariance
             );
             
+            // Wheel odometry motion between two existing keyframes.
+            // Pose delta is previous-body-to-next-body; velocity delta is
+            // next minus previous in the same frame as the graph velocities.
+            void addOdometryPoseFactor(
+                std::size_t previous_index,
+                std::size_t post_index,
+                const gtsam::Pose3 &pose_change
+            );
+
+            void addOdometryVelocityFactor(
+                std::size_t previous_index,
+                std::size_t post_index,
+                const gtsam::Vector3 &velocity_change
+            );
+
             // Adds a raw imu sample to the preintegrator
             // Every time an imu measurement arrives, accumulate it into
             //  a compressed IMU measurement between current and next frame
