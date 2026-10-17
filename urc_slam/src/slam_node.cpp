@@ -20,26 +20,7 @@
 
 
 namespace urc_slam {
-    namespace {
-        constexpr std::size_t maximum_odom_buffer_size = 200;
-        constexpr double minimum_quaternion_norm = 1e-6;
-
-        gtsam::Pose3 odometryPose(const nav_msgs::msg::Odometry &msg) {
-            const auto &p = msg.pose.pose.position;
-            const auto &q = msg.pose.pose.orientation;
-            return gtsam::Pose3(
-                gtsam::Rot3::Quaternion(q.w, q.x, q.y, q.z),
-                gtsam::Point3(p.x, p.y, p.z)
-            );
-        }
-
-        // Twist is expressed in the child frame; rotate it into the odometry frame
-        gtsam::Vector3 odometryVelocity(const nav_msgs::msg::Odometry &msg) {
-            const auto &v = msg.twist.twist.linear;
-            return odometryPose(msg).rotation().rotate(gtsam::Vector3(v.x, v.y, v.z));
-        }
-    }
-
+   
     SlamNode::SlamNode(const rclcpp::NodeOptions &options)
         :   rclcpp::Node("slam_node", options),   
             lidar_frontend(
@@ -79,8 +60,7 @@ namespace urc_slam {
         imu_topic = declare_parameter<std::string>("imu_topic", "/imu/data");
         lidar_topic = declare_parameter<std::string>("lidar_topic", "/points");
         gps_topic = declare_parameter<std::string>("gps_topic", "/slam/gps_odometry");
-        odom_topic = declare_parameter<std::string>("wheel_odom_topic", "/wheel/odom");
-        odom_time_tolerance_sec = declare_parameter<double>("wheel_odom_time_tolerance_sec", 0.1);
+        odom_topic = declare_parameter<std::string>("wheel_odom_topic", "/odom");
         slam_odom_topic = declare_parameter<std::string>("slam_odom_topic", "/slam/odometry");
         map_frame = declare_parameter<std::string>("map_frame", "map");
         base_link_frame = declare_parameter<std::string>("base_link_frame", "base_link");
@@ -399,13 +379,11 @@ namespace urc_slam {
         const auto &p = msg->pose.pose.position;
         const auto &q = msg->pose.pose.orientation;
         const auto &v = msg->twist.twist.linear;
-        const double quaternion_norm = std::sqrt(
-            q.w * q.w + q.x * q.x + q.y * q.y + q.z * q.z
-        );
 
-        if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z) ||
-            !std::isfinite(v.x) || !std::isfinite(v.y) || !std::isfinite(v.z) ||
-            !std::isfinite(quaternion_norm) || quaternion_norm < minimum_quaternion_norm) {
+        // Wheel odometry is planar: only x, y and yaw (quaternion z, w) are measured
+        if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
+            !std::isfinite(q.z) || !std::isfinite(q.w) ||
+            !std::isfinite(v.x) || !std::isfinite(v.y)) {
             return;
         }
 
@@ -472,11 +450,31 @@ namespace urc_slam {
                 continue;
             }
 
-            const gtsam::Pose3 pose_change = odometryPose(previous.measurement).between(
-                odometryPose(post.measurement)
+            // Odometry lives in SwerveController
+            const auto &previous_pose = previous.measurement.pose.pose;
+            const auto &post_pose = post.measurement.pose.pose;
+            const auto &previous_velocity = previous.measurement.twist.twist.linear;
+            const auto &post_velocity = post.measurement.twist.twist.linear;
+
+            //Previous Pose
+            const gtsam::Pose3 previous_odom_pose(
+                gtsam::Point3(previous_pose.position.x, previous_pose.position.y, 0.0)
             );
-            const gtsam::Vector3 velocity_change =
-                odometryVelocity(post.measurement) - odometryVelocity(previous.measurement);
+
+            //Post Pose
+            const gtsam::Pose3 post_odom_pose(
+                gtsam::Point3(post_pose.position.x, post_pose.position.y, 0.0)
+            );
+
+            //Change in pose
+            const gtsam::Pose3 pose_change = previous_odom_pose.between(post_odom_pose);
+
+
+            const gtsam::Vector3 velocity_change(
+                post_velocity.x - previous_velocity.x,
+                post_velocity.y - previous_velocity.y,
+                0.0
+            );
 
             backend.addOdometryPoseFactor(
                 previous.keyframe_index, post.keyframe_index, pose_change
