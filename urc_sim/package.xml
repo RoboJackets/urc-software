@@ -9,7 +9,11 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>urc_msgs</depend>
+  <depend condition="$GZ_VERSION == fortress or $GZ_VERSION == ''">ignition-msgs8</depend>
+  <depend condition="$GZ_VERSION == fortress or $GZ_VERSION == ''">ignition-transport11</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
