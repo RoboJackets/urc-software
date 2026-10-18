@@ -13,12 +13,12 @@ def generate_launch_description():
     )
 
     navsat_node = Node(
-        package = "robot_localization",
-        executable = "navsat_transform_node",
-        name = "slam_navsat_transform",
-        output = "screen",
-        parameters = [parameters_file],
-        remappings = [
+        package="robot_localization",
+        executable="navsat_transform_node",
+        name="slam_navsat_transform",
+        output="screen",
+        parameters=[parameters_file],
+        remappings=[
             ("gps/fix", "/gps"),
             ("imu", "/imu/fused"),
             ("odometry/filtered", "/slam/odometry"),
