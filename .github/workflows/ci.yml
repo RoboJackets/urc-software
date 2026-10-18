@@ -2,107 +2,117 @@ name: CI
 on:
   pull_request:
     branches: [master]
-    types: [closed]
   push:
-    branches-ignore:
-      - master
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whitespace
+        run: |
+          base=${{ github.event.pull_request.base.sha || github.event.before }}
+          [[ -n "${base}" ]] || exit 0
+          git diff --check "${base}" HEAD
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build lint image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          target: lint
+          load: true
+          tags: urc-lint:ci
+          cache-from: type=gha,scope=lint
+          cache-to: type=gha,scope=lint,mode=max
+
+      - name: Run linters
+        run: |
+          docker run --rm -v "$PWD":/ws -w /ws urc-lint:ci bash -c '
+            source /opt/ros/humble/setup.bash
+            ament_uncrustify -c ament_code_style.cfg
+            ament_flake8
+            ament_xmllint
+            ament_lint_cmake
+          '
+
   build:
-    name: Build
+    name: Build and Test
     runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
+    timeout-minutes: 45
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-          path: colcon_ws/src/urc-software
-
-      - name: Update Dependencies
-        shell: bash
-        run: |
-          # ensure tools
-          sudo apt-get update
-          sudo apt-get install -y curl gnupg lsb-release ca-certificates
-
-          # Remove any old ROS repo/key files that may be invalid
-          sudo rm -f /etc/apt/sources.list.d/ros2.list
-          sudo rm -f /usr/share/keyrings/ros-archive-keyring.gpg
-          # (optional) try to remove old apt-key entry if present
-          sudo apt-key del F42ED6FBAB17C654 || true
-
-          # Install fresh ROS apt keyring and repository (signed-by)
-          curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-            | sudo gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] https://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" \
-            | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
-          # Update & upgrade now that key/repo are correct
-          sudo apt-get update
-          sudo apt-get --with-new-pkgs upgrade -y
-
-      - name: Build
-        shell: bash
-        working-directory: colcon_ws
-        run: |
-          source /opt/ros/humble/setup.bash
-          rosdep update
-          rosdep install --from-paths src --ignore-src -r -y
-          colcon build
-
-  cpp_linting:
-    name: C++ Linting
-    runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Run Uncrustify
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          touch external/AMENT_IGNORE
-          ament_uncrustify -c ament_code_style.cfg
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  python_linting:
-    name: Python Linting
-    runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+      - name: Build CI image
+        uses: docker/build-push-action@v6
         with:
-          submodules: recursive
+          context: .
+          file: docker/Dockerfile
+          target: ci
+          load: true
+          tags: urc-ci:ci
+          cache-from: type=gha,scope=ci
+          cache-to: type=gha,scope=ci,mode=max
 
-      - name: Run flake8
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          ament_flake8 --exclude external
-
-  build_linting:
-    name: Build Linting
-    runs-on: ubuntu-22.04
-    container: robojackets/urc-baseimage:humble
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+      - name: Restore ccache
+        uses: actions/cache@v4
         with:
-          submodules: recursive
+          path: ~/.ccache-ci
+          key: ccache-${{ github.sha }}
+          restore-keys: ccache-
 
-      - name: Run xmllint
-        shell: bash
+      - name: Build and test
         run: |
-          source /opt/ros/humble/setup.bash
-          ament_xmllint --exclude external
+          mkdir -p ~/.ccache-ci
+          docker run --rm \
+            -v "$PWD":/ws/src \
+            -v ~/.ccache-ci:/ccache \
+            urc-ci:ci bash -c '
+              source /opt/ros/humble/setup.bash
+              colcon build \
+                --event-handlers console_cohesion+ \
+                --cmake-args \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                  -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+              ccache --show-stats
+              colcon test --event-handlers console_direct+ \
+                --packages-skip nanopb vectornav vectornav_msgs \
+                  behaviortree_ros2 btcpp_ros2_interfaces btcpp_ros2_samples
+              colcon test-result --verbose
+            '
 
-      - name: Run ament_lint_cmake
-        shell: bash
+  ci-success:
+    name: CI Success
+    if: always()
+    needs: [lint, build]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - name: Require all jobs to pass
         run: |
-          source /opt/ros/humble/setup.bash
-          touch external/AMENT_IGNORE
-          ament_lint_cmake
+          [[ "${{ needs.lint.result }}" == "success" && "${{ needs.build.result }}" == "success" ]]
