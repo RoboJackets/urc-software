@@ -46,7 +46,7 @@ jobs:
 
       - name: Run linters
         run: |
-          docker run --rm -v "$PWD":/ws -w /ws urc-lint:ci bash -c '
+          docker run --rm -v "$PWD":/ws -w /ws urc-lint:ci bash -e -o pipefail -c '
             source /opt/ros/humble/setup.bash
             ament_uncrustify -c ament_code_style.cfg
             ament_flake8
@@ -91,7 +91,7 @@ jobs:
           docker run --rm \
             -v "$PWD":/ws/src \
             -v ~/.ccache-ci:/ccache \
-            urc-ci:ci bash -c '
+            urc-ci:ci bash -e -o pipefail -c '
               source /opt/ros/humble/setup.bash
               colcon build \
                 --event-handlers console_cohesion+ \
@@ -100,6 +100,7 @@ jobs:
                   -DCMAKE_C_COMPILER_LAUNCHER=ccache \
                   -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
               ccache --show-stats
+              source install/setup.bash
               colcon test --event-handlers console_direct+ \
                 --packages-skip nanopb vectornav vectornav_msgs \
                   behaviortree_ros2 btcpp_ros2_interfaces btcpp_ros2_samples
