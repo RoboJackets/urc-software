@@ -34,5 +34,7 @@ any model change.
 - `models/` contains the installed rover and terrain meshes.
 - `rviz/display.rviz` is the default visualization configuration.
 - Sensor xacros define the simulated lidar, IMU, and GPS.
+- `urdf/simplified_swerve_status_light.xacro` defines the rear status light;
+  `urc_sim` sets its color in simulation.
 
 Use `ros2 launch urc_bringup sim.launch.py` for the composed rover simulation.
