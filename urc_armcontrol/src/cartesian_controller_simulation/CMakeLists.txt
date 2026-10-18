@@ -8,4 +8,8 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS scripts/gripper_telemetry.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

@@ -66,6 +66,13 @@ def generate_launch_description():
         output="screen",
     )
 
+    gripper_telemetry = Node(
+        package="cartesian_controller_simulation",
+        executable="gripper_telemetry.py",
+        parameters=[{"use_sim_time": True}],
+        output="screen",
+    )
+
     # --- Arm URDF from cartesian_controller_simulation ---
     robot_description_content = Command(
         [
@@ -218,6 +225,7 @@ def generate_launch_description():
             gz_sim,
             bridge,
             robot_state_publisher_node,
+            gripper_telemetry,
             # rviz,
             # relay,
             spawn,

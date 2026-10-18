@@ -13,6 +13,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/GripperTelemetry.msg"
   "msg/BatteryInfo.msg"
   "msg/StatusLightCommand.msg"
   "msg/Waypoint.msg"

@@ -20,6 +20,7 @@
   <exec_depend>rqt_gui</exec_depend>
   <exec_depend>rqt_joint_trajectory_controller</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>cartesian_controller_simulation</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
