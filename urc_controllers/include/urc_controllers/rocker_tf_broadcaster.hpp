@@ -33,7 +33,7 @@ private:
   std::string parent_frame_;
   std::string child_frame_;
 
-    bool invert_sign_{true};
+  bool invert_sign_{true};
 
   rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr js_sub_;
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr angle_pub_;
