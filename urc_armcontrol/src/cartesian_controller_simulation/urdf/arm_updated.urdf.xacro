@@ -25,19 +25,30 @@
           bicep_link   -> link2
           forearm_link -> link3
           diffw_forearm -> link4
-          diffw_link   -> link5
+          link5 is now the claw palm, replacing diffw_link geometry
 
         NOTE: joint5 axis / diffw_yaw mapping to "wrist roll" is unconfirmed —
         verify against the physical arm.
 
-        Gripper geometry from the old xacro is kept below but commented out
-        so it can be toggled back on once confirmed against the real
-        end effector. A minimal, zero-offset tool0 frame is left active
-        (uncommented) so cartesian controllers relying on
-        end_effector_link: "tool0" don't break while the gripper is disabled.
+        The end effector is a prototype parallel claw with one driven finger
+        and one mimic finger. Dimensions and masses are placeholders, not CAD.
+        Width = 2 * left_finger_joint position (meters); maximum width is 80 mm.
+        tool0 is fixed to the palm at the grasp point, so finger motion does
+        not add joints to the arm's Cartesian chain.
         -->
 
         <xacro:include filename="$(find cartesian_controller_simulation)/urdf/joint_gz.urdf.xacro"/>
+
+        <!-- Prototype claw dimensions (meters, kilograms). -->
+        <xacro:property name="claw_palm_x" value="0.03"/>
+        <xacro:property name="claw_palm_y" value="0.10"/>
+        <xacro:property name="claw_palm_z" value="0.02"/>
+        <xacro:property name="claw_palm_mass" value="0.2"/>
+        <xacro:property name="claw_finger_x" value="0.02"/>
+        <xacro:property name="claw_finger_y" value="0.01"/>
+        <xacro:property name="claw_finger_z" value="0.06"/>
+        <xacro:property name="claw_finger_mass" value="0.05"/>
+        <xacro:property name="claw_finger_travel" value="0.04"/>
 
         <!-- ROS2 control interfaces -->
         <ros2_control name="cartesian_controller_simulation" type="system">
@@ -61,20 +72,44 @@
                 <xacro:joint_interface name="joint4" /> <!-- wrist pitch -->
                 <xacro:joint_interface name="joint5" /> <!-- wrist roll -->
 
+                <!-- Humble gz_ros2_control: command only the left joint in
+                     a gripper controller; the right joint follows it. -->
+                <joint name="left_finger_joint">
+                        <command_interface name="position">
+                                <param name="min">0.0</param>
+                                <param name="max">${claw_finger_travel}</param>
+                        </command_interface>
+                        <state_interface name="position">
+                                <param name="initial_value">${claw_finger_travel / 2}</param>
+                        </state_interface>
+                        <state_interface name="velocity"/>
+                </joint>
+                <joint name="right_finger_joint">
+                        <param name="mimic">left_finger_joint</param>
+                        <param name="multiplier">1</param>
+                        <command_interface name="position"/>
+                        <state_interface name="position">
+                                <param name="initial_value">${claw_finger_travel / 2}</param>
+                        </state_interface>
+                        <state_interface name="velocity"/>
+                </joint>
+
                 <hardware>
                         <plugin>gz_ros2_control/GazeboSimSystem</plugin>
                 </hardware>
 
         </ros2_control>
 
-        <!-- UNCOMMENT IF ONLY ARM SIM NEEDED -->
-        <!-- Gazebo plugin to load controller manager
+        <!-- Combined rover models supply their own controller-manager plugin. -->
+        <xacro:arg name="standalone_sim" default="false"/>
+        <xacro:if value="$(arg standalone_sim)">
         <gazebo>
                 <plugin filename="gz_ros2_control-system"
                         name="gz_ros2_control::GazeboSimROS2ControlPlugin">
                         <parameters>$(find cartesian_controller_simulation)/config/controller_manager_arm.yaml</parameters>
                 </plugin>
-        </gazebo> -->
+        </gazebo>
+        </xacro:if>
 
         <material name="base">
                 <color rgba="0.79216 0.81961 0.93333 1" />
@@ -231,28 +266,34 @@
                 <limit lower="-1.57" upper="1.57" effort="1.0" velocity="10.0" />
         </joint>
 
-        <!-- ================= link5 (was diffw_link) ================= -->
-        <link name="link5">
-                <inertial>
-                        <origin xyz="4.5926E-06 1.4231E-06 0.0052114" rpy="0 0 0" />
-                        <mass value="0.12065" />
-                        <inertia ixx="6.1339E-05" ixy="8.9689E-10" ixz="1.7613E-08"
-                                 iyy="6.1337E-05" iyz="5.4578E-09" izz="4.0162E-05" />
-                </inertial>
-                <visual>
-                        <origin xyz="0 0 0" rpy="0 0 0" />
-                        <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
-                        </geometry>
-                        <material name="base" />
-                </visual>
-                <collision>
-                        <origin xyz="0 0 0" rpy="0 0 0" />
-                        <geometry>
-                                <mesh filename="package://cartesian_controller_simulation/meshes/diffw_link.STL" />
-                        </geometry>
-                </collision>
-        </link>
+        <!-- Box geometry with physically consistent inertia about its center.
+             z offsets the box center from the link frame along the tool axis. -->
+        <xacro:macro name="claw_box" params="name sx sy sz mass z">
+                <link name="${name}">
+                        <inertial>
+                                <origin xyz="0 0 ${z}"/>
+                                <mass value="${mass}"/>
+                                <inertia ixx="${mass * (sy*sy + sz*sz) / 12}"
+                                         iyy="${mass * (sx*sx + sz*sz) / 12}"
+                                         izz="${mass * (sx*sx + sy*sy) / 12}"
+                                         ixy="0" ixz="0" iyz="0"/>
+                        </inertial>
+                        <visual>
+                                <origin xyz="0 0 ${z}"/>
+                                <geometry><box size="${sx} ${sy} ${sz}"/></geometry>
+                                <material name="base"/>
+                        </visual>
+                        <collision>
+                                <origin xyz="0 0 ${z}"/>
+                                <geometry><box size="${sx} ${sy} ${sz}"/></geometry>
+                        </collision>
+                </link>
+        </xacro:macro>
+
+        <!-- link5 retains the CAD wrist attachment frame; the palm extends +Z. -->
+        <xacro:claw_box name="link5"
+                        sx="${claw_palm_x}" sy="${claw_palm_y}" sz="${claw_palm_z}"
+                        mass="${claw_palm_mass}" z="${claw_palm_z / 2}"/>
 
         <!-- joint5: wrist roll (was diffw_yaw) -->
         <!-- NOTE: unconfirmed whether this SolidWorks joint is actually the -->
@@ -265,105 +306,38 @@
                 <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="1.0" velocity="2.0" />
         </joint>
 
-        <!-- ================================================================= -->
-        <!-- End effector frames                                                -->
-        <!-- ================================================================= -->
+        <!-- Fingers extend +Z and open along opposite Y axes. At q=0 their
+             inner faces meet; equal positive joint positions open the claw. -->
+        <xacro:claw_box name="left_finger"
+                        sx="${claw_finger_x}" sy="${claw_finger_y}" sz="${claw_finger_z}"
+                        mass="${claw_finger_mass}" z="${claw_finger_z / 2}"/>
+        <xacro:claw_box name="right_finger"
+                        sx="${claw_finger_x}" sy="${claw_finger_y}" sz="${claw_finger_z}"
+                        mass="${claw_finger_mass}" z="${claw_finger_z / 2}"/>
 
-        <!-- Active minimal tool0: zero-offset from link5 so cartesian         -->
-        <!-- controllers (end_effector_link: "tool0") keep working while the   -->
-        <!-- gripper block below is disabled. Once the gripper geometry is     -->
-        <!-- confirmed and re-enabled, move this joint's origin/parent down to -->
-        <!-- sensor_link (see commented block) instead of link5.               -->
-        <joint name="tool0_joint" type="fixed">
-                <origin xyz="0 0 0" rpy="0 0 0" />
-                <parent link="link5" />
-                <child link="tool0" />
-        </joint>
-        <link name="tool0" />
-
-        <!--
-        ================================================================
-        GRIPPER (from old xacro): commented out, toggle back on once
-        confirmed against the real end effector. If re-enabled, DELETE
-        the minimal tool0 block above and uncomment sensor_link/tool0
-        below instead, along with removing "link5" -> "tool0" shortcut.
-
-        <xacro:property name="joint_radius" value="0.02" />
-        <xacro:property name="joint_length" value="0.03" />
-        <xacro:property name="link5_length" value="0.1" />
-
-        <material name="joint_part1">
-                <color rgba="0.525 0.713 0.662 1.0"/>
-        </material>
-        <material name="joint_part2">
-                <color rgba="0.462 0.196 0.411 1.0"/>
-        </material>
-
-        <visual name="gripper_base">
-                <origin xyz="0 0 ${link5_length}" rpy="0 0 0" />
-                <geometry>
-                        <box size="${joint_radius * 2} ${joint_radius * 2.5} ${joint_length}"/>
-                </geometry>
-                <material name="joint_part1"/>
-        </visual>
-        <visual name="right_finger_1">
-                <origin xyz="${joint_radius * 2} ${joint_radius} ${link5_length}" rpy="0 0 0.3" />
-                <geometry>
-                        <box size="${joint_length * 3} ${joint_radius * 0.8} ${joint_radius * 0.8}"/>
-                </geometry>
-                <material name="joint_part2"/>
-        </visual>
-        <visual name="right_finger_2">
-                <origin xyz="${joint_radius * 3.75} ${joint_radius * 1.5} ${link5_length}" rpy="0 0 1.2" />
-                <geometry>
-                        <box size="${joint_length * 1.5} ${joint_radius * 0.8} ${joint_radius * 0.8}"/>
-                </geometry>
-                <material name="joint_part2"/>
-        </visual>
-        <visual name="left_finger_1">
-                <origin xyz="${joint_radius * 2} -${joint_radius} ${link5_length}" rpy="0 0 -0.3" />
-                <geometry>
-                        <box size="${joint_length * 3} ${joint_radius * 0.8} ${joint_radius * 0.8}"/>
-                </geometry>
-                <material name="joint_part2"/>
-        </visual>
-        <visual name="left_finger_2">
-                <origin xyz="${joint_radius * 3.75} -${joint_radius * 1.5} ${link5_length}" rpy="0 0 -1.2" />
-                <geometry>
-                        <box size="${joint_length * 1.5} ${joint_radius * 0.8} ${joint_radius * 0.8}"/>
-                </geometry>
-                <material name="joint_part2"/>
-        </visual>
-
-        <joint name="sensor_link_joint" type="fixed">
-                <origin xyz="0 0 ${link5_length}" rpy="0 0 0"/>
+        <joint name="left_finger_joint" type="prismatic">
                 <parent link="link5"/>
-                <child link="sensor_link"/>
+                <child link="left_finger"/>
+                <origin xyz="0 ${claw_finger_y / 2} ${claw_palm_z}"/>
+                <axis xyz="0 1 0"/>
+                <limit lower="0" upper="${claw_finger_travel}" effort="20" velocity="0.02"/>
         </joint>
-        <link name="sensor_link"/>
+        <joint name="right_finger_joint" type="prismatic">
+                <parent link="link5"/>
+                <child link="right_finger"/>
+                <origin xyz="0 ${-claw_finger_y / 2} ${claw_palm_z}"/>
+                <axis xyz="0 -1 0"/>
+                <limit lower="0" upper="${claw_finger_travel}" effort="20" velocity="0.02"/>
+                <mimic joint="left_finger_joint" multiplier="1" offset="0"/>
+        </joint>
 
+        <!-- Grasp point is centered between the fingers, 10 mm behind tips. -->
         <joint name="tool0_joint" type="fixed">
-                <origin xyz="${joint_radius * 3.5} 0 0" rpy="0 0 0"/>
-                <parent link="sensor_link"/>
+                <origin xyz="0 0 ${claw_palm_z + claw_finger_z - 0.01}"/>
+                <parent link="link5"/>
                 <child link="tool0"/>
         </joint>
         <link name="tool0"/>
-
-        <joint name="invalid_sensor_link_joint" type="fixed">
-                <origin xyz="0 0 ${link5_length * 3}" rpy="0 0 0"/>
-                <parent link="link5"/>
-                <child link="invalid_sensor_link"/>
-        </joint>
-        <link name="invalid_sensor_link"/>
-
-        <joint name="invalid_compliance_link_joint" type="fixed">
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <parent link="sensor_link"/>
-                <child link="invalid_compliance_link"/>
-        </joint>
-        <link name="invalid_compliance_link"/>
-        ================================================================
-        -->
 
         <!-- ================================================================= -->
         <!-- Gazebo per-link material tags                                      -->

@@ -162,3 +162,30 @@ or unplug/replug the controller and attach in powershell again.
 ```
 pip install 'numpy<2'  
 ```
+## Test the claw with sliders in Gazebo
+
+Install the optional GUI if needed:
+
+```bash
+sudo apt install ros-humble-rqt-joint-trajectory-controller
+```
+
+From the workspace root, rebuild and source the modified packages:
+
+```bash
+colcon build --packages-select cartesian_controller_simulation urc_bringup
+source install/setup.bash
+ros2 launch urc_bringup arm_sim.launch.py gripper_gui:=true
+```
+
+In the rqt window, select `/controller_manager`, then `gripper_controller`.
+Enable control with the power button and move the `left_finger_joint` slider
+between 0 and 0.04 meters. The right finger follows automatically; total claw
+opening is twice the slider value (0 to 80 mm). Start with low speed scaling.
+The arm Cartesian controller remains active while you exercise the claw.
+This GUI sends trajectories to Gazebo; do not run a separate
+`joint_state_publisher_gui` alongside the simulator's joint-state broadcaster.
+
+The GUI is disabled by default (`gripper_gui:=false`). The standalone launch
+passes `standalone_sim:=true` to the arm xacro to load its control plugin;
+combined rover models retain the default of supplying their own plugin.

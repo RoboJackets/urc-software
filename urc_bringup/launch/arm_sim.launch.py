@@ -6,6 +6,7 @@ from launch.actions import (
     RegisterEventHandler,
     SetEnvironmentVariable, 
 )
+from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
@@ -50,6 +51,21 @@ def generate_launch_description():
         description="bridge YAML config",
     )
 
+    gripper_gui_arg = DeclareLaunchArgument(
+        "gripper_gui",
+        default_value="false",
+        description="Open rqt trajectory sliders; select gripper_controller to move the claw",
+    )
+
+    gripper_gui = Node(
+        package="rqt_gui",
+        executable="rqt_gui",
+        arguments=["--standalone", "rqt_joint_trajectory_controller"],
+        parameters=[{"use_sim_time": True}],
+        condition=IfCondition(LaunchConfiguration("gripper_gui")),
+        output="screen",
+    )
+
     # --- Arm URDF from cartesian_controller_simulation ---
     robot_description_content = Command(
         [
@@ -63,6 +79,7 @@ def generate_launch_description():
                     # "arm_gazebo.urdf.xacro", #basic geometry arm
                 ]
             ),
+            " standalone_sim:=true",
         ]
     )
 
@@ -141,6 +158,8 @@ def generate_launch_description():
             + [a for a in args],
         )
 
+    load_gripper_controller = controller_spawner("gripper_controller")
+
     load_joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
@@ -195,6 +214,7 @@ def generate_launch_description():
             ign_resource_path,
             sim_world_arg,
             bridge_yaml,
+            gripper_gui_arg,
             gz_sim,
             bridge,
             robot_state_publisher_node,
@@ -214,10 +234,18 @@ def generate_launch_description():
             RegisterEventHandler(
                 event_handler=OnProcessExit(
                     target_action=load_joint_state_broadcaster,
-                    on_exit=[load_cartesian_motion_controller, load_joint_trajectory_controller],
+                    on_exit=[load_cartesian_motion_controller, load_joint_trajectory_controller,
+                             load_gripper_controller],
                 )
             ),
 
+
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=load_gripper_controller,
+                    on_exit=[gripper_gui],
+                )
+            ),
 
             # # Start cartesian controllers AFTER joint_state_broadcaster
             # RegisterEventHandler(

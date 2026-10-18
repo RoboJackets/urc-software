@@ -11,8 +11,30 @@ controller_manager:
     motion_control_handle:
       type: cartesian_controller_handles/MotionControlHandle
 
+    gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
     joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
+
+gripper_controller:
+  ros__parameters:
+    # Trajectory messages may include velocities and accelerations for spline
+    # interpolation; Gazebo receives the resulting position command.
+    joints:
+      - left_finger_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    constraints:
+      goal_time: 1.0
+      stopped_velocity_tolerance: 0.002
+      left_finger_joint:
+        goal: 0.001
 
 # cartesian_compliance_controller:
 #   ros__parameters:
@@ -28,7 +50,7 @@ controller_manager:
 #     # controllers will build a kinematic chain from this link up to
 #     # end_effector_link.  It's also the reference frame for the superposition
 #     # of error components in all controllers.
-#     robot_base_link: "base_link"
+#     robot_base_link: "arm_base_link"
 
 #     # This is the URDF link of your sensor. Sensor signals are assumed to be
 #     # given in this frame.  It's important that this link is located somewhere
@@ -93,7 +115,7 @@ controller_manager:
 
 #     # See the cartesian_compliance_controller
 #     end_effector_link: "tool0"
-#     robot_base_link: "base_link"
+#     robot_base_link: "arm_base_link"
 #     ft_sensor_ref_link: "sensor_link"
 #     joints:
 #       - joint1
@@ -124,7 +146,7 @@ cartesian_motion_controller:
 
     # See the cartesian_compliance_controller
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "arm_base_link"
     joints:
       - joint1
       - joint2
@@ -153,7 +175,7 @@ cartesian_motion_controller:
 motion_control_handle:
   ros__parameters:
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "arm_base_link"
     ft_sensor_ref_link: "tool0"
     joints:
       - joint1
@@ -183,7 +205,7 @@ joint_trajectory_controller:
 invalid_cartesian_compliance_controller:
   ros__parameters:
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "arm_base_link"
     ft_sensor_ref_link: "sensor_link"
 
     # Invalid: the compliance link is not part of the kinematic chain from
@@ -221,7 +243,7 @@ invalid_cartesian_compliance_controller:
 invalid_cartesian_force_controller:
   ros__parameters:
     end_effector_link: "tool0"
-    robot_base_link: "base_link"
+    robot_base_link: "arm_base_link"
 
     # Invalid: The sensor link is not part of the kinematic chain from
     # robot_base_link to end_effector_link

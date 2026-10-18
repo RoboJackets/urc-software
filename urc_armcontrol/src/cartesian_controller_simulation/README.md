@@ -29,7 +29,7 @@ It's ready-to-use and we will just point to it during the build.
 In a sourced terminal, run
 ```bash
 export LC_NUMERIC="en_US.UTF-8"
-ros2 launch cartesian_controller_simulation simulation.launch.py
+ros2 launch cartesian_controller_simulation arm_simulation.launch.py
 ```
 The export might not be necessary on your system.
 It fixes an eventual *locals* problem and makes sure that you see the robot visualization correctly in RViz.
