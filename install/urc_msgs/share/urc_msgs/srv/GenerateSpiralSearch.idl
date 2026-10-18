@@ -1,0 +1,36 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from urc_msgs/srv/GenerateSpiralSearch.srv
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/PoseStamped.idl"
+#include "nav_msgs/msg/Path.idl"
+
+module urc_msgs {
+  module srv {
+    @verbatim (language="comment", text=
+      "Request: spiral center, outer search radius, and optional spacing overrides (<= 0 uses server defaults).")
+    struct GenerateSpiralSearch_Request {
+      geometry_msgs::msg::PoseStamped center;
+
+      double search_radius;
+
+      double track_spacing;
+
+      double waypoint_spacing;
+    };
+    module GenerateSpiralSearch_Response_Constants {
+      const uint16 SUCCESS = 0;
+      const uint16 INVALID_REQUEST = 1;
+      const uint16 FAILURE = 2;
+    };
+    struct GenerateSpiralSearch_Response {
+      nav_msgs::msg::Path path;
+
+      double track_spacing;
+
+      double path_length;
+
+      uint16 error_code;
+    };
+  };
+};

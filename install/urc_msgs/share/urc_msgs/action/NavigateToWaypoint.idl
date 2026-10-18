@@ -1,0 +1,49 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from urc_msgs/action/NavigateToWaypoint.action
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/PoseStamped.idl"
+#include "nav_msgs/msg/Path.idl"
+#include "std_msgs/msg/Empty.idl"
+
+module urc_msgs {
+  module action {
+    @verbatim (language="comment", text=
+      "request definition" "\n"
+      "Either path or goal must be provided" "\n"
+      "If goal is provided, path planning service will be called")
+    struct NavigateToWaypoint_Goal {
+      nav_msgs::msg::Path path;
+
+      geometry_msgs::msg::PoseStamped goal;
+
+      boolean has_path;
+
+      boolean has_goal;
+
+      boolean enforce_goal_heading;
+    };
+    module NavigateToWaypoint_Result_Constants {
+      const uint16 SUCCESS = 0;
+      const uint16 FAILURE = 1;
+      const uint16 OBSTACLE_DETECTED = 2;
+      const uint16 PLANNING_FAILED = 3;
+    };
+    @verbatim (language="comment", text=
+      "response definition")
+    struct NavigateToWaypoint_Result {
+      std_msgs::msg::Empty result;
+
+      uint16 error_code;
+    };
+    @verbatim (language="comment", text=
+      "feedback definition")
+    struct NavigateToWaypoint_Feedback {
+      float distance_to_goal;
+
+      boolean is_planning;
+
+      uint16 replan_count;
+    };
+  };
+};

@@ -1,0 +1,25 @@
+[package]
+name = "urc_msgs"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+rosidl_runtime_rs = "0.6"
+serde = { version = "1", optional = true, features = ["derive"] }
+serde-big-array = { version = "0.5.1", optional = true }
+
+# ROS Dependencies
+action_msgs = "*"
+builtin_interfaces = "*"
+geometry_msgs = "*"
+nav_msgs = "*"
+rosgraph_msgs = "*"
+statistics_msgs = "*"
+std_msgs = "*"
+unique_identifier_msgs = "*"
+
+[features]
+serde = ['dep:serde', 'dep:serde-big-array', 'rosidl_runtime_rs/serde', 'action_msgs/serde', 'builtin_interfaces/serde', 'geometry_msgs/serde', 'nav_msgs/serde', 'rosgraph_msgs/serde', 'statistics_msgs/serde', 'std_msgs/serde', 'unique_identifier_msgs/serde']
+
+[package.metadata.ros-env]
+include = true

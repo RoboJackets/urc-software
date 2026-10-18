@@ -1,0 +1,32 @@
+// generated from rosidl_adapter/resource/action.idl.em
+// with input from vectornav_msgs/action/MagCal.action
+// generated code does not contain a copyright notice
+
+
+module vectornav_msgs {
+  module action {
+    @verbatim (language="comment", text=
+      "request")
+    struct MagCal_Goal {
+      uint8 structure_needs_at_least_one_member;
+    };
+    typedef float float__12[12];
+    @verbatim (language="comment", text=
+      "result")
+    struct MagCal_Result {
+      float__12 avg_dev;
+
+      float__12 calib;
+    };
+    typedef float float__12[12];
+    @verbatim (language="comment", text=
+      "feedback")
+    struct MagCal_Feedback {
+      float__12 curr_avg_dev;
+
+      float__12 curr_calib;
+
+      uint32 samples;
+    };
+  };
+};

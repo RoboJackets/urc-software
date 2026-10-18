@@ -1,0 +1,5 @@
+float32 cell_voltage
+float32 cell_charge_percentage
+float32 cell_discharge_current
+float32 cell_temperature
+float32[] cell_voltages

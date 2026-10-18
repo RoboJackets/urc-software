@@ -10,6 +10,7 @@ find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(urc_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
@@ -71,12 +72,22 @@ set(dependencies
   pluginlib
 )
 
+add_executable(spiral_search_server
+  src/spiral_search_server.cpp
+  src/spiral_search.cpp
+)
+
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
 ament_target_dependencies(gaussian_filter
   ${dependencies}
+)
+
+ament_target_dependencies(spiral_search_server
+  ${dependencies}
+  urc_msgs
 )
 
 rclcpp_components_register_node(
@@ -96,6 +107,12 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+# Install spiral search executable
+install(
+  TARGETS spiral_search_server
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 # Install launch files.

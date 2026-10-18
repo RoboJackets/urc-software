@@ -1,0 +1,62 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from vectornav_msgs/msg/AttitudeGroup.msg
+// generated code does not contain a copyright notice
+
+#include "geometry_msgs/msg/Quaternion.idl"
+#include "geometry_msgs/msg/Vector3.idl"
+#include "std_msgs/msg/Header.idl"
+#include "vectornav_msgs/msg/VpeStatus.idl"
+
+module vectornav_msgs {
+  module msg {
+    typedef float float__9[9];
+    module AttitudeGroup_Constants {
+      const uint16 ATTITUDEGROUP_VPESTATUS = 1;
+      const uint16 ATTITUDEGROUP_YAWPITCHROLL = 2;
+      const uint16 ATTITUDEGROUP_QUATERNION = 4;
+      const uint16 ATTITUDEGROUP_DCM = 8;
+      const uint16 ATTITUDEGROUP_MAGNED = 16;
+      const uint16 ATTITUDEGROUP_ACCELNED = 32;
+      const uint16 ATTITUDEGROUP_LINEARACCELBODY = 64;
+      const uint16 ATTITUDEGROUP_LINEARACCELNED = 128;
+      const uint16 ATTITUDEGROUP_YPRU = 256;
+    };
+    @verbatim (language="comment", text=
+      "VectorNav Composite Data Packet" "\n"
+      "" "\n"
+      "Only the enabled fields will be populated with data and only the fields " "\n"
+      "you require for your application should be enabled to conserve bandwidth" "\n"
+      "and increase the update rate." "\n"
+      "" "\n"
+      "TODO Requires rosidl patches")
+    struct AttitudeGroup {
+      @verbatim (language="comment", text=
+        "Data Received (ROS Time)")
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "Field Enable Bits")
+      uint16 group_fields;
+
+      @verbatim (language="comment", text=
+        "Fields")
+      vectornav_msgs::msg::VpeStatus vpestatus;
+
+      geometry_msgs::msg::Vector3 yawpitchroll;
+
+      geometry_msgs::msg::Quaternion quaternion;
+
+      float__9 dcm;
+
+      geometry_msgs::msg::Vector3 magned;
+
+      geometry_msgs::msg::Vector3 accelned;
+
+      geometry_msgs::msg::Vector3 linearaccelbody;
+
+      geometry_msgs::msg::Vector3 linearaccelned;
+
+      geometry_msgs::msg::Vector3 ypru;
+    };
+  };
+};

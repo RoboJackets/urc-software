@@ -1,0 +1,10 @@
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/uninstall.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/urc_nanopb_uninstall.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/urc_nanopb.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/test.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/edit_cache.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/rebuild_cache.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/list_install_components.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/install.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/install/local.dir
+/home/ubuntu/urc_software/build/urc_nanopb/CMakeFiles/install/strip.dir
