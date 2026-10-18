@@ -291,6 +291,9 @@ urc_msgs__srv__GenerateSpiralSearch_Response__init(urc_msgs__srv__GenerateSpiral
   }
   // track_spacing
   // path_length
+  // traversability_checked
+  // truncated
+  // skipped_waypoints
   // error_code
   return true;
 }
@@ -305,6 +308,9 @@ urc_msgs__srv__GenerateSpiralSearch_Response__fini(urc_msgs__srv__GenerateSpiral
   nav_msgs__msg__Path__fini(&msg->path);
   // track_spacing
   // path_length
+  // traversability_checked
+  // truncated
+  // skipped_waypoints
   // error_code
 }
 
@@ -326,6 +332,18 @@ urc_msgs__srv__GenerateSpiralSearch_Response__are_equal(const urc_msgs__srv__Gen
   }
   // path_length
   if (lhs->path_length != rhs->path_length) {
+    return false;
+  }
+  // traversability_checked
+  if (lhs->traversability_checked != rhs->traversability_checked) {
+    return false;
+  }
+  // truncated
+  if (lhs->truncated != rhs->truncated) {
+    return false;
+  }
+  // skipped_waypoints
+  if (lhs->skipped_waypoints != rhs->skipped_waypoints) {
     return false;
   }
   // error_code
@@ -353,6 +371,12 @@ urc_msgs__srv__GenerateSpiralSearch_Response__copy(
   output->track_spacing = input->track_spacing;
   // path_length
   output->path_length = input->path_length;
+  // traversability_checked
+  output->traversability_checked = input->traversability_checked;
+  // truncated
+  output->truncated = input->truncated;
+  // skipped_waypoints
+  output->skipped_waypoints = input->skipped_waypoints;
   // error_code
   output->error_code = input->error_code;
   return true;

@@ -127,16 +127,64 @@ private:
   ::urc_msgs::srv::GenerateSpiralSearch_Response msg_;
 };
 
+class Init_GenerateSpiralSearch_Response_skipped_waypoints
+{
+public:
+  explicit Init_GenerateSpiralSearch_Response_skipped_waypoints(::urc_msgs::srv::GenerateSpiralSearch_Response & msg)
+  : msg_(msg)
+  {}
+  Init_GenerateSpiralSearch_Response_error_code skipped_waypoints(::urc_msgs::srv::GenerateSpiralSearch_Response::_skipped_waypoints_type arg)
+  {
+    msg_.skipped_waypoints = std::move(arg);
+    return Init_GenerateSpiralSearch_Response_error_code(msg_);
+  }
+
+private:
+  ::urc_msgs::srv::GenerateSpiralSearch_Response msg_;
+};
+
+class Init_GenerateSpiralSearch_Response_truncated
+{
+public:
+  explicit Init_GenerateSpiralSearch_Response_truncated(::urc_msgs::srv::GenerateSpiralSearch_Response & msg)
+  : msg_(msg)
+  {}
+  Init_GenerateSpiralSearch_Response_skipped_waypoints truncated(::urc_msgs::srv::GenerateSpiralSearch_Response::_truncated_type arg)
+  {
+    msg_.truncated = std::move(arg);
+    return Init_GenerateSpiralSearch_Response_skipped_waypoints(msg_);
+  }
+
+private:
+  ::urc_msgs::srv::GenerateSpiralSearch_Response msg_;
+};
+
+class Init_GenerateSpiralSearch_Response_traversability_checked
+{
+public:
+  explicit Init_GenerateSpiralSearch_Response_traversability_checked(::urc_msgs::srv::GenerateSpiralSearch_Response & msg)
+  : msg_(msg)
+  {}
+  Init_GenerateSpiralSearch_Response_truncated traversability_checked(::urc_msgs::srv::GenerateSpiralSearch_Response::_traversability_checked_type arg)
+  {
+    msg_.traversability_checked = std::move(arg);
+    return Init_GenerateSpiralSearch_Response_truncated(msg_);
+  }
+
+private:
+  ::urc_msgs::srv::GenerateSpiralSearch_Response msg_;
+};
+
 class Init_GenerateSpiralSearch_Response_path_length
 {
 public:
   explicit Init_GenerateSpiralSearch_Response_path_length(::urc_msgs::srv::GenerateSpiralSearch_Response & msg)
   : msg_(msg)
   {}
-  Init_GenerateSpiralSearch_Response_error_code path_length(::urc_msgs::srv::GenerateSpiralSearch_Response::_path_length_type arg)
+  Init_GenerateSpiralSearch_Response_traversability_checked path_length(::urc_msgs::srv::GenerateSpiralSearch_Response::_path_length_type arg)
   {
     msg_.path_length = std::move(arg);
-    return Init_GenerateSpiralSearch_Response_error_code(msg_);
+    return Init_GenerateSpiralSearch_Response_traversability_checked(msg_);
   }
 
 private:

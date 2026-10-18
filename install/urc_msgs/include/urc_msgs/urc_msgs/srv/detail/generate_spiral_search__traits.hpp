@@ -196,6 +196,27 @@ inline void to_flow_style_yaml(
     out << ", ";
   }
 
+  // member: traversability_checked
+  {
+    out << "traversability_checked: ";
+    rosidl_generator_traits::value_to_yaml(msg.traversability_checked, out);
+    out << ", ";
+  }
+
+  // member: truncated
+  {
+    out << "truncated: ";
+    rosidl_generator_traits::value_to_yaml(msg.truncated, out);
+    out << ", ";
+  }
+
+  // member: skipped_waypoints
+  {
+    out << "skipped_waypoints: ";
+    rosidl_generator_traits::value_to_yaml(msg.skipped_waypoints, out);
+    out << ", ";
+  }
+
   // member: error_code
   {
     out << "error_code: ";
@@ -234,6 +255,36 @@ inline void to_block_style_yaml(
     }
     out << "path_length: ";
     rosidl_generator_traits::value_to_yaml(msg.path_length, out);
+    out << "\n";
+  }
+
+  // member: traversability_checked
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "traversability_checked: ";
+    rosidl_generator_traits::value_to_yaml(msg.traversability_checked, out);
+    out << "\n";
+  }
+
+  // member: truncated
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "truncated: ";
+    rosidl_generator_traits::value_to_yaml(msg.truncated, out);
+    out << "\n";
+  }
+
+  // member: skipped_waypoints
+  {
+    if (indentation > 0) {
+      out << std::string(indentation, ' ');
+    }
+    out << "skipped_waypoints: ";
+    rosidl_generator_traits::value_to_yaml(msg.skipped_waypoints, out);
     out << "\n";
   }
 

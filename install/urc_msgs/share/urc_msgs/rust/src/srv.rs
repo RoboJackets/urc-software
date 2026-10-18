@@ -216,6 +216,15 @@ pub struct GenerateSpiralSearch_Response {
     #[allow(missing_docs)]
     pub path_length: f64,
 
+    /// True when the path was routed against the traversability map.
+    pub traversability_checked: bool,
+
+    /// True when the outer part of the spiral was dropped because no safe route reached it.
+    pub truncated: bool,
+
+    /// Spiral waypoints left out of the path because they were blocked or unreachable.
+    pub skipped_waypoints: u32,
+
 
     // This member is not documented.
     #[allow(missing_docs)]
@@ -239,6 +248,12 @@ impl GenerateSpiralSearch_Response {
     #[allow(missing_docs)]
     pub const FAILURE: u16 = 2;
 
+    /// No fresh traversability map was available and the server requires one.
+    pub const MAP_UNAVAILABLE: u16 = 3;
+
+    /// Every spiral waypoint was blocked or unreachable on the traversability map.
+    pub const NO_TRAVERSABLE_PATH: u16 = 4;
+
 }
 
 
@@ -257,12 +272,18 @@ impl rosidl_runtime_rs::Message for GenerateSpiralSearch_Response {
         path: nav_msgs::msg::Path::into_rmw_message(std::borrow::Cow::Owned(msg.path)).into_owned(),
         track_spacing: msg.track_spacing,
         path_length: msg.path_length,
+        traversability_checked: msg.traversability_checked,
+        truncated: msg.truncated,
+        skipped_waypoints: msg.skipped_waypoints,
         error_code: msg.error_code,
       }),
       std::borrow::Cow::Borrowed(msg) => std::borrow::Cow::Owned(Self::RmwMsg {
         path: nav_msgs::msg::Path::into_rmw_message(std::borrow::Cow::Borrowed(&msg.path)).into_owned(),
       track_spacing: msg.track_spacing,
       path_length: msg.path_length,
+      traversability_checked: msg.traversability_checked,
+      truncated: msg.truncated,
+      skipped_waypoints: msg.skipped_waypoints,
       error_code: msg.error_code,
       })
     }
@@ -273,6 +294,9 @@ impl rosidl_runtime_rs::Message for GenerateSpiralSearch_Response {
       path: nav_msgs::msg::Path::from_rmw_message(msg.path),
       track_spacing: msg.track_spacing,
       path_length: msg.path_length,
+      traversability_checked: msg.traversability_checked,
+      truncated: msg.truncated,
+      skipped_waypoints: msg.skipped_waypoints,
       error_code: msg.error_code,
     }
   }

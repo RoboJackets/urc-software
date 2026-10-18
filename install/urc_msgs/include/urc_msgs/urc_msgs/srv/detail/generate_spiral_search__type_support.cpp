@@ -207,7 +207,7 @@ void GenerateSpiralSearch_Response_fini_function(void * message_memory)
   typed_message->~GenerateSpiralSearch_Response();
 }
 
-static const ::rosidl_typesupport_introspection_cpp::MessageMember GenerateSpiralSearch_Response_message_member_array[4] = {
+static const ::rosidl_typesupport_introspection_cpp::MessageMember GenerateSpiralSearch_Response_message_member_array[7] = {
   {
     "path",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_MESSAGE,  // type
@@ -260,6 +260,57 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember GenerateSpira
     nullptr  // resize(index) function pointer
   },
   {
+    "traversability_checked",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(urc_msgs::srv::GenerateSpiralSearch_Response, traversability_checked),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr,  // fetch(index, &value) function pointer
+    nullptr,  // assign(index, value) function pointer
+    nullptr  // resize(index) function pointer
+  },
+  {
+    "truncated",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_BOOLEAN,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(urc_msgs::srv::GenerateSpiralSearch_Response, truncated),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr,  // fetch(index, &value) function pointer
+    nullptr,  // assign(index, value) function pointer
+    nullptr  // resize(index) function pointer
+  },
+  {
+    "skipped_waypoints",  // name
+    ::rosidl_typesupport_introspection_cpp::ROS_TYPE_UINT32,  // type
+    0,  // upper bound of string
+    nullptr,  // members of sub message
+    false,  // is array
+    0,  // array size
+    false,  // is upper bound
+    offsetof(urc_msgs::srv::GenerateSpiralSearch_Response, skipped_waypoints),  // bytes offset in struct
+    nullptr,  // default value
+    nullptr,  // size() function pointer
+    nullptr,  // get_const(index) function pointer
+    nullptr,  // get(index) function pointer
+    nullptr,  // fetch(index, &value) function pointer
+    nullptr,  // assign(index, value) function pointer
+    nullptr  // resize(index) function pointer
+  },
+  {
     "error_code",  // name
     ::rosidl_typesupport_introspection_cpp::ROS_TYPE_UINT16,  // type
     0,  // upper bound of string
@@ -281,7 +332,7 @@ static const ::rosidl_typesupport_introspection_cpp::MessageMember GenerateSpira
 static const ::rosidl_typesupport_introspection_cpp::MessageMembers GenerateSpiralSearch_Response_message_members = {
   "urc_msgs::srv",  // message namespace
   "GenerateSpiralSearch_Response",  // message name
-  4,  // number of fields
+  7,  // number of fields
   sizeof(urc_msgs::srv::GenerateSpiralSearch_Response),
   GenerateSpiralSearch_Response_message_member_array,  // message members
   GenerateSpiralSearch_Response_init_function,  // function to initialize message memory (memory has to be allocated)

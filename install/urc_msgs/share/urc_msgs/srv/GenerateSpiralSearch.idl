@@ -22,6 +22,12 @@ module urc_msgs {
       const uint16 SUCCESS = 0;
       const uint16 INVALID_REQUEST = 1;
       const uint16 FAILURE = 2;
+      @verbatim (language="comment", text=
+        "No fresh traversability map was available and the server requires one.")
+      const uint16 MAP_UNAVAILABLE = 3;
+      @verbatim (language="comment", text=
+        "Every spiral waypoint was blocked or unreachable on the traversability map.")
+      const uint16 NO_TRAVERSABLE_PATH = 4;
     };
     struct GenerateSpiralSearch_Response {
       nav_msgs::msg::Path path;
@@ -29,6 +35,18 @@ module urc_msgs {
       double track_spacing;
 
       double path_length;
+
+      @verbatim (language="comment", text=
+        "True when the path was routed against the traversability map.")
+      boolean traversability_checked;
+
+      @verbatim (language="comment", text=
+        "True when the outer part of the spiral was dropped because no safe route reached it.")
+      boolean truncated;
+
+      @verbatim (language="comment", text=
+        "Spiral waypoints left out of the path because they were blocked or unreachable.")
+      uint32 skipped_waypoints;
 
       uint16 error_code;
     };

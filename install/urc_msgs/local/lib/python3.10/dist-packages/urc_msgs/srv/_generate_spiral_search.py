@@ -220,6 +220,8 @@ class Metaclass_GenerateSpiralSearch_Response(type):
         'SUCCESS': 0,
         'INVALID_REQUEST': 1,
         'FAILURE': 2,
+        'MAP_UNAVAILABLE': 3,
+        'NO_TRAVERSABLE_PATH': 4,
     }
 
     @classmethod
@@ -255,6 +257,8 @@ class Metaclass_GenerateSpiralSearch_Response(type):
             'SUCCESS': cls.__constants['SUCCESS'],
             'INVALID_REQUEST': cls.__constants['INVALID_REQUEST'],
             'FAILURE': cls.__constants['FAILURE'],
+            'MAP_UNAVAILABLE': cls.__constants['MAP_UNAVAILABLE'],
+            'NO_TRAVERSABLE_PATH': cls.__constants['NO_TRAVERSABLE_PATH'],
         }
 
     @property
@@ -272,6 +276,16 @@ class Metaclass_GenerateSpiralSearch_Response(type):
         """Message constant 'FAILURE'."""
         return Metaclass_GenerateSpiralSearch_Response.__constants['FAILURE']
 
+    @property
+    def MAP_UNAVAILABLE(self):
+        """Message constant 'MAP_UNAVAILABLE'."""
+        return Metaclass_GenerateSpiralSearch_Response.__constants['MAP_UNAVAILABLE']
+
+    @property
+    def NO_TRAVERSABLE_PATH(self):
+        """Message constant 'NO_TRAVERSABLE_PATH'."""
+        return Metaclass_GenerateSpiralSearch_Response.__constants['NO_TRAVERSABLE_PATH']
+
 
 class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Response):
     """
@@ -281,12 +295,17 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
       SUCCESS
       INVALID_REQUEST
       FAILURE
+      MAP_UNAVAILABLE
+      NO_TRAVERSABLE_PATH
     """
 
     __slots__ = [
         '_path',
         '_track_spacing',
         '_path_length',
+        '_traversability_checked',
+        '_truncated',
+        '_skipped_waypoints',
         '_error_code',
     ]
 
@@ -294,6 +313,9 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
         'path': 'nav_msgs/Path',
         'track_spacing': 'double',
         'path_length': 'double',
+        'traversability_checked': 'boolean',
+        'truncated': 'boolean',
+        'skipped_waypoints': 'uint32',
         'error_code': 'uint16',
     }
 
@@ -301,6 +323,9 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
         rosidl_parser.definition.NamespacedType(['nav_msgs', 'msg'], 'Path'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
         rosidl_parser.definition.BasicType('double'),  # noqa: E501
+        rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
+        rosidl_parser.definition.BasicType('boolean'),  # noqa: E501
+        rosidl_parser.definition.BasicType('uint32'),  # noqa: E501
         rosidl_parser.definition.BasicType('uint16'),  # noqa: E501
     )
 
@@ -312,6 +337,9 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
         self.path = kwargs.get('path', Path())
         self.track_spacing = kwargs.get('track_spacing', float())
         self.path_length = kwargs.get('path_length', float())
+        self.traversability_checked = kwargs.get('traversability_checked', bool())
+        self.truncated = kwargs.get('truncated', bool())
+        self.skipped_waypoints = kwargs.get('skipped_waypoints', int())
         self.error_code = kwargs.get('error_code', int())
 
     def __repr__(self):
@@ -348,6 +376,12 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
         if self.track_spacing != other.track_spacing:
             return False
         if self.path_length != other.path_length:
+            return False
+        if self.traversability_checked != other.traversability_checked:
+            return False
+        if self.truncated != other.truncated:
+            return False
+        if self.skipped_waypoints != other.skipped_waypoints:
             return False
         if self.error_code != other.error_code:
             return False
@@ -401,6 +435,47 @@ class GenerateSpiralSearch_Response(metaclass=Metaclass_GenerateSpiralSearch_Res
             assert not (value < -1.7976931348623157e+308 or value > 1.7976931348623157e+308) or math.isinf(value), \
                 "The 'path_length' field must be a double in [-1.7976931348623157e+308, 1.7976931348623157e+308]"
         self._path_length = value
+
+    @builtins.property
+    def traversability_checked(self):
+        """Message field 'traversability_checked'."""
+        return self._traversability_checked
+
+    @traversability_checked.setter
+    def traversability_checked(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, bool), \
+                "The 'traversability_checked' field must be of type 'bool'"
+        self._traversability_checked = value
+
+    @builtins.property
+    def truncated(self):
+        """Message field 'truncated'."""
+        return self._truncated
+
+    @truncated.setter
+    def truncated(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, bool), \
+                "The 'truncated' field must be of type 'bool'"
+        self._truncated = value
+
+    @builtins.property
+    def skipped_waypoints(self):
+        """Message field 'skipped_waypoints'."""
+        return self._skipped_waypoints
+
+    @skipped_waypoints.setter
+    def skipped_waypoints(self, value):
+        if __debug__:
+            assert \
+                isinstance(value, int), \
+                "The 'skipped_waypoints' field must be of type 'int'"
+            assert value >= 0 and value < 4294967296, \
+                "The 'skipped_waypoints' field must be an unsigned integer in [0, 4294967295]"
+        self._skipped_waypoints = value
 
     @builtins.property
     def error_code(self):

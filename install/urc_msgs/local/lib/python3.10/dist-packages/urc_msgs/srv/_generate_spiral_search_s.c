@@ -247,6 +247,33 @@ bool urc_msgs__srv__generate_spiral_search__response__convert_from_py(PyObject *
     ros_message->path_length = PyFloat_AS_DOUBLE(field);
     Py_DECREF(field);
   }
+  {  // traversability_checked
+    PyObject * field = PyObject_GetAttrString(_pymsg, "traversability_checked");
+    if (!field) {
+      return false;
+    }
+    assert(PyBool_Check(field));
+    ros_message->traversability_checked = (Py_True == field);
+    Py_DECREF(field);
+  }
+  {  // truncated
+    PyObject * field = PyObject_GetAttrString(_pymsg, "truncated");
+    if (!field) {
+      return false;
+    }
+    assert(PyBool_Check(field));
+    ros_message->truncated = (Py_True == field);
+    Py_DECREF(field);
+  }
+  {  // skipped_waypoints
+    PyObject * field = PyObject_GetAttrString(_pymsg, "skipped_waypoints");
+    if (!field) {
+      return false;
+    }
+    assert(PyLong_Check(field));
+    ros_message->skipped_waypoints = PyLong_AsUnsignedLong(field);
+    Py_DECREF(field);
+  }
   {  // error_code
     PyObject * field = PyObject_GetAttrString(_pymsg, "error_code");
     if (!field) {
@@ -308,6 +335,39 @@ PyObject * urc_msgs__srv__generate_spiral_search__response__convert_to_py(void *
     field = PyFloat_FromDouble(ros_message->path_length);
     {
       int rc = PyObject_SetAttrString(_pymessage, "path_length", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // traversability_checked
+    PyObject * field = NULL;
+    field = PyBool_FromLong(ros_message->traversability_checked ? 1 : 0);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "traversability_checked", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // truncated
+    PyObject * field = NULL;
+    field = PyBool_FromLong(ros_message->truncated ? 1 : 0);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "truncated", field);
+      Py_DECREF(field);
+      if (rc) {
+        return NULL;
+      }
+    }
+  }
+  {  // skipped_waypoints
+    PyObject * field = NULL;
+    field = PyLong_FromUnsignedLong(ros_message->skipped_waypoints);
+    {
+      int rc = PyObject_SetAttrString(_pymessage, "skipped_waypoints", field);
       Py_DECREF(field);
       if (rc) {
         return NULL;

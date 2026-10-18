@@ -61,6 +61,24 @@ enum
   urc_msgs__srv__GenerateSpiralSearch_Response__FAILURE = 2
 };
 
+/// Constant 'MAP_UNAVAILABLE'.
+/**
+  * No fresh traversability map was available and the server requires one.
+ */
+enum
+{
+  urc_msgs__srv__GenerateSpiralSearch_Response__MAP_UNAVAILABLE = 3
+};
+
+/// Constant 'NO_TRAVERSABLE_PATH'.
+/**
+  * Every spiral waypoint was blocked or unreachable on the traversability map.
+ */
+enum
+{
+  urc_msgs__srv__GenerateSpiralSearch_Response__NO_TRAVERSABLE_PATH = 4
+};
+
 // Include directives for member types
 // Member 'path'
 #include "nav_msgs/msg/detail/path__struct.h"
@@ -71,6 +89,12 @@ typedef struct urc_msgs__srv__GenerateSpiralSearch_Response
   nav_msgs__msg__Path path;
   double track_spacing;
   double path_length;
+  /// True when the path was routed against the traversability map.
+  bool traversability_checked;
+  /// True when the outer part of the spiral was dropped because no safe route reached it.
+  bool truncated;
+  /// Spiral waypoints left out of the path because they were blocked or unreachable.
+  uint32_t skipped_waypoints;
   uint16_t error_code;
 } urc_msgs__srv__GenerateSpiralSearch_Response;
 

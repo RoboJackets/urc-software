@@ -205,6 +205,9 @@ struct GenerateSpiralSearch_Response_
     {
       this->track_spacing = 0.0;
       this->path_length = 0.0;
+      this->traversability_checked = false;
+      this->truncated = false;
+      this->skipped_waypoints = 0ul;
       this->error_code = 0;
     }
   }
@@ -217,6 +220,9 @@ struct GenerateSpiralSearch_Response_
     {
       this->track_spacing = 0.0;
       this->path_length = 0.0;
+      this->traversability_checked = false;
+      this->truncated = false;
+      this->skipped_waypoints = 0ul;
       this->error_code = 0;
     }
   }
@@ -231,6 +237,15 @@ struct GenerateSpiralSearch_Response_
   using _path_length_type =
     double;
   _path_length_type path_length;
+  using _traversability_checked_type =
+    bool;
+  _traversability_checked_type traversability_checked;
+  using _truncated_type =
+    bool;
+  _truncated_type truncated;
+  using _skipped_waypoints_type =
+    uint32_t;
+  _skipped_waypoints_type skipped_waypoints;
   using _error_code_type =
     uint16_t;
   _error_code_type error_code;
@@ -254,6 +269,24 @@ struct GenerateSpiralSearch_Response_
     this->path_length = _arg;
     return *this;
   }
+  Type & set__traversability_checked(
+    const bool & _arg)
+  {
+    this->traversability_checked = _arg;
+    return *this;
+  }
+  Type & set__truncated(
+    const bool & _arg)
+  {
+    this->truncated = _arg;
+    return *this;
+  }
+  Type & set__skipped_waypoints(
+    const uint32_t & _arg)
+  {
+    this->skipped_waypoints = _arg;
+    return *this;
+  }
   Type & set__error_code(
     const uint16_t & _arg)
   {
@@ -268,6 +301,10 @@ struct GenerateSpiralSearch_Response_
     1u;
   static constexpr uint16_t FAILURE =
     2u;
+  static constexpr uint16_t MAP_UNAVAILABLE =
+    3u;
+  static constexpr uint16_t NO_TRAVERSABLE_PATH =
+    4u;
 
   // pointer types
   using RawPtr =
@@ -318,6 +355,15 @@ struct GenerateSpiralSearch_Response_
     if (this->path_length != other.path_length) {
       return false;
     }
+    if (this->traversability_checked != other.traversability_checked) {
+      return false;
+    }
+    if (this->truncated != other.truncated) {
+      return false;
+    }
+    if (this->skipped_waypoints != other.skipped_waypoints) {
+      return false;
+    }
     if (this->error_code != other.error_code) {
       return false;
     }
@@ -348,6 +394,16 @@ constexpr uint16_t GenerateSpiralSearch_Response_<ContainerAllocator>::INVALID_R
 // static constexpr member variable definitions are only needed in C++14 and below, deprecated in C++17
 template<typename ContainerAllocator>
 constexpr uint16_t GenerateSpiralSearch_Response_<ContainerAllocator>::FAILURE;
+#endif  // __cplusplus < 201703L
+#if __cplusplus < 201703L
+// static constexpr member variable definitions are only needed in C++14 and below, deprecated in C++17
+template<typename ContainerAllocator>
+constexpr uint16_t GenerateSpiralSearch_Response_<ContainerAllocator>::MAP_UNAVAILABLE;
+#endif  // __cplusplus < 201703L
+#if __cplusplus < 201703L
+// static constexpr member variable definitions are only needed in C++14 and below, deprecated in C++17
+template<typename ContainerAllocator>
+constexpr uint16_t GenerateSpiralSearch_Response_<ContainerAllocator>::NO_TRAVERSABLE_PATH;
 #endif  // __cplusplus < 201703L
 
 }  // namespace srv

@@ -1,15 +1,13 @@
 import os
-from launch.descriptions import executable
+
+from ament_index_python.packages import PackageNotFoundError, get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import GroupAction, IncludeLaunchDescription, LogInfo
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node, SetRemap
 from xacro import process_file
 import yaml
-from launch import LaunchDescription
-from launch.actions import GroupAction, IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch_ros.actions import Node, SetRemap
-from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
-from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 
 
 def load_yaml(package_name, file_path):
@@ -27,7 +25,11 @@ def generate_launch_description():
     pkg_urc_bringup = get_package_share_directory("urc_bringup")
     pkg_urc_platform = get_package_share_directory("urc_platform")
     pkg_urc_localization = get_package_share_directory("urc_localization")
-    pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
+
+    try:
+        pkg_ublox_dgnss = get_package_share_directory("ublox_dgnss")
+    except PackageNotFoundError:
+        pkg_ublox_dgnss = None
 
     controller_config_file_dir = os.path.join(
         pkg_urc_bringup, "config", "controller_config.yaml"
@@ -92,22 +94,35 @@ def generate_launch_description():
         parameters=[twist_mux_config],
     )
 
-    launch_gps = GroupAction(
-        actions=[
-            SetRemap(src="/rover/fix", dst="/gps/data"),
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(
-                    os.path.join(
-                        pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
-                    )
-                ),
-                launch_arguments={
-                    "device_serial_string": "rover",
-                    "frame_id": "gps_link",
-                }.items(),
+    ublox_gps_actions = []
+    if pkg_ublox_dgnss is not None:
+        ublox_gps_actions = [
+            GroupAction(
+                actions=[
+                    SetRemap(src="/rover/fix", dst="/gps/data"),
+                    IncludeLaunchDescription(
+                        PythonLaunchDescriptionSource(
+                            os.path.join(
+                                pkg_ublox_dgnss, "launch", "ublox_fb+r_rover.launch.py"
+                            )
+                        ),
+                        launch_arguments={
+                            "device_serial_string": "rover",
+                            "frame_id": "gps_link",
+                        }.items(),
+                    ),
+                ]
             ),
         ]
-    )
+    else:
+        ublox_gps_actions = [
+            LogInfo(
+                msg=(
+                    "Package ublox_dgnss not found; skipping u-blox GPS launch. "
+                    "Install ublox_dgnss or pass launch_ublox_gps:=false."
+                )
+            ),
+        ]
 
     imu_ned2enu_node = Node(
         package="urc_platform",
@@ -178,7 +193,7 @@ def generate_launch_description():
             load_status_light_controller,
             imu_ned2enu_node,
             twist_mux_node,
-            launch_gps,
+            *ublox_gps_actions,
             rosbridge_server_node,
             # launch_ekf,
             gps_imu_localizer_node,

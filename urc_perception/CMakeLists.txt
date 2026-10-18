@@ -12,6 +12,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(tf2_sensor_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
@@ -75,6 +76,7 @@ set(dependencies
 add_executable(spiral_search_server
   src/spiral_search_server.cpp
   src/spiral_search.cpp
+  src/traversability_router.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -87,6 +89,7 @@ ament_target_dependencies(gaussian_filter
 
 ament_target_dependencies(spiral_search_server
   ${dependencies}
+  tf2_ros
   urc_msgs
 )
 
