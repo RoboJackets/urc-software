@@ -1,5 +1,5 @@
-#ifndef URC_SIM__SIM_STATUS_LIGHT_HPP_
-#define URC_SIM__SIM_STATUS_LIGHT_HPP_
+#ifndef URC_HW_DESCRIPTION__SIM_STATUS_LIGHT_HPP_
+#define URC_HW_DESCRIPTION__SIM_STATUS_LIGHT_HPP_
 
 #include <functional>
 #include <string>
@@ -9,9 +9,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <urc_msgs/msg/status_light_command.hpp>
 
-#include "urc_sim/status_light_color.hpp"
+#include "urc_hw_description/status_light_color.hpp"
 
-namespace urc_sim
+namespace urc_hw_description
 {
 
 // Shows /command/status_light on the simulated rover by recoloring the status
@@ -42,6 +42,6 @@ private:
   ignition::transport::Node gz_node_;
 };
 
-}  // namespace urc_sim
+}  // namespace urc_hw_description
 
-#endif  // URC_SIM__SIM_STATUS_LIGHT_HPP_
+#endif  // URC_HW_DESCRIPTION__SIM_STATUS_LIGHT_HPP_

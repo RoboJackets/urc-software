@@ -24,7 +24,6 @@ def generate_launch_description():
     path_ros_gazebo_sim = get_package_share_directory("ros_gz_sim")
     path_urc_hw_description = get_package_share_directory("urc_hw_description")
     path_urc_bringup = get_package_share_directory("urc_bringup")
-    path_urc_sim = get_package_share_directory("urc_sim")
 
     controller_config_file_dir = os.path.join(
         path_urc_bringup, "config", "test_controllers.yaml"
@@ -155,10 +154,12 @@ def generate_launch_description():
     )
 
     sim_status_light = Node(
-        package="urc_sim",
-        executable="urc_sim_SimStatusLight",
+        package="urc_hw_description",
+        executable="urc_hw_description_SimStatusLight",
         name="sim_status_light",
-        parameters=[os.path.join(path_urc_sim, "config", "sim_status_light.yaml")],
+        parameters=[
+            os.path.join(path_urc_hw_description, "config", "sim_status_light.yaml")
+        ],
         output="screen",
     )
 

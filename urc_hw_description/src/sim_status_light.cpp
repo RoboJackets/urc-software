@@ -1,4 +1,4 @@
-#include "urc_sim/sim_status_light.hpp"
+#include "urc_hw_description/sim_status_light.hpp"
 
 #include <chrono>
 #include <stdexcept>
@@ -6,7 +6,7 @@
 #include <ignition/msgs/visual.pb.h>
 #include <rclcpp_components/register_node_macro.hpp>
 
-namespace urc_sim
+namespace urc_hw_description
 {
 namespace
 {
@@ -114,6 +114,6 @@ void SimStatusLight::requestVisualColor()
   }
 }
 
-}  // namespace urc_sim
+}  // namespace urc_hw_description
 
-RCLCPP_COMPONENTS_REGISTER_NODE(urc_sim::SimStatusLight)
+RCLCPP_COMPONENTS_REGISTER_NODE(urc_hw_description::SimStatusLight)

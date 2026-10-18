@@ -1,6 +1,6 @@
-#include "urc_sim/status_light_color.hpp"
+#include "urc_hw_description/status_light_color.hpp"
 
-namespace urc_sim
+namespace urc_hw_description
 {
 namespace
 {
@@ -43,4 +43,4 @@ StatusLightRgb statusLightColor(
   }
 }
 
-}  // namespace urc_sim
+}  // namespace urc_hw_description

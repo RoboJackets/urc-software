@@ -16,7 +16,6 @@
   <depend>urc_path_planning</depend>
   <depend>urc_perception</depend>
   <depend>urc_platform</depend>
-  <depend>urc_sim</depend>
   <depend>urc_state_machine</depend>
   <depend>urc_trajectory_following</depend>
   <depend>ros_gz</depend>
