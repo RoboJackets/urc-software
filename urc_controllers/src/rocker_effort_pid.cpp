@@ -6,11 +6,13 @@ namespace urc_controllers
 {
 
 RockerEffortPid::RockerEffortPid(const rclcpp::NodeOptions & options)
-  : rclcpp::Node("rocker_effort_pid", options)
+: rclcpp::Node("rocker_effort_pid", options)
 {
   // Parameters
-  pitch_topic_       = declare_parameter<std::string>("pitch_topic", "/rocker/pitch_raw");
-  command_topic_     = declare_parameter<std::string>("command_topic", "/rocker_effort_controller/commands");
+  pitch_topic_ = declare_parameter<std::string>("pitch_topic", "/rocker/pitch_raw");
+  command_topic_ = declare_parameter<std::string>(
+    "command_topic",
+    "/rocker_effort_controller/commands");
 
   kp_ = declare_parameter<double>("kp", kp_);
   ki_ = declare_parameter<double>("ki", ki_);
@@ -28,10 +30,12 @@ RockerEffortPid::RockerEffortPid(const rclcpp::NodeOptions & options)
     rclcpp::SensorDataQoS(),
     std::bind(&RockerEffortPid::onPitch, this, std::placeholders::_1));
 
-  RCLCPP_INFO(get_logger(),
+  RCLCPP_INFO(
+    get_logger(),
     "RockerEffortPid: pitch_topic='%s' cmd_topic='%s'",
     pitch_topic_.c_str(), command_topic_.c_str());
-  RCLCPP_INFO(get_logger(),
+  RCLCPP_INFO(
+    get_logger(),
     "PID: kp=%.3f ki=%.3f kd=%.3f, effort_limit=%.1f, i_clamp=%.1f",
     kp_, ki_, kd_, effort_limit_, i_clamp_);
 }
@@ -46,7 +50,7 @@ void RockerEffortPid::onPitch(const std_msgs::msg::Float64::SharedPtr msg)
   double dt = 0.0;
   if (last_stamp_.nanoseconds() != 0) {
     dt = (stamp - last_stamp_).seconds();
-    if (dt < 0.0) dt = 0.0;
+    if (dt < 0.0) {dt = 0.0;}
   }
   last_stamp_ = stamp;
 
@@ -64,7 +68,7 @@ void RockerEffortPid::onPitch(const std_msgs::msg::Float64::SharedPtr msg)
 
   double u = u_unsat;
 
-  const double min_u = min_spin_effort_;  
+  const double min_u = min_spin_effort_;
   if (std::abs(u) > 1e-6 && std::abs(u) < min_u) {
     u = std::copysign(min_u, u);
   }
