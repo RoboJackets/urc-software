@@ -85,7 +85,7 @@ namespace urc_slam {
             std::optional<rclcpp::Time> last_accepted_odom_stamp;
             std::deque<MatchedOdometry> matched_odom;
             double odom_time_tolerance_sec = 0.1;
-            constexpr std::size_t maximum_odom_buffer_size = 200;
+            std::size_t maximum_odom_buffer_size = 200;
 
 
             std::string slam_odom_topic;
