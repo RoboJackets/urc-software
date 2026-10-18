@@ -42,7 +42,8 @@ Use `ros2 launch urc_bringup sim.launch.py` for the composed rover simulation.
 ## SimStatusLight | Node
 
 Executable: `urc_hw_description_SimStatusLight`, also registered as a
-composable ROS 2 component. `sim.launch.py` starts it with the simulation.
+composable ROS 2 component. `sim.launch.py` starts it with the simulation and
+publishes a solid blue command at startup.
 
 The URC autonomy rules require a rear status light: red for autonomous
 operation, blue for teleoperation, and flashing green on arrival at a target.

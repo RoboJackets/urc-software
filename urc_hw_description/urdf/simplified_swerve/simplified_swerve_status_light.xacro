@@ -33,7 +33,7 @@
     <joint name="status_light_joint" type="fixed">
       <parent link="base_link" />
       <child link="status_light_link" />
-      <origin xyz="-0.28 0 ${status_light_size_z / 2}" rpy="0 0 0" />
+      <origin xyz="${-0.308 - status_light_size_x / 2} 0 -0.1" rpy="0 0 0" />
     </joint>
 
     <!-- Keep the light as its own link in Gazebo so its color can be changed by name -->
