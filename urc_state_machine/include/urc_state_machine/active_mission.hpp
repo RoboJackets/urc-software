@@ -17,6 +17,7 @@ namespace urc_state_machine
 enum class NavigationLeg
 {
   INITIAL_WAYPOINT,
+  SEARCH_PATTERN,
   ARUCO_APPROACH
 };
 
@@ -31,6 +32,9 @@ struct ActiveMission
   NavigationLeg navigation_leg{NavigationLeg::INITIAL_WAYPOINT};
   std::optional<urc_msgs::msg::DetectionBoundingBox> bounding_box;
   std::optional<geometry_msgs::msg::PoseStamped> aruco_pose;
+  std::vector<geometry_msgs::msg::PoseStamped> search_waypoints;
+  std::size_t next_search_waypoint{0};
+  int consecutive_search_leg_failures{0};
   bool cancellation_requested{false};
 };
 
