@@ -19,6 +19,9 @@ find_package(diagnostic_updater REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(osqp_vendor REQUIRED)
+find_package(osqp REQUIRED)
 
 include_directories(
   include
@@ -26,6 +29,7 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
+  src/mpc/qp_solver.cpp
   src/pure_pursuit/pure_pursuit.cpp
   src/trajectory_factory.cpp
   src/geometry_util.cpp
@@ -51,6 +55,11 @@ set(dependencies
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  Eigen3::Eigen
+  osqp::osqp
 )
 
 rclcpp_components_register_node(
@@ -95,6 +104,6 @@ ament_export_include_directories(msg)
 ament_export_include_directories(include)
 
 ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(${dependencies})
+ament_export_dependencies(${dependencies} Eigen3 osqp_vendor osqp)
 
 ament_package()
