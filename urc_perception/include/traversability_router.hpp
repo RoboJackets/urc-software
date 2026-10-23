@@ -76,7 +76,9 @@ public:
   bool isSegmentTraversable(const grid_map::Position & from, const grid_map::Position & to) const;
 
   /// @param waypoint_spacing [m] Upper bound on the distance between inserted detour points.
-  RoutedPath route(const std::vector<grid_map::Position> & waypoints, double waypoint_spacing) const;
+  RoutedPath route(
+    const std::vector<grid_map::Position> & waypoints,
+    double waypoint_spacing) const;
 
 private:
   struct Reconnection

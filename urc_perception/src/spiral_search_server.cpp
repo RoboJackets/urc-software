@@ -90,7 +90,9 @@ SpiralSearchServer::SpiralSearchServer(const rclcpp::NodeOptions & options)
   traversability_criteria_.max_cost = declare_parameter<double>("max_traversability_cost", 0.05);
   traversability_criteria_.allow_unknown =
     declare_parameter<bool>("allow_unknown_terrain", false);
-  if (!std::isfinite(traversability_criteria_.max_cost) || traversability_criteria_.max_cost < 0.0) {
+  if (!std::isfinite(traversability_criteria_.max_cost) ||
+    traversability_criteria_.max_cost < 0.0)
+  {
     throw std::invalid_argument("Parameter max_traversability_cost must be zero or positive.");
   }
 
@@ -274,7 +276,8 @@ std::optional<nav_msgs::msg::Path> SpiralSearchServer::routeSpiral(
   waypoints.reserve(spiral.poses.size());
   for (const auto & pose : spiral.poses) {
     const tf2::Vector3 point =
-      spiral_to_map * tf2::Vector3(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
+      spiral_to_map *
+      tf2::Vector3(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
     waypoints.emplace_back(point.x(), point.y());
   }
 

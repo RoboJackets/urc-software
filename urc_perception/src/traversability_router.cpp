@@ -78,7 +78,8 @@ Eigen::Vector2d TraversabilityRouter::toCellCoordinates(const grid_map::Position
   return (corner - position) / map_.getResolution();
 }
 
-std::optional<grid_map::Index> TraversabilityRouter::cellOf(const grid_map::Position & position) const
+std::optional<grid_map::Index> TraversabilityRouter::cellOf(const grid_map::Position & position)
+const
 {
   const Eigen::Vector2d cell = toCellCoordinates(position);
   const long row = static_cast<long>(std::floor(cell.x()));
