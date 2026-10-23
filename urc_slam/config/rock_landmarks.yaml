@@ -1,0 +1,22 @@
+# Proposed parameters for the rock-landmark pipeline. NOT loaded by anything yet:
+# slam_node does not declare these (see REVIEW_NOTES.md, "Required changes").
+# Merge under slam_node.ros__parameters in slam_params.yaml when wiring in.
+rock_landmarks:
+  extractor:
+    cluster_range_jump_m: 0.3
+    min_points: 3
+    max_points: 100
+    min_extent_m: 0.1
+    max_extent_m: 1.5
+  noise:
+    # TODO(AJ): set from repo/measurement. Deliberately NaN: validate() rejects
+    # it, so the pipeline cannot run on an invented value.
+    range_sigma_m: .nan
+    bearing_sigma_rad: .nan
+  associator:
+    gate_confidence: 0.99
+    recently_seen_window_poses: 10
+    min_pairings_for_reassociation: 2
+    ambiguity_margin: 2.0
+    max_search_nodes: 20000
+  huber_kernel_width: 1.345
