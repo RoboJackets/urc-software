@@ -3,7 +3,7 @@
 <package format="3">
   <name>urc_perception</name>
   <version>0.0.0</version>
-  <description>Generate traversability maps for rover navigation</description>
+  <description>Perception nodes for traversability mapping and visual sub-missions</description>
   <maintainer email="sfarahmand3@gatech.edu">Shaya Farahmand</maintainer>
   <license>MIT</license>
 
@@ -31,6 +31,14 @@
   <depend>grid_map_visualization</depend>
   <depend>grid_map_pcl</depend>
   <depend>grid_map_cv</depend>
+
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>urc_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

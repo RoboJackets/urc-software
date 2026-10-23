@@ -20,8 +20,44 @@ contains no runtime nodes.
 | Interface | Purpose |
 | --- | --- |
 | `GeneratePlan` service | Requests a path between start and goal poses and returns a `nav_msgs/Path` with a success or failure code |
+| `AstronautFollow` action | Runs the astronaut-follow sub-mission from gesture recognition through follow behavior |
 | `ExecuteAutonomousMission` action | Navigates to a waypoint and optionally performs a YOLO or ArUco search while retaining mission context across replans |
 | `NavigateToWaypoint` action | Follows a supplied path or plans to a goal, with optional final-heading enforcement and progress feedback |
+| `RecognizeFollowGesture` action | Arms camera-based follow-gesture recognition and returns the confirmed astronaut detection |
+
+## Astronaut-follow contract
+
+`AstronautFollow` is the activation boundary for the astronaut-follow
+sub-mission. Sending a goal arms follow-gesture recognition for the requested
+timeout. A zero timeout delegates timeout selection to the action server's
+configuration. Implementations use `astronaut_follow` as the default action
+name.
+
+Feedback distinguishes waiting for a confirmed gesture, gesture confirmation,
+behavior startup, active following, and temporary target loss. The matching-frame
+counts expose temporal confirmation progress without making the classifier's
+thresholds part of the action request.
+
+A successful result means the complete sub-mission finished. Recognition
+timeout, perception failure, following-behavior failure, and cancellation have
+separate result codes. Once a gesture has been confirmed,
+`has_astronaut_detection` is true and `astronaut_detection` identifies the
+confirmed image-space target, even if a later behavior fails.
+
+`RecognizeFollowGesture` is the narrower perception contract used by the
+sub-mission coordinator. Its feedback exposes image availability, processed
+frames, temporal-confirmation progress, confidence, and inference latency. It
+does not command rover motion.
+
+Once an action server is implemented, inspect its connections and stream its
+feedback during a bounded recognition attempt with:
+
+```bash
+ros2 action info astronaut_follow
+ros2 action send_goal --feedback astronaut_follow \
+  urc_msgs/action/AstronautFollow \
+  "{recognition_timeout: {sec: 30, nanosec: 0}}"
+```
 
 ## Autonomous mission contract
 
@@ -68,6 +104,8 @@ types, constants, and result codes. Inspect an installed interface with:
 
 ```bash
 ros2 interface show urc_msgs/action/NavigateToWaypoint
+ros2 interface show urc_msgs/action/AstronautFollow
+ros2 interface show urc_msgs/action/RecognizeFollowGesture
 ros2 interface show urc_msgs/action/ExecuteAutonomousMission
 ros2 interface show urc_msgs/msg/DetectionBoundingBox
 ```

@@ -17,17 +17,26 @@ Current Gesture Implementations:
 
 
 
-
 Model Choices:
 1. yolo26n-pose.pt
     - Robust, can handle multiple subjects
     - But takes up more space in memory
+
+Command:
+python urc_perception/src/gesture_recognition.py \
+  --backend yolo \
+  --yolo-model yolo26n-pose.pt
+
 
 2. movenet_lightning
     - Ultra-lightweight (on memory)
     - Only supports 1 subject, but trained on the same COCO dataset as yolo
     - tensorflow
     - not thoroughly documented on ONNX
+
+Command:
+python urc_perception/src/gesture_recognition.py \
+  --backend movenet
 
 
 Identification Strategy:
@@ -69,3 +78,13 @@ model = YOLO("path/to/best.pt")  # load a custom model
 
 # Export the model
 model.export(format="onnx")
+
+
+Questions:
+1. What camera are we using (Intel realsense d435)
+2. What happens after export to onnx
+3. What is the process of going from current computer (MPS cam) to whatever hardware we use?
+4. Does this need to be converted to C++
+
+
+/astronaut/pose

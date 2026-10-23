@@ -1,0 +1,31 @@
+# Goal
+# A zero timeout delegates timeout selection to the action server configuration.
+builtin_interfaces/Duration recognition_timeout
+---
+# Result
+uint16 SUCCESS=0
+uint16 INVALID_REQUEST=1
+uint16 RECOGNITION_TIMEOUT=2
+uint16 PERCEPTION_FAILED=3
+uint16 BEHAVIOR_FAILED=4
+uint16 CANCELED=5
+
+uint16 error_code
+string message
+
+# The detection is available after gesture confirmation, including when a later
+# following behavior fails.
+bool has_astronaut_detection
+urc_msgs/DetectionBoundingBox astronaut_detection
+---
+# Feedback
+uint8 STATE_WAITING_FOR_GESTURE=0
+uint8 STATE_GESTURE_CONFIRMED=1
+uint8 STATE_STARTING_BEHAVIOR=2
+uint8 STATE_FOLLOWING=3
+uint8 STATE_TARGET_LOST=4
+
+uint8 state
+uint16 matching_frames
+uint16 required_frames
+float32 detection_confidence

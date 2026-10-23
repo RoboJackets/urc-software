@@ -105,7 +105,25 @@ install(
 )
 
 install(
-  FILES filter_plugins.xml
+  PROGRAMS src/follow_gesture_recognition_node.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME follow_gesture_recognition
+)
+
+install(
+  FILES
+    src/follow_gesture_action_messages.py
+    src/follow_gesture_classifier.py
+    src/follow_gesture_node_config.py
+    src/follow_gesture_recognition.py
+    src/latest_image_buffer.py
+    src/pose_estimation.py
+    src/yolo_pose_estimator.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  FILES filter_plugins.xml requirements.txt
   DESTINATION share/${PROJECT_NAME}
 )
 
