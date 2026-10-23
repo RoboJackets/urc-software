@@ -12,6 +12,11 @@
   <depend>xacro</depend>
   <depend>urc_bringup</depend>
   <depend>joint_state_broadcaster</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>urc_msgs</depend>
+  <depend condition="$GZ_VERSION == fortress or $GZ_VERSION == ''">ignition-msgs8</depend>
+  <depend condition="$GZ_VERSION == fortress or $GZ_VERSION == ''">ignition-transport11</depend>
   
   <!-- Launch file dependencies -->
   <exec_depend>robot_state_publisher</exec_depend>
