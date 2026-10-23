@@ -30,6 +30,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/mpc/qp_solver.cpp
+  src/mpc/swerve_model.cpp
   src/pure_pursuit/pure_pursuit.cpp
   src/trajectory_factory.cpp
   src/geometry_util.cpp
