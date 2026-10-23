@@ -271,6 +271,18 @@ namespace urc_slam {
         optimize();
     }
 
+    void SlamBackend::addLandmarkUpdate(
+        const gtsam::NonlinearFactorGraph &factors,
+        const gtsam::Values &values
+    ) {
+        if (factors.empty() && values.empty()) {
+            return;
+        }
+        new_factors.push_back(factors);
+        new_values.insert(values);
+        optimize();
+    }
+
     void SlamBackend::optimize() {
         isam.update(new_factors, new_values);
         estimate = isam.calculateEstimate();

@@ -1,7 +1,8 @@
 # Rock landmark loop closure: review notes
 
-Branch `feature/rock-landmarks` (local only, never pushed). Everything here is
-new files under `urc_slam/`; no existing file was modified.
+Branch `feature/rock-landmarks`. The algorithm is in new files; a later commit
+wired it into the existing node (section 5 lists exactly which existing files
+changed).
 
 **Verification status.** This machine has no GTSAM/Boost (WSL Ubuntu has none,
 no sudo, Docker daemon was off). So:
@@ -156,43 +157,44 @@ into its pending iSAM2 update.
 
 Proposed YAML is in `config/rock_landmarks.yaml` (not loaded by anything).
 
-## 5. Required changes to existing files (NOT made)
+## 5. Changes to existing files (wiring)
 
-1. **`include/slam_backend.hpp` / `src/slam_backend.cpp`**:
-   - Add `const gtsam::ISAM2 &isam() const` (the member is private) and
-     `std::size_t latestIndex() const`. `LandmarkManager::processScan` needs
-     both.
-   - Add `void addLandmarkUpdate(const NonlinearFactorGraph &, const Values &)`
-     that appends to `new_factors`/`new_values` and calls `optimize()`.
-     Why: only the backend may touch its staging containers, and it must keep
-     `estimate` and the cached latest state in sync.
-2. **`src/slam_node.cpp` / `include/slam_node.hpp`**:
-   - Declare the parameters in section 4; build a `RockLandmarkParams`; own a
-     `RockExtractor` and `LandmarkManager`.
-   - **Input adapter:** convert the `PointCloud2` to `PointCloud3d` (finite
-     points, sensor frame; one loop). Feed it the raw or lightly filtered cloud,
-     **not** the 0.2 m voxel-downsampled one from `LidarFrontend::preprocess`:
-     a 0.2 m voxel exceeds `cluster_tolerance_m` and is too sparse for a sphere
-     fit on a small rock. This costs a second pass over the cloud per keyframe.
-   - Call site: in `lidarCallback`, after `backend.addLidarFactor(...)`
-     (and in the first-keyframe branch), run
-     `extract -> manager.processScan(obs, current_index, backend.isam()) ->
-     backend.addLandmarkUpdate(...)`. This must come **after** the pose is in
-     iSAM2 and **before** the next scan. Non-keyframe scans are dropped
-     earlier in that function, so rocks are only processed at keyframes
-     (0.5 m / 10 deg apart).
-   - Pass a `LogSink` that forwards to `RCLCPP_INFO_THROTTLE`.
-   - Optional: IMU roll/pitch into `RockExtractor::attitudeIsUsable` (hook; better, rotate the cloud into a gravity-aligned frame first).
-3. **`CMakeLists.txt`**: add the eight new `.cpp` files to the library. No new
-   package dependencies (GTSAM/Eigen already linked). Optionally
-   `add_subdirectory(test)` under `BUILD_TESTING`.
-4. **`config/slam_params.yaml`**: merge `config/rock_landmarks.yaml`, and move
-   the rock noise out of code once measured.
+Made, all under `urc_slam/`:
 
-Unrelated, noticed while reading (not touched): `slam_node.hpp:88` declares
-`constexpr std::size_t maximum_odom_buffer_size = 200;` as a non-static member,
-which should not compile (needs `static constexpr`). If the branch you based
-this on builds for you, ignore this.
+- `slam_backend.hpp/.cpp`: `isamGraph()` (read-only iSAM2 access, needed for
+  marginal covariances) and `addLandmarkUpdate(factors, values)` (stages and
+  optimizes).
+- `slam_node.hpp/.cpp`: owns a `RockLandmarkPipeline` (null unless
+  `rock_landmarks.enabled`). `processRocks()` runs from `lidarCallback` right
+  after each keyframe is added and optimized (and for keyframe 0), on the RAW
+  cloud converted to `PointCloud3d`, then applies the update through
+  `addLandmarkUpdate`. `publishLandmarks()` runs at the end of `publishOutputs`,
+  so markers also refresh after GPS/odometry updates move the landmarks.
+- `CMakeLists.txt`, `package.xml`: the new sources and `visualization_msgs`.
+- `config/slam_params.yaml`: `landmark_topic` and `rock_landmarks.*`.
+- Incidental fix: `slam_node.hpp` declared `constexpr std::size_t
+  maximum_odom_buffer_size` as a non-static member, which does not compile;
+  now `static constexpr`.
+
+Behaviour to know:
+- **Disabled by default.** With `rock_landmarks.enabled: true` and the noise
+  still NaN, the node throws at startup by design.
+- **Keyframes only.** Non-keyframe sweeps return early in `lidarCallback` and
+  have no pose node, so rocks are only processed at keyframes (>= 0.5 m or
+  ~10 degrees apart), not literally every sweep. Processing every sweep would
+  need a pose node per sweep.
+- Visualization: `/slam/landmarks` (`visualization_msgs/MarkerArray`, frame
+  `map_frame`, transient-local so rviz sees it on late join): an orange sphere
+  sized by the fitted radius plus an `L<id>` label per landmark. Add it in rviz
+  as a MarkerArray display.
+- **None of the wiring has been compiled** (no ROS, PCL or GTSAM on this
+  machine). Expect to fix compile errors on first build.
+
+Still open:
+- The real `base_T_sensor` (identity placeholder).
+- The range prefilter before `marginalCovariance` (see section 6).
+
+Unrelated, noticed while reading (not touched): none remaining.
 
 ## 6. Approximations, assumptions, known weaknesses
 

@@ -1,5 +1,7 @@
 #include "slam_node.hpp"
 
+#include "rock_landmark_ros.hpp"
+
 #include <functional>
 #include <limits>
 
@@ -131,6 +133,12 @@ namespace urc_slam {
             "/slam/map_points",
             rclcpp::QoS(1).reliable().transient_local()
         );
+
+        rock_pipeline = createRockPipeline(*this);
+        landmark_pub = create_publisher<visualization_msgs::msg::MarkerArray>(
+            declare_parameter<std::string>("landmark_topic", "/slam/landmarks"),
+            rclcpp::QoS(1).reliable().transient_local()
+        );
     }
 
     void SlamNode::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg) {
@@ -202,6 +210,7 @@ namespace urc_slam {
                 0, rclcpp::Time(msg->header.stamp)
             });
             addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
+            processRocks(*raw_cloud, 0);
             processGPSMeasurements();
             publishOutputs(rclcpp::Time(msg->header.stamp));
             return;
@@ -266,8 +275,34 @@ namespace urc_slam {
             current_index, rclcpp::Time(msg->header.stamp)
         });
         addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
+        processRocks(*raw_cloud, current_index);
         processGPSMeasurements();
         publishOutputs(rclcpp::Time(msg->header.stamp));
+    }
+
+    // Rocks are matched against the graph, so they can only be processed at
+    // keyframes: that is the only time a pose node exists for this sweep.
+    // Uses the raw cloud: the 0.2 m voxel filter used for registration is too
+    // sparse for clustering and sphere fitting small rocks.
+    void SlamNode::processRocks(const LidarFrontend::Cloud &raw_cloud, std::size_t pose_index) {
+        if (!rock_pipeline) {
+            return;
+        }
+
+        const LandmarkGraphUpdate update = rock_pipeline->processSweep(
+            toPointCloud3d(raw_cloud), pose_index, backend.isamGraph());
+        backend.addLandmarkUpdate(update.factors, update.values);
+
+        RCLCPP_DEBUG(get_logger(), "Rocks at keyframe %zu: %zu matched, %zu new, %zu ambiguous",
+            pose_index, update.summary.matched, update.summary.created, update.summary.ambiguous);
+    }
+
+    void SlamNode::publishLandmarks(const rclcpp::Time &stamp) {
+        if (!rock_pipeline) {
+            return;
+        }
+        landmark_pub->publish(makeLandmarkMarkers(
+            rock_pipeline->snapshots(backend.isamGraph()), map_frame, stamp));
     }
 
     void SlamNode::gpsCallback(nav_msgs::msg::Odometry::SharedPtr msg) {
@@ -542,6 +577,8 @@ namespace urc_slam {
 
         transform_msg.transform.rotation = odometry_msg.pose.pose.orientation;
         tf_broadcaster->sendTransform(transform_msg);
+
+        publishLandmarks(stamp);
     }
 
     void SlamNode::rebuildMap() {

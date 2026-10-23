@@ -89,6 +89,21 @@ namespace urc_slam {
             poseKey(pose_index), landmark, gtsam::Unit3(in_base), in_base.norm(), noise);
     }
 
+    std::vector<LandmarkSnapshot> LandmarkManager::snapshots(const gtsam::ISAM2 &isam) const {
+        std::vector<LandmarkSnapshot> result;
+        result.reserve(landmarks_.size());
+        for (std::size_t id = 0; id < landmarks_.size(); ++id) {
+            const LandmarkRecord &record = landmarks_[id];
+            // Skip landmarks whose creating update has not reached iSAM2 yet.
+            if (!isam.valueExists(record.key)) {
+                continue;
+            }
+            result.push_back({id, isam.calculateEstimate<gtsam::Point3>(record.key),
+                              record.radius_m, record.last_seen_pose_index});
+        }
+        return result;
+    }
+
     LandmarkGraphUpdate LandmarkManager::processScan(
         const std::vector<RockObservation> &observations,
         std::size_t pose_index,

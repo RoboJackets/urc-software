@@ -23,6 +23,14 @@ namespace urc_slam {
         std::size_t last_seen_pose_index = 0;
     };
 
+    // A landmark's current optimized state, for visualization and logging.
+    struct LandmarkSnapshot {
+        std::size_t id = 0;
+        gtsam::Point3 position;   // map frame
+        double radius_m = 0.0;
+        std::size_t last_seen_pose_index = 0;
+    };
+
     struct ScanSummary {
         std::size_t matched = 0;
         std::size_t created = 0;
@@ -54,6 +62,9 @@ namespace urc_slam {
             );
 
             const std::vector<LandmarkRecord> &landmarks() const { return landmarks_; }
+
+            // Current optimized position of every landmark already in `isam`.
+            std::vector<LandmarkSnapshot> snapshots(const gtsam::ISAM2 &isam) const;
 
             // Same 'x' pose symbol as SlamBackend::poseKey (private there).
             static gtsam::Symbol poseKey(std::size_t index) { return gtsam::Symbol('x', index); }

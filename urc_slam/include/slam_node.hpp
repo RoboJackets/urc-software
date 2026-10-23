@@ -12,9 +12,11 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <tf2_ros/transform_broadcaster.h>
+#include <visualization_msgs/msg/marker_array.hpp>
 
 #include "slam_backend.hpp"
 #include "lidar_frontend.hpp"
+#include "rock_landmark_pipeline.hpp"
 
 namespace urc_slam {
     class SlamNode : public rclcpp::Node {
@@ -40,6 +42,8 @@ namespace urc_slam {
             void processOdometry();
             void publishOutputs(const rclcpp::Time &stamp);
             void rebuildMap();
+            void processRocks(const LidarFrontend::Cloud &raw_cloud, std::size_t pose_index);
+            void publishLandmarks(const rclcpp::Time &stamp);
 
 
 
@@ -85,7 +89,7 @@ namespace urc_slam {
             std::optional<rclcpp::Time> last_accepted_odom_stamp;
             std::deque<MatchedOdometry> matched_odom;
             double odom_time_tolerance_sec = 0.1;
-            constexpr std::size_t maximum_odom_buffer_size = 200;
+            static constexpr std::size_t maximum_odom_buffer_size = 200;
 
 
             std::string slam_odom_topic;
@@ -101,6 +105,10 @@ namespace urc_slam {
             double map_voxel_size_m;
             rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
             void addKeyframeToMap(const LidarFrontend::Cloud::ConstPtr &cloud, const rclcpp::Time &stamp);
+
+            // Null unless rock_landmarks.enabled is set.
+            std::unique_ptr<RockLandmarkPipeline> rock_pipeline;
+            rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr landmark_pub;
     };
 
 }

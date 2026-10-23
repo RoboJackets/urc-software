@@ -81,6 +81,17 @@ namespace urc_slam {
             gtsam::Pose3 poseAt(std::size_t index) const;
 
             gtsam::Pose3 predictedRelativePose() const;
+
+            // Read-only view for landmark association, which needs pose and
+            // landmark marginal covariances that only iSAM2 can provide.
+            const gtsam::ISAM2 &isamGraph() const { return isam; }
+
+            // Merges landmark factors/values (see LandmarkManager) into the
+            // graph and optimizes. The referenced pose must already be in iSAM2.
+            void addLandmarkUpdate(
+                const gtsam::NonlinearFactorGraph &factors,
+                const gtsam::Values &values
+            );
         private:
             void optimize();
             // Factor graph symbols

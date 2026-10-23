@@ -10,6 +10,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(visualization_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 
 find_package(Eigen3 REQUIRED)
@@ -25,6 +26,16 @@ add_library(${PROJECT_NAME} SHARED
   src/slam_backend.cpp
   src/lidar_frontend.cpp
   src/slam_node.cpp
+  src/rock_landmark_params.cpp
+  src/rock_extractor.cpp
+  src/ground_filter.cpp
+  src/point_clustering.cpp
+  src/sphere_fit.cpp
+  src/jcbb_search.cpp
+  src/landmark_associator.cpp
+  src/landmark_manager.cpp
+  src/rock_landmark_pipeline.cpp
+  src/rock_landmark_ros.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -46,6 +57,7 @@ ament_target_dependencies(${PROJECT_NAME}
   nav_msgs
   geometry_msgs
   tf2_ros
+  visualization_msgs
   pcl_conversions
 )
 
@@ -93,6 +105,7 @@ ament_export_dependencies(
   nav_msgs
   geometry_msgs
   tf2_ros
+  visualization_msgs
   pcl_conversions
 )
 
