@@ -1,9 +1,0 @@
-source;share/nanopb/hook/cmake_prefix_path.ps1
-source;share/nanopb/hook/cmake_prefix_path.dsv
-source;share/nanopb/hook/cmake_prefix_path.sh
-source;share/nanopb/hook/path.ps1
-source;share/nanopb/hook/path.dsv
-source;share/nanopb/hook/path.sh
-source;share/nanopb/hook/pythonscriptspath.ps1
-source;share/nanopb/hook/pythonscriptspath.dsv
-source;share/nanopb/hook/pythonscriptspath.sh

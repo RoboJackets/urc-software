@@ -1,3 +1,0 @@
-follower_action_server::FollowerActionServer;lib/libtrajectory_following.so
-trajectory_following::SpiralPathGenerator;lib/libtrajectory_following.so
-trajectory_following::SquareBoxSearchPattern;lib/libtrajectory_following.so
