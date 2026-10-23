@@ -5,7 +5,7 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Int32MultiArray
-from geometry_msgs.msg import PoseArray, PoseStamped
+from geometry_msgs.msg import PoseArray, PoseStamped, TransformStamped
 
 from cv_bridge import CvBridge
 from rclpy.qos import qos_profile_sensor_data
@@ -15,6 +15,10 @@ from tf2_ros import Buffer, TransformException, TransformListener
 
 import cv2
 import numpy as np
+
+from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.clock import Clock, ClockType
+from rclpy.task import Future
 
 
 def rvec_to_quaternion(rvec):
@@ -63,23 +67,17 @@ def rvec_to_quaternion(rvec):
 
 
 class ArucoDetector(Node):
+    TRANSFORM_LOOKUP_TIMEOUT_SECONDS = 0.1
 
     def __init__(self):
         super().__init__('aruco_detector')
 
         # Parameters
         self.declare_parameter('marker_size', 0.05)
-        self.declare_parameter('target_frame', 'odom')
-
-        # DICT_6X6_50 marker ID used by the simulated tag
-        self.declare_parameter('expected_marker_id', 23)
+        self.declare_parameter('target_frame', 'base_link')
 
         self.marker_size = float(
             self.get_parameter('marker_size').value
-        )
-
-        self.expected_marker_id = int(
-            self.get_parameter('expected_marker_id').value
         )
 
         self.bridge = CvBridge()
@@ -92,6 +90,8 @@ class ArucoDetector(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_warning_logged = False
+        self.transform_timeout_callback_group = ReentrantCallbackGroup()
+        self.steady_clock = Clock(clock_type=ClockType.STEADY_TIME)
 
         # ---------------------------------------------------------
         # Subscribers
@@ -149,10 +149,7 @@ class ArucoDetector(Node):
 
         self.aruco_params = cv2.aruco.DetectorParameters_create()
 
-        self.get_logger().info(
-            f'Detecting DICT_6X6_50 marker ID '
-            f'{self.expected_marker_id}'
-        )
+        self.get_logger().info('Detecting all DICT_6X6_50 markers')
 
         self.get_logger().info(
             f'Marker size: {self.marker_size:.3f} m'
@@ -178,7 +175,61 @@ class ArucoDetector(Node):
     # Image callback
     # -------------------------------------------------------------
 
-    def image_cb(self, msg: Image):
+    async def _lookup_transform_at_time(
+        self,
+        target_frame: str,
+        source_frame: str,
+        time: Time
+    ) -> TransformStamped:
+        executor = self.executor
+        if executor is None:
+            raise RuntimeError('ArUco detector must be running in an executor')
+
+        transform_future = self.tf_buffer.wait_for_transform_async(
+            target_frame,
+            source_frame,
+            time
+        )
+        ready_future = Future(executor=executor)
+
+        def mark_ready(_):
+            if not ready_future.done():
+                ready_future.set_result(True)
+
+        transform_future.add_done_callback(mark_ready)
+
+        def mark_timeout():
+            if not ready_future.done():
+                ready_future.set_result(False)
+
+        timeout_timer = self.create_timer(
+            self.TRANSFORM_LOOKUP_TIMEOUT_SECONDS,
+            mark_timeout,
+            callback_group=self.transform_timeout_callback_group,
+            clock=self.steady_clock
+        )
+
+        try:
+            transform_ready = await ready_future
+            if not transform_ready:
+                transform_future.cancel()
+                raise TimeoutError(
+                    f'No transform from {source_frame} to {target_frame} '
+                    f'at the image timestamp within '
+                    f'{self.TRANSFORM_LOOKUP_TIMEOUT_SECONDS:.3f} seconds'
+                )
+
+            transform_future.result()
+            return self.tf_buffer.lookup_transform_core(
+                target_frame,
+                source_frame,
+                time
+            )
+        finally:
+            timeout_timer.cancel()
+            self.destroy_timer(timeout_timer)
+
+    async def image_cb(self, msg: Image):
 
         try:
             cv_image = self.bridge.imgmsg_to_cv2(
@@ -214,138 +265,88 @@ class ArucoDetector(Node):
         # ---------------------------------------------------------
 
         if ids is not None and len(ids) > 0:
+            detected_ids = ids.flatten()
+            ids_msg.data = [int(marker_id) for marker_id in detected_ids]
 
-            matching_indices = [
-                index
-                for index, marker_id in enumerate(ids.flatten())
-                if int(marker_id) == self.expected_marker_id
-            ]
+            if self.camera_matrix is not None:
+                rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
+                    corners,
+                    self.marker_size,
+                    self.camera_matrix,
+                    self.dist_coeffs
+                )
 
-            if matching_indices:
+                for marker_id, rvec, tvec in zip(
+                    detected_ids,
+                    rvecs,
+                    tvecs
+                ):
+                    x = float(tvec[0][0])
+                    y = float(tvec[0][1])
+                    z = float(tvec[0][2])
 
-                matching_corners = [
-                    corners[index]
-                    for index in matching_indices
-                ]
+                    qx, qy, qz, qw = rvec_to_quaternion(rvec[0])
 
-                matching_ids = ids[matching_indices]
+                    camera_pose = PoseStamped()
+                    camera_pose.header = msg.header
+                    camera_pose.pose.position.x = x
+                    camera_pose.pose.position.y = y
+                    camera_pose.pose.position.z = z
+                    camera_pose.pose.orientation.x = float(qx)
+                    camera_pose.pose.orientation.y = float(qy)
+                    camera_pose.pose.orientation.z = float(qz)
+                    camera_pose.pose.orientation.w = float(qw)
 
-                ids_msg.data = [
-                    self.expected_marker_id
-                    for _ in matching_indices
-                ]
-
-                # -------------------------------------------------
-                # Pose estimation
-                # -------------------------------------------------
-
-                if self.camera_matrix is not None:
-
-                    rvecs, tvecs, _ = (
-                        cv2.aruco.estimatePoseSingleMarkers(
-                            matching_corners,
-                            self.marker_size,
-                            self.camera_matrix,
-                            self.dist_coeffs
+                    try:
+                        transform = await self._lookup_transform_at_time(
+                            self.target_frame,
+                            msg.header.frame_id,
+                            Time.from_msg(msg.header.stamp)
                         )
+                        pose_stamped = do_transform_pose_stamped(
+                            camera_pose,
+                            transform
+                        )
+                    except (TransformException, TimeoutError) as e:
+                        if not self.tf_warning_logged:
+                            self.get_logger().warning(
+                                f'Cannot transform ArUco pose from '
+                                f'{msg.header.frame_id} to '
+                                f'{self.target_frame}: {e}'
+                            )
+                            self.tf_warning_logged = True
+                        continue
+
+                    self.tf_warning_logged = False
+                    pose = pose_stamped.pose
+
+                    pose_array.poses.append(pose)
+
+                    self.pose_pub.publish(pose_stamped)
+
+                    self.get_logger().info(
+                        f'ArUco {int(marker_id)} pose: '
+                        f'x={pose.position.x:.3f} m, '
+                        f'y={pose.position.y:.3f} m, '
+                        f'z={pose.position.z:.3f} m in '
+                        f'{self.target_frame} | '
+                        f'quaternion='
+                        f'({pose.orientation.x:.3f}, '
+                        f'{pose.orientation.y:.3f}, '
+                        f'{pose.orientation.z:.3f}, '
+                        f'{pose.orientation.w:.3f})'
                     )
 
-                    for rvec, tvec in zip(rvecs, tvecs):
-
-                        # -----------------------------------------
-                        # Position
-                        # -----------------------------------------
-
-                        x = float(tvec[0][0])
-                        y = float(tvec[0][1])
-                        z = float(tvec[0][2])
-
-                        # -----------------------------------------
-                        # Orientation
-                        # -----------------------------------------
-
-                        qx, qy, qz, qw = (
-                            rvec_to_quaternion(rvec[0])
-                        )
-
-                        camera_pose = PoseStamped()
-                        camera_pose.header = msg.header
-                        camera_pose.pose.position.x = x
-                        camera_pose.pose.position.y = y
-                        camera_pose.pose.position.z = z
-                        camera_pose.pose.orientation.x = float(qx)
-                        camera_pose.pose.orientation.y = float(qy)
-                        camera_pose.pose.orientation.z = float(qz)
-                        camera_pose.pose.orientation.w = float(qw)
-
-                        try:
-                            transform = self.tf_buffer.lookup_transform(
-                                self.target_frame,
-                                msg.header.frame_id,
-                                Time.from_msg(msg.header.stamp)
-                            )
-                            pose_stamped = do_transform_pose_stamped(
-                                camera_pose,
-                                transform
-                            )
-                        except TransformException as e:
-                            if not self.tf_warning_logged:
-                                self.get_logger().warning(
-                                    f'Cannot transform ArUco pose from '
-                                    f'{msg.header.frame_id} to '
-                                    f'{self.target_frame}: {e}'
-                                )
-                                self.tf_warning_logged = True
-                            continue
-
-                        self.tf_warning_logged = False
-                        pose = pose_stamped.pose
-
-                        pose_array.poses.append(pose)
-
-                        self.pose_pub.publish(
-                            pose_stamped
-                        )
-
-                        # -----------------------------------------
-                        # Log pose
-                        # -----------------------------------------
-
-                        self.get_logger().info(
-                            f'ArUco {self.expected_marker_id} pose: '
-                            f'x={pose.position.x:.3f} m, '
-                            f'y={pose.position.y:.3f} m, '
-                            f'z={pose.position.z:.3f} m in '
-                            f'{self.target_frame} | '
-                            f'quaternion='
-                            f'({pose.orientation.x:.3f}, '
-                            f'{pose.orientation.y:.3f}, '
-                            f'{pose.orientation.z:.3f}, '
-                            f'{pose.orientation.w:.3f})'
-                        )
-
-                        # -----------------------------------------
-                        # Draw coordinate axes
-                        # -----------------------------------------
-
-                        cv2.aruco.drawAxis(
-                            cv_image,
-                            self.camera_matrix,
-                            self.dist_coeffs,
-                            rvec,
-                            tvec,
-                            self.marker_size
-                        )
-
-                    # Draw detected marker
-                    cv2.aruco.drawDetectedMarkers(
+                    cv2.aruco.drawAxis(
                         cv_image,
-                        matching_corners,
-                        matching_ids
+                        self.camera_matrix,
+                        self.dist_coeffs,
+                        rvec,
+                        tvec,
+                        self.marker_size
                     )
 
-            else:
-                ids = None
+            cv2.aruco.drawDetectedMarkers(cv_image, corners, ids)
 
         # ---------------------------------------------------------
         # Publish results

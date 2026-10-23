@@ -220,7 +220,7 @@ def generate_launch_description():
         # Marker IDs are identified directly from the camera image; no ID filter.
         parameters=[
             {
-                "marker_size": 0.50,
+                "marker_size": 0.375,
                 "use_sim_time": True,
             }
         ],
@@ -273,7 +273,7 @@ def generate_launch_description():
                 "gps_input_topic": "/gps",
                 "gps_output_topic": "/gps/covariances",
             }
-        ],
+        ], 
         output="screen",
     )
 
