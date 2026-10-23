@@ -281,9 +281,11 @@
                         <visual>
                                 <origin xyz="0 0 ${z}"/>
                                 <geometry><box size="${sx} ${sy} ${sz}"/></geometry>
-                                <material name="base"/>
+                                <material name="my_custom_color">
+                                        <color rgba="0.8 0.2 0.2 1.0"/>
+                                </material>
                         </visual>
-                        <collision>
+                        <collision name="${name}_collision">
                                 <origin xyz="0 0 ${z}"/>
                                 <geometry><box size="${sx} ${sy} ${sz}"/></geometry>
                         </collision>
@@ -338,6 +340,30 @@
                 <child link="tool0"/>
         </joint>
         <link name="tool0"/>
+
+        <!-- Independent contact feedback for each finger. The simulation world
+             must load Gazebo's Contact system; ROS topics require a bridge.
+             URDF-to-SDF conversion appends _collision to the collision names. -->
+        <gazebo reference="left_finger">
+                <sensor name="left_finger_contact" type="contact">
+                        <always_on>true</always_on>
+                        <update_rate>100</update_rate>
+                        <topic>/gripper/left_contact</topic>
+                        <contact>
+                                <collision>left_finger_collision_collision</collision>
+                        </contact>
+                </sensor>
+        </gazebo>
+        <gazebo reference="right_finger">
+                <sensor name="right_finger_contact" type="contact">
+                        <always_on>true</always_on>
+                        <update_rate>100</update_rate>
+                        <topic>/gripper/right_contact</topic>
+                        <contact>
+                                <collision>right_finger_collision_collision</collision>
+                        </contact>
+                </sensor>
+        </gazebo>
 
         <!-- ================================================================= -->
         <!-- Gazebo per-link material tags                                      -->
