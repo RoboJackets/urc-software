@@ -19,7 +19,7 @@ namespace urc_slam {
     // Metadata only; the landmark's position lives in iSAM2 under `key`.
     struct LandmarkRecord {
         gtsam::Symbol key;
-        double size_m = 0.0;
+        double radius_m = 0.0;
         std::size_t last_seen_pose_index = 0;
     };
 

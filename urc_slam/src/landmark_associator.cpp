@@ -8,18 +8,24 @@ namespace urc_slam {
 
     namespace {
 
-        // Range/bearing noise mapped to x/y noise at this observation's range.
-        // A fixed bearing sigma smears points sideways by range * sigma, so far
-        // rocks are less certain than near ones.
-        Eigen::Matrix2d cartesianMeasurementCovariance(
+        // Range/azimuth/elevation noise mapped to x/y/z noise at this
+        // observation's range. A fixed angular sigma smears points sideways by
+        // range * sigma, so far rocks are less certain than near ones. Azimuth
+        // and elevation share bearing_sigma_rad, matching the factor's Unit3 noise.
+        Eigen::Matrix3d cartesianMeasurementCovariance(
             const RockObservation &observation, const RockMeasurementNoise &noise
         ) {
-            const double c = std::cos(observation.bearing_rad);
-            const double s = std::sin(observation.bearing_rad);
-            Eigen::Matrix2d jacobian;
-            jacobian << c, -observation.range_m * s,
-                        s,  observation.range_m * c;
-            const Eigen::Vector2d sigmas(noise.range_sigma_m, noise.bearing_sigma_rad);
+            const double r = observation.range_m();
+            const double ca = std::cos(observation.azimuth_rad());
+            const double sa = std::sin(observation.azimuth_rad());
+            const double ce = std::cos(observation.elevation_rad());
+            const double se = std::sin(observation.elevation_rad());
+            Eigen::Matrix3d jacobian;   // columns: d/d(range), d/d(azimuth), d/d(elevation)
+            jacobian << ce * ca, -r * ce * sa, -r * se * ca,
+                        ce * sa,  r * ce * ca, -r * se * sa,
+                        se,       0.0,          r * ce;
+            const Eigen::Vector3d sigmas(
+                noise.range_sigma_m, noise.bearing_sigma_rad, noise.bearing_sigma_rad);
             return jacobian * sigmas.array().square().matrix().asDiagonal() *
                    jacobian.transpose();
         }
@@ -29,8 +35,7 @@ namespace urc_slam {
             const BasePoseEstimate &pose,
             const gtsam::Pose3 &base_T_sensor
         ) {
-            const Eigen::Vector2d p = observation.sensorPoint();
-            return pose.pose.transformFrom(base_T_sensor.transformFrom(gtsam::Point3(p.x(), p.y(), 0.0)));
+            return pose.pose.transformFrom(base_T_sensor.transformFrom(observation.sensor_point));
         }
 
     }
@@ -55,13 +60,10 @@ namespace urc_slam {
         const gtsam::Point3 in_sensor = base_T_sensor_.transformTo(in_base);
         const gtsam::Matrix3 sensor_R_base = base_T_sensor_.rotation().inverse().matrix();
 
-        // The scan is 2D, so only x/y are compared; the predicted z (landmark
-        // height vs. scan plane) carries no information a 2D scan can check.
         PairTerm term;
-        term.innovation = observation.sensorPoint() - in_sensor.head<2>();
-        term.pose_jacobian = (sensor_R_base * d_base_d_pose).topRows<2>();
-        const Eigen::Matrix<double, 2, 3> landmark_jacobian =
-            (sensor_R_base * d_base_d_landmark).topRows<2>();
+        term.innovation = observation.sensor_point - in_sensor;
+        term.pose_jacobian = sensor_R_base * d_base_d_pose;
+        const Eigen::Matrix3d landmark_jacobian = sensor_R_base * d_base_d_landmark;
 
         // APPROXIMATION: pose and landmark errors are treated as independent
         // (block-diagonal joint covariance). ISAM2 only exposes single-key
@@ -76,13 +78,13 @@ namespace urc_slam {
             landmark_jacobian * candidate.covariance * landmark_jacobian.transpose() +
             cartesianMeasurementCovariance(observation, noise_);
 
-        const Eigen::Matrix2d innovation_covariance =
+        const Eigen::Matrix3d innovation_covariance =
             term.pose_jacobian * pose.covariance * term.pose_jacobian.transpose() +
             term.independent_covariance;
         const double distance_sq =
             term.innovation.dot(innovation_covariance.ldlt().solve(term.innovation));
         term.individually_compatible =
-            distance_sq <= chiSquareQuantile(2, params_.gate_confidence);
+            distance_sq <= chiSquareQuantile(3, params_.gate_confidence);
         return term;
     }
 

@@ -3,11 +3,17 @@
 # Merge under slam_node.ros__parameters in slam_params.yaml when wiring in.
 rock_landmarks:
   extractor:
-    cluster_range_jump_m: 0.3
-    min_points: 3
-    max_points: 100
-    min_extent_m: 0.1
-    max_extent_m: 1.5
+    min_range_m: 1.0
+    max_range_m: 30.0
+    ground_cell_size_m: 0.5
+    ground_clearance_m: 0.10
+    cluster_tolerance_m: 0.15
+    min_points: 20
+    max_points: 20000
+    min_radius_m: 0.1
+    max_radius_m: 1.0
+    max_height_m: 1.5
+    max_sphere_rms_m: 0.05
   noise:
     # TODO(AJ): set from repo/measurement. Deliberately NaN: validate() rejects
     # it, so the pipeline cannot run on an invented value.

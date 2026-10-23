@@ -5,21 +5,12 @@
 #include <limits>
 #include <gtsam/geometry/Pose3.h>
 
+#include "rock_extractor_params.hpp"
+
 namespace urc_slam {
 
-    struct RockExtractorParams {
-        // Consecutive beams whose ranges differ by more than this start a new
-        // cluster. Too small splits one rock in two; too large merges rock + wall.
-        double cluster_range_jump_m = 0.3;
-        std::size_t min_points = 3;
-        std::size_t max_points = 100;
-        // Extent = 2 * largest distance from the cluster centroid.
-        double min_extent_m = 0.1;
-        double max_extent_m = 1.5;
-    };
-
     // Noise of a rock observation expressed as range/bearing of the EXTRACTED
-    // centroid. The repo defines no such value (its lidar_sigmas describe the
+    // centre (sphere-fit centre or centroid). The repo defines no such value (its lidar_sigmas describe the
     // ICP relative pose), so these start unset and validate() rejects NaN.
     struct RockMeasurementNoise {
         // TODO(AJ): set from repo/measurement

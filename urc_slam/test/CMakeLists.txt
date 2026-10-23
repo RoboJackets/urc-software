@@ -19,6 +19,9 @@ set(SLAM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_library(rock_landmarks STATIC
   ${SLAM_DIR}/src/rock_landmark_params.cpp
   ${SLAM_DIR}/src/rock_extractor.cpp
+  ${SLAM_DIR}/src/ground_filter.cpp
+  ${SLAM_DIR}/src/point_clustering.cpp
+  ${SLAM_DIR}/src/sphere_fit.cpp
   ${SLAM_DIR}/src/jcbb_search.cpp
   ${SLAM_DIR}/src/landmark_associator.cpp
   ${SLAM_DIR}/src/landmark_manager.cpp
@@ -29,6 +32,7 @@ target_link_libraries(rock_landmarks PUBLIC gtsam Eigen3::Eigen)
 enable_testing()
 foreach(test_name
     test_rock_extractor
+    test_jcbb_search
     test_jcbb_vs_nearest_neighbor
     test_ambiguity
     test_loop_closure_graph)

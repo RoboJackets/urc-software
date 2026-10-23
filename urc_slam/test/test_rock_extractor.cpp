@@ -1,79 +1,105 @@
 #include <cmath>
 #include <iostream>
+#include <random>
 
 #include "mini_check.hpp"
 #include "rock_extractor.hpp"
 
 namespace {
 
-    struct Circle {
-        double x;
-        double y;
+    struct Rock {
+        Eigen::Vector3d center;
         double radius;
     };
 
-    // Distance along a ray from the origin to the circle's near side, or -1.
-    double rayHit(double angle, const Circle &circle) {
-        const double dx = std::cos(angle);
-        const double dy = std::sin(angle);
-        const double along = circle.x * dx + circle.y * dy;
-        const double closest_sq = circle.x * circle.x + circle.y * circle.y - along * along;
-        const double depth_sq = circle.radius * circle.radius - closest_sq;
-        if (along <= 0.0 || depth_sq < 0.0) {
-            return -1.0;
-        }
-        return along - std::sqrt(depth_sq);
-    }
+    // Flat ground at z = 0 sampled on a grid, then a sphere's surface as seen
+    // from the origin: only the hemisphere facing the sensor is generated,
+    // which is what a real sweep would hit.
+    urc_slam::PointCloud3d syntheticSweep(const std::vector<Rock> &rocks, double sensor_height_m) {
+        std::mt19937 rng(7);
+        std::normal_distribution<double> noise(0.0, 0.005);
+        urc_slam::PointCloud3d cloud;
+        const Eigen::Vector3d sensor(0.0, 0.0, sensor_height_m);
 
-    urc_slam::PlanarScan syntheticScan(const std::vector<Circle> &circles) {
-        urc_slam::PlanarScan scan;
-        scan.angle_min_rad = -M_PI / 2.0;
-        scan.angle_increment_rad = 0.25 * M_PI / 180.0;
-        scan.range_min_m = 0.1;
-        scan.range_max_m = 30.0;
-        const int beams = static_cast<int>(M_PI / scan.angle_increment_rad) + 1;
-        for (int i = 0; i < beams; ++i) {
-            const double angle = scan.angle_min_rad + i * scan.angle_increment_rad;
-            float range = std::numeric_limits<float>::infinity();
-            for (const Circle &circle : circles) {
-                const double hit = rayHit(angle, circle);
-                if (hit > 0.0 && hit < range) {
-                    range = static_cast<float>(hit);
+        for (double x = 1.0; x <= 12.0; x += 0.1) {
+            for (double y = -6.0; y <= 6.0; y += 0.1) {
+                cloud.emplace_back(x, y, noise(rng));
+            }
+        }
+        for (const Rock &rock : rocks) {
+            for (double polar = 0.0; polar < M_PI; polar += 0.04) {
+                for (double azimuth = 0.0; azimuth < 2.0 * M_PI; azimuth += 0.04) {
+                    const Eigen::Vector3d normal(std::sin(polar) * std::cos(azimuth),
+                                                 std::sin(polar) * std::sin(azimuth),
+                                                 std::cos(polar));
+                    const Eigen::Vector3d surface = rock.center + rock.radius * normal;
+                    // Facing the sensor and above the ground plane.
+                    if (normal.dot(sensor - surface) > 0.0 && surface.z() > 0.02) {
+                        cloud.push_back(surface + Eigen::Vector3d::Constant(noise(rng)));
+                    }
                 }
             }
-            scan.ranges_m.push_back(range);
         }
-        return scan;
+        // Sensor frame is the origin here, so shift by the mounting height.
+        for (Eigen::Vector3d &point : cloud) {
+            point.z() -= sensor_height_m;
+        }
+        return cloud;
     }
 
-    bool near(const urc_slam::RockObservation &rock, const Circle &circle) {
-        const double true_range = std::hypot(circle.x, circle.y);
-        const double true_bearing = std::atan2(circle.y, circle.x);
-        // The centroid of the visible near arc lies between the near surface and
-        // the true centre (see the TODO in rock_extractor.cpp), so the range is
-        // only guaranteed to land within one radius short of the centre.
-        return rock.range_m < true_range &&
-               rock.range_m > true_range - circle.radius &&
-               std::abs(rock.bearing_rad - true_bearing) < 0.03;
+    bool matches(const urc_slam::RockObservation &rock, const Eigen::Vector3d &truth, double tolerance_m) {
+        return (rock.sensor_point - truth).norm() < tolerance_m;
     }
 
 }
 
 int main() {
-    const std::vector<Circle> circles{{3.0, 1.0, 0.3}, {5.0, -1.5, 0.4}};
+    const double sensor_height_m = 1.0;
+    const std::vector<Rock> rocks{{{4.0, 1.5, 0.3}, 0.35}, {{7.0, -2.0, 0.4}, 0.45}};
+    const urc_slam::RockExtractor extractor{urc_slam::RockExtractorParams{}};
 
-    urc_slam::RockExtractor extractor{urc_slam::RockExtractorParams{}};
-    const auto rocks = extractor.extract(syntheticScan(circles));
+    // Two spherical rocks on flat ground give two observations whose fitted
+    // centres land close to the true centres, in the sensor frame (z is
+    // relative to the sensor, hence the -sensor_height_m).
+    const auto found = extractor.extract(syntheticSweep(rocks, sensor_height_m));
+    CHECK(found.size() == 2);
 
-    CHECK(rocks.size() == 2);
-    // Output is ordered by beam angle: the -1.5 m rock is swept first.
-    CHECK(near(rocks[0], circles[1]));
-    CHECK(near(rocks[1], circles[0]));
-    CHECK(rocks[0].size_m > 0.3 && rocks[0].size_m < 0.9);
+    for (const Rock &rock : rocks) {
+        const Eigen::Vector3d truth = rock.center - Eigen::Vector3d(0.0, 0.0, sensor_height_m);
+        bool matched = false;
+        for (const auto &observation : found) {
+            if (matches(observation, truth, 0.08)) {
+                matched = true;
+                CHECK(observation.center_from_sphere_fit);
+                CHECK_NEAR(observation.radius_m, rock.radius, 0.08);
+            }
+        }
+        CHECK(matched);
+    }
 
-    // Empty scan and a wall-sized object must not produce rocks.
-    CHECK(extractor.extract(syntheticScan({})).empty());
-    CHECK(extractor.extract(syntheticScan({{4.0, 0.0, 3.0}})).empty());
+    // The point of the pivot: the visible cap's centroid is biased toward the
+    // sensor by roughly a radius/2, while the fitted centre is not. Force the
+    // centroid fallback (sphere fit rejected) and check it is measurably worse.
+    urc_slam::RockExtractorParams no_fit;
+    no_fit.max_sphere_rms_m = 0.0;
+    const auto centroid_only = urc_slam::RockExtractor(no_fit).extract(syntheticSweep(rocks, sensor_height_m));
+    CHECK(centroid_only.size() == 2);
+    for (const Rock &rock : rocks) {
+        const Eigen::Vector3d truth = rock.center - Eigen::Vector3d(0.0, 0.0, sensor_height_m);
+        double best_fit_error = 1e9;
+        double best_centroid_error = 1e9;
+        for (const auto &o : found) { best_fit_error = std::min(best_fit_error, (o.sensor_point - truth).norm()); }
+        for (const auto &o : centroid_only) { best_centroid_error = std::min(best_centroid_error, (o.sensor_point - truth).norm()); }
+        std::cout << "rock r=" << rock.radius << ": centre error sphere fit " << best_fit_error
+                  << " m, centroid " << best_centroid_error << " m" << std::endl;
+        CHECK(best_centroid_error > 2.0 * best_fit_error);
+    }
+
+    // Bare ground produces nothing.
+    CHECK(extractor.extract(syntheticSweep({}, sensor_height_m)).empty());
+
+    // A wall-sized object (radius 3) is rejected by the size filter.
+    CHECK(extractor.extract(syntheticSweep({{{8.0, 0.0, 1.0}, 3.0}}, sensor_height_m)).empty());
 
     std::cout << "test_rock_extractor passed" << std::endl;
     return 0;

@@ -121,13 +121,13 @@ namespace urc_slam {
         const std::vector<std::pair<std::size_t, std::size_t>> &pairings
     ) {
         const Eigen::Index n = static_cast<Eigen::Index>(pairings.size());
-        Eigen::VectorXd innovation(2 * n);
-        Eigen::MatrixXd covariance(2 * n, 2 * n);
+        Eigen::VectorXd innovation(3 * n);
+        Eigen::MatrixXd covariance(3 * n, 3 * n);
 
         for (Eigen::Index a = 0; a < n; ++a) {
             const PairTerm &term_a =
                 problem.terms[pairings[a].first * problem.num_candidates + pairings[a].second];
-            innovation.segment<2>(2 * a) = term_a.innovation;
+            innovation.segment<3>(3 * a) = term_a.innovation;
 
             for (Eigen::Index b = 0; b < n; ++b) {
                 const PairTerm &term_b =
@@ -135,11 +135,11 @@ namespace urc_slam {
                 // All pairings observe from the same pose, so its covariance couples
                 // every pair of innovations. This off-diagonal block is what
                 // distinguishes joint from individual compatibility.
-                covariance.block<2, 2>(2 * a, 2 * b) =
+                covariance.block<3, 3>(3 * a, 3 * b) =
                     term_a.pose_jacobian * problem.pose_covariance *
                     term_b.pose_jacobian.transpose();
             }
-            covariance.block<2, 2>(2 * a, 2 * a) += term_a.independent_covariance;
+            covariance.block<3, 3>(3 * a, 3 * a) += term_a.independent_covariance;
         }
 
         const Eigen::LDLT<Eigen::MatrixXd> factorization(covariance);
@@ -147,7 +147,7 @@ namespace urc_slam {
             return std::nullopt;
         }
         const double distance_sq = innovation.dot(factorization.solve(innovation));
-        const double gate = chiSquareQuantile(2 * pairings.size(), problem.gate_confidence);
+        const double gate = chiSquareQuantile(3 * pairings.size(), problem.gate_confidence);
         if (distance_sq > gate) {
             return std::nullopt;
         }

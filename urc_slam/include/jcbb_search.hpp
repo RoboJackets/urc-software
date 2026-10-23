@@ -19,14 +19,14 @@ namespace urc_slam {
     // knows nothing about GTSAM, keys, or frames.
     struct PairTerm {
         bool individually_compatible = false;
-        // Observed minus predicted observation (2D, sensor frame).
-        Eigen::Vector2d innovation = Eigen::Vector2d::Zero();
+        // Observed minus predicted rock centre (3D, sensor frame).
+        Eigen::Vector3d innovation = Eigen::Vector3d::Zero();
         // d(predicted observation)/d(pose). Observations share ONE pose, so
         // this is what correlates the innovations of different pairings.
-        Eigen::Matrix<double, 2, 6> pose_jacobian = Eigen::Matrix<double, 2, 6>::Zero();
+        Eigen::Matrix<double, 3, 6> pose_jacobian = Eigen::Matrix<double, 3, 6>::Zero();
         // Landmark-uncertainty + measurement-noise contribution, which is
         // independent between pairings (see REVIEW_NOTES: cross terms ignored).
-        Eigen::Matrix2d independent_covariance = Eigen::Matrix2d::Identity();
+        Eigen::Matrix3d independent_covariance = Eigen::Matrix3d::Identity();
     };
 
     struct JcbbProblem {

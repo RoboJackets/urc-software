@@ -3,10 +3,19 @@
 Branch `feature/rock-landmarks` (local only, never pushed). Everything here is
 new files under `urc_slam/`; no existing file was modified.
 
-**Verification status: the tests have been written but NOT built or run.**
-This machine has no GTSAM/Boost (WSL Ubuntu has none, no sudo, Docker daemon
-was off). See "How to run the tests" at the end. Treat every GTSAM API call
-below as unchecked against a compiler until that is done.
+**Verification status.** This machine has no GTSAM/Boost (WSL Ubuntu has none,
+no sudo, Docker daemon was off). So:
+- **Built and passing (g++/Eigen only, in WSL):** `test_rock_extractor` and
+  `test_jcbb_search` (the R1/R2/R3 worked example, ties, search budget).
+- **Written but NOT compiled or run (need GTSAM):** `landmark_associator.cpp`,
+  `landmark_manager.cpp`, `rock_landmark_params.cpp`,
+  `test_jcbb_vs_nearest_neighbor`, `test_ambiguity`, `test_loop_closure_graph`.
+  Treat every GTSAM API call as unchecked against a compiler.
+
+**Design pivot (2D -> 3D).** The first version extracted rocks from a 2D
+`LaserScan`. The repo's LiDAR is a 3D `PointCloud2`, so the extractor now works
+on the 3D cloud (ground removal, clustering, sphere fit), observations carry a
+real elevation, and association gates in 3 dimensions instead of 2.
 
 ---
 
@@ -40,11 +49,12 @@ keyframe. There are **no landmark keys today**. This work uses `'l'`
 
 **LiDAR message and arrival.** `sensor_msgs::msg::PointCloud2`, subscribed in
 `SlamNode` on `lidar_topic` (YAML: `/scan/points`), `SensorDataQoS`, handled in
-`SlamNode::lidarCallback`. **It is a 3D point cloud, not the 2D `LaserScan`
-the task expected.** The callback voxel-filters it, runs GICP against the last
-keyframe cloud, and returns early unless the IMU-predicted motion exceeds the
-keyframe thresholds (0.5 m / 0.1745 rad). So **scans that are not keyframes
-never have a pose node**, which matters for when rocks can be processed.
+`SlamNode::lidarCallback`. This is a 3D cloud (the task text expected a 2D
+`LaserScan`); the 3D extractor consumes it directly. The callback
+voxel-filters it, runs GICP against the last keyframe cloud, and returns early
+unless the IMU-predicted motion exceeds the keyframe thresholds (0.5 m /
+0.1745 rad). So **sweeps that are not keyframes never have a pose node**, which
+matters for when rocks can be processed.
 
 **Measurement-noise parameters in the repo.** All are hard-coded in the
 `SlamNode` constructor (`slam_node.cpp:42-51`); none are in YAML. All are
@@ -82,29 +92,34 @@ too slow per scan, hence the approximation in section 6.
 
 ## 2. Data flow for one scan
 
-A planar scan (`PlanarScan`) goes into `RockExtractor::extract`, which converts
-beams to 2D points, splits them into clusters wherever consecutive ranges jump
-by more than a threshold, keeps rock-sized clusters and reports each one's
-centroid as (range, bearing, size). `LandmarkManager::processScan` then reads
-the current pose estimate and its marginal covariance from iSAM2, collects the
-existing landmarks (position + marginal covariance), and hands both to
-`LandmarkAssociator::associate`. The associator predicts each landmark's
-position in the sensor frame, gates every (observation, landmark) pair
-individually with a chi-square test on the Mahalanobis distance, and then
-runs JCBB over the surviving pairs to find the largest set that is jointly
-compatible, where the shared pose uncertainty correlates the innovations.
-Each observation comes back as *matched* (add a Huber-wrapped
-`BearingRangeFactor<Pose3,Point3>` from the pose to that landmark), *new* (it
-had no gated candidate at all: add a landmark node initialised from pose plus
-measurement, and its factor), or *ambiguous* (log and add nothing). The
-manager returns the factors/values as a `LandmarkGraphUpdate` for the backend
-to merge into its pending iSAM2 update.
+A sensor-frame point cloud (`PointCloud3d`) goes into `RockExtractor::extract`.
+It drops points outside a range band, removes ground (`removeGround`: the
+lowest z in each point's 3x3 grid neighbourhood is "ground", and points more
+than `ground_clearance_m` above it survive), groups the survivors with
+Euclidean clustering (`clusterPoints`), keeps clusters of rock-like point
+count, width and height, and estimates each rock's centre by least-squares
+sphere fit (`fitSphere`), falling back to the visible-point centroid when the
+fit is implausible. `LandmarkManager::processScan` then reads the current pose
+estimate and marginal covariance from iSAM2, collects existing landmarks
+(position + marginal covariance), and calls `LandmarkAssociator::associate`.
+The associator predicts each landmark's position in the sensor frame, gates
+every (observation, landmark) pair individually with a 3-dof chi-square test
+on the Mahalanobis distance, and runs JCBB over the survivors to find the
+largest set that is jointly compatible; the shared pose uncertainty correlates
+the innovations. Each observation comes back as *matched* (add a Huber-wrapped
+`BearingRangeFactor<Pose3,Point3>` from the pose to that landmark), *new* (no
+gated candidate at all: add a landmark node initialised from pose plus
+measurement, and its factor), or *ambiguous* (log and add nothing). The manager
+returns the factors/values as a `LandmarkGraphUpdate` for the backend to merge
+into its pending iSAM2 update.
 
 ## 3. Reading order
 
 1. `include/rock_types.hpp`, `include/rock_landmark_params.hpp`: data types and
    every tunable. Note the NaN noise.
-2. `src/rock_extractor.cpp`: clustering; find the centroid TODO and think about it.
+2. `src/rock_extractor.cpp` (orchestration, size filters, the centre TODO), then
+   `src/ground_filter.cpp`, `src/point_clustering.cpp`, `src/sphere_fit.cpp`
+   (each one idea; note what each assumes).
 3. `include/jcbb_search.hpp` then `src/jcbb_search.cpp`: the algorithm, ROS-
    and GTSAM-free. Look at `jointDistanceSq` (the pose-covariance coupling
    block is the whole idea) and the `>=` bound in `descend` (why ties survive).
@@ -113,17 +128,24 @@ to merge into its pending iSAM2 update.
 5. `src/landmark_manager.cpp`: association-before-creation, factor/noise
    construction, landmark initialisation.
 6. `test/test_jcbb_vs_nearest_neighbor.cpp` (the clearest statement of why JCBB),
-   then `test_ambiguity.cpp`, `test_loop_closure_graph.cpp`, `test_rock_extractor.cpp`.
+   `test_jcbb_search.cpp` (same example without GTSAM), `test_ambiguity.cpp`,
+   `test_loop_closure_graph.cpp`, `test_rock_extractor.cpp` (prints sphere-fit vs
+   centroid error).
 
 ## 4. Parameters added
 
 | Parameter | Default | Effect of raising it |
 |---|---|---|
-| `extractor.cluster_range_jump_m` | 0.3 | Fewer splits; rocks merge with neighbours/walls |
-| `extractor.min_points` / `max_points` | 3 / 100 | Looser size filter by beam count |
-| `extractor.min_extent_m` / `max_extent_m` | 0.1 / 1.5 | Looser size filter by width |
-| `noise.range_sigma_m` | **unset (NaN)** | `TODO(AJ)`. Larger: wider gates, weaker range constraint |
-| `noise.bearing_sigma_rad` | **unset (NaN)** | `TODO(AJ)`. Same, for bearing (also used for the unobserved elevation axis) |
+| `extractor.min_range_m` / `max_range_m` | 1.0 / 30.0 | Wider band: more points, but far returns are too sparse to cluster |
+| `extractor.ground_cell_size_m` | 0.5 | Larger: tolerates wider rocks and more slope error, but the ground estimate gets coarser. Keep slope x cell < clearance |
+| `extractor.ground_clearance_m` | 0.10 | Larger: low rocks vanish; smaller: uneven ground leaks in as false rocks |
+| `extractor.cluster_tolerance_m` | 0.15 | Larger: rocks merge with neighbours. Must exceed point spacing at max range |
+| `extractor.min_points` / `max_points` | 20 / 20000 | Point-count filter |
+| `extractor.min_radius_m` / `max_radius_m` | 0.1 / 1.0 | Bounds sphere radius and (doubled) horizontal extent |
+| `extractor.max_height_m` | 1.5 | Rejects people/poles/walls |
+| `extractor.max_sphere_rms_m` | 0.05 | Larger: accepts rougher rocks for sphere-fit centres (less centroid fallback, riskier fits) |
+| `noise.range_sigma_m` | **unset (NaN)** | `TODO(AJ)`. Larger: wider gates, weaker range constraint. Should include sphere-fit error, not only sensor noise |
+| `noise.bearing_sigma_rad` | **unset (NaN)** | `TODO(AJ)`. Same, for azimuth and elevation (one shared sigma: the factor's Unit3 tangent has no preferred axis) |
 | `associator.gate_confidence` | 0.99 | Larger gate: more candidates, more JCBB work, more ambiguity |
 | `associator.recently_seen_window_poses` | 10 | Larger: more landmarks count as "recent", so single-pairing matches are allowed more often |
 | `associator.min_pairings_for_reassociation` | 2 | Larger: loop closures need more simultaneously visible rocks (safer, rarer) |
@@ -147,11 +169,11 @@ Proposed YAML is in `config/rock_landmarks.yaml` (not loaded by anything).
 2. **`src/slam_node.cpp` / `include/slam_node.hpp`**:
    - Declare the parameters in section 4; build a `RockLandmarkParams`; own a
      `RockExtractor` and `LandmarkManager`.
-   - **Input adapter (a real decision for AJ):** the cloud is 3D
-     `PointCloud2`, the extractor wants a `PlanarScan`. Either subscribe to a
-     2D `LaserScan` (e.g. from `pointcloud_to_laserscan`) or slice the filtered
-     cloud by a height band and bin by bearing. Not written: it needs the
-     sensor mounting height, which the repo does not define.
+   - **Input adapter:** convert the `PointCloud2` to `PointCloud3d` (finite
+     points, sensor frame; one loop). Feed it the raw or lightly filtered cloud,
+     **not** the 0.2 m voxel-downsampled one from `LidarFrontend::preprocess`:
+     a 0.2 m voxel exceeds `cluster_tolerance_m` and is too sparse for a sphere
+     fit on a small rock. This costs a second pass over the cloud per keyframe.
    - Call site: in `lidarCallback`, after `backend.addLidarFactor(...)`
      (and in the first-keyframe branch), run
      `extract -> manager.processScan(obs, current_index, backend.isam()) ->
@@ -160,8 +182,8 @@ Proposed YAML is in `config/rock_landmarks.yaml` (not loaded by anything).
      earlier in that function, so rocks are only processed at keyframes
      (0.5 m / 10 deg apart).
    - Pass a `LogSink` that forwards to `RCLCPP_INFO_THROTTLE`.
-   - Optional: IMU roll/pitch into `RockExtractor::scanPlaneIsUsable` (hook).
-3. **`CMakeLists.txt`**: add the five new `.cpp` files to the library. No new
+   - Optional: IMU roll/pitch into `RockExtractor::attitudeIsUsable` (hook; better, rotate the cloud into a gravity-aligned frame first).
+3. **`CMakeLists.txt`**: add the eight new `.cpp` files to the library. No new
    package dependencies (GTSAM/Eigen already linked). Optionally
    `add_subdirectory(test)` under `BUILD_TESTING`.
 4. **`config/slam_params.yaml`**: merge `config/rock_landmarks.yaml`, and move
@@ -181,13 +203,20 @@ this on builds for you, ignore this.
   what is used. Consequence: the gate is **too loose**, never too tight. More
   false candidates reach JCBB, and a wrong match is less likely to be refused.
   Landmark-landmark cross terms are ignored for the same reason.
-- 2D gating only (x, y in the sensor frame). The scan plane carries no z
-  information; the landmark height is unobserved and its factor treats
-  elevation as measured 0 with the bearing sigma.
-- **Centroid bias** (the verbatim TODO): the near-arc centroid sits between the
-  surface and the true centre and moves with viewing direction. A re-observation
-  from the opposite side is biased by up to ~a rock radius in the opposite
-  direction. The noise model does not account for it. Unsolved by design.
+- **Centre bias** (the TODO in `rock_extractor.cpp`): the 3D sweep still sees
+  only the near cap. The sphere fit removes most of the shift for round rocks
+  (synthetic test: ~0.4 mm vs ~0.2 m centroid error), but that test uses
+  perfect spheres. Real rocks are irregular, the algebraic fit is biased for
+  small caps, and the centroid fallback keeps the old bias. Unsolved by design;
+  needs real data.
+- **Ground model is crude.** Lowest-z-in-3x3-cells assumes a roughly level
+  sensor and gentle slope (slope x cell size < clearance); boulder fields and
+  steep slopes will mis-segment. Half-buried rocks fit a sphere to the exposed
+  cap only, so the "centre" is the fitted sphere's, not the rock's.
+- Sensor z is assumed up; with vehicle pitch/roll the ground filter degrades
+  (see the `attitudeIsUsable` hook).
+- Elevation is now measured, but the Unit3 noise treats azimuth and elevation
+  identically.
 - Chi-square quantile is Wilson-Hilferty and the normal quantile A&S 26.2.23;
   accurate to well under 1% for the dof used, not exact.
 - `ambiguity_margin` is a heuristic. An exactly symmetric scene gives a tie;
@@ -198,7 +227,7 @@ this on builds for you, ignore this.
   on every scan. No spatial prefilter yet; this will not scale to a large map.
   JCBB is exponential in the worst case (bounded by `max_search_nodes`).
 - Landmarks are never merged, pruned or re-initialised.
-- Scans wrapping 360 degrees can split one rock across the first/last beam.
+- A rock partly occluded or cut by the range-band edge can fail the size filter or the fit.
 - A rock seen only once from a poorly known pose is initialised from that
   pose; the landmark is only as good as the pose at creation.
 - Comment density follows `CLAUDE.md` ("explain why") rather than `AGENTS.md`

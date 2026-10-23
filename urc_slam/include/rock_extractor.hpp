@@ -3,27 +3,30 @@
 
 #include <vector>
 
-#include "rock_landmark_params.hpp"
+#include "rock_extractor_params.hpp"
 #include "rock_types.hpp"
 
 namespace urc_slam {
 
-    // Turns one planar scan into rock-sized clusters. Stateless between scans.
+    // Finds rocks in one 3D sweep: ground removal -> Euclidean clustering ->
+    // size filtering -> sphere fit for the centre. Stateless between sweeps.
     class RockExtractor {
         public:
             explicit RockExtractor(const RockExtractorParams &params);
 
-            std::vector<RockObservation> extract(const PlanarScan &scan) const;
+            // `cloud` is in the sensor frame with +z roughly up; see
+            // attitudeIsUsable().
+            std::vector<RockObservation> extract(const PointCloud3d &cloud) const;
 
-            // Hook, not yet implemented: reject scans taken while the vehicle is
-            // pitched or rolled enough that the scan plane hits the slope itself.
-            // Such a scan returns a ground arc whose clusters look like rocks.
-            // Intended inputs are IMU roll/pitch (e.g. from /imu/fused) and a
-            // tolerance parameter; the caller would skip extract() when this
-            // returns false. Currently always accepts.
-            // TODO(AJ): implement with a roll/pitch tolerance once the IMU
-            // attitude is plumbed to the landmark pipeline.
-            bool scanPlaneIsUsable(double roll_rad, double pitch_rad) const;
+            // Hook, not yet implemented: reject sweeps taken while the vehicle is
+            // pitched or rolled far enough that the sensor z axis no longer points
+            // roughly up, which breaks the grid ground model in removeGround().
+            // A better fix than rejecting is rotating the cloud into a
+            // gravity-aligned frame using IMU roll/pitch (e.g. /imu/fused) before
+            // extract(). Currently always accepts.
+            // TODO(AJ): implement with a roll/pitch tolerance once IMU attitude
+            // is plumbed to the landmark pipeline.
+            bool attitudeIsUsable(double roll_rad, double pitch_rad) const;
 
         private:
             RockExtractorParams params_;

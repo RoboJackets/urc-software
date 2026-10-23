@@ -45,11 +45,10 @@ namespace fixture {
         return candidate;
     }
 
-    inline urc_slam::RockObservation observationAt(double x, double y) {
+    inline urc_slam::RockObservation observationAt(double x, double y, double z = 0.0) {
         urc_slam::RockObservation observation;
-        observation.range_m = std::hypot(x, y);
-        observation.bearing_rad = std::atan2(y, x);
-        observation.size_m = 0.4;
+        observation.sensor_point = Eigen::Vector3d(x, y, z);
+        observation.radius_m = 0.2;
         return observation;
     }
 

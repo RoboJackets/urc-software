@@ -32,7 +32,7 @@ namespace {
         std::vector<urc_slam::RockObservation> observations;
         for (const gtsam::Point3 &rock : rocks) {
             const gtsam::Point3 local = true_pose.transformTo(rock);
-            observations.push_back(fixture::observationAt(local.x(), local.y()));
+            observations.push_back(fixture::observationAt(local.x(), local.y(), local.z()));
         }
         return observations;
     }

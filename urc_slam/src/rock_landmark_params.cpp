@@ -21,10 +21,12 @@ namespace urc_slam {
         requirePositive(params.noise.range_sigma_m, "noise.range_sigma_m");
         requirePositive(params.noise.bearing_sigma_rad, "noise.bearing_sigma_rad");
         requirePositive(params.huber_kernel_width, "huber_kernel_width");
-        requirePositive(params.extractor.cluster_range_jump_m, "extractor.cluster_range_jump_m");
+        requirePositive(params.extractor.cluster_tolerance_m, "extractor.cluster_tolerance_m");
+        requirePositive(params.extractor.ground_cell_size_m, "extractor.ground_cell_size_m");
 
         if (params.extractor.min_points > params.extractor.max_points ||
-            params.extractor.min_extent_m > params.extractor.max_extent_m) {
+            params.extractor.min_radius_m > params.extractor.max_radius_m ||
+            params.extractor.min_range_m > params.extractor.max_range_m) {
             throw std::invalid_argument("extractor min bounds exceed max bounds");
         }
 

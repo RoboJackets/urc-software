@@ -59,10 +59,8 @@ namespace urc_slam {
     gtsam::Point3 LandmarkManager::initialLandmarkPosition(
         const RockObservation &observation, const gtsam::Pose3 &pose
     ) const {
-        // Composition of the current pose estimate with the range-bearing
-        // measurement (scan plane, so z = 0 in the sensor frame).
-        const Eigen::Vector2d p = observation.sensorPoint();
-        return pose.transformFrom(params_.base_T_sensor.transformFrom(gtsam::Point3(p.x(), p.y(), 0.0)));
+        // Current pose estimate composed with the measured rock centre.
+        return pose.transformFrom(params_.base_T_sensor.transformFrom(observation.sensor_point));
     }
 
     gtsam::NonlinearFactor::shared_ptr LandmarkManager::makeFactor(
@@ -72,11 +70,10 @@ namespace urc_slam {
     ) const {
         // The factor measures from the BASE pose key, so express the scan point
         // in the base frame before splitting into bearing and range.
-        const Eigen::Vector2d p = observation.sensorPoint();
-        const gtsam::Point3 in_base = params_.base_T_sensor.transformFrom(gtsam::Point3(p.x(), p.y(), 0.0));
+        const gtsam::Point3 in_base = params_.base_T_sensor.transformFrom(observation.sensor_point);
 
         // Unit3 has a 2-D tangent space with an arbitrary basis, so both bearing
-        // axes share one sigma (the elevation is measured as ~0 by a planar scan).
+        // axes (azimuth and elevation) share one sigma.
         const gtsam::Vector3 sigmas(
             params_.noise.bearing_sigma_rad,
             params_.noise.bearing_sigma_rad,
@@ -125,7 +122,7 @@ namespace urc_slam {
                     const gtsam::Symbol key = landmarkKey(landmarks_.size());
                     update.values.insert(key, initialLandmarkPosition(observations[i], pose));
                     update.factors.push_back(makeFactor(observations[i], pose_index, key));
-                    landmarks_.push_back({key, observations[i].size_m, pose_index});
+                    landmarks_.push_back({key, observations[i].radius_m, pose_index});
                     ++update.summary.created;
                     break;
                 }
