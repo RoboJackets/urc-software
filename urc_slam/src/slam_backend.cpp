@@ -271,6 +271,26 @@ namespace urc_slam {
         optimize();
     }
 
+    void SlamBackend::addLoopClosureFactor(
+        std::size_t earlier_index,
+        std::size_t current_index,
+        const gtsam::Pose3 &relative_pose,
+        double huber_kernel_width
+    ) {
+        new_factors.add(
+            gtsam::BetweenFactor<gtsam::Pose3>(
+                poseKey(earlier_index),
+                poseKey(current_index),
+                relative_pose,
+                gtsam::noiseModel::Robust::Create(
+                    gtsam::noiseModel::mEstimator::Huber::Create(huber_kernel_width),
+                    lidar_noise
+                )
+            )
+        );
+        optimize();
+    }
+
     void SlamBackend::addLandmarkUpdate(
         const gtsam::NonlinearFactorGraph &factors,
         const gtsam::Values &values

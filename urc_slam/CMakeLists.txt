@@ -36,6 +36,9 @@ add_library(${PROJECT_NAME} SHARED
   src/landmark_manager.cpp
   src/rock_landmark_pipeline.cpp
   src/rock_landmark_ros.cpp
+  src/loop_closure_screening.cpp
+  src/loop_closure_detector.cpp
+  src/loop_closure_ros.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

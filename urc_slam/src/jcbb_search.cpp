@@ -143,7 +143,12 @@ namespace urc_slam {
         }
 
         const Eigen::LDLT<Eigen::MatrixXd> factorization(covariance);
-        if (factorization.info() != Eigen::Success || !factorization.isPositive()) {
+        // isPositive() accepts semi-definite matrices and LDLT then solves with a
+        // pseudo-inverse; require strictly positive pivots so a singular joint
+        // covariance cannot masquerade as a perfect match.
+        const Eigen::VectorXd pivots = factorization.vectorD();
+        if (factorization.info() != Eigen::Success || !factorization.isPositive() ||
+            pivots.minCoeff() <= 1e-12 * pivots.maxCoeff()) {
             return std::nullopt;
         }
         const double distance_sq = innovation.dot(factorization.solve(innovation));

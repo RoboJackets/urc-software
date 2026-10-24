@@ -196,6 +196,52 @@ Still open:
 
 Unrelated, noticed while reading (not touched): none remaining.
 
+## 5b. Terrain loop closure (GICP revisit detection)
+
+For terrain with few rocks (hills, ground relief), `LoopClosureDetector` ties the
+current keyframe to an earlier one by registering their clouds. Off by default
+(`loop_closure.enabled`).
+
+Per keyframe (`SlamNode::tryLoopClosure`, before rock association):
+1. `findLoopCandidates`: earlier keyframes within `base_radius_m +
+   sigma_scale * sigma_pos` of the current estimate (capped), excluding any
+   within `min_index_gap` keyframes or `min_path_gap_m` of travelled path
+   (those are tied to the current one by odometry already). Nearest
+   `max_candidates` kept.
+2. GICP (`LidarFrontend::registerClouds`) from the candidate's stored cloud to
+   the current one. Starting guess = `x_earlier.between(x_current)` from the
+   graph.
+3. Reject if it did not converge or `fitness_score > max_fitness_score`.
+4. `gateCorrection`: the correction GICP applied to the guess (6-vector via
+   `Pose3::Logmap(guess.between(result))`) must pass a chi-square test (6 dof)
+   against `cov_current + Ad * cov_earlier * Ad^T` (iSAM2 marginals).
+5. Best remaining candidate (lowest fitness) becomes one
+   `BetweenFactor<Pose3>(x(earlier), x(current))` via
+   `SlamBackend::addLoopClosureFactor`, using the existing `lidar_noise` (0.2)
+   wrapped in a Huber kernel. The map/path are rebuilt.
+
+Notes and limits:
+- **PCL GICP returns no covariance.** The factor reuses `lidar_noise`, the repo's
+  noise for consecutive-keyframe ICP. A loop closure over a long baseline is
+  probably less certain than that; the Huber kernel is the safety net, not a fix.
+- The gate treats the two poses' errors as independent (iSAM2 gives no cheap
+  joint covariance): the gate is too LOOSE for strongly correlated keyframes.
+- The fitness score is a mean squared distance in m^2 and does not detect
+  degenerate (slidable) matches or low overlap; the gate is the second line.
+- Registers against a single earlier cloud, not a submap, so one sparse sweep
+  can fail a real revisit. Clouds are `keyframe_clouds` (already stored, 0.2 m
+  voxels), so memory grows with keyframes.
+- GICP runs inside the LiDAR callback. `max_candidates` and
+  `attempt_every_n_keyframes` bound it; a worker thread is the next step.
+- Candidate search is O(keyframes) per attempt.
+- Default thresholds (`base_radius_m` 3, `sigma_scale` 3, gaps 20, fitness 0.5,
+  confidence 0.99, cooldown 10) are untuned heuristics, not measured.
+- The ground filter of the rock extractor still assumes gentle slopes; hills
+  help this pipeline but hurt that one (see section 6).
+- Verified: `test_loop_closure_screening` (candidate search, radius scaling,
+  gate). NOT compiled: `loop_closure_detector.cpp`, `loop_closure_ros.cpp`, the
+  backend and node changes.
+
 ## 6. Approximations, assumptions, known weaknesses
 
 - **Pose-landmark cross-covariance is ignored** (block-diagonal joint covariance;

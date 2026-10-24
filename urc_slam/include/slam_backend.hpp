@@ -86,6 +86,17 @@ namespace urc_slam {
             // landmark marginal covariances that only iSAM2 can provide.
             const gtsam::ISAM2 &isamGraph() const { return isam; }
 
+            // Constrains two existing keyframes by a registration between their
+            // clouds, using the same noise as consecutive-keyframe ICP but wrapped
+            // in a Huber kernel: a loop closure that is wrong warps the whole
+            // trajectory, so it must not be trusted as hard as a sequential one.
+            void addLoopClosureFactor(
+                std::size_t earlier_index,
+                std::size_t current_index,
+                const gtsam::Pose3 &relative_pose,
+                double huber_kernel_width
+            );
+
             // Merges landmark factors/values (see LandmarkManager) into the
             // graph and optimizes. The referenced pose must already be in iSAM2.
             void addLandmarkUpdate(

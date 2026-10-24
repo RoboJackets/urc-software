@@ -16,6 +16,7 @@
 
 #include "slam_backend.hpp"
 #include "lidar_frontend.hpp"
+#include "loop_closure_detector.hpp"
 #include "rock_landmark_pipeline.hpp"
 
 namespace urc_slam {
@@ -43,6 +44,7 @@ namespace urc_slam {
             void publishOutputs(const rclcpp::Time &stamp);
             void rebuildMap();
             void processRocks(const LidarFrontend::Cloud &raw_cloud, std::size_t pose_index);
+            void tryLoopClosure(std::size_t current_index);
             void publishLandmarks(const rclcpp::Time &stamp);
 
 
@@ -105,6 +107,9 @@ namespace urc_slam {
             double map_voxel_size_m;
             rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;
             void addKeyframeToMap(const LidarFrontend::Cloud::ConstPtr &cloud, const rclcpp::Time &stamp);
+
+            // Null unless loop_closure.enabled is set.
+            std::unique_ptr<LoopClosureDetector> loop_detector;
 
             // Null unless rock_landmarks.enabled is set.
             std::unique_ptr<RockLandmarkPipeline> rock_pipeline;

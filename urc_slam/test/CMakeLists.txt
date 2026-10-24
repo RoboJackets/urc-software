@@ -23,6 +23,7 @@ add_library(rock_landmarks STATIC
   ${SLAM_DIR}/src/point_clustering.cpp
   ${SLAM_DIR}/src/sphere_fit.cpp
   ${SLAM_DIR}/src/jcbb_search.cpp
+  ${SLAM_DIR}/src/loop_closure_screening.cpp
   ${SLAM_DIR}/src/landmark_associator.cpp
   ${SLAM_DIR}/src/landmark_manager.cpp
 )
@@ -33,6 +34,7 @@ enable_testing()
 foreach(test_name
     test_rock_extractor
     test_jcbb_search
+    test_loop_closure_screening
     test_jcbb_vs_nearest_neighbor
     test_ambiguity
     test_loop_closure_graph)

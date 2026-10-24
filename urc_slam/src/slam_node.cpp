@@ -1,5 +1,6 @@
 #include "slam_node.hpp"
 
+#include "loop_closure_ros.hpp"
 #include "rock_landmark_ros.hpp"
 
 #include <functional>
@@ -134,6 +135,7 @@ namespace urc_slam {
             rclcpp::QoS(1).reliable().transient_local()
         );
 
+        loop_detector = createLoopClosureDetector(*this, lidar_frontend);
         rock_pipeline = createRockPipeline(*this);
         landmark_pub = create_publisher<visualization_msgs::msg::MarkerArray>(
             declare_parameter<std::string>("landmark_topic", "/slam/landmarks"),
@@ -275,9 +277,31 @@ namespace urc_slam {
             current_index, rclcpp::Time(msg->header.stamp)
         });
         addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
+        tryLoopClosure(current_index);
         processRocks(*raw_cloud, current_index);
         processGPSMeasurements();
         publishOutputs(rclcpp::Time(msg->header.stamp));
+    }
+
+    // Revisit detection runs before rock association so landmarks are matched
+    // against the already-corrected pose. A closure rewrites past poses, so the
+    // accumulated map and path are rebuilt.
+    void SlamNode::tryLoopClosure(std::size_t current_index) {
+        if (!loop_detector) {
+            return;
+        }
+
+        const std::optional<LoopClosure> closure =
+            loop_detector->detect(current_index, keyframe_clouds, backend);
+        if (!closure) {
+            return;
+        }
+
+        backend.addLoopClosureFactor(
+            closure->earlier_index, current_index, closure->relative_pose, closure->huber_kernel_width);
+        rebuildMap();
+        RCLCPP_INFO(get_logger(), "Loop closure: keyframe %zu -> %zu (fitness %.3f, d^2 %.2f)",
+            current_index, closure->earlier_index, closure->fitness_score, closure->correction_distance_sq);
     }
 
     // Rocks are matched against the graph, so they can only be processed at
