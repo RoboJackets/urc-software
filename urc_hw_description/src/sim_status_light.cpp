@@ -91,6 +91,9 @@ SimStatusLight::SimStatusLight(const rclcpp::NodeOptions & options)
 
 void SimStatusLight::onCommand(const StatusLightCommand & command)
 {
+  if (current_command_.color == command.color && current_command_.state == command.state) {
+    return;
+  }
   current_command_ = command;
   blink_phase_ = BlinkPhase::LIT;
   requestVisualColor();

@@ -1,5 +1,10 @@
 #include "urc_path_planning/astar.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <stdexcept>
+
 namespace astar
 {
 
@@ -116,12 +121,6 @@ void AStar::appendStraightLineSegment(
   }
 }
 
-void AStar::setGoalNode(const geometry_msgs::msg::Pose & goal_pose)
-{
-  goal_node_.x = goal_pose.position.x;
-  goal_node_.y = goal_pose.position.y;
-}
-
 void AStar::createPlan(
   const geometry_msgs::msg::Pose & start_pose,
   const geometry_msgs::msg::Pose & goal_pose)
@@ -153,7 +152,7 @@ void AStar::createPlan(
   start_pose_ = start_pose;
   goal_pose_ = planning_goal;
 
-  setGoalNode(planning_goal);
+  const auto goal_coord = getCoordinateByPose(planning_goal);
 
   AStarNodeQueue open_set;
 
@@ -170,10 +169,10 @@ void AStar::createPlan(
     open_set.pop();
     current_node->status = NodeStatus::Visited;
 
-    if (std::fabs(current_node->x - goal_node_.x) < EPSILON &&
-      std::fabs(current_node->y - goal_node_.y) < EPSILON)
-    {
+    const auto current_coord = getCoordinateByPose(current_node->getPose());
+    if (current_coord.x == goal_coord.x && current_coord.y == goal_coord.y) {
       reconstructPath(current_node);
+      appendStraightLineSegment(current_node->getPose(), planning_goal);
       if (!goal_inside_costmap) {
         appendStraightLineSegment(planning_goal, requested_goal);
       }

@@ -268,22 +268,27 @@ void FollowerActionServer::execute_navigate(
         ex.what());
       result->error_code =
         urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
-      goal_handle->abort(result);
       publishZeroVelocity();
+      goal_handle->abort(result);
       return;
     }
 
     bool planning_success = false;
+    publishZeroVelocity();
     path = callPlanningService(start_pose, goal_pose, planning_success);
 
     feedback->is_planning = false;
 
+    if (goal_handle->is_canceling()) {
+      publishZeroVelocity();
+      goal_handle->canceled(result);
+      return;
+    }
     if (!planning_success || path.poses.empty()) {
       result->error_code =
         urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
-      goal_handle->abort(result);
-      RCLCPP_ERROR(this->get_logger(), "Initial planning failed");
       publishZeroVelocity();
+      goal_handle->abort(result);
       return;
     }
   } else {
@@ -304,6 +309,11 @@ void FollowerActionServer::execute_navigate(
   rclcpp::Rate rate(10);
 
   while (rclcpp::ok()) {
+    if (goal_handle->is_canceling()) {
+      publishZeroVelocity();
+      goal_handle->canceled(result);
+      return;
+    }
     // Get current pose in map frame from TF
     geometry_msgs::msg::PoseStamped current_pose_map_frame_;
     try {
@@ -322,6 +332,7 @@ void FollowerActionServer::execute_navigate(
       RCLCPP_WARN(
         this->get_logger(), "Could not get current pose: %s",
         ex.what());
+      publishZeroVelocity();
       rate.sleep();
       continue;
     }
@@ -330,11 +341,7 @@ void FollowerActionServer::execute_navigate(
     feedback->distance_to_goal = geometry_util::dist2D(
       current_pose_map_frame_.pose.position, goal_pose.pose.position);
 
-    if (goal_handle->is_canceling()) {
-      goal_handle->canceled(result);
-      RCLCPP_INFO(this->get_logger(), "Goal has been canceled");
-      break;
-    } else if (feedback->distance_to_goal <
+    if (feedback->distance_to_goal <
       get_parameter("goal_tolerance").as_double())
     {
       bool heading_satisfied = true;
@@ -406,9 +413,9 @@ void FollowerActionServer::execute_navigate(
       if (heading_satisfied) {
         result->error_code =
           urc_msgs::action::NavigateToWaypoint::Result::SUCCESS;
+        publishZeroVelocity();
         goal_handle->succeed(result);
-        RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
-        break;
+        return;
       }
     } else if (getCost(
         output.tracking_point.point.x,
@@ -442,23 +449,29 @@ void FollowerActionServer::execute_navigate(
           ex.what());
         result->error_code =
           urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
-        goal_handle->abort(result);
         publishZeroVelocity();
+        goal_handle->abort(result);
         return;
       }
 
       bool planning_success = false;
+      publishZeroVelocity();
       nav_msgs::msg::Path new_path =
         callPlanningService(start_pose, goal_pose, planning_success);
 
       feedback->is_planning = false;
 
+      if (goal_handle->is_canceling()) {
+        publishZeroVelocity();
+        goal_handle->canceled(result);
+        return;
+      }
       if (!planning_success || new_path.poses.empty()) {
         result->error_code =
           urc_msgs::action::NavigateToWaypoint::Result::PLANNING_FAILED;
+        publishZeroVelocity();
         goal_handle->abort(result);
-        RCLCPP_ERROR(this->get_logger(), "Re-planning failed");
-        break;
+        return;
       }
 
       // Update the path and continue
@@ -477,6 +490,7 @@ void FollowerActionServer::execute_navigate(
         get_parameter("map_frame").as_string()));
 
     if (stamped_) {
+      output.cmd_vel.header.stamp = now();
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
     } else {
       cmd_vel_pub_->publish(output.cmd_vel.twist);

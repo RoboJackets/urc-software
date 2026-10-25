@@ -1,55 +1,72 @@
 #include "urc_state_machine/nav_coordinator.hpp"
-
-#include <functional>
+#include <chrono>
 #include <rclcpp_components/register_node_macro.hpp>
+#include "urc_state_machine/mission_geometry.hpp"
 
 namespace nav_coordinator
 {
 NavCoordinator::NavCoordinator(const rclcpp::NodeOptions & options)
-: rclcpp::Node("nav_coordinator", options)
+: Node("nav_coordinator", options),
+  parameters_(urc_state_machine::declareMissionParameters(*this))
 {
-  declare_parameter<std::string>("waypoint_topic", "/nav/waypoint");
-  declare_parameter<std::string>("gps_waypoint_topic", "/waypoint");
-  declare_parameter<std::string>("follower_action_name", "navigate_to_waypoint");
-  declare_parameter<bool>("cancel_on_new_waypoint", true);
-  declare_parameter<std::string>("map_frame_id", "map");
-  declare_parameter<std::string>("utm_frame_id", "utm");
-
-  follower_action_name_ = get_parameter("follower_action_name").as_string();
-  cancel_on_new_waypoint_ = get_parameter("cancel_on_new_waypoint").as_bool();
-  map_frame_id_ = get_parameter("map_frame_id").as_string();
-  utm_frame_id_ = get_parameter("utm_frame_id").as_string();
-
-  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(get_clock());
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
-
-  state_publisher_ = create_publisher<std_msgs::msg::String>("nav_coordinator_state", 10);
-  follower_client_ = rclcpp_action::create_client<NavigateToWaypoint>(this, follower_action_name_);
-
-  waypoint_subscriber_ = create_subscription<geometry_msgs::msg::PoseStamped>(
-    get_parameter("waypoint_topic").as_string(),
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&NavCoordinator::handleWaypoint, this, std::placeholders::_1));
-
-  gps_waypoint_subscriber_ = create_subscription<urc_msgs::msg::Waypoint>(
-    get_parameter("gps_waypoint_topic").as_string(),
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&NavCoordinator::handleGpsWaypoint, this, std::placeholders::_1));
-
-  initializeMissionActionServer();
-
-  RCLCPP_INFO(
-    get_logger(),
-    "Nav Coordinator ready. Pose waypoints on '%s', GPS waypoints on '%s', forwarding to action '%s'.",
-    get_parameter("waypoint_topic").as_string().c_str(),
-    get_parameter("gps_waypoint_topic").as_string().c_str(),
-    follower_action_name_.c_str());
-
-  if (state_publisher_) {
-    publishState();
+  navigation_ = std::make_unique<urc_state_machine::NavigationClient>(
+    *this, parameters_.follower_action);
+  spiral_search_ = std::make_unique<urc_state_machine::SpiralSearchClient>(
+    *this, parameters_.spiral_search_service);
+  state_pub_ = create_publisher<std_msgs::msg::String>(
+    parameters_.state_topic, rclcpp::QoS(1).reliable().transient_local());
+  initializeRouteAction();
+  initializeAstronautAction();
+  initializeInputs();
+  initializeDriveControl();
+  initializeStatusLight();
+  timer_ = create_wall_timer(
+    std::chrono::duration<double>(parameters_.tick_period), [this]() {
+      updateMission();
+    });
+  if (parameters_.tool_placeholder_success) {
+    RCLCPP_WARN(get_logger(), "TEST MODE: FETCH and GIVE simulate success; no arm moves");
   }
+  publishState();
 }
 
+bool NavCoordinator::canAccept(const Pose & waypoint) const
+{
+  return mission_.kind == Kind::NONE && !navigation_->busy() && navigation_->ready() &&
+         waypoint.header.frame_id == parameters_.map_frame &&
+         urc_state_machine::validPose(waypoint);
 }
 
+void NavCoordinator::begin(Kind kind, const Pose & waypoint)
+{
+  mission_ = urc_state_machine::ActiveMission();
+  mission_.kind = kind;
+  mission_.waypoint = waypoint;
+  arrival_indicated_ = false;
+  tracking_.reset();
+  last_command_stamp_ = now();
+}
+
+void NavCoordinator::publishState()
+{
+  std_msgs::msg::String message;
+  message.data = std::string("state=") + urc_state_machine::stateName(mission_.state);
+  if (mission_.state == State::PAUSED || mission_.state == State::RESUMING) {
+    message.data += std::string(" resume=") + urc_state_machine::stateName(mission_.resume);
+  }
+  if (!mission_.reason.empty()) {
+    message.data += " details=" + mission_.reason;
+  }
+  state_pub_->publish(message);
+  publishStatusLight();
+}
+
+double NavCoordinator::phaseElapsed() const
+{
+  return std::chrono::duration<double>(
+    urc_state_machine::MissionClock::now() - mission_.phase_started).count();
+}
+}  // namespace nav_coordinator
 RCLCPP_COMPONENTS_REGISTER_NODE(nav_coordinator::NavCoordinator)
