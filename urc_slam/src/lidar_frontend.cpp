@@ -1,6 +1,5 @@
 #include "lidar_frontend.hpp"
 
-#include <cmath>
 #include <Eigen/Core>
 #include <pcl/common/point_tests.h>
 #include <pcl/filters/voxel_grid.h>
@@ -14,7 +13,6 @@ namespace urc_slam {
         double maximum_correspondence_distance_m,
         int maximum_iterations,
         double transformation_epsilon,
-        double fitness_epsilon,
         const gtsam::Pose3 &base_T_lidar
     ) 
     : voxel_size_m_(voxel_size_m),
@@ -25,7 +23,6 @@ namespace urc_slam {
     ),
     maximum_iterations_(maximum_iterations),
     transformation_epsilon_(transformation_epsilon),
-    fitness_epsilon_(fitness_epsilon),
     base_T_lidar_(base_T_lidar)
 {
 
@@ -86,14 +83,13 @@ LidarRegistrationResult LidarFrontend::registerClouds(
     gicp.setMaxCorrespondenceDistance(maximum_correspondence_distance_m_);
     gicp.setMaximumIterations(maximum_iterations_); 
     gicp.setTransformationEpsilon(transformation_epsilon_);
-    gicp.setEuclideanFitnessEpsilon(fitness_epsilon_);
 
     Cloud aligned_cloud;
 
     gicp.align(aligned_cloud, initial_guess);
 
     result.converged = gicp.hasConverged();
-    result.fitness_score = gicp.getFitnessScore();
+    result.fitness_score = gicp.getFitnessScore(maximum_correspondence_distance_m_);
 
     if (!result.converged) {
         return result;

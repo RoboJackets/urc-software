@@ -1,35 +1,30 @@
 #include "slam_backend.hpp"
 
 #include <cmath>
-#include <stdexcept>
 #include <gtsam/inference/Symbol.h>
 #include <gtsam/nonlinear/ISAM2Params.h>
 #include <gtsam/slam/BetweenFactor.h>
 #include <gtsam/slam/PriorFactor.h>
 #include <gtsam/navigation/GPSFactor.h>
-#include <gtsam/navigation/ImuBias.h>
 #include <gtsam/navigation/ImuFactor.h>
 #include <gtsam/navigation/PreintegrationParams.h>
 
 namespace urc_slam {
     
-    // Constructor
     SlamBackend::SlamBackend(
         double keyframe_translation_threshold_m,
         double keyframe_rotation_threshold_rad,
         const gtsam::Vector6 &pose_prior_sigmas,
         const gtsam::Vector3 &velocity_prior_sigmas,
-        const gtsam::Vector6 &odom_sigmas,
         const gtsam::Vector6 &lidar_sigmas,
         const gtsam::Vector6 &bias_prior_sigmas,
         const gtsam::Vector6 &bias_between_sigmas
     ):
         // ISAM factor graph
         isam(gtsam::ISAM2(gtsam::ISAM2Params())),
-        // Prior for first measurement, wheel odom noise, lidar noise
+        // Prior for first measurement and lidar noise
         pose_prior_noise(gtsam::noiseModel::Diagonal::Sigmas(pose_prior_sigmas)),
         velocity_prior_noise(gtsam::noiseModel::Diagonal::Sigmas(velocity_prior_sigmas)),
-        odom_noise(gtsam::noiseModel::Diagonal::Sigmas(odom_sigmas)),
         lidar_noise(gtsam::noiseModel::Diagonal::Sigmas(lidar_sigmas)),
         // Bias noises
         bias_prior_noise(gtsam::noiseModel::Diagonal::Sigmas(bias_prior_sigmas)),
@@ -97,7 +92,6 @@ namespace urc_slam {
 
 
         latest_index = 0;
-        last_measured_pose = initial_navstate.pose();
 
         last_estimated_pose = estimate.at<gtsam::Pose3>(poseKey(0));
         last_estimated_velocity = estimate.at<gtsam::Vector3>(velocityKey(0));
@@ -113,12 +107,12 @@ namespace urc_slam {
     bool SlamBackend::shouldCreateKeyframe(const gtsam::Pose3 &measured_pose) const {
         // Check if current measurements exceed thresholds
         return translationDistance(
-                last_measured_pose,
+                last_estimated_pose,
                 measured_pose
             ) >= keyframe_translation_threshold_m
             || 
             rotationDistance(
-                last_measured_pose,
+                last_estimated_pose,
                 measured_pose
             ) >= keyframe_rotation_threshold_rad;
     }
@@ -139,7 +133,7 @@ namespace urc_slam {
         );
     }
 
-    void SlamBackend::addKeyframe(const gtsam::Pose3 &measured_pose) {
+    void SlamBackend::addImuKeyframe() {
 
         const std::size_t previous_index = latest_index;
         const std::size_t new_index = previous_index + 1;
@@ -197,14 +191,11 @@ namespace urc_slam {
         
 
         latest_index = new_index;
-        last_measured_pose = measured_pose;
-
         
-        imu_preintegrator->resetIntegrationAndSetBias(
-            last_estimated_bias
-        );
 
     }
+
+
 
     void SlamBackend::addGpsFactor(
         std::size_t index,
@@ -213,7 +204,7 @@ namespace urc_slam {
     ) {
         const auto noise = gtsam::noiseModel::Gaussian::Covariance(covariance);
         new_factors.add(gtsam::GPSFactor(poseKey(index), position, noise));
-        optimize();
+
     }
 
     void SlamBackend::addLidarFactor(
@@ -230,7 +221,7 @@ namespace urc_slam {
                 lidar_noise
             )
         );
-        optimize();
+
         
     }
 
@@ -244,7 +235,7 @@ namespace urc_slam {
                 poseKey(previous_index),
                 poseKey(post_index),
                 pose_change,
-                odom_noise
+                lidar_noise
             )
         );
         optimize();
@@ -255,17 +246,13 @@ namespace urc_slam {
         std::size_t post_index,
         const gtsam::Vector3 &velocity_change
     ) {
-        // A Vector3 factor needs a 3-dimensional model: take the translation
-        // block (last three; pose sigmas are rotation then translation) of odom_noise
-        const auto odom_sigmas =
-            boost::dynamic_pointer_cast<gtsam::noiseModel::Diagonal>(odom_noise)->sigmas();
-
+        
         new_factors.add(
             gtsam::BetweenFactor<gtsam::Vector3>(
                 velocityKey(previous_index),
                 velocityKey(post_index),
                 velocity_change,
-                gtsam::noiseModel::Diagonal::Sigmas(odom_sigmas.tail<3>())
+                lidar_noise
             )
         );
         optimize();
@@ -307,6 +294,7 @@ namespace urc_slam {
         isam.update(new_factors, new_values);
         estimate = isam.calculateEstimate();
 
+        const bool added_keyframe = new_values.exists(poseKey(latest_index));
         new_factors.resize(0);
         new_values.clear();
 
@@ -322,6 +310,11 @@ namespace urc_slam {
             estimate.at<gtsam::imuBias::ConstantBias>(
                 biasKey(latest_index)
         );
+        if (added_keyframe) {
+            imu_preintegrator->resetIntegrationAndSetBias(
+                last_estimated_bias
+            );
+        }
     }
 
     // Integrate IMU measurement

@@ -203,7 +203,7 @@ void TraversabilityMapping::handlePointcloud(const sensor_msgs::msg::PointCloud2
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_sensor(new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromROSMsg(*msg, *cloud_sensor);
 
-  filterSphere(cloud_sensor, min_filter_radius_, filter_radius_);
+  // filterSphere(cloud_sensor, min_filter_radius_, filter_radius_);
 
   sensor_msgs::msg::PointCloud2 cloud_sensor_filtered_msg;
   pcl::toROSMsg(*cloud_sensor, cloud_sensor_filtered_msg);
