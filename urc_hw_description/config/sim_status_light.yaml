@@ -1,0 +1,7 @@
+sim_status_light:
+  ros__parameters:
+    command_topic: /command/status_light
+    world_name: leo_marsyard
+    link_name: status_light_link
+    visual_name: status_light_link_visual
+    refresh_period_ms: 500

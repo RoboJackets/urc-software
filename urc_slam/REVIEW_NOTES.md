@@ -1,5 +1,38 @@
 # Rock landmark loop closure: review notes
 
+## Status after the master merge
+
+The four SLAM node/backend conflicts are reconciled using master's formatting
+and retaining this branch's wheel-odometry subscription, buffering, and factors.
+The odometry buffer limit is now `static constexpr` so the header is valid C++17.
+The pose (`x`), velocity (`v`), and bias (`b`) key conventions, keyframe lifecycle,
+and backend ownership of iSAM2 remain unchanged; landmark keys (`l`) do not collide.
+
+The package library now compiles the eight rock-pipeline sources. With
+`BUILD_TESTING`, the package also registers the five existing rock tests against
+that library; the standalone test build remains available without ROS.
+Wheel odometry now retains yaw when calculating relative motion and uses
+planar pose factors plus body-velocity observation factors. The latter rotate
+graph velocities from map into base_link; the old velocity-difference factor
+has been removed. See README.md for the current wheel odometry contract.
+Historical wheel factor descriptions below are superseded by this behavior.
+
+Runtime rock processing is still unwired. Backend access/update methods,
+node parameter declarations, the raw-cloud adapter, and map rebuilding after
+landmark corrections are still required. Do not feed rocks through the existing
+0.2 m voxel filter or call `processScan` before the keyframe's LiDAR update has
+inserted its pose into iSAM2. Apply each returned landmark update before
+processing the next scan and refresh the backend's cached estimate.
+
+On the merge-review host, direct C++17 builds and runs of `test_rock_extractor`
+and `test_jcbb_search` passed. Standalone CMake configuration stopped because
+GTSAM was unavailable. ROS was also unavailable and the Docker daemon was not
+running, so the full package and GTSAM-dependent tests remain unverified here.
+
+The notes below describe the original implementation and its historical
+verification status; statements about untouched files and missing build wiring
+are superseded by the status above.
+
 Branch `feature/rock-landmarks` (local only, never pushed). Everything here is
 new files under `urc_slam/`; no existing file was modified.
 

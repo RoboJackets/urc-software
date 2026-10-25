@@ -4,6 +4,11 @@ slam_node:
     imu_topic: /imu/fused
     lidar_topic: /scan/points
     slam_odom_topic: /slam/odometry
+    wheel_odom_topic: /odom
+    wheel_odometry:
+      frame: odom
+      time_tolerance_sec: 0.1
+      velocity_sigmas_mps: [1.0, 1.0]
 
     map_frame: map
     base_link_frame: base_link

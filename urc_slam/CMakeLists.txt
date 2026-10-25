@@ -25,6 +25,16 @@ add_library(${PROJECT_NAME} SHARED
   src/slam_backend.cpp
   src/lidar_frontend.cpp
   src/slam_node.cpp
+  src/slam_wheel_odometry.cpp
+  src/wheel_odometry_factors.cpp
+  src/rock_landmark_params.cpp
+  src/rock_extractor.cpp
+  src/ground_filter.cpp
+  src/point_clustering.cpp
+  src/sphere_fit.cpp
+  src/jcbb_search.cpp
+  src/landmark_associator.cpp
+  src/landmark_manager.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -79,6 +89,8 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
+
 ament_export_targets(
   export_${PROJECT_NAME}
   HAS_LIBRARY_TARGET
@@ -101,6 +113,8 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+  enable_testing()
+  add_subdirectory(test)
 endif()
 
 ament_package()
