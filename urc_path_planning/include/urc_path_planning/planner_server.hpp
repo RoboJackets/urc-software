@@ -5,7 +5,10 @@
 #include <grid_map_msgs/msg/grid_map.hpp>
 #include <nav_msgs/msg/path.hpp>
 
+#include <string>
+
 #include "urc_msgs/srv/generate_plan.hpp"
+#include "urc_path_planning/astar.hpp"
 
 namespace planner_server
 {
@@ -41,6 +44,8 @@ protected:
    */
   void handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg);
 
+  std::string costmap_layer_;
+  astar::TraversalCostPolicy cost_policy_;
   grid_map_msgs::msg::GridMap current_costmap_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;

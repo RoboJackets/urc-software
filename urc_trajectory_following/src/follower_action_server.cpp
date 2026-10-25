@@ -25,7 +25,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("base_link_frame", "base_link");
   declare_parameter("goal_tolerance", 0.5);
   declare_parameter("cmd_vel_stamped", false);
-  declare_parameter("lethal_cost_threshold", 50.0);
+  declare_parameter("lethal_cost_threshold", 1.0);
   declare_parameter("enforce_goal_heading", false);
   declare_parameter("goal_heading_tolerance", 0.1);
   declare_parameter("costmap_layer", "traversability_inflated");
@@ -82,8 +82,10 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 void FollowerActionServer::handleCostmap(
   const grid_map_msgs::msg::GridMap::SharedPtr msg)
 {
-  current_costmap_ = *msg;
-  grid_map_utils_.setMap(*msg);
+  if (!grid_map_utils_.setMap(*msg)) {
+    RCLCPP_WARN_THROTTLE(
+      this->get_logger(), *this->get_clock(), 5000, "Ignoring costmap that could not be converted");
+  }
 }
 
 geometry_msgs::msg::TransformStamped
@@ -170,17 +172,18 @@ void FollowerActionServer::publishZeroVelocity()
   }
 }
 
-float FollowerActionServer::getCost(double x, double y)
+bool FollowerActionServer::isLethal(double x, double y)
 {
   float cost;
   if (!grid_map_utils_.tryGetCellCost(x, y, cost)) {
     RCLCPP_WARN_THROTTLE(
       this->get_logger(), *this->get_clock(), 5000,
-      "Costmap layer '%s' not found", costmap_layer_.c_str());
-    return 0.0f;
+      "Lookahead point is outside the costmap or layer '%s' is missing", costmap_layer_.c_str());
+    return false;
   }
 
-  return cost;
+  // Unobserved (NaN) cells are not lethal; the planner already penalizes them
+  return cost >= get_parameter("lethal_cost_threshold").as_double();
 }
 
 nav_msgs::msg::Path FollowerActionServer::callPlanningService(
@@ -410,11 +413,7 @@ void FollowerActionServer::execute_navigate(
         RCLCPP_INFO(this->get_logger(), "Goal has been reached!");
         break;
       }
-    } else if (getCost(
-        output.tracking_point.point.x,
-        output.tracking_point.point.y) >
-      get_parameter("lethal_cost_threshold").as_double())
-    {
+    } else if (isLethal(output.tracking_point.point.x, output.tracking_point.point.y)) {
       // Obstacle detected - attempt to re-plan
       RCLCPP_WARN(
         this->get_logger(),

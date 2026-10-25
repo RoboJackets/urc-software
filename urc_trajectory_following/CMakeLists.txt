@@ -27,6 +27,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/pure_pursuit/pure_pursuit.cpp
+  src/lqr_controller.cpp
   src/trajectory_factory.cpp
   src/geometry_util.cpp
   src/follower_action_server.cpp
