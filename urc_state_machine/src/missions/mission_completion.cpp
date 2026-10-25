@@ -7,6 +7,7 @@ namespace nav_coordinator
 void NavCoordinator::finishMission()
 {
   mission_.state = mission_.after_stop;
+  arrival_indicated_ = mission_.state == State::SUCCEEDED && mission_.kind != Kind::ASTRONAUT;
   if (route_handle_) {
     auto result = std::make_shared<Route::Result>();
     result->error_code = mission_.error_code;
@@ -17,10 +18,8 @@ void NavCoordinator::finishMission()
     }
     if (mission_.state == State::SUCCEEDED) {
       route_handle_->succeed(result);
-    } else if (mission_.state == State::CANCELED) {
-      route_handle_->canceled(result);
     } else {
-      route_handle_->abort(result);
+      route_handle_->canceled(result);
     }
     route_handle_.reset();
   }
@@ -33,14 +32,15 @@ void NavCoordinator::finishMission()
     }
     if (mission_.state == State::SUCCEEDED) {
       astronaut_handle_->succeed(result);
-    } else if (mission_.state == State::CANCELED) {
-      astronaut_handle_->canceled(result);
     } else {
-      astronaut_handle_->abort(result);
+      astronaut_handle_->canceled(result);
     }
     astronaut_handle_.reset();
   }
   mission_.kind = Kind::NONE;
+  if (mission_.state == State::CANCELED) {
+    setAutonomousMode(false);
+  }
   publishState();
 }
 

@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <urc_msgs/action/navigate_to_waypoint.hpp>
@@ -22,6 +23,7 @@ public:
   bool busy() const;
   // Coalesce updates and wait for the old terminal result before sending the newest goal.
   void replace(const geometry_msgs::msg::PoseStamped & goal);
+  void follow(const nav_msgs::msg::Path & path);
   // Discard pending replacements. busy() remains true until stopping is acknowledged.
   void cancel();
   // Consume one completion. Internal replacement cancellations are not mission failures.
@@ -32,7 +34,8 @@ public:
 private:
   using Action = urc_msgs::action::NavigateToWaypoint;
   using Handle = rclcpp_action::ClientGoalHandle<Action>;
-  void send(const geometry_msgs::msg::PoseStamped & goal);
+  void replaceGoal(Action::Goal goal);
+  void send(Action::Goal goal);
   void accepted(uint64_t generation, Handle::SharedPtr handle);
   void completed(uint64_t generation, const Handle::WrappedResult & result);
   void finish(NavigationResult result);
@@ -40,7 +43,7 @@ private:
 
   rclcpp_action::Client<Action>::SharedPtr client_;
   Handle::SharedPtr handle_;
-  std::optional<geometry_msgs::msg::PoseStamped> pending_;
+  std::optional<Action::Goal> pending_;
   std::optional<NavigationResult> result_;
   bool sending_{false};
   bool stopping_{false};

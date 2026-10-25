@@ -490,6 +490,7 @@ void FollowerActionServer::execute_navigate(
         get_parameter("map_frame").as_string()));
 
     if (stamped_) {
+      output.cmd_vel.header.stamp = now();
       cmd_vel_stamped_pub_->publish(output.cmd_vel);
     } else {
       cmd_vel_pub_->publish(output.cmd_vel.twist);

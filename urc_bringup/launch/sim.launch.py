@@ -9,7 +9,7 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import (
     LaunchConfiguration,
     Command,
@@ -166,6 +166,7 @@ def generate_launch_description():
 
     # Rear status light starts blue (teleoperation), per the URC rules
     initial_status_light = ExecuteProcess(
+        condition=UnlessCondition(LaunchConfiguration("autonomy")),
         cmd=[
             "ros2", "topic", "pub", "--once",
             "/command/status_light",
@@ -223,6 +224,7 @@ def generate_launch_description():
             os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
         ),
         condition=IfCondition(LaunchConfiguration("autonomy")),
+        launch_arguments={"use_sim_time": "true"}.items(),
     )
 
     rocker_tf_broadcaster = Node(

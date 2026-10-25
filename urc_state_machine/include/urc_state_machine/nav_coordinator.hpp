@@ -7,17 +7,20 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
 #include <urc_msgs/action/execute_astronaut_mission.hpp>
 #include <urc_msgs/action/execute_autonomous_mission.hpp>
 #include <urc_msgs/msg/aruco_detection.hpp>
 #include <urc_msgs/msg/astronaut_command.hpp>
+#include <urc_msgs/msg/status_light_command.hpp>
 #include <urc_msgs/msg/waypoint.hpp>
 #include "urc_state_machine/active_mission.hpp"
 #include "urc_state_machine/astronaut_tracking.hpp"
 #include "urc_state_machine/mission_parameters.hpp"
 #include "urc_state_machine/navigation_client.hpp"
+#include "urc_state_machine/spiral_search_client.hpp"
 
 namespace nav_coordinator
 {
@@ -42,6 +45,15 @@ private:
   void initializeRouteAction();
   void initializeAstronautAction();
   void initializeInputs();
+  void initializeStatusLight();
+  void initializeDriveControl();
+  void abortMission(const std::string & reason);
+  bool resumeMission(State state);
+  bool phaseInputsReady(State state) const;
+  void beginResume(State state);
+  void setAutonomousMode(bool autonomous);
+  void updateResume();
+  void publishStatusLight();
   bool canAccept(const Pose & waypoint) const;
   void begin(Kind kind, const Pose & waypoint);
   void command(const Command & input);
@@ -52,11 +64,9 @@ private:
   void updateStopping();
   void transitionOn(Event event);
   void changeState(State state);
-  void driveToWaypoint();
+  void driveToWaypoint(const Pose & rover);
   void searchForMarker();
-  void calculateMarkerApproach(const Pose & rover);
-  void driveToMarker();
-  void verifyMarkerArrival(const Pose & rover);
+  Pose routeNavigationGoal(const Pose & rover) const;
   void driveToAstronaut(const Pose & rover);
   void followAstronaut(const Pose & rover);
   void waitForStay(const Pose & rover);
@@ -67,7 +77,7 @@ private:
   void updateRecovery();
   void updateNavigationOutcome(urc_state_machine::NavigationResult result);
   void startNavigation(const Pose & goal);
-  void retryStateOrFail(State resume, uint16_t code, const std::string & reason);
+  void retryStateOrPause(State resume, uint16_t code, const std::string & reason);
   void stopMission(State next, uint16_t code, const std::string & reason);
   void finishMission();
   void publishState();
@@ -83,6 +93,7 @@ private:
   urc_state_machine::ActiveMission mission_;
   urc_state_machine::AstronautTracking tracking_;
   std::unique_ptr<urc_state_machine::NavigationClient> navigation_;
+  std::unique_ptr<urc_state_machine::SpiralSearchClient> spiral_search_;
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   rclcpp_action::Server<Route>::SharedPtr route_server_;
@@ -96,6 +107,14 @@ private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Time last_command_stamp_{0, 0, RCL_ROS_TIME};
+  rclcpp::Publisher<urc_msgs::msg::StatusLightCommand>::SharedPtr status_light_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr drive_mode_pub_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr drive_mode_sub_;
+  rclcpp::TimerBase::SharedPtr status_light_timer_;
+  bool autonomous_{false};
+  bool teleop_available_{false};
+  bool arrival_indicated_{false};
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr abort_service_, resume_service_;
 };
 }  // namespace nav_coordinator
 #endif

@@ -8,6 +8,8 @@ namespace nav_coordinator
 void NavCoordinator::waypoint(const Pose & input)
 {
   if ((mission_.kind != Kind::NONE && mission_.kind != Kind::WAYPOINT) ||
+    mission_.state == State::PAUSED || mission_.state == State::RESUMING ||
+    mission_.state == State::STOPPING ||
     (navigation_->busy() && !parameters_.cancel_on_new_waypoint) ||
     input.header.frame_id != parameters_.map_frame || !urc_state_machine::validPose(input))
   {
@@ -15,7 +17,7 @@ void NavCoordinator::waypoint(const Pose & input)
   }
   navigation_->cancel();
   begin(Kind::WAYPOINT, input);
-  changeState(State::NAVIGATING);
+  beginResume(State::NAVIGATING);
 }
 
 void NavCoordinator::gpsWaypoint(const urc_msgs::msg::Waypoint & input)

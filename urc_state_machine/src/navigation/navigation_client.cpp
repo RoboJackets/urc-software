@@ -1,6 +1,7 @@
 #include "urc_state_machine/navigation_client.hpp"
 
 #include <limits>
+#include <utility>
 #include <rclcpp/exceptions/exceptions.hpp>
 
 namespace urc_state_machine
@@ -27,14 +28,30 @@ uint16_t NavigationClient::replans() const
   return replans_;
 }
 
-void NavigationClient::replace(const geometry_msgs::msg::PoseStamped & goal)
+void NavigationClient::replace(const geometry_msgs::msg::PoseStamped & pose)
+{
+  Action::Goal goal;
+  goal.goal = pose;
+  goal.has_goal = true;
+  replaceGoal(std::move(goal));
+}
+
+void NavigationClient::follow(const nav_msgs::msg::Path & path)
+{
+  Action::Goal goal;
+  goal.path = path;
+  goal.has_path = true;
+  replaceGoal(std::move(goal));
+}
+
+void NavigationClient::replaceGoal(Action::Goal goal)
 {
   result_.reset();
   if (!busy()) {
-    send(goal);
+    send(std::move(goal));
     return;
   }
-  pending_ = goal;
+  pending_ = std::move(goal);
   stopping_ = true;
   cancelAcceptedGoal();
 }
@@ -62,7 +79,7 @@ std::optional<NavigationResult> NavigationClient::takeResult()
   return result;
 }
 
-void NavigationClient::send(const geometry_msgs::msg::PoseStamped & pose)
+void NavigationClient::send(Action::Goal goal)
 {
   stopping_ = false;
   cancel_sent_ = false;
@@ -75,11 +92,6 @@ void NavigationClient::send(const geometry_msgs::msg::PoseStamped & pose)
   sending_ = true;
   // Late callbacks from an older goal must not mutate the current leg.
   const auto generation = ++generation_;
-  Action::Goal goal;
-  goal.goal = pose;
-  goal.has_goal = true;
-  goal.has_path = false;
-  goal.enforce_goal_heading = false;
   rclcpp_action::Client<Action>::SendGoalOptions options;
   options.goal_response_callback = [this, generation](Handle::SharedPtr handle) {
       accepted(generation, handle);
@@ -141,9 +153,9 @@ void NavigationClient::finish(NavigationResult result)
   handle_.reset();
   sending_ = false;
   if (pending_) {
-    auto next = *pending_;
+    auto next = std::move(*pending_);
     pending_.reset();
-    send(next);
+    send(std::move(next));
     return;
   }
   result_ = result;

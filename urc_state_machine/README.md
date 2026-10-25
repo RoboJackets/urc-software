@@ -16,31 +16,23 @@ NavCoordinator → mission feedback, state topic, and final action result
 ```
 
 One mission can contain several navigation goals. The mission action remains
-active until the whole sequence succeeds, fails, or is canceled.
-
-Inside the coordinator, the normal flow is:
-
-```text
-Event → transitionOn() → changeState()
-                              ↓
-Timer → updateMission() → updateCurrentState() → current state's function
-                                                   ↓
-                                     Start once, then check progress
-                                                   ↓
-                                             Next event
-```
-
-The constructor in `src/nav_coordinator.cpp` sets up the timer and subscriptions.
-ROS calls them when the timer fires or a message arrives. The methods spread
-across `src/ros/` and `src/missions/` all belong to the same `NavCoordinator`
-object. `NavigationClient` and `AstronautTracking` are components it owns.
+active until the whole sequence succeeds or is canceled. Operational failures and
+explicit aborts pause the action for a teleop intervention and later retry.
 
 ## Mission sequences
 
-**Route:** drive to the supplied waypoint → wait for marker 1 or 2 → calculate
-an approach → drive toward the marker → verify distance within 1 m → succeed.
-Search motion is a placeholder for the incoming spiral-search node. Without a
-matching detection, the search phase times out.
+**Route:** navigate to the supplied target waypoint. A fresh nearby ArUco pose
+can refine the approach and confirm arrival. If the follower reaches the coordinate
+without a fresh detection, stop and request a spiral-search path. Follow it until
+a marker is found, then stop search motion before approaching the marker.
+Search failure, exhaustion, or timeout pauses the mission. Marker IDs are not
+specified in route goals. Setting `aruco_refinement=false` retains coordinate-only
+completion without search.
+
+Spiral generation uses `/generate_spiral_search` from
+[PR #342](https://github.com/RoboJackets/urc-software/pull/342). Its server must be
+installed and running separately; this branch adds the client integration, not a
+second generator. Radius and timeout are configured in `config/mission.yaml`.
 
 **Astronaut:** drive to the rendezvous waypoint → gesture or remote FOLLOW → follow the
 tracked person → wait when they stop nearby → remote STAY → FETCH → grasp
@@ -49,7 +41,7 @@ Fetch and give currently support simulated completion only.
 
 ## Where to read next
 
-- [Files and functions](docs/code_guide.md): every package file, what its functions do, and example call flows.
+- [Coordinator design](docs/code_guide.md): ownership, execution, and integration boundaries.
 - [States and recovery](docs/state_machine.md): exact transition conditions and differences from the architecture drawing.
 - [Inputs and integration](docs/integration.md): topics, frames, and external nodes needed to run missions.
 
@@ -59,18 +51,37 @@ Fetch and give currently support simulated completion only.
 ros2 launch urc_bringup autonomy.launch.py
 ```
 
-This starts the coordinator, planner, follower, traversability mapper, and Grid
+This starts the coordinator, drive mux, planner, follower, traversability mapper, and Grid
 Map visualization. Sensor sources, localization, and astronaut input publishers
 must be running separately. Settings live in [config/mission.yaml](config/mission.yaml).
 
 To exercise fetch/give without an arm, add `tool_placeholder_success:=true`.
-The default is `false`, which fails those phases explicitly with `TOOL_FAILED`.
+The default is `false`, which pauses those phases explicitly with `TOOL_FAILED`.
 
 Send route goals to `/execute_autonomous_mission` using
-`urc_msgs/action/ExecuteAutonomousMission` with a map `waypoint` and `marker_id`
-1 or 2. Send astronaut goals to `/execute_astronaut_mission` using
+`urc_msgs/action/ExecuteAutonomousMission` with the target map `waypoint`. Send astronaut goals to `/execute_astronaut_mission` using
 `urc_msgs/action/ExecuteAstronautMission` with the initial map `waypoint`.
 Standalone navigation uses `/nav/waypoint` (map pose) or `/waypoint` (GPS).
 
-The route action uses `marker_id`; clients using the old `search_mode` interface
-must be rebuilt. Use standalone waypoints for travel without marker detection.
+The coordinator drives the rear status light: red for autonomous operation, blue
+for teleoperation, and flashing green at confirmed navigation arrivals. See
+[light and drive-mode integration](docs/integration.md#rear-status-light) for the
+mode input and configuration.
+
+The route action accepts only `waypoint`; clients using `search_mode` or
+`marker_id` must be updated and rebuilt. Convert supplied GNSS coordinates to
+the configured map frame before sending an action goal. `route_arrival_radius`
+replaces `aruco_arrival_radius`. `search_timeout` bounds the complete fallback,
+including service availability, path generation, and following.
+
+Phase limits are configured separately for navigation, search, tools, following,
+and command waits. Following and command waits have no deadline by default;
+STAYING always waits for a command or cancellation. Custom configurations using
+`phase_timeout` must migrate to the [separate limits](docs/state_machine.md#phase-deadlines).
+
+Use `/abort_mission` (`std_srvs/Trigger`) to stop and hand control to teleop while
+preserving the current task. Repeating the task's command resumes it; interrupted
+following accepts a fresh FOLLOW gesture or remote command. `/resume_mission`
+(`std_srvs/Trigger`) retries the saved phase, including route navigation. Resume
+waits for valid inputs and confirmed autonomous mux mode. Abort never
+initiates a return to the astronaut. See [abort and resume](docs/integration.md#abort-teleoperation-and-resume).

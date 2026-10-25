@@ -21,7 +21,6 @@ struct ActiveMission
   geometry_msgs::msg::PoseStamped waypoint;
   std::optional<geometry_msgs::msg::PoseStamped> marker;
   std::optional<geometry_msgs::msg::PoseStamped> navigation_goal;
-  int marker_id{0};
   int retries{0};
   uint16_t error_code{0};
   std::string reason;

@@ -14,6 +14,7 @@ find_package(rclcpp REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(nanopb REQUIRED)
 find_package(urc_nanopb REQUIRED)
+find_package(urc_msgs REQUIRED)
 
 add_library(
     urc_hw
@@ -45,6 +46,7 @@ ament_target_dependencies(
     "rclcpp"
     "nanopb"
     "urc_nanopb"
+    "urc_msgs"
     "pluginlib"
 )
 

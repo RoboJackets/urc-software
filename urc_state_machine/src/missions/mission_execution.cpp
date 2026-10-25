@@ -4,24 +4,27 @@ namespace nav_coordinator
 {
 void NavCoordinator::transitionOn(Event event)
 {
-  const State next = mission_.kind == Kind::ROUTE ?
-    urc_state_machine::routeTransition(mission_.state, event) :
-    urc_state_machine::astronautTransition(mission_.state, event);
+  const State next = urc_state_machine::astronautTransition(mission_.state, event);
   if (next == mission_.state) {
     return;
   }
-  if (mission_.kind == Kind::ASTRONAUT || next == State::SEARCHING_ARUCO) {
-    mission_.retries = 0;
-  }
+  mission_.retries = 0;
   if (next == State::SUCCEEDED || next == State::STAYING) {
     stopMission(next, 0, next == State::SUCCEEDED ? "Mission completed" : "Remote STAY");
     return;
   }
-  changeState(next);
+  if (event == Event::START) {
+    beginResume(next);
+  } else {
+    changeState(next);
+  }
 }
 
 void NavCoordinator::changeState(State state)
 {
+  arrival_indicated_ = mission_.state != State::RECOVERING && mission_.state != State::RESUMING &&
+    (state == State::WAIT_FOLLOW || state == State::WAIT_STAY || state == State::WAIT_GIVE);
+  spiral_search_->cancel();
   mission_.state = state;
   mission_.phase_started = urc_state_machine::MissionClock::now();
   mission_.operation_started = false;
@@ -42,12 +45,13 @@ void NavCoordinator::updateNavigationOutcome(urc_state_machine::NavigationResult
 {
   using Result = urc_state_machine::NavigationResult;
   if (mission_.state == State::STOPPING || mission_.state == State::RECOVERING ||
+    mission_.state == State::PAUSED || mission_.state == State::RESUMING ||
     result == Result::STOPPED)
   {
     return;
   }
   if (result != Result::REACHED) {
-    retryStateOrFail(
+    retryStateOrPause(
       mission_.state, Route::Result::NAVIGATION_FAILED,
       "Navigation failed or was canceled externally");
     return;
@@ -58,10 +62,16 @@ void NavCoordinator::updateNavigationOutcome(urc_state_machine::NavigationResult
 void NavCoordinator::updateMission()
 {
   if (mission_.kind == Kind::NONE) {
+    updateResume();
     return;
   }
   if (auto result = navigation_->takeResult()) {
     updateNavigationOutcome(*result);
+  }
+  if (mission_.state == State::PAUSED || mission_.state == State::RESUMING) {
+    updateResume();
+    publishFeedback();
+    return;
   }
   if (mission_.state == State::STOPPING) {
     updateStopping();
@@ -73,8 +83,11 @@ void NavCoordinator::updateMission()
     publishFeedback();
     return;
   }
-  if (phaseElapsed() > parameters_.phase_timeout) {
-    stopMission(State::FAILED, Route::Result::TIMEOUT, "Phase deadline exceeded");
+  const double timeout = urc_state_machine::phaseTimeout(mission_.state, parameters_.timeouts);
+  if (timeout > 0.0 && phaseElapsed() > timeout) {
+    stopMission(
+      State::PAUSED, Route::Result::TIMEOUT,
+      std::string(urc_state_machine::stateName(mission_.state)) + " deadline exceeded");
     return;
   }
   updateCurrentState();
@@ -94,16 +107,13 @@ void NavCoordinator::updateCurrentState()
   }
   const auto rover = roverPose();
   if (!rover) {
-    retryStateOrFail(
+    retryStateOrPause(
       mission_.state, Route::Result::NAVIGATION_FAILED, "Rover localization missing or stale");
     return;
   }
   switch (mission_.state) {
-    case State::NAVIGATING: driveToWaypoint(); break;
     case State::SEARCHING_ARUCO: searchForMarker(); break;
-    case State::CALCULATING_APPROACH: calculateMarkerApproach(*rover); break;
-    case State::NAVIGATING_TO_ARUCO: driveToMarker(); break;
-    case State::VERIFY_ARRIVAL: verifyMarkerArrival(*rover); break;
+    case State::NAVIGATING: driveToWaypoint(*rover); break;
     case State::GO_TO_ASTRONAUT: driveToAstronaut(*rover); break;
     case State::FOLLOWING: followAstronaut(*rover); break;
     case State::WAIT_STAY: waitForStay(*rover); break;

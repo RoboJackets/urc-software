@@ -9,6 +9,12 @@ nav_coordinator:
     waypoint_topic: /nav/waypoint
     gps_waypoint_topic: /waypoint
     state_topic: nav_coordinator_state
+    status_light_topic: /command/status_light
+    drive_mode_command_topic: /cmd_vel_mode
+    drive_mode_topic: /drive_mode
+    abort_service: /abort_mission
+    resume_service: /resume_mission
+    status_light_refresh_period: 2.0
     command_topic: /command
     astronaut_pose_topic: /astronaut/pose
     aruco_topic: /aruco/detections
@@ -16,11 +22,19 @@ nav_coordinator:
     tick_period: 0.1
     target_max_age: 2.0
     command_max_age: 2.0
-    phase_timeout: 180.0
+    spiral_search_service: generate_spiral_search
+    spiral_search_radius: 5.0
+    search_timeout: 180.0
+    navigation_timeout: 180.0
+    tool_timeout: 180.0
+    following_timeout: 0.0
+    command_wait_timeout: 0.0
     recovery_timeout: 5.0
     max_retries: 1
     astronaut_arrival_radius: 3.0
-    aruco_arrival_radius: 1.0
+    route_arrival_radius: 1.0
+    aruco_refinement: true
+    aruco_association_radius: 1.0
     follow_distance: 2.0
     aruco_standoff: 0.5
     goal_update_period: 1.0

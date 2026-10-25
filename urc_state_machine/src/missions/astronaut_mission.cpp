@@ -16,7 +16,7 @@ void NavCoordinator::driveToAstronaut(const Pose & rover)
   if (urc_state_machine::distanceTo(rover, mission_.waypoint) <= parameters_.astronaut_radius) {
     transitionOn(Event::NAVIGATION_REACHED);
   } else {
-    retryStateOrFail(
+    retryStateOrPause(
       State::GO_TO_ASTRONAUT, Astronaut::Result::NAVIGATION_FAILED,
       "Initial waypoint arrival was outside tolerance");
   }
@@ -27,7 +27,7 @@ bool NavCoordinator::requireAstronautObservation()
   if (astronautFresh()) {
     return true;
   }
-  retryStateOrFail(
+  retryStateOrPause(
     mission_.state, Astronaut::Result::TARGET_LOST, "Astronaut observation missing or stale");
   return false;
 }
@@ -101,7 +101,7 @@ void NavCoordinator::completeToolPlaceholder()
 {
   if (!parameters_.tool_placeholder_success) {
     stopMission(
-      State::FAILED, Astronaut::Result::TOOL_FAILED,
+      State::PAUSED, Astronaut::Result::TOOL_FAILED,
       "Autonomous arm unavailable; test placeholder is disabled");
     return;
   }

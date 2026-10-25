@@ -3,10 +3,39 @@
 
 namespace nav_coordinator
 {
-void NavCoordinator::driveToWaypoint()
+NavCoordinator::Pose NavCoordinator::routeNavigationGoal(const Pose & rover) const
 {
+  if (mission_.kind != Kind::ROUTE || !markerFresh()) {
+    return mission_.waypoint;
+  }
+  const auto approach = urc_state_machine::standoffGoal(
+    rover, *mission_.marker, parameters_.aruco_standoff);
+  if (urc_state_machine::distanceTo(approach, mission_.waypoint) > parameters_.route_radius) {
+    return mission_.waypoint;
+  }
+  return approach;
+}
+
+void NavCoordinator::driveToWaypoint(const Pose & rover)
+{
+  if (mission_.kind == Kind::ROUTE &&
+    urc_state_machine::distanceTo(rover, mission_.waypoint) <= parameters_.route_radius)
+  {
+    if (parameters_.aruco_refinement && !markerFresh()) {
+      if (mission_.navigation_reached) {
+        stopMission(State::SEARCHING_ARUCO, 0, "Coordinate reached; searching for ArUco");
+        return;
+      }
+    } else if (!markerFresh() ||
+      urc_state_machine::distanceTo(rover, *mission_.marker) <= parameters_.route_radius)
+    {
+      stopMission(State::SUCCEEDED, 0, "Route target reached");
+      return;
+    }
+  }
+  const auto goal = routeNavigationGoal(rover);
   if (!mission_.operation_started) {
-    startNavigation(mission_.waypoint);
+    startNavigation(goal);
     mission_.operation_started = true;
     return;
   }
@@ -14,62 +43,21 @@ void NavCoordinator::driveToWaypoint()
     if (mission_.kind == Kind::WAYPOINT) {
       stopMission(State::SUCCEEDED, 0, "Waypoint reached");
     } else {
-      transitionOn(Event::NAVIGATION_REACHED);
+      retryStateOrPause(
+        State::NAVIGATING, Route::Result::NAVIGATION_FAILED,
+        "Follower finished outside route arrival tolerance");
     }
-  }
-}
-
-void NavCoordinator::searchForMarker()
-{
-  // Spiral-search integration will own search motion; for now only observe detections.
-  if (!markerFresh()) {
     return;
   }
-  if (navigation_->busy()) {
-    navigation_->cancel();
-  } else {
-    transitionOn(Event::MARKER_FOUND);
-  }
-}
-
-void NavCoordinator::calculateMarkerApproach(const Pose & rover)
-{
-  if (!markerFresh()) {
-    retryStateOrFail(
-      State::SEARCHING_ARUCO, Route::Result::TARGET_NOT_FOUND, "Marker observation stale");
-    return;
-  }
-  mission_.navigation_goal = urc_state_machine::standoffGoal(
-    rover, *mission_.marker, parameters_.aruco_standoff);
-  transitionOn(Event::APPROACH_READY);
-}
-
-void NavCoordinator::driveToMarker()
-{
-  if (!mission_.operation_started) {
-    if (!mission_.navigation_goal) {
-      stopMission(State::FAILED, Route::Result::APPROACH_FAILED, "Approach goal missing");
-      return;
-    }
-    startNavigation(*mission_.navigation_goal);
-    mission_.operation_started = true;
-    return;
-  }
-  if (mission_.navigation_reached) {
-    transitionOn(Event::NAVIGATION_REACHED);
-  }
-}
-
-void NavCoordinator::verifyMarkerArrival(const Pose & rover)
-{
-  if (markerFresh() &&
-    urc_state_machine::distanceTo(rover, *mission_.marker) <= parameters_.aruco_radius)
+  const double elapsed = std::chrono::duration<double>(
+    urc_state_machine::MissionClock::now() - mission_.last_goal_update).count();
+  if (mission_.kind == Kind::ROUTE && mission_.navigation_goal &&
+    elapsed >= parameters_.goal_update_period &&
+    urc_state_machine::distanceTo(
+      goal,
+      *mission_.navigation_goal) >= parameters_.goal_update_distance)
   {
-    transitionOn(Event::ARRIVAL_CONFIRMED);
-    return;
+    startNavigation(goal);
   }
-  retryStateOrFail(
-    State::CALCULATING_APPROACH, Route::Result::APPROACH_FAILED,
-    "Arrival requires a fresh marker measurement within tolerance");
 }
 }  // namespace nav_coordinator

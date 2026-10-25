@@ -29,13 +29,17 @@ void NavCoordinator::initializeInputs()
   aruco_sub_ = create_subscription<urc_msgs::msg::ArucoDetection>(
     parameters_.aruco_topic, rclcpp::SensorDataQoS(),
     [this](urc_msgs::msg::ArucoDetection::ConstSharedPtr message) {
-      if (mission_.kind != Kind::ROUTE || message->marker_id != mission_.marker_id ||
+      if (mission_.kind != Kind::ROUTE || !parameters_.aruco_refinement ||
       !fresh(message->pose.header.stamp, parameters_.target_max_age))
       {
         return;
       }
       auto pose = mapPose(message->pose);
-      if (pose && (!mission_.marker ||
+      if (pose &&
+      urc_state_machine::distanceTo(
+        *pose,
+        mission_.waypoint) <= parameters_.aruco_association_radius &&
+      (!mission_.marker ||
       rclcpp::Time(pose->header.stamp) > rclcpp::Time(mission_.marker->header.stamp)))
       {
         mission_.marker = pose;

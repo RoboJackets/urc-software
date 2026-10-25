@@ -3,8 +3,11 @@ uint8 STAY=2
 uint8 FETCH=3
 uint8 COME=4
 uint8 GIVE=5
+uint8 ABORT=6
+uint8 RESUME=7
 uint8 GESTURE=1
 uint8 REMOTE=2
+uint8 OPERATOR=3
 builtin_interfaces/Time stamp
 uint8 command
 uint8 source

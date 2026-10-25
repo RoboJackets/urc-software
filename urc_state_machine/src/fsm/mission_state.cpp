@@ -6,11 +6,8 @@ const char * stateName(State state)
 {
   switch (state) {
     case State::IDLE: return "IDLE";
-    case State::NAVIGATING: return "NAVIGATING";
     case State::SEARCHING_ARUCO: return "SEARCHING_ARUCO";
-    case State::CALCULATING_APPROACH: return "CALCULATING_APPROACH";
-    case State::NAVIGATING_TO_ARUCO: return "NAVIGATING_TO_ARUCO";
-    case State::VERIFY_ARRIVAL: return "VERIFY_ARRIVAL";
+    case State::NAVIGATING: return "NAVIGATING";
     case State::GO_TO_ASTRONAUT: return "GO_TO_ASTRONAUT";
     case State::WAIT_FOLLOW: return "WAIT_FOLLOW";
     case State::FOLLOWING: return "FOLLOWING";
@@ -23,8 +20,9 @@ const char * stateName(State state)
     case State::GIVING: return "GIVING";
     case State::RECOVERING: return "RECOVERING";
     case State::STOPPING: return "STOPPING";
+    case State::PAUSED: return "PAUSED";
+    case State::RESUMING: return "RESUMING";
     case State::SUCCEEDED: return "SUCCEEDED";
-    case State::FAILED: return "FAILED";
     case State::CANCELED: return "CANCELED";
   }
   return "UNKNOWN";

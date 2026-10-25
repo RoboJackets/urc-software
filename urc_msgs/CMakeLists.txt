@@ -20,6 +20,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/GridLocation.msg"
   "msg/OrientationPoses.msg"
   "srv/GeneratePlan.srv"
+  "srv/GenerateSpiralSearch.srv"
   "msg/RoverPoses.msg"
   "action/ExecuteAutonomousMission.action"
   "action/NavigateToWaypoint.action"
