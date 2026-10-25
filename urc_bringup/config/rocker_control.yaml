@@ -1,0 +1,21 @@
+rocker_tf_broadcaster:
+  ros__parameters:
+    use_sim_time: true
+    left_joint_name: L_Rocker_Joint
+    right_joint_name: R_Rocker_Joint
+    joint_state_topic: /joint_states
+    pitch_topic: /rocker/pitch_raw
+    invert_sign: true
+
+rocker_effort_pid:
+  ros__parameters:
+    use_sim_time: true
+    pitch_topic: /rocker/pitch_raw
+    command_topic: /rocker_effort_controller/commands
+    kp: 120.0
+    ki: 10.0
+    kd: 40.0
+    min_spin_effort: 40.0
+    effort_limit: 1200.0
+    i_clamp: 100.0
+    pitch_target: 0.0

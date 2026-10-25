@@ -4,18 +4,25 @@
   <name>urc_bringup</name>
   <version>0.0.0</version>
   <description>Package to launch all urc packages</description>
-  <maintainer email="abhiramg2021@gmail.com">Abhiram Ghanta</maintainer>
+  <maintainer email="mrinal@gatech.edu"> Mrinal Jain </maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>rclcpp</depend>
-  <depend>rclcpp_components</depend>
-  <depend>std_msgs</depend>
   <depend>rosbridge_server</depend>
-  <depend>sensor_msgs</depend>
-  <depend>tf2_msgs</depend>
   <depend>urc_msgs</depend>
+  <depend>urc_controllers</depend>
+  <depend>urc_localization</depend>
+  <depend>urc_path_planning</depend>
+  <depend>urc_perception</depend>
+  <depend>urc_platform</depend>
+  <depend>urc_state_machine</depend>
+  <depend>urc_trajectory_following</depend>
+  <depend>ros_gz</depend>
+  <exec_depend>forward_command_controller</exec_depend>
+  <depend>effort_controllers</depend>
+  <depend>grid_map_rviz_plugin</depend>
+  <exec_depend>grid_map_visualization</exec_depend>
 
   <exec_depend>rqt_gui</exec_depend>
   <exec_depend>rqt_joint_trajectory_controller</exec_depend>

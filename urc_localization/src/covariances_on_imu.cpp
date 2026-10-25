@@ -1,54 +1,55 @@
-#include "covariances_on_imu.hpp"
+#include "urc_localization/covariances_on_imu.hpp"
 
 #include <array>
+#include <functional>
 #include <sensor_msgs/msg/imu.hpp>
 #include "rclcpp_components/register_node_macro.hpp"
 
 namespace covariances_on_imu
 {
 
-CovariancesOnImu::CovariancesOnImu(const rclcpp::NodeOptions &options)
-    : rclcpp::Node("covariances_on_imu", options)
+CovariancesOnImu::CovariancesOnImu(const rclcpp::NodeOptions & options)
+: rclcpp::Node("covariances_on_imu", options)
 {
   const auto imu_input_topic = declare_parameter<std::string>("imu_input_topic", "/imu/data_raw");
   const auto imu_output_topic = declare_parameter<std::string>("imu_output_topic", "/imu/fused");
 
   imu_publisher_ = create_publisher<sensor_msgs::msg::Imu>(
-      imu_output_topic,
-      rclcpp::SystemDefaultsQoS());
+    imu_output_topic,
+    rclcpp::SystemDefaultsQoS());
 
   imu_subscription_ = create_subscription<sensor_msgs::msg::Imu>(
-      imu_input_topic,
-      rclcpp::SystemDefaultsQoS(),
-      std::bind(&CovariancesOnImu::handleImu, this, std::placeholders::_1));
+    imu_input_topic,
+    rclcpp::SystemDefaultsQoS(),
+    std::bind(&CovariancesOnImu::handleImu, this, std::placeholders::_1));
 }
 
 void CovariancesOnImu::handleImu(const sensor_msgs::msg::Imu::SharedPtr msg)
 {
-  if (!imu_publisher_)
-  {
+  if (!imu_publisher_) {
     return;
   }
 
   sensor_msgs::msg::Imu output = *msg;
 
-  // Set covariance diagonals to squared stddevs per field
-  constexpr double var_lin_acc = 0.01 * 0.01;     // 1e-4
-  constexpr double var_ang_vel = 0.0005 * 0.0005; // 2.5e-7
-  constexpr double var_orientation = 0.001 * 0.001; // 1e-6
+  output.header.stamp = this->get_clock()->now();
+  output.header.frame_id = "imu_link"; // Ensure the frame_id is set to the expected value
 
-  auto set_diag_variance = [](std::array<double, 9> &cov, double variance) {
-    if (!cov.empty() && cov[0] < 0.0) {
-      cov.fill(0.0);
-    }
-    cov[0] = variance;
-    cov[4] = variance;
-    cov[8] = variance;
-  };
+  output.orientation_covariance.fill(0.0);
+  output.angular_velocity_covariance.fill(0.0);
+  output.linear_acceleration_covariance.fill(0.0);
 
-  set_diag_variance(output.linear_acceleration_covariance, var_lin_acc);
-  set_diag_variance(output.angular_velocity_covariance, var_ang_vel);
-  set_diag_variance(output.orientation_covariance, var_orientation);
+  output.orientation_covariance[0] = 0.0001;  // roll variance
+  output.orientation_covariance[4] = 0.0001;  // pitch variance
+  output.orientation_covariance[8] = 0.0001;  // yaw variance
+
+  output.angular_velocity_covariance[0] = 0.00001;  // x variance
+  output.angular_velocity_covariance[4] = 0.00001;  // y
+  output.angular_velocity_covariance[8] = 0.00001;  // z
+
+  output.linear_acceleration_covariance[0] = 1e6;  // x variance
+  output.linear_acceleration_covariance[4] = 1e6;  // y
+  output.linear_acceleration_covariance[8] = 1e6;  // z
 
   imu_publisher_->publish(output);
 }

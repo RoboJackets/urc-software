@@ -41,8 +41,15 @@ def generate_launch_description():
 
     sim_world_arg = DeclareLaunchArgument(
         "world",
-        default_value="world.sdf",
+        # default_value="world.sdf",
+        default_value="marsyard2020.sdf",
         description="Name of the world file (not full path)",
+    )
+
+    arm_scale_arg = DeclareLaunchArgument(
+        "arm_scale",
+        default_value="0.5",
+        description="Uniform arm size relative to CAD (1.0 is original size)",
     )
 
     bridge_yaml = DeclareLaunchArgument(
@@ -87,6 +94,8 @@ def generate_launch_description():
                 ]
             ),
             " standalone_sim:=true",
+            " arm_scale:=",
+            LaunchConfiguration("arm_scale"),
         ]
     )
 
@@ -144,16 +153,16 @@ def generate_launch_description():
     )
 
     # --- RViz ---
-    # rviz_config = PathJoinSubstitution(
-    #     [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
-    # )
-    # rviz = Node(
-    #     package="rviz2",
-    #     executable="rviz2",
-    #     name="rviz2",
-    #     output="log",
-    #     arguments=["-d", rviz_config],
-    # )
+    rviz_config = PathJoinSubstitution(
+        [FindPackageShare("cartesian_controller_simulation"), "etc", "arm_robot.rviz"]
+    )
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="log",
+        arguments=["-d", rviz_config],
+    )
 
     # --- Controller Spawners ---
     def controller_spawner(name, *args):
@@ -220,6 +229,7 @@ def generate_launch_description():
         [
             ign_resource_path,
             sim_world_arg,
+            arm_scale_arg,
             bridge_yaml,
             gripper_gui_arg,
             gz_sim,

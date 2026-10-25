@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="incline_plane_obstacle">
+    <static>true</static>
+    <pose>0 0 0 0 0 0</pose>
+    <link name="incline_link">
+      <collision name="incline_collision">
+        <geometry>
+          <box>
+            <size>2.0 2.0 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="incline_visual">
+        <geometry>
+          <box>
+            <size>2.0 2.0 0.2</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.2 0.3 0.8 1.0</ambient>
+          <diffuse>0.3 0.4 0.9 1.0</diffuse>
+          <specular>0.1 0.1 0.1 1.0</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

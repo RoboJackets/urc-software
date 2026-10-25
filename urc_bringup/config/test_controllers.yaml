@@ -1,4 +1,5 @@
 # Controllers to test the new simulation
+## updated to have arm
 controller_manager:
   ros__parameters:
     update_rate: 100
@@ -14,6 +15,19 @@ controller_manager:
 
     swerve_controller:
       type: urc_controllers/SwerveDriveController
+    
+    ## remove these three if you don't want arm
+    cartesian_motion_controller:
+      type: cartesian_motion_controller/CartesianMotionController
+
+    motion_control_handle:
+      type: cartesian_controller_handles/MotionControlHandle
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    rocker_effort_controller:
+      type: forward_command_controller/ForwardCommandController
 
 position_controller:
   ros__parameters:
@@ -36,3 +50,67 @@ swerve_controller:
     module_x: 0.35255
     module_y: 0.307978
     wheel_radius: 0.119888
+
+
+cartesian_motion_controller:
+  ros__parameters:
+
+    # See the cartesian_compliance_controller
+    end_effector_link: "tool0"
+    robot_base_link: "arm_base_link"
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+
+    # See the cartesian_compliance_controller
+    command_interfaces:
+      - position
+      #- velocity
+
+    solver:
+        error_scale: 1.0
+        iterations: 10
+        publish_state_feedback: True
+
+    pd_gains:
+        trans_x: {p: 1.0, d: 0.1}  # was 1.0
+        trans_y: {p: 1.0, d: 0.1}
+        trans_z: {p: 1.0, d: 0.1}
+        rot_x: {p: 0.5}              # was 0.5
+        rot_y: {p: 0.5}
+        rot_z: {p: 0.5}
+
+motion_control_handle:
+  ros__parameters:
+    end_effector_link: "tool0"
+    robot_base_link: "arm_base_link"
+    ft_sensor_ref_link: "tool0"
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+rocker_effort_controller:
+  ros__parameters:
+    joints:
+      - L_Rocker_Joint
+      - R_Rocker_Joint
+    interface_name: effort

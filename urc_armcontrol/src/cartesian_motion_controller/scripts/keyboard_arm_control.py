@@ -36,8 +36,11 @@ import select
 import sys
 import tty
 import termios
+import xml.etree.ElementTree as ET
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+from std_msgs.msg import String
+from rclpy.qos import QoSProfile, DurabilityPolicy
 from geometry_msgs.msg import PoseStamped
 from scipy.spatial.transform import Rotation as R
 from controller_manager_msgs.srv import SwitchController
@@ -64,10 +67,10 @@ HOME_ORIENTATION = R.from_euler('xyz', [0.0, 0.0, 0.0])
 # Joint names and limits — must match URDF exactly
 JOINT_NAMES  = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5']
 JOINT_LIMITS = {
-    'joint1': (-0.5,          0.5),
+    'joint1': (0.0,          0.25),
     'joint2': (-2.0 * np.pi, 2.0 * np.pi),
     'joint3': (-np.pi,        np.pi),
-    'joint4': (-2.0 * np.pi, 2.0 * np.pi),
+    'joint4': (-1.57,        1.57),
     'joint5': (-2.0 * np.pi, 2.0 * np.pi),
 }
 
@@ -182,6 +185,12 @@ class KeyboardArmController(Node):
 
         self._lock    = threading.Lock()
         self._running = True
+        self._joint_limits = dict(JOINT_LIMITS)
+        # Use the expanded model limits, including the selected arm scale.
+        self.description_sub = self.create_subscription(
+            String, '/robot_description', self._description_callback,
+            QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        )
 
         # Keyboard thread
         self._kb_thread = threading.Thread(target=self._poll_keyboard, daemon=True)
@@ -196,6 +205,19 @@ class KeyboardArmController(Node):
     # ------------------------------------------------------------------
     # Joint state callback
     # ------------------------------------------------------------------
+
+    def _description_callback(self, msg: String):
+        try:
+            root = ET.fromstring(msg.data)
+            limits = {}
+            for joint in root.findall('joint'):
+                limit = joint.find('limit')
+                if joint.get('name') in JOINT_NAMES and limit is not None:
+                    limits[joint.get('name')] = (float(limit.get('lower')), float(limit.get('upper')))
+            with self._lock:
+                self._joint_limits.update(limits)
+        except (ET.ParseError, TypeError, ValueError) as error:
+            self.get_logger().warning(f'Could not read arm joint limits: {error}')
 
     def _joint_state_callback(self, msg: JointState):
         with self._lock:
@@ -270,7 +292,7 @@ class KeyboardArmController(Node):
             elif mode == MODE_JOINT and key in FK_BINDINGS:
                 joint_name, direction = FK_BINDINGS[key]
                 with self._lock:
-                    lo, hi    = JOINT_LIMITS[joint_name]
+                    lo, hi    = self._joint_limits[joint_name]
                     new_val   = float(np.clip(
                         self._target_joint_values[joint_name] + direction * JOINT_STEP,
                         lo, hi
@@ -353,7 +375,7 @@ class KeyboardArmController(Node):
 
         for name in JOINT_NAMES:
             if name in current:
-                lo, hi = JOINT_LIMITS[name]
+                lo, hi = self._joint_limits[name]
                 self._target_joint_values[name] = float(np.clip(current[name], lo, hi))
 
         self._target_joint_values_seeded = True
@@ -386,7 +408,7 @@ class KeyboardArmController(Node):
 
         msg = PoseStamped()
         msg.header.stamp    = self.get_clock().now().to_msg()
-        msg.header.frame_id = 'base_link'
+        msg.header.frame_id = 'arm_base_link'
 
         msg.pose.position.x = float(pos[0])
         msg.pose.position.y = float(pos[1])
