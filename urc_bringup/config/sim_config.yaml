@@ -15,6 +15,17 @@
   gz_type_name: "ignition.msgs.IMU"
   direction: GZ_TO_ROS
 
+- ros_topic_name: "/gripper/left_contact"
+  gz_topic_name: "/gripper/left_contact"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/gripper/right_contact"
+  gz_topic_name: "/gripper/right_contact"
+  ros_type_name: "ros_gz_interfaces/msg/Contacts"
+  gz_type_name: "ignition.msgs.Contacts"
+  direction: GZ_TO_ROS
 
 #- ros_topic_name: "/tf"
 #  gz_topic_name: "/world/leo_marsyard/pose/info"

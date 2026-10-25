@@ -135,7 +135,7 @@ def generate_launch_description():
             "-name", "arm",
             "-x", "0",
             "-y", "0",
-            "-z", "1.5",
+            "-z", "0",
             "-R", "0",
             "-P", "0",
             "-Y", "0",
