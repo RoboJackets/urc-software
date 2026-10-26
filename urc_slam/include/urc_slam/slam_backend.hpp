@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <memory>
 
+#include <gtsam/geometry/Pose2.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/inference/Symbol.h>
 #include <gtsam/linear/NoiseModel.h>
@@ -29,6 +30,9 @@ struct SlamBackendParameters
   double velocity_prior_sigma_mps;
   double accelerometer_bias_prior_sigma_mps2;
   double gyroscope_bias_prior_sigma_radps;
+
+  double wheel_translation_sigma_m;
+  double wheel_yaw_sigma_rad;
 
   double lidar_rotation_sigma_rad;
   double lidar_translation_sigma_m;
@@ -91,6 +95,12 @@ public:
     const gtsam::Point3 & position,
     const gtsam::Matrix3 & covariance
   );
+
+  // Stages planar motion and body-frame velocity constraints; optimize() commits them.
+  void addWheelOdometryFactors(
+    std::size_t previous_index, std::size_t current_index,
+    const gtsam::Pose2 & relative_pose, const gtsam::Vector2 & body_velocity,
+    const gtsam::Vector2 & velocity_sigmas);
 
   void optimize();
 

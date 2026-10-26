@@ -6,7 +6,9 @@
 #include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <algorithm>
+#include <chrono>
 #include <stdexcept>
+#include <utility>
 
 namespace follower_action_server
 {
@@ -82,7 +84,14 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
 void FollowerActionServer::handleCostmap(
   const grid_map_msgs::msg::GridMap::SharedPtr msg)
 {
-  if (!grid_map_utils_.setMap(*msg)) {
+  grid_map_utils::GridMapUtils updated_map;
+  updated_map.setLayer(costmap_layer_);
+  const bool converted = updated_map.setMap(*msg);
+  {
+    std::lock_guard<std::mutex> lock(costmap_mutex_);
+    std::swap(grid_map_utils_, updated_map);
+  }
+  if (!converted) {
     RCLCPP_WARN_THROTTLE(
       this->get_logger(), *this->get_clock(), 5000, "Ignoring costmap that could not be converted");
   }
@@ -110,6 +119,14 @@ FollowerActionServer::lookup_transform(
 
 FollowerActionServer::~FollowerActionServer()
 {
+  stopping_.store(true);
+  for (auto & worker : navigation_workers_) {
+    try {
+      worker.get();
+    } catch (const std::exception & error) {
+      RCLCPP_WARN(get_logger(), "Navigation worker stopped during shutdown: %s", error.what());
+    }
+  }
   RCLCPP_INFO(this->get_logger(), "Follower action server has been stopped.");
 }
 
@@ -121,8 +138,8 @@ rclcpp_action::GoalResponse FollowerActionServer::handle_navigate_goal(
 
   (void)uuid;
 
-  if (!goal->has_path && !goal->has_goal) {
-    RCLCPP_ERROR(this->get_logger(), "Neither path nor goal provided");
+  if (!goal->has_goal && (!goal->has_path || goal->path.poses.empty())) {
+    RCLCPP_ERROR(this->get_logger(), "A goal or a non-empty path is required");
     return rclcpp_action::GoalResponse::REJECT;
   }
 
@@ -151,15 +168,62 @@ void FollowerActionServer::handle_navigate_accepted(
     rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>>
   goal_handle)
 {
-  std::thread{std::bind(
-      &FollowerActionServer::execute_navigate, this,
-      std::placeholders::_1),
-    goal_handle}
-  .detach();
+  navigation_workers_.erase(
+    std::remove_if(
+      navigation_workers_.begin(), navigation_workers_.end(),
+      [this](std::future<void> & worker) {
+        if (worker.wait_for(std::chrono::seconds(0)) != std::future_status::ready) {
+          return false;
+        }
+        try {
+          worker.get();
+        } catch (const std::exception & error) {
+          RCLCPP_ERROR(get_logger(), "Navigation worker failed: %s", error.what());
+        }
+        return true;
+      }),
+    navigation_workers_.end());
+  navigation_workers_.push_back(
+    std::async(
+      std::launch::async, &FollowerActionServer::runNavigation, this, goal_handle));
+}
+
+void FollowerActionServer::runNavigation(
+  const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle)
+{
+  try {
+    execute_navigate(goal_handle);
+  } catch (const std::exception & error) {
+    if (!stopping_.load() && rclcpp::ok()) {
+      RCLCPP_ERROR(get_logger(), "Navigation failed: %s", error.what());
+    }
+    publishZeroVelocity();
+  }
+
+  // Humble auto-cancels nonterminal handles in their destructor. Transition
+  // first, even at shutdown when the result transport may already be unavailable.
+  if (goal_handle->is_active()) {
+    auto result = std::make_shared<urc_msgs::action::NavigateToWaypoint::Result>();
+    result->error_code = urc_msgs::action::NavigateToWaypoint::Result::FAILURE;
+    try {
+      if (goal_handle->is_canceling()) {
+        goal_handle->canceled(result);
+      } else {
+        goal_handle->abort(result);
+      }
+    } catch (const std::exception & error) {
+      if (!stopping_.load() && rclcpp::ok()) {
+        RCLCPP_ERROR(get_logger(), "Could not publish final navigation result: %s", error.what());
+      }
+    }
+  }
 }
 
 void FollowerActionServer::publishZeroVelocity()
 {
+  if (!rclcpp::ok()) {
+    return;
+  }
   geometry_msgs::msg::TwistStamped cmd_vel;
   cmd_vel.header.stamp = get_clock()->now();
   cmd_vel.twist.linear.x = 0.0;
@@ -175,7 +239,12 @@ void FollowerActionServer::publishZeroVelocity()
 bool FollowerActionServer::isLethal(double x, double y)
 {
   float cost;
-  if (!grid_map_utils_.tryGetCellCost(x, y, cost)) {
+  bool has_cost;
+  {
+    std::lock_guard<std::mutex> lock(costmap_mutex_);
+    has_cost = grid_map_utils_.tryGetCellCost(x, y, cost);
+  }
+  if (!has_cost) {
     RCLCPP_WARN_THROTTLE(
       this->get_logger(), *this->get_clock(), 5000,
       "Lookahead point is outside the costmap or layer '%s' is missing", costmap_layer_.c_str());
@@ -198,7 +267,17 @@ nav_msgs::msg::Path FollowerActionServer::callPlanningService(
 
   auto result = planning_client_->async_send_request(request);
 
-  if (result.wait_for(std::chrono::seconds(10)) == std::future_status::ready) {
+  const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+  while (rclcpp::ok() && !stopping_.load() && std::chrono::steady_clock::now() < deadline) {
+    if (result.wait_for(std::chrono::milliseconds(100)) == std::future_status::ready) {
+      break;
+    }
+  }
+  if (!rclcpp::ok() || stopping_.load()) {
+    success = false;
+    return nav_msgs::msg::Path();
+  }
+  if (result.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
     auto response = result.get();
     if (response->error_code ==
       urc_msgs::srv::GeneratePlan::Response::SUCCESS)
@@ -278,6 +357,9 @@ void FollowerActionServer::execute_navigate(
 
     bool planning_success = false;
     path = callPlanningService(start_pose, goal_pose, planning_success);
+    if (stopping_.load() || !rclcpp::ok()) {
+      return;
+    }
 
     feedback->is_planning = false;
 
@@ -306,7 +388,7 @@ void FollowerActionServer::execute_navigate(
   trajectory_following::TrajectoryOutput output;
   rclcpp::Rate rate(10);
 
-  while (rclcpp::ok()) {
+  while (rclcpp::ok() && !stopping_.load()) {
     // Get current pose in map frame from TF
     geometry_msgs::msg::PoseStamped current_pose_map_frame_;
     try {
@@ -449,6 +531,9 @@ void FollowerActionServer::execute_navigate(
       bool planning_success = false;
       nav_msgs::msg::Path new_path =
         callPlanningService(start_pose, goal_pose, planning_success);
+      if (stopping_.load() || !rclcpp::ok()) {
+        return;
+      }
 
       feedback->is_planning = false;
 

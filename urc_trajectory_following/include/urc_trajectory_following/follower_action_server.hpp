@@ -1,6 +1,11 @@
 #ifndef FOLLOWER_ACTION_SERVER_HPP_
 #define FOLLOWER_ACTION_SERVER_HPP_
 
+#include <mutex>
+#include <atomic>
+#include <future>
+#include <vector>
+
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <geometry_msgs/msg/point_stamped.hpp>
@@ -43,6 +48,9 @@ private:
   void execute_navigate(
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle);
 
+  void runNavigation(
+    const std::shared_ptr<rclcpp_action::ServerGoalHandle<urc_msgs::action::NavigateToWaypoint>> goal_handle);
+
   nav_msgs::msg::Path callPlanningService(
     const geometry_msgs::msg::PoseStamped & start,
     const geometry_msgs::msg::PoseStamped & goal,
@@ -57,6 +65,7 @@ private:
   bool isLethal(double x, double y);
 
   grid_map_utils::GridMapUtils grid_map_utils_;
+  std::mutex costmap_mutex_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   std::string costmap_layer_;
   rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
@@ -69,6 +78,8 @@ private:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
   bool stamped_;
+  std::atomic<bool> stopping_{false};
+  std::vector<std::future<void>> navigation_workers_;
 };
 } // namespace follower_action_server
 

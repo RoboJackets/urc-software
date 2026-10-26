@@ -40,6 +40,9 @@ public:
 private:
   void imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
   void lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
+  void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
+  void matchBufferedOdometry();
+  bool applyWheelOdometryMatches();
   void gpsCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
   void publishMap();
 
@@ -86,6 +89,17 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub;
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_sub;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr gps_sub;
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub;
+
+  struct MatchedOdometry
+  {
+    std::size_t keyframe_index;
+    nav_msgs::msg::Odometry measurement;
+  };
+  std::deque<nav_msgs::msg::Odometry> odom_buffer;
+  std::deque<MatchedOdometry> matched_odom;
+  std::optional<rclcpp::Time> last_accepted_odom_stamp;
+  static constexpr std::size_t maximum_odom_buffer_size = 200;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odometry_pub;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr map_pub;

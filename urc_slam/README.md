@@ -10,6 +10,13 @@ ros2 launch urc_bringup sim.launch.py
 ros2 launch urc_slam slam.launch.py
 ```
 
+SLAM waits for a settled IMU orientation and sensor transforms before starting.
+To run SLAM, the rolling traversability costmap, and the waypoint mission together:
+
+```bash
+ros2 launch urc_bringup autonomy_demo.launch.py
+```
+
 Parameters are in `config/slam_params.yaml`. The defaults use simulation time.
 SLAM publishes `/slam/odometry`, `/slam/path`, `/slam/map_points`, and the
 `map` to `base_link` transform. Do not run a competing localization TF publisher.
@@ -30,7 +37,12 @@ to be aligned with `map`.
 
 Measurements are matched to keyframes within `wheel_odometry.time_tolerance_sec`.
 `wheel_odometry.velocity_sigmas_mps` configures independent x/y velocity standard
-deviations in metres per second. The default values preserve the previous
+deviations in metres per second. `wheel_odometry.translation_sigma_m` and
+`wheel_odometry.yaw_sigma_rad` configure relative pose uncertainty. The defaults preserve the previous
 numerical velocity noise scale; calibrate them for the deployed drivetrain.
+
+Wheel factors follow the backend's staged-update contract. Delayed wheel updates
+refresh the path and invalidate the map for its next timer tick; they do not
+reset the current IMU integration window or publish TF with an old timestamp.
 
 The rock landmark pipeline is compiled but is not connected to the running node.

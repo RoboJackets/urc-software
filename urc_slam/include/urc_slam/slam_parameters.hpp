@@ -13,6 +13,7 @@ namespace urc_slam
 
 struct SlamTopics
 {
+  std::string wheel_odometry;
   std::string imu;
   std::string lidar;
   std::string gps;
@@ -24,6 +25,7 @@ struct SlamTopics
 struct SlamFrames
 {
   std::string map;
+  std::string wheel_odometry;
   std::string base_link;
   bool publish_tf;
 };
@@ -37,6 +39,8 @@ struct SlamNodeParameters
 
   int registration_submap_keyframes;
   int registration_maximum_consecutive_failures;
+  double wheel_time_tolerance_s;
+  gtsam::Vector2 wheel_velocity_sigmas_mps;
   double imu_maximum_gap_s;
   double gps_time_tolerance_s;
   double map_voxel_size_m;

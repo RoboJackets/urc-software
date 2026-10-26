@@ -28,7 +28,7 @@ def generate_launch_description():
     trajectory_controller_arg = DeclareLaunchArgument(
         "trajectory_controller",
         default_value="pure_pursuit",
-        description="Path-following controller: pure_pursuit or lqr",
+        description="Path-following controller (pure_pursuit)",
     )
     controller = {"trajectory_controller": LaunchConfiguration("trajectory_controller")}
     sim_time = {

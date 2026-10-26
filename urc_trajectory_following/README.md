@@ -33,6 +33,10 @@ configured costmap layer and requests a new A* path when the cost reaches
   `cmd_vel_stamped`; its topic is configured by `cmd_vel_topic`.
 - Cancellation, completion, and handled planning failures publish a final
   zero-velocity command.
+- Costmap updates and collision checks are synchronized across callbacks and
+  navigation workers. Shutdown stops and joins workers before destroying the
+  action server.
+- Pure Pursuit projects 3D SLAM transforms onto planar yaw for path following.
 - Goal heading is enforced when requested by the action or enabled in the node
   configuration.
 

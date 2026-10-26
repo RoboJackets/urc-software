@@ -1,6 +1,13 @@
 slam_node:
   ros__parameters:
     use_sim_time: true
+    wheel_odom_topic: /odom
+    wheel_odometry:
+      frame: odom
+      time_tolerance_sec: 0.1
+      translation_sigma_m: 1.0
+      yaw_sigma_rad: 1.0
+      velocity_sigmas_mps: [1.0, 1.0]
     imu_topic: /imu/fused
     lidar_topic: /scan/points
     gps_topic: /slam/gps_odometry

@@ -130,7 +130,7 @@ void WaypointMission::handleCoordinatorState(const std_msgs::msg::String::Shared
   // Terminal states are only trusted after this waypoint was accepted, so a
   // result left over from the previous waypoint cannot advance the route
   if (phase_ == Phase::AwaitingAcceptance) {
-    if (state == "TRACKING_GOAL") {
+    if (state == "NAVIGATING") {
       phase_ = Phase::Tracking;
     } else if (state == "FAILED") {
       handleFailure(msg->data);

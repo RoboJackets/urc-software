@@ -37,6 +37,16 @@ add_library(${PROJECT_NAME} SHARED
   src/slam_messages.cpp
   src/slam_node.cpp
   src/slam_parameters.cpp
+  src/slam_wheel_odometry.cpp
+  src/wheel_odometry_factors.cpp
+  src/rock_landmark_params.cpp
+  src/rock_extractor.cpp
+  src/ground_filter.cpp
+  src/point_clustering.cpp
+  src/sphere_fit.cpp
+  src/jcbb_search.cpp
+  src/landmark_associator.cpp
+  src/landmark_manager.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

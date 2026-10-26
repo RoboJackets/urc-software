@@ -36,7 +36,9 @@ std::optional<gtsam::Rot3> toValidRotation(const sensor_msgs::msg::Imu & msg)
   }
   const gtsam::Quaternion orientation(
     msg.orientation.w, msg.orientation.x, msg.orientation.y, msg.orientation.z);
-  if (std::abs(orientation.norm() - 1.0) >= kUnitQuaternionTolerance) {
+  if (!orientation.coeffs().allFinite() ||
+    std::abs(orientation.norm() - 1.0) >= kUnitQuaternionTolerance)
+  {
     return std::nullopt;
   }
   return gtsam::Rot3(orientation.normalized());
@@ -69,17 +71,6 @@ SlamNode::SlamNode(const rclcpp::NodeOptions & options)
   gps_matcher(parameters.gps_time_tolerance_s, kGpsBufferCapacity),
   keyframe_map(parameters.map_voxel_size_m, parameters.lidar_frontend.voxel_size_m)
 {
-  // Identity initialization disabled: the backend is now initialized at the
-  // first keyframe from the IMU's roll and pitch, so gravity does not leak
-  // into the IMU prediction when the rover starts tilted.
-  // backend.initialize(
-  //     gtsam::NavState(
-  //         gtsam::Pose3(),
-  //         gtsam::Vector3::Zero()
-  //     ),
-  //     gtsam::imuBias::ConstantBias()
-  // );
-
   tf_buffer = std::make_shared<tf2_ros::Buffer>(get_clock());
   tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer, this);
   tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
@@ -92,6 +83,9 @@ SlamNode::SlamNode(const rclcpp::NodeOptions & options)
     parameters.topics.lidar,
     rclcpp::SensorDataQoS(),
     std::bind(&SlamNode::lidarCallback, this, std::placeholders::_1));
+  odom_sub = create_subscription<nav_msgs::msg::Odometry>(
+    parameters.topics.wheel_odometry, rclcpp::SensorDataQoS(),
+    std::bind(&SlamNode::odomCallback, this, std::placeholders::_1));
   gps_sub = create_subscription<nav_msgs::msg::Odometry>(
     parameters.topics.gps,
     rclcpp::SensorDataQoS(),
@@ -398,6 +392,7 @@ void SlamNode::commitKeyframe(const rclcpp::Time & stamp, const LidarFrontend::C
   keyframe_map.addKeyframe(stamp, cloud, state.pose());
   path_msg.poses.push_back(toPoseStampedMsg(state.pose(), stamp, parameters.frames.map));
 
+  applyWheelOdometryMatches();
   applyGpsMatches();
   publishState(backend.latestEstimate(), stamp);
   path_msg.header.stamp = stamp;

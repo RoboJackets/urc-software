@@ -4,6 +4,16 @@ Changes to the LiDAR-inertial SLAM pipeline made on `feat/new-costmap`, on top o
 commit `94a58ca`. Everything was built in `/home/rover_ws` and tested in the
 `marsyard2020` simulation against `/ground_truth/odom`.
 
+## Integration with the wheel odometry branch
+
+The merged node retains planar wheel pose and body-velocity factors alongside
+the per-scan registration and timestamp-aligned IMU windows described below.
+Wheel measurements use the new keyframe map's timestamps and the backend's
+staged optimization API. Wheel corrections invalidate the map and rebuild the
+path without replaying old odometry or TF timestamps. Wheel and rock sources are
+included in the package library so the retained regression executables link.
+The rock pipeline remains disconnected from runtime scan processing.
+
 ## Root causes found
 
 These explained most of the "LiDAR registration did not converge" and drift

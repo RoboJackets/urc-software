@@ -6,18 +6,14 @@
 
 namespace trajectory_following
 {
-// testing-only LQR
-std::unique_ptr<TrajectoryController> makeLqrController(double, double, double);
-
 namespace
 {
 constexpr char kPurePursuit[] = "pure_pursuit";
-constexpr char kLqr[] = "lqr";  // testing-only LQR
 }
 
 bool TrajectoryFactory::supports(const std::string & controller_type)
 {
-  return controller_type == kPurePursuit || controller_type == kLqr;
+  return controller_type == kPurePursuit;
 }
 
 std::unique_ptr<TrajectoryController> TrajectoryFactory::create(
@@ -34,13 +30,6 @@ std::unique_ptr<TrajectoryController> TrajectoryFactory::create(
     };
     return std::make_unique<pure_pursuit::PurePursuit>(params);
   }
-  if (controller_type == kLqr) {  // testing-only LQR
-    return makeLqrController(
-      node.get_parameter("desired_linear_velocity").as_double(),
-      node.get_parameter("max_angular_velocity").as_double(),
-      node.get_parameter("lookahead_distance").as_double());
-  }
-
   throw std::invalid_argument("Unsupported trajectory controller: " + controller_type);
 }
 }  // namespace trajectory_following

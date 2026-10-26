@@ -24,7 +24,13 @@ include_directories(
 
 # Library creation
 add_library(${PROJECT_NAME} SHARED
+  src/coordinator_state.cpp
+  src/follower_navigation.cpp
+  src/gps_waypoint_conversion.cpp
+  src/mission_action.cpp
+  src/mission_navigation.cpp
   src/nav_coordinator.cpp
+  src/waypoint_requests.cpp
   src/waypoint_mission.cpp
 )
 

@@ -1,6 +1,8 @@
 #include "urc_slam/slam_parameters.hpp"
 
+#include <cmath>
 #include <stdexcept>
+#include <vector>
 
 namespace urc_slam
 {
@@ -10,7 +12,7 @@ namespace
 double declarePositive(rclcpp::Node & node, const std::string & name, double default_value)
 {
   const double value = node.declare_parameter<double>(name, default_value);
-  if (!(value > 0.0)) {
+  if (!std::isfinite(value) || !(value > 0.0)) {
     throw std::invalid_argument("Parameter '" + name + "' must be positive");
   }
   return value;
@@ -28,7 +30,7 @@ int declarePositiveInt(rclcpp::Node & node, const std::string & name, int defaul
 double declareFraction(rclcpp::Node & node, const std::string & name, double default_value)
 {
   const double value = node.declare_parameter<double>(name, default_value);
-  if (value < 0.0 || value > 1.0) {
+  if (!std::isfinite(value) || value < 0.0 || value > 1.0) {
     throw std::invalid_argument("Parameter '" + name + "' must be in [0, 1]");
   }
   return value;
@@ -89,6 +91,9 @@ SlamBackendParameters declareBackend(rclcpp::Node & node)
   p.gyroscope_bias_prior_sigma_radps =
     declarePositive(node, "prior.gyroscope_bias_sigma_radps", 0.01);
 
+  p.wheel_translation_sigma_m = declarePositive(node, "wheel_odometry.translation_sigma_m", 1.0);
+  p.wheel_yaw_sigma_rad = declarePositive(node, "wheel_odometry.yaw_sigma_rad", 1.0);
+
   p.lidar_rotation_sigma_rad =
     declarePositive(node, "lidar_factor.rotation_sigma_rad", 0.05);
   p.lidar_translation_sigma_m =
@@ -109,6 +114,7 @@ SlamBackendParameters declareBackend(rclcpp::Node & node)
 SlamNodeParameters declareSlamParameters(rclcpp::Node & node)
 {
   SlamNodeParameters p;
+  p.topics.wheel_odometry = declareNonEmpty(node, "wheel_odom_topic", "/odom");
   p.topics.imu = declareNonEmpty(node, "imu_topic", "/imu/data");
   p.topics.lidar = declareNonEmpty(node, "lidar_topic", "/points");
   p.topics.gps = declareNonEmpty(node, "gps_topic", "/slam/gps_odometry");
@@ -116,6 +122,7 @@ SlamNodeParameters declareSlamParameters(rclcpp::Node & node)
   p.topics.path = declareNonEmpty(node, "path_topic", "/slam/path");
   p.topics.map = declareNonEmpty(node, "map_topic", "/slam/map_points");
 
+  p.frames.wheel_odometry = declareNonEmpty(node, "wheel_odometry.frame", "odom");
   p.frames.map = declareNonEmpty(node, "map_frame", "map");
   p.frames.base_link = declareNonEmpty(node, "base_link_frame", "base_link");
   p.frames.publish_tf = node.declare_parameter<bool>("publish_tf", true);
@@ -127,6 +134,16 @@ SlamNodeParameters declareSlamParameters(rclcpp::Node & node)
     declarePositiveInt(node, "registration.submap_keyframes", 3);
   p.registration_maximum_consecutive_failures =
     declarePositiveInt(node, "registration.maximum_consecutive_failures", 3);
+  p.wheel_time_tolerance_s = declarePositive(node, "wheel_odometry.time_tolerance_sec", 0.1);
+  const auto velocity_sigmas = node.declare_parameter<std::vector<double>>(
+    "wheel_odometry.velocity_sigmas_mps", {1.0, 1.0});
+  if (velocity_sigmas.size() != 2 || !std::isfinite(velocity_sigmas[0]) ||
+    !std::isfinite(velocity_sigmas[1]) || velocity_sigmas[0] <= 0.0 || velocity_sigmas[1] <= 0.0)
+  {
+    throw std::invalid_argument(
+            "Parameter 'wheel_odometry.velocity_sigmas_mps' needs two positive finite values");
+  }
+  p.wheel_velocity_sigmas_mps = gtsam::Vector2(velocity_sigmas[0], velocity_sigmas[1]);
   p.imu_maximum_gap_s = declarePositive(node, "imu.maximum_gap_s", 0.1);
   p.gps_time_tolerance_s = declarePositive(node, "gps.time_tolerance_s", 0.25);
   p.map_voxel_size_m = declarePositive(node, "map.voxel_size_m", 0.2);
