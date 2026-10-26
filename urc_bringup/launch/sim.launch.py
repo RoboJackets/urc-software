@@ -154,27 +154,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    sim_status_light = Node(
-        package="urc_hw_description",
-        executable="urc_hw_description_SimStatusLight",
-        name="sim_status_light",
-        parameters=[
-            os.path.join(path_urc_hw_description, "config", "sim_status_light.yaml")
-        ],
-        output="screen",
-    )
-
-    # Rear status light starts blue (teleoperation), per the URC rules
-    initial_status_light = ExecuteProcess(
-        cmd=[
-            "ros2", "topic", "pub", "--once",
-            "/command/status_light",
-            "urc_msgs/msg/StatusLightCommand",
-            "{color: 0, state: 1}",
-        ],
-        output="screen",
-    )
-
     covariances_on_imu = Node(
         package="urc_localization",
         executable="urc_localization_CovariancesOnImu",
@@ -199,6 +178,7 @@ def generate_launch_description():
                 "target_child_frame": "walli",
                 "odom_frame_id": "map",
                 "base_frame_id": "walli",
+                "relative_to_first_pose": True,
             }
         ],
         output="screen",
@@ -222,6 +202,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
         ),
+        launch_arguments={"use_sim_time": "true"}.items(),
         condition=IfCondition(LaunchConfiguration("autonomy")),
     )
 
@@ -368,8 +349,6 @@ def generate_launch_description():
             gz_sim,
             bridge,
             robot_state_publisher_node,
-            sim_status_light,
-            initial_status_light,
             covariances_on_imu,
             covariances_on_gps,
             launch_autonomy,

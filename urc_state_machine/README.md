@@ -38,6 +38,22 @@ Missing UTM-to-map transforms, an unavailable follower action server, rejected
 goals, planning failures, and follower failures transition the coordinator to
 `FAILED`.
 
+## Waypoint mission
+
+`urc_state_machine_WaypointMission` drives a fixed route through the
+coordinator. It waits for the `map` to `base_link` transform and a coordinator
+subscriber, then publishes one map-frame waypoint at a time on `/nav/waypoint`.
+It advances on `SUCCEEDED`, retries a failed waypoint up to
+`max_attempts_per_waypoint` times before skipping it, and repeats the route
+`laps` times (0 repeats forever). The route and the current target are
+published as markers on `mission_waypoints`.
+
+The simulation demo in `urc_bringup` uses it:
+
+```bash
+ros2 launch urc_bringup autonomy_demo.launch.py
+```
+
 ## Usage
 
 The coordinator is started as part of the autonomy stack:

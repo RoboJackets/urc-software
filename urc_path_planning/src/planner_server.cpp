@@ -1,6 +1,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include <stdexcept>
+
 #include "urc_path_planning/planner_server.hpp"
 #include "urc_path_planning/astar.hpp"
 
@@ -9,6 +11,16 @@ namespace planner_server
 PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 : rclcpp::Node("planner_server", options)
 {
+  costmap_layer_ = declare_parameter("costmap_layer", "traversability_inflated");
+  cost_policy_.lethal_cost = declare_parameter("lethal_cost", 1.0);
+  cost_policy_.unknown_cost = declare_parameter("unknown_cost", 0.5);
+  if (costmap_layer_.empty()) {
+    throw std::invalid_argument("costmap_layer must not be empty");
+  }
+  if (cost_policy_.unknown_cost < 0.0 || cost_policy_.unknown_cost >= cost_policy_.lethal_cost) {
+    throw std::invalid_argument("unknown_cost must be in [0, lethal_cost)");
+  }
+
   RCLCPP_INFO(get_logger(), "Planner server started.");
 
   // Create the service
@@ -30,7 +42,6 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 
 void PlannerServer::handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg)
 {
-  // RCLCPP_INFO(get_logger(), "Received Costmap!");
   current_costmap_ = *msg;
 }
 
@@ -42,7 +53,8 @@ void PlannerServer::generatePlan(
 {
   try {
     astar::AStar astar;
-    astar.setCostmapLayer("traversability_inflated");
+    astar.setCostmapLayer(costmap_layer_);
+    astar.setCostPolicy(cost_policy_);
     astar.setMap(current_costmap_);
 
     auto start = request->start.pose;

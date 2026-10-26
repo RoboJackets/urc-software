@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(urc_slam)
 
+# GICP and Eigen are header templates compiled into this package; unoptimized
+# builds make registration seconds long, so default to an optimized build
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Build type" FORCE)
+endif()
+
 include(../cmake/default_settings.cmake)
 
 find_package(ament_cmake REQUIRED)
@@ -9,6 +15,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 
@@ -22,19 +29,14 @@ find_package(PCL REQUIRED COMPONENTS
 find_package(GTSAM REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/slam_backend.cpp
+  src/gps_keyframe_matcher.cpp
+  src/imu_buffer.cpp
+  src/keyframe_map.cpp
   src/lidar_frontend.cpp
+  src/slam_backend.cpp
+  src/slam_messages.cpp
   src/slam_node.cpp
-  src/slam_wheel_odometry.cpp
-  src/wheel_odometry_factors.cpp
-  src/rock_landmark_params.cpp
-  src/rock_extractor.cpp
-  src/ground_filter.cpp
-  src/point_clustering.cpp
-  src/sphere_fit.cpp
-  src/jcbb_search.cpp
-  src/landmark_associator.cpp
-  src/landmark_manager.cpp
+  src/slam_parameters.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -55,6 +57,7 @@ ament_target_dependencies(${PROJECT_NAME}
   sensor_msgs
   nav_msgs
   geometry_msgs
+  tf2
   tf2_ros
   pcl_conversions
 )
@@ -85,7 +88,7 @@ install(
 )
 
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -104,6 +107,7 @@ ament_export_dependencies(
   sensor_msgs
   nav_msgs
   geometry_msgs
+  tf2
   tf2_ros
   pcl_conversions
 )

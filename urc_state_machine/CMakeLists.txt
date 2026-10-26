@@ -16,6 +16,7 @@ find_package(std_msgs REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(urc_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 include_directories(
   include
@@ -24,12 +25,7 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/nav_coordinator.cpp
-  src/waypoint_requests.cpp
-  src/gps_waypoint_conversion.cpp
-  src/follower_navigation.cpp
-  src/coordinator_state.cpp
-  src/mission_action.cpp
-  src/mission_navigation.cpp
+  src/waypoint_mission.cpp
 )
 
 set(dependencies
@@ -44,6 +40,7 @@ set(dependencies
   tf2_geometry_msgs
   tf2_ros
   urc_msgs
+  visualization_msgs
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -55,6 +52,12 @@ rclcpp_components_register_node(
   ${PROJECT_NAME}
   PLUGIN "nav_coordinator::NavCoordinator"
   EXECUTABLE ${PROJECT_NAME}_NavCoordinator
+)
+
+rclcpp_components_register_node(
+  ${PROJECT_NAME}
+  PLUGIN "waypoint_mission::WaypointMission"
+  EXECUTABLE ${PROJECT_NAME}_WaypointMission
 )
 
 install(

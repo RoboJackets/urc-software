@@ -9,12 +9,14 @@ pcl_grid_map_extraction:
       r: 0.0
       p: 0.0
       y: 0.0
+  # Input is the SLAM map, already voxel-filtered at 0.2 m, so clusters must
+  # bridge that spacing and single points must count
   cluster_extraction:
-    cluster_tolerance: 0.05
-    min_num_points: 4
+    cluster_tolerance: 0.3
+    min_num_points: 1
     max_num_points: 1000000
   outlier_removal:
-    is_remove_outliers: true
+    is_remove_outliers: false
     mean_K: 50
     stddev_threshold: 1.0
   downsampling:
@@ -24,7 +26,7 @@ pcl_grid_map_extraction:
       y: 0.02
       z: 0.02
   grid_map:
-    min_num_points_per_cell: 2
+    min_num_points_per_cell: 1
     resolution: 0.25
     height_type: 0
     height_thresh: 1.0

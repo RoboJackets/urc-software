@@ -1,523 +1,481 @@
-#include "slam_node.hpp"
+#include "urc_slam/slam_node.hpp"
 
-#include <functional>
-#include <limits>
-#include <stdexcept>
-
-
+#include <chrono>
 #include <cmath>
-#include <Eigen/Cholesky>
+#include <functional>
 
 #include <gtsam/geometry/Rot3.h>
 #include <gtsam/navigation/ImuBias.h>
 #include <gtsam/navigation/NavState.h>
-
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/common/transforms.h>
-#include <pcl/filters/voxel_grid.h>
-
-#include <geometry_msgs/msg/pose_stamped.hpp>
-#include <geometry_msgs/msg/transform_stamped.hpp>
-
+#include <tf2/exceptions.hpp>
+#include <tf2/time.hpp>
 
 namespace urc_slam
 {
-SlamNode::SlamNode(const rclcpp::NodeOptions & options)
-:   rclcpp::Node("slam_node", options),
-  lidar_frontend(
-    declare_parameter<double>("lidar_frontend.voxel_size_m", 0.2),
-    declare_parameter<double>("lidar_frontend.minimum_range_m", 1.0),
-    declare_parameter<double>("lidar_frontend.maximum_range_m", 80.0),
-    declare_parameter<double>("lidar_frontend.maximum_correspondence_distance_m", 2.0),
-    declare_parameter<int>("lidar_frontend.maximum_iterations", 64),
-    declare_parameter<double>("lidar_frontend.transformation_epsilon", 1e-6),
-    declare_parameter<double>("lidar_frontend.fitness_epsilon", 1e-6),
-    gtsam::Pose3()
 
-  ),
-  previous_keyframe_cloud(nullptr),
-  last_lidar_relative_pose(gtsam::Pose3()),
-  maximum_fitness_score(
-    declare_parameter<double>("lidar_frontend.maximum_fitness_score", 0.5)
-  ),
-  backend(
-    declare_parameter<double>("keyframe.translation_threshold_m", 0.5),
-    declare_parameter<double>("keyframe.rotation_threshold_rad", 0.174533),
-    gtsam::Vector6::Constant(0.1),
-    gtsam::Vector3::Constant(1.0),
-    gtsam::Vector6::Constant(1.0),
-    gtsam::Vector6::Constant(0.2),
-    gtsam::Vector6::Constant(1e-3),
-    gtsam::Vector6::Constant(1e-4)
-  ),
-  previous_imu_stamp(std::nullopt),
-  latest_keyframe_index(0),
-  accumulated_map(new LidarFrontend::Cloud),
-  map_voxel_size_m(
-    declare_parameter<double>("map_voxel_size_m", 0.5)
-  )
+namespace
 {
-  imu_topic = declare_parameter<std::string>("imu_topic", "/imu/data");
-  lidar_topic = declare_parameter<std::string>("lidar_topic", "/points");
-  gps_topic = declare_parameter<std::string>("gps_topic", "/slam/gps_odometry");
-  odom_topic = declare_parameter<std::string>("wheel_odom_topic", "/odom");
-  slam_odom_topic = declare_parameter<std::string>("slam_odom_topic", "/slam/odometry");
-  map_frame = declare_parameter<std::string>("map_frame", "map");
-  base_link_frame = declare_parameter<std::string>("base_link_frame", "base_link");
-  wheel_odom_frame = declare_parameter<std::string>("wheel_odometry.frame", "odom");
-  odom_time_tolerance_sec = declare_parameter<double>("wheel_odometry.time_tolerance_sec", 0.1);
-  const auto velocity_sigmas = declare_parameter<std::vector<double>>(
-    "wheel_odometry.velocity_sigmas_mps", {1.0, 1.0});
-  if (wheel_odom_frame.empty() || !std::isfinite(odom_time_tolerance_sec) ||
-    odom_time_tolerance_sec <= 0.0 || velocity_sigmas.size() != 2 ||
-    !std::isfinite(velocity_sigmas[0]) || !std::isfinite(velocity_sigmas[1]) ||
-    velocity_sigmas[0] <= 0.0 || velocity_sigmas[1] <= 0.0)
-  {
-    throw std::invalid_argument("Invalid wheel odometry frame, time tolerance, or velocity sigmas");
+// About 20 s of IMU history at 100 Hz, enough to bridge a LiDAR dropout
+constexpr std::size_t kImuBufferCapacity = 2000;
+// Deep enough that 100 Hz IMU samples queue up while GICP blocks the executor
+constexpr std::size_t kImuSubscriptionDepth = 200;
+constexpr std::size_t kGpsBufferCapacity = 200;
+constexpr double kUnitQuaternionTolerance = 1e-3;
+constexpr int kWarningThrottleMs = 1000;
+// The starting orientation is taken only once the rover has settled, e.g. after
+// dropping in at spawn, so a transient tilt is not mistaken for gravity
+constexpr double kSettledWindowS = 1.0;
+constexpr double kSettledMaximumRotationRad = 0.05;
+
+std::optional<gtsam::Rot3> toValidRotation(const sensor_msgs::msg::Imu & msg)
+{
+  // A negative first covariance element means the driver provides no orientation
+  if (msg.orientation_covariance[0] < 0.0) {
+    return std::nullopt;
   }
-  wheel_velocity_sigmas = gtsam::Vector2(velocity_sigmas[0], velocity_sigmas[1]);
+  const gtsam::Quaternion orientation(
+    msg.orientation.w, msg.orientation.x, msg.orientation.y, msg.orientation.z);
+  if (std::abs(orientation.norm() - 1.0) >= kUnitQuaternionTolerance) {
+    return std::nullopt;
+  }
+  return gtsam::Rot3(orientation.normalized());
+}
 
-  backend.initialize(
-    gtsam::NavState(
-      gtsam::Pose3(),
-      gtsam::Vector3::Zero()
-    ),
-    gtsam::imuBias::ConstantBias()
-  );
+GpsMeasurement toGpsMeasurement(const nav_msgs::msg::Odometry & msg)
+{
+  const auto & position = msg.pose.pose.position;
+  gtsam::Matrix3 covariance;
+  for (int row = 0; row < 3; ++row) {
+    for (int col = 0; col < 3; ++col) {
+      covariance(row, col) = msg.pose.covariance[row * 6 + col];
+    }
+  }
+  return {
+    rclcpp::Time(msg.header.stamp),
+    gtsam::Point3(position.x, position.y, position.z),
+    covariance
+  };
+}
+}  // namespace
 
-  imu_sub = create_subscription<sensor_msgs::msg::Imu>(
-    imu_topic,
-    rclcpp::SensorDataQoS(),
-    std::bind(
-      &SlamNode::imuCallback,
-      this,
-      std::placeholders::_1
-    )
-  );
+SlamNode::SlamNode(const rclcpp::NodeOptions & options)
+: rclcpp::Node("slam_node", options),
+  parameters(declareSlamParameters(*this)),
+  output_frames{parameters.frames.map, parameters.frames.base_link},
+  lidar_frontend(parameters.lidar_frontend),
+  backend(parameters.backend),
+  imu_buffer(kImuBufferCapacity),
+  gps_matcher(parameters.gps_time_tolerance_s, kGpsBufferCapacity),
+  keyframe_map(parameters.map_voxel_size_m, parameters.lidar_frontend.voxel_size_m)
+{
+  // Identity initialization disabled: the backend is now initialized at the
+  // first keyframe from the IMU's roll and pitch, so gravity does not leak
+  // into the IMU prediction when the rover starts tilted.
+  // backend.initialize(
+  //     gtsam::NavState(
+  //         gtsam::Pose3(),
+  //         gtsam::Vector3::Zero()
+  //     ),
+  //     gtsam::imuBias::ConstantBias()
+  // );
 
-  odom_sub = create_subscription<nav_msgs::msg::Odometry>(
-      odom_topic, rclcpp::SensorDataQoS(),
-      std::bind(&SlamNode::odomCallback, this, std::placeholders::_1));
-
-  lidar_sub = create_subscription<sensor_msgs::msg::PointCloud2>(
-    lidar_topic,
-    rclcpp::SensorDataQoS(),
-    std::bind(
-      &SlamNode::lidarCallback,
-      this,
-      std::placeholders::_1
-    )
-  );
-
-  gps_sub = create_subscription<nav_msgs::msg::Odometry>(
-    gps_topic,
-    rclcpp::SensorDataQoS(),
-    std::bind(
-      &SlamNode::gpsCallback,
-      this,
-      std::placeholders::_1
-    )
-  );
-
-  slam_odom_pub = create_publisher<nav_msgs::msg::Odometry>(
-    slam_odom_topic,
-    10
-  );
-
-  path_pub = create_publisher<nav_msgs::msg::Path>(
-    "/slam/path",
-    10
-  );
-
+  tf_buffer = std::make_shared<tf2_ros::Buffer>(get_clock());
+  tf_listener = std::make_shared<tf2_ros::TransformListener>(*tf_buffer, this);
   tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
-  path_msg.header.frame_id = map_frame;
+  imu_sub = create_subscription<sensor_msgs::msg::Imu>(
+    parameters.topics.imu,
+    rclcpp::SensorDataQoS().keep_last(kImuSubscriptionDepth),
+    std::bind(&SlamNode::imuCallback, this, std::placeholders::_1));
+  lidar_sub = create_subscription<sensor_msgs::msg::PointCloud2>(
+    parameters.topics.lidar,
+    rclcpp::SensorDataQoS(),
+    std::bind(&SlamNode::lidarCallback, this, std::placeholders::_1));
+  gps_sub = create_subscription<nav_msgs::msg::Odometry>(
+    parameters.topics.gps,
+    rclcpp::SensorDataQoS(),
+    std::bind(&SlamNode::gpsCallback, this, std::placeholders::_1));
 
+  odometry_pub = create_publisher<nav_msgs::msg::Odometry>(parameters.topics.odometry, 10);
+  path_pub = create_publisher<nav_msgs::msg::Path>(parameters.topics.path, 10);
   map_pub = create_publisher<sensor_msgs::msg::PointCloud2>(
-    "/slam/map_points",
-    rclcpp::QoS(1).reliable().transient_local()
-  );
+    parameters.topics.map, rclcpp::QoS(1).reliable().transient_local());
+  map_timer = create_wall_timer(
+    std::chrono::duration<double>(parameters.map_publish_period_s),
+    std::bind(&SlamNode::publishMap, this));
+
+  path_msg.header.frame_id = parameters.frames.map;
 }
 
 void SlamNode::imuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
 {
-  const rclcpp::Time current_stamp(msg->header.stamp);
-
-  const gtsam::Vector3 acceleration(
-    msg->linear_acceleration.x,
-    msg->linear_acceleration.y,
-    msg->linear_acceleration.z
-  );
-
-  const gtsam::Vector3 angular_velocity(
-    msg->angular_velocity.x,
-    msg->angular_velocity.y,
-    msg->angular_velocity.z
-  );
-
-  if (!previous_imu_stamp.has_value()) {
-    previous_imu_stamp = current_stamp;
-    return;
-  }
-
-  const double dt = (current_stamp - previous_imu_stamp.value()).seconds();
-  previous_imu_stamp = current_stamp;
-
-  if (dt <= 0.0 || dt > 0.1) {
-    return;
-  }
-
-  if (!previous_keyframe_cloud) {
-    return;
-  }
-
-  backend.integrateImuMeasurement(
-    acceleration,
-    angular_velocity,
-    dt
-  );
-
-  imu_integrated_since_keyframe = true;
-}
-
-void SlamNode::lidarCallback(
-  const sensor_msgs::msg::PointCloud2::SharedPtr msg
-)
-{
-
-
-  LidarFrontend::Cloud::Ptr raw_cloud(
-    new LidarFrontend::Cloud
-  );
-
-  pcl::fromROSMsg(*msg, *raw_cloud);
-
-  const LidarFrontend::Cloud::Ptr current_cloud = lidar_frontend.preprocess(raw_cloud);
-
-  if (!current_cloud || current_cloud->empty()) {
-    RCLCPP_WARN(get_logger(), "Discarding empty LiDAR cloud");
-    return;
-  }
-
-  // First cloud is keyframe zero
-  if (!previous_keyframe_cloud) {
-    previous_keyframe_cloud = current_cloud;
-    latest_keyframe_index = 0;
-    imu_integrated_since_keyframe = false;
-
-    keyframe_clouds.push_back(current_cloud);
-    keyframe_stamps.push_back(
-      {
-        0, rclcpp::Time(msg->header.stamp)
-      });
-    addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
-    processGPSMeasurements();
-    processOdometry();
-    publishOutputs(rclcpp::Time(msg->header.stamp));
-    return;
-  }
-
-  if (!imu_integrated_since_keyframe) {
-    return;
-  }
-
-  // Use accumulated IMU motion as ICP initial guess
-  const gtsam::Pose3 imu_relative_guess = backend.predictedRelativePose();
-  const gtsam::Pose3 predicted_global_pose = backend.latestEstimate().pose().compose(
-    imu_relative_guess
-  );
-
-  if (!backend.shouldCreateKeyframe(predicted_global_pose)) {
-    return;
-  }
-
-  const LidarRegistrationResult registration = lidar_frontend.registerClouds(
-    previous_keyframe_cloud,
-    current_cloud,
-    last_lidar_relative_pose
-  );
-
-  if (!registration.converged) {
-    RCLCPP_WARN(get_logger(), "LiDAR registration did not converge");
-    return;
-  }
-
-  if (registration.fitness_score > maximum_fitness_score) {
-    RCLCPP_WARN(
-      get_logger(), "Rejected LiDAR registration with fitness score  %.3f",
-      registration.fitness_score
-    );
-    return;
-  }
-
-  last_lidar_relative_pose = registration.relative_pose;
-
-  const std::size_t previous_index = latest_keyframe_index;
-  const std::size_t current_index = previous_index + 1;
-
-  // Convert icp relative transform to global pose
-  const gtsam::Pose3 current_global_pose = backend.latestEstimate().pose().compose(
-    registration.relative_pose
-  );
-
-  // Stage imu state, then optimize with LiDAR constraint
-  backend.addKeyframe(current_global_pose);
-  backend.addLidarFactor(
-    previous_index,
-    current_index,
-    registration.relative_pose
-  );
-
-  latest_keyframe_index = current_index;
-  previous_keyframe_cloud = current_cloud;
-  imu_integrated_since_keyframe = false;
-
-  keyframe_clouds.push_back(current_cloud);
-  keyframe_stamps.push_back(
+  imu_buffer.push(
     {
-      current_index, rclcpp::Time(msg->header.stamp)
+      rclcpp::Time(msg->header.stamp),
+      gtsam::Vector3(
+        msg->linear_acceleration.x, msg->linear_acceleration.y, msg->linear_acceleration.z),
+      gtsam::Vector3(
+        msg->angular_velocity.x, msg->angular_velocity.y, msg->angular_velocity.z)
     });
-  addKeyframeToMap(current_cloud, rclcpp::Time(msg->header.stamp));
-  processGPSMeasurements();
-  processOdometry();
-  publishOutputs(rclcpp::Time(msg->header.stamp));
-}
 
-void SlamNode::gpsCallback(nav_msgs::msg::Odometry::SharedPtr msg)
-{
-  if (msg->header.frame_id != map_frame) {
+  imu_frame_id = msg->header.frame_id;
+  if (backend.isInitialized()) {
     return;
   }
-
-  const auto & p = msg->pose.pose.position;
-  if (!std::isfinite(p.x) ||
-    !std::isfinite(p.y) ||
-    !std::isfinite(p.z))
-  {
-    return;
-  }
-
-  // Extract position block from 6x6 pose covariance
-  Eigen::Matrix3d covariance;
-  for (int row = 0; row < 3; ++row) {
-    for (int col = 0; col < 3; ++col) {
-      covariance(row, col) = msg->pose.covariance[row * 6 + col];
+  if (const auto orientation = toValidRotation(*msg)) {
+    const rclcpp::Time stamp(msg->header.stamp);
+    recent_imu_orientations.push_back({stamp, *orientation});
+    while ((stamp - recent_imu_orientations.front().first).seconds() > kSettledWindowS) {
+      recent_imu_orientations.pop_front();
     }
   }
+}
 
-  if (!covariance.allFinite() || !covariance.isApprox(covariance.transpose())) {
-    return;
+std::optional<gtsam::Rot3> SlamNode::settledImuOrientation() const
+{
+  if (recent_imu_orientations.size() < 2) {
+    return std::nullopt;
   }
-
-  Eigen::LLT<Eigen::Matrix3d> decomposition(covariance);
-  if (decomposition.info() != Eigen::Success) {
-    return;
+  const auto & [newest_stamp, newest] = recent_imu_orientations.back();
+  const double span_s = (newest_stamp - recent_imu_orientations.front().first).seconds();
+  if (span_s < 0.9 * kSettledWindowS) {
+    return std::nullopt;
   }
+  for (const auto & [stamp, orientation] : recent_imu_orientations) {
+    if (gtsam::Rot3::Logmap(newest.between(orientation)).norm() > kSettledMaximumRotationRad) {
+      return std::nullopt;
+    }
+  }
+  return newest;
+}
 
-  // Keep timestamps strictly increasing; discard duplicates
+void SlamNode::lidarCallback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
+{
   const rclcpp::Time stamp(msg->header.stamp);
-  if (last_accepted_gps_stamp && stamp <= *last_accepted_gps_stamp) {
+  if (!backend.isInitialized()) {
+    initializeAtScan(*msg);
     return;
   }
-
-  gps_buffer.push_back(*msg);
-  last_accepted_gps_stamp = stamp;
-  while (gps_buffer.size() > 200) {
-    gps_buffer.pop_front();
+  if (!integrateImuUntil(stamp)) {
+    return;
   }
-
-  processGPSMeasurements();
-
+  processScan(*msg, stamp);
 }
 
-void SlamNode::processGPSMeasurements()
+void SlamNode::gpsCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
-  if (keyframe_stamps.empty()) {
+  if (msg->header.frame_id != parameters.frames.map) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Ignoring GPS odometry in frame '%s'; expected '%s'",
+      msg->header.frame_id.c_str(), parameters.frames.map.c_str());
     return;
   }
-
-  while (!gps_buffer.empty()) {
-    const auto & gps = gps_buffer.front();
-    const rclcpp::Time gps_stamp(gps.header.stamp);
-
-    // Wait until keyframes bracket this measurement's time
-    if (gps_stamp > keyframe_stamps.back().stamp) {
-      break;
-    }
-
-    double best_dt = std::numeric_limits<double>::infinity();
-    std::size_t best_index = 0;
-
-    for (const auto & keyframe : keyframe_stamps) {
-      const double dt = std::abs((keyframe.stamp - gps_stamp).seconds());
-
-      if (dt < best_dt) {
-        best_dt = dt;
-        best_index = keyframe.index;
-      }
-    }
-
-    if (best_dt <= gps_time_tolerance_sec) {
-      matched_gps.push_back({best_index, gps});
-    }
-
-    // Consume matched fixes and discard those outside tolerance
-    gps_buffer.pop_front();
+  const GpsAddResult result = gps_matcher.add(toGpsMeasurement(*msg));
+  if (result == GpsAddResult::Invalid) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Rejected GPS fix with a non-finite position or invalid covariance");
   }
-
-  const bool has_gps_updates = !matched_gps.empty();
-  while (!matched_gps.empty()) {
-    const auto & match = matched_gps.front();
-    const auto & p = match.measurement.pose.pose.position;
-
-    gtsam::Matrix3 covariance;
-    for (int row = 0; row < 3; ++row) {
-      for (int col = 0; col < 3; ++col) {
-        covariance(row, col) = match.measurement.pose.covariance[row * 6 + col];
-      }
-    }
-
-    backend.addGpsFactor(
-      match.keyframe_index,
-      gtsam::Point3(p.x, p.y, p.z),
-      covariance
-    );
-
-    matched_gps.pop_front();
+  if (result != GpsAddResult::Accepted) {
+    return;
   }
-  if (has_gps_updates) {
-    rebuildMap();
-    publishOutputs(keyframe_stamps.back().stamp);
+  if (applyGpsMatches()) {
+    path_pub->publish(path_msg);
   }
 }
 
-void SlamNode::publishOutputs(const rclcpp::Time & stamp)
+void SlamNode::publishMap()
 {
-  const gtsam::NavState state = backend.latestEstimate();
-  const gtsam::Pose3 pose = state.pose();
-  const gtsam::Point3 position = pose.translation();
-  const auto orientation = pose.rotation().toQuaternion();
-
-  // gtsam velocity is in the map frame, odometry twist uses base link
-  const gtsam::Vector3 body_velocity = pose.rotation().unrotate(state.v());
-
-  nav_msgs::msg::Odometry odometry_msg;
-  odometry_msg.header.stamp = stamp;
-  odometry_msg.header.frame_id = map_frame;
-  odometry_msg.child_frame_id = base_link_frame;
-
-  odometry_msg.pose.pose.position.x = position.x();
-  odometry_msg.pose.pose.position.y = position.y();
-  odometry_msg.pose.pose.position.z = position.z();
-
-  odometry_msg.pose.pose.orientation.w = orientation.w();
-  odometry_msg.pose.pose.orientation.x = orientation.x();
-  odometry_msg.pose.pose.orientation.y = orientation.y();
-  odometry_msg.pose.pose.orientation.z = orientation.z();
-
-  odometry_msg.twist.twist.linear.x = body_velocity.x();
-  odometry_msg.twist.twist.linear.y = body_velocity.y();
-  odometry_msg.twist.twist.linear.z = body_velocity.z();
-
-  slam_odom_pub->publish(odometry_msg);
-
-  geometry_msgs::msg::PoseStamped pose_msg;
-  pose_msg.header = odometry_msg.header;
-  pose_msg.pose = odometry_msg.pose.pose;
-
-  path_msg.header.stamp = stamp;
-  path_msg.poses.resize(latest_keyframe_index + 1);
-  path_msg.poses.at(latest_keyframe_index) = pose_msg;
-  path_pub->publish(path_msg);
-
-  geometry_msgs::msg::TransformStamped transform_msg;
-  transform_msg.header.stamp = stamp;
-  transform_msg.header.frame_id = map_frame;
-  transform_msg.child_frame_id = base_link_frame;
-
-  transform_msg.transform.translation.x = position.x();
-  transform_msg.transform.translation.y = position.y();
-  transform_msg.transform.translation.z = position.z();
-
-  transform_msg.transform.rotation = odometry_msg.pose.pose.orientation;
-  tf_broadcaster->sendTransform(transform_msg);
-}
-
-void SlamNode::rebuildMap()
-{
-  if (keyframe_stamps.empty()) {
+  if (keyframe_map.size() == 0 || !keyframe_map.update(poseLookup())) {
     return;
   }
-
-  accumulated_map->clear();
-  path_msg.poses.clear();
-  path_msg.header.frame_id = map_frame;
-  path_msg.header.stamp = keyframe_stamps.back().stamp;
-  path_msg.poses.reserve(keyframe_stamps.size());
-
-  for (const auto & keyframe : keyframe_stamps) {
-    const gtsam::Pose3 pose = backend.poseAt(keyframe.index);
-
-    // Match the frontend's current identity base_T_lidar assumption.
-    LidarFrontend::Cloud transformed;
-    pcl::transformPointCloud(
-      *keyframe_clouds.at(keyframe.index),
-      transformed,
-      pose.matrix()
-    );
-    *accumulated_map += transformed;
-
-    geometry_msgs::msg::PoseStamped pose_msg;
-    pose_msg.header.frame_id = map_frame;
-    pose_msg.header.stamp = keyframe.stamp;
-    const auto & position = pose.translation();
-    const auto rotation = pose.rotation().toQuaternion();
-    pose_msg.pose.position.x = position.x();
-    pose_msg.pose.position.y = position.y();
-    pose_msg.pose.position.z = position.z();
-    pose_msg.pose.orientation.x = rotation.x();
-    pose_msg.pose.orientation.y = rotation.y();
-    pose_msg.pose.orientation.z = rotation.z();
-    pose_msg.pose.orientation.w = rotation.w();
-    path_msg.poses.push_back(pose_msg);
-  }
-
   sensor_msgs::msg::PointCloud2 map_msg;
-  pcl::toROSMsg(*accumulated_map, map_msg);
-  map_msg.header = path_msg.header;
+  pcl::toROSMsg(keyframe_map.mapCloud(), map_msg);
+  map_msg.header.stamp = keyframe_map.stamps().back();
+  map_msg.header.frame_id = parameters.frames.map;
   map_pub->publish(map_msg);
-  path_pub->publish(path_msg);
 }
 
-void SlamNode::addKeyframeToMap(
-  const LidarFrontend::Cloud::ConstPtr & cloud,
+void SlamNode::initializeAtScan(const sensor_msgs::msg::PointCloud2 & msg)
+{
+  const std::optional<gtsam::Rot3> imu_orientation = settledImuOrientation();
+  if (!imu_orientation) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Waiting for a settled IMU orientation to initialize SLAM");
+    return;
+  }
+  const auto lidar_extrinsic = lookupBaseTransform(msg.header.frame_id);
+  const auto imu_extrinsic = lookupBaseTransform(imu_frame_id);
+  if (!lidar_extrinsic || !imu_extrinsic) {
+    return;
+  }
+  base_T_lidar = *lidar_extrinsic;
+
+  const LidarFrontend::Cloud::Ptr cloud = preprocessScan(msg);
+  if (cloud->empty()) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "First LiDAR scan is empty after filtering; waiting for another");
+    return;
+  }
+
+  // Gravity fixes roll and pitch only; yaw stays zero so the map x-axis is
+  // the starting heading
+  const gtsam::Rot3 measured_map_R_base =
+    imu_orientation->compose(imu_extrinsic->rotation().inverse());
+  const gtsam::Rot3 initial_rotation = gtsam::Rot3::Ypr(
+    0.0, measured_map_R_base.pitch(), measured_map_R_base.roll());
+
+  const rclcpp::Time stamp(msg.header.stamp);
+  backend.initialize(
+    gtsam::NavState(
+      gtsam::Pose3(initial_rotation, gtsam::Point3::Zero()),
+      gtsam::Vector3::Zero()),
+    gtsam::imuBias::ConstantBias(),
+    *imu_extrinsic);
+  imu_buffer.startWindowAt(stamp);
+  commitKeyframe(stamp, cloud);
+
+  RCLCPP_INFO(
+    get_logger(), "SLAM initialized (roll %.3f rad, pitch %.3f rad)",
+    initial_rotation.roll(), initial_rotation.pitch());
+}
+
+bool SlamNode::integrateImuUntil(const rclcpp::Time & stamp)
+{
+  const ImuWindow window = imu_buffer.takeUntil(stamp);
+  if (window.status == ImuWindowStatus::WaitingForData) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Waiting for IMU data to reach the LiDAR scan stamp");
+    return false;
+  }
+  if (window.status == ImuWindowStatus::StaleStamp) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Skipping LiDAR scan that is not newer than the last processed scan");
+    return false;
+  }
+  if (window.largest_gap_s > parameters.imu_maximum_gap_s) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "IMU gap of %.3f s; integrating it with the next sample held constant",
+      window.largest_gap_s);
+  }
+
+  for (const ImuMeasurement & measurement : window.measurements) {
+    if (measurement.dt > 0.0) {
+      backend.integrateImuMeasurement(
+        measurement.acceleration, measurement.angular_velocity, measurement.dt);
+    }
+  }
+  return true;
+}
+
+LidarFrontend::Cloud::Ptr SlamNode::preprocessScan(
+  const sensor_msgs::msg::PointCloud2 & msg
+) const
+{
+  LidarFrontend::Cloud sensor_cloud;
+  pcl::fromROSMsg(msg, sensor_cloud);
+  return lidar_frontend.preprocess(sensor_cloud, base_T_lidar);
+}
+
+// Every scan is registered against the local submap so that published odometry
+// is LiDAR-corrected; only scans passing the keyframe gate enter the factor graph
+void SlamNode::processScan(
+  const sensor_msgs::msg::PointCloud2 & msg,
   const rclcpp::Time & stamp
 )
 {
-  const gtsam::Pose3 map_T_base = backend.latestEstimate().pose();
+  const gtsam::NavState predicted_state = backend.predictedState();
+  const LidarFrontend::Cloud::Ptr cloud = preprocessScan(msg);
+  if (cloud->empty()) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Discarding empty LiDAR cloud");
+    publishState(predicted_state, stamp);
+    return;
+  }
 
-  // FIX FOR ACTUAL - base_T_lidar is identity rn
-  const gtsam::Pose3 map_T_lidar = map_T_base;
+  const auto relative_pose = registerScan(cloud, backend.predictedRelativePose());
+  consecutive_registration_failures = relative_pose ? 0 : consecutive_registration_failures + 1;
+  const gtsam::NavState scan_state = relative_pose ?
+    gtsam::NavState(backend.latestEstimate().pose().compose(*relative_pose), predicted_state.v()) :
+    predicted_state;
 
-  LidarFrontend::Cloud transformed_cloud;
-  pcl::transformPointCloud(*cloud, transformed_cloud, map_T_lidar.matrix());
-
-  *accumulated_map += transformed_cloud;
-  // LidarFrontend::Cloud::Ptr filtered_map(new LidarFrontend::Cloud);
-  // pcl::VoxelGrid<LidarFrontend::Point> voxel_filter;
-  // voxel_filter.setInputCloud(accumulated_map);
-  // voxel_filter.setLeafSize(map_voxel_size_m, map_voxel_size_m, map_voxel_size_m);
-  // voxel_filter.filter(*filtered_map);
-  // accumulated_map = filtered_map;
-
-  sensor_msgs::msg::PointCloud2 map_msg;
-  pcl::toROSMsg(*accumulated_map, map_msg);
-  map_msg.header.stamp = stamp;
-  map_msg.header.frame_id = map_frame;
-  map_pub->publish(map_msg);
+  const double seconds_since_keyframe = (stamp - keyframe_map.stamps().back()).seconds();
+  if (!backend.shouldCreateKeyframe(scan_state.pose(), seconds_since_keyframe)) {
+    publishState(scan_state, stamp);
+    return;
+  }
+  addKeyframe(stamp, cloud, relative_pose, scan_state);
 }
 
+void SlamNode::addKeyframe(
+  const rclcpp::Time & stamp,
+  const LidarFrontend::Cloud::Ptr & cloud,
+  const std::optional<gtsam::Pose3> & relative_pose,
+  const gtsam::NavState & scan_state
+)
+{
+  const bool imu_only_keyframe_due =
+    consecutive_registration_failures >= parameters.registration_maximum_consecutive_failures;
+  if (!relative_pose && !imu_only_keyframe_due) {
+    publishState(scan_state, stamp);
+    return;
+  }
+
+  const std::size_t previous_index = backend.latestIndex();
+  const std::size_t index = backend.addImuKeyframe();
+  if (relative_pose) {
+    backend.addLidarFactor(previous_index, index, *relative_pose);
+  } else {
+    RCLCPP_WARN(
+      get_logger(),
+      "%d consecutive LiDAR registration failures; adding an IMU-only keyframe",
+      consecutive_registration_failures);
+    consecutive_registration_failures = 0;
+  }
+
+  backend.optimize();
+  if (relative_pose) {
+    // Large disagreement means the IMU factor is overriding the LiDAR measurement
+    const gtsam::Pose3 optimized_motion =
+      backend.poseAt(previous_index).between(backend.poseAt(index));
+    RCLCPP_DEBUG(
+      get_logger(), "Keyframe %zu: LiDAR moved %.3f m, optimizer moved %.3f m (difference %.3f m)",
+      index, relative_pose->translation().norm(), optimized_motion.translation().norm(),
+      (optimized_motion.translation() - relative_pose->translation()).norm());
+  }
+  commitKeyframe(stamp, cloud);
 }
+
+std::optional<gtsam::Pose3> SlamNode::registerScan(
+  const LidarFrontend::Cloud::Ptr & cloud,
+  const gtsam::Pose3 & imu_relative_guess
+)
+{
+  const LidarFrontend::Cloud::Ptr submap = keyframe_map.buildLocalSubmap(
+    static_cast<std::size_t>(parameters.registration_submap_keyframes), poseLookup());
+
+  // Identity is the fallback guess for when IMU drift makes the prediction unusable
+  const auto registration_start = std::chrono::steady_clock::now();
+  const LidarRegistrationResult result = lidar_frontend.registerClouds(
+    submap, cloud, {imu_relative_guess, gtsam::Pose3()});
+  const double registration_ms = std::chrono::duration<double, std::milli>(
+    std::chrono::steady_clock::now() - registration_start).count();
+
+  if (result.accepted) {
+    RCLCPP_DEBUG(
+      get_logger(),
+      "LiDAR registration accepted in %.0f ms (%zu source, %zu target points, "
+      "fitness %.3f m^2, inliers %.2f)",
+      registration_ms, cloud->size(), submap->size(),
+      result.fitness_score_m2, result.inlier_fraction);
+    return result.relative_pose;
+  }
+
+  RCLCPP_WARN_THROTTLE(
+    get_logger(), *get_clock(), kWarningThrottleMs,
+    "LiDAR registration rejected after %.0f ms (converged: %s, fitness %.3f m^2, "
+    "inliers %.2f, IMU guess %.2f m / %.3f rad)",
+    registration_ms,
+    result.converged ? "yes" : "no",
+    result.fitness_score_m2,
+    result.inlier_fraction,
+    imu_relative_guess.translation().norm(),
+    gtsam::Rot3::Logmap(imu_relative_guess.rotation()).norm());
+  return std::nullopt;
+}
+
+void SlamNode::commitKeyframe(const rclcpp::Time & stamp, const LidarFrontend::Cloud::Ptr & cloud)
+{
+  const gtsam::NavState state = backend.latestEstimate();
+  keyframe_map.addKeyframe(stamp, cloud, state.pose());
+  path_msg.poses.push_back(toPoseStampedMsg(state.pose(), stamp, parameters.frames.map));
+
+  applyGpsMatches();
+  publishState(backend.latestEstimate(), stamp);
+  path_msg.header.stamp = stamp;
+  path_pub->publish(path_msg);
+}
+
+bool SlamNode::applyGpsMatches()
+{
+  const std::vector<GpsKeyframeMatch> matches = gps_matcher.takeMatches(keyframe_map.stamps());
+  if (matches.empty()) {
+    return false;
+  }
+  for (const GpsKeyframeMatch & match : matches) {
+    // Shift the fix to the keyframe's time using the keyframe's estimated
+    // velocity, so the matching tolerance does not become position error
+    const double keyframe_minus_fix_s =
+      (keyframe_map.stamps()[match.keyframe_index] - match.measurement.stamp).seconds();
+    const gtsam::Point3 position_at_keyframe = match.measurement.position +
+      keyframe_minus_fix_s * backend.velocityAt(match.keyframe_index);
+    backend.addGpsFactor(
+      match.keyframe_index, position_at_keyframe, match.measurement.covariance);
+  }
+  backend.optimize();
+  keyframe_map.markPosesChanged();
+  rebuildPath();
+  return true;
+}
+
+void SlamNode::publishState(const gtsam::NavState & state, const rclcpp::Time & stamp)
+{
+  odometry_pub->publish(
+    toOdometryMsg(
+      state,
+      backend.latestPoseCovariance(),
+      backend.latestVelocityCovariance(),
+      stamp,
+      output_frames));
+  if (parameters.frames.publish_tf) {
+    tf_broadcaster->sendTransform(toTransformMsg(state.pose(), stamp, output_frames));
+  }
+}
+
+void SlamNode::rebuildPath()
+{
+  const std::vector<rclcpp::Time> & stamps = keyframe_map.stamps();
+  path_msg.poses.clear();
+  path_msg.poses.reserve(stamps.size());
+  for (std::size_t index = 0; index < stamps.size(); ++index) {
+    path_msg.poses.push_back(
+      toPoseStampedMsg(backend.poseAt(index), stamps[index], parameters.frames.map));
+  }
+  path_msg.header.stamp = stamps.back();
+}
+
+std::optional<gtsam::Pose3> SlamNode::lookupBaseTransform(const std::string & frame_id)
+{
+  if (frame_id.empty() || frame_id == parameters.frames.base_link) {
+    return gtsam::Pose3();
+  }
+  try {
+    return toPose3(
+      tf_buffer->lookupTransform(
+        parameters.frames.base_link, frame_id, tf2::TimePointZero).transform);
+  } catch (const tf2::TransformException & exception) {
+    RCLCPP_WARN_THROTTLE(
+      get_logger(), *get_clock(), kWarningThrottleMs,
+      "Waiting for transform %s -> %s: %s",
+      parameters.frames.base_link.c_str(), frame_id.c_str(), exception.what());
+    return std::nullopt;
+  }
+}
+
+KeyframeMap::PoseLookup SlamNode::poseLookup() const
+{
+  return [this](std::size_t index) {return backend.poseAt(index);};
+}
+
+}  // namespace urc_slam
 
 #include <rclcpp_components/register_node_macro.hpp>
 RCLCPP_COMPONENTS_REGISTER_NODE(urc_slam::SlamNode)
