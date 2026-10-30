@@ -121,6 +121,8 @@ namespace urc_slam {
             // Null unless rock_landmarks.enabled is set.
             std::unique_ptr<RockLandmarkPipeline> rock_pipeline;
             rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr landmark_pub;
+            // Rocks extracted at the latest keyframe, in the LiDAR frame.
+            rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr rock_detection_pub;
     };
 
 }

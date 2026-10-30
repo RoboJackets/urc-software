@@ -31,6 +31,14 @@ namespace urc_slam {
         const std::string &frame_id,
         const builtin_interfaces::msg::Time &stamp);
 
+    // Rocks extracted from one sweep, in that sweep's sensor frame: one sphere
+    // per rock, sized by its fitted radius. Starts with DELETEALL so rocks from
+    // the previous sweep do not linger.
+    visualization_msgs::msg::MarkerArray makeDetectionMarkers(
+        const std::vector<RockObservation> &observations,
+        const std::string &frame_id,
+        const builtin_interfaces::msg::Time &stamp);
+
 }
 
 #endif

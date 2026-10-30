@@ -18,11 +18,16 @@ namespace urc_slam {
         public:
             RockLandmarkPipeline(const RockLandmarkParams &params, LogSink log);
 
-            // `cloud` is in the sensor frame. `pose_index` must be a keyframe
-            // already in `isam`. The returned update must be applied to iSAM2
-            // before the next call.
-            LandmarkGraphUpdate processSweep(
-                const PointCloud3d &cloud, std::size_t pose_index, const gtsam::ISAM2 &isam);
+            // `cloud` is in the sensor frame; so are the returned rocks.
+            std::vector<RockObservation> extract(const PointCloud3d &cloud) const {
+                return extractor_.extract(cloud);
+            }
+
+            // `pose_index` must be a keyframe already in `isam`. The returned
+            // update must be applied to iSAM2 before the next call.
+            LandmarkGraphUpdate associate(
+                const std::vector<RockObservation> &observations, std::size_t pose_index,
+                const gtsam::ISAM2 &isam);
 
             std::vector<LandmarkSnapshot> snapshots(const gtsam::ISAM2 &isam) const {
                 return manager_.snapshots(isam);

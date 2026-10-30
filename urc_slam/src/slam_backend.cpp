@@ -228,14 +228,15 @@ namespace urc_slam {
     void SlamBackend::addOdometryPoseFactor(
         std::size_t previous_index,
         std::size_t post_index,
-        const gtsam::Pose3 &pose_change
+        const gtsam::Pose3 &pose_change,
+        const gtsam::SharedNoiseModel &noise
     ) {
         new_factors.add(
             gtsam::BetweenFactor<gtsam::Pose3>(
                 poseKey(previous_index),
                 poseKey(post_index),
                 pose_change,
-                lidar_noise
+                noise
             )
         );
         optimize();
@@ -244,15 +245,15 @@ namespace urc_slam {
     void SlamBackend::addOdometryVelocityFactor(
         std::size_t previous_index,
         std::size_t post_index,
-        const gtsam::Vector3 &velocity_change
+        const gtsam::Vector3 &velocity_change,
+        const gtsam::SharedNoiseModel &noise
     ) {
-        
         new_factors.add(
             gtsam::BetweenFactor<gtsam::Vector3>(
                 velocityKey(previous_index),
                 velocityKey(post_index),
                 velocity_change,
-                lidar_noise
+                noise
             )
         );
         optimize();

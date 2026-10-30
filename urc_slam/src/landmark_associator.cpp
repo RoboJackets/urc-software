@@ -12,6 +12,7 @@ namespace urc_slam {
         // observation's range. A fixed angular sigma smears points sideways by
         // range * sigma, so far rocks are less certain than near ones. Azimuth
         // and elevation share bearing_sigma_rad, matching the factor's Unit3 noise.
+        //Ahh this creates the measurement covariance matric which is related to the joint innovation covaraince matrix how?
         Eigen::Matrix3d cartesianMeasurementCovariance(
             const RockObservation &observation, const RockMeasurementNoise &noise
         ) {
@@ -58,6 +59,8 @@ namespace urc_slam {
         const gtsam::Point3 in_base =
             pose.pose.transformTo(candidate.position, d_base_d_pose, d_base_d_landmark);
         const gtsam::Point3 in_sensor = base_T_sensor_.transformTo(in_base);
+
+        //gets the inverse rotation for the base to sensor transofrm -- sensor to base
         const gtsam::Matrix3 sensor_R_base = base_T_sensor_.rotation().inverse().matrix();
 
         PairTerm term;
@@ -74,13 +77,20 @@ namespace urc_slam {
         // innovation covariance: the gate is too LOOSE (more false candidates,
         // more reliance on the JCBB joint test and the Huber kernel to reject
         // them). It never makes the gate too tight.
+
+
+        
         term.independent_covariance =
             landmark_jacobian * candidate.covariance * landmark_jacobian.transpose() +
             cartesianMeasurementCovariance(observation, noise_);
 
+
+            //the pose.covariance can be got from the isam 2 graph.
         const Eigen::Matrix3d innovation_covariance =
             term.pose_jacobian * pose.covariance * term.pose_jacobian.transpose() +
             term.independent_covariance;
+
+            
         const double distance_sq =
             term.innovation.dot(innovation_covariance.ldlt().solve(term.innovation));
         term.individually_compatible =

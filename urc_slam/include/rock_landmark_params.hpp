@@ -10,12 +10,10 @@
 namespace urc_slam {
 
     // Noise of a rock observation expressed as range/bearing of the EXTRACTED
-    // centre (sphere-fit centre or centroid). The repo defines no such value (its lidar_sigmas describe the
-    // ICP relative pose), so these start unset and validate() rejects NaN.
+    // centre (sphere-fit centre). No default: values come from configuration
+    // (measured in simulation, see slam_params.yaml) and validate() rejects NaN.
     struct RockMeasurementNoise {
-        // TODO(AJ): set from repo/measurement
         double range_sigma_m = std::numeric_limits<double>::quiet_NaN();
-        // TODO(AJ): set from repo/measurement
         double bearing_sigma_rad = std::numeric_limits<double>::quiet_NaN();
     };
 

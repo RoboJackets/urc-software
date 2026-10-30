@@ -53,17 +53,25 @@ namespace urc_slam {
             // Wheel odometry motion between two existing keyframes.
             // Pose delta is previous-body-to-next-body; velocity delta is
             // next minus previous in the same frame as the graph velocities.
+            // `noise` must be 6-dimensional, in Pose3 tangent order
+            // (roll, pitch, yaw, x, y, z).
             void addOdometryPoseFactor(
                 std::size_t previous_index,
                 std::size_t post_index,
-                const gtsam::Pose3 &pose_change
+                const gtsam::Pose3 &pose_change,
+                const gtsam::SharedNoiseModel &noise
             );
 
+            // `noise` must be 3-dimensional (vx, vy, vz).
             void addOdometryVelocityFactor(
                 std::size_t previous_index,
                 std::size_t post_index,
-                const gtsam::Vector3 &velocity_change
+                const gtsam::Vector3 &velocity_change,
+                const gtsam::SharedNoiseModel &noise
             );
+
+            // 6-dimensional, Pose3 tangent order (roll, pitch, yaw, x, y, z).
+            const gtsam::SharedNoiseModel &lidarNoise() const { return lidar_noise; }
 
             // Adds a raw imu sample to the preintegrator
             // Every time an imu measurement arrives, accumulate it into
@@ -103,7 +111,7 @@ namespace urc_slam {
                 const gtsam::NonlinearFactorGraph &factors,
                 const gtsam::Values &values
             );
-        private:
+        
             void optimize();
         private:
 

@@ -70,30 +70,19 @@ int main() {
         for (const auto &observation : found) {
             if (matches(observation, truth, 0.08)) {
                 matched = true;
-                CHECK(observation.center_from_sphere_fit);
                 CHECK_NEAR(observation.radius_m, rock.radius, 0.08);
+                std::cout << "rock r=" << rock.radius << ": centre error sphere fit "
+                          << (observation.sensor_point - truth).norm() << " m" << std::endl;
             }
         }
         CHECK(matched);
     }
 
-    // The point of the pivot: the visible cap's centroid is biased toward the
-    // sensor by roughly a radius/2, while the fitted centre is not. Force the
-    // centroid fallback (sphere fit rejected) and check it is measurably worse.
+    // A rejected sphere fit yields no observation rather than a centroid
+    // biased toward the sensor.
     urc_slam::RockExtractorParams no_fit;
     no_fit.max_sphere_rms_m = 0.0;
-    const auto centroid_only = urc_slam::RockExtractor(no_fit).extract(syntheticSweep(rocks, sensor_height_m));
-    CHECK(centroid_only.size() == 2);
-    for (const Rock &rock : rocks) {
-        const Eigen::Vector3d truth = rock.center - Eigen::Vector3d(0.0, 0.0, sensor_height_m);
-        double best_fit_error = 1e9;
-        double best_centroid_error = 1e9;
-        for (const auto &o : found) { best_fit_error = std::min(best_fit_error, (o.sensor_point - truth).norm()); }
-        for (const auto &o : centroid_only) { best_centroid_error = std::min(best_centroid_error, (o.sensor_point - truth).norm()); }
-        std::cout << "rock r=" << rock.radius << ": centre error sphere fit " << best_fit_error
-                  << " m, centroid " << best_centroid_error << " m" << std::endl;
-        CHECK(best_centroid_error > 2.0 * best_fit_error);
-    }
+    CHECK(urc_slam::RockExtractor(no_fit).extract(syntheticSweep(rocks, sensor_height_m)).empty());
 
     // Bare ground produces nothing.
     CHECK(extractor.extract(syntheticSweep({}, sensor_height_m)).empty());

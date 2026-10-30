@@ -47,7 +47,7 @@ namespace urc_slam {
             RockLandmarkParams params;
             params.extractor = declareExtractorParams(node);
             params.associator = declareAssociatorParams(node);
-            // NaN default on purpose: validate() rejects it until the noise is measured.
+            // NaN default on purpose: validate() rejects it unless config supplies the noise.
             params.noise.range_sigma_m = node.declare_parameter<double>(
                 "rock_landmarks.noise.range_sigma_m", std::numeric_limits<double>::quiet_NaN());
             params.noise.bearing_sigma_rad = node.declare_parameter<double>(
@@ -59,12 +59,13 @@ namespace urc_slam {
 
         visualization_msgs::msg::Marker baseMarker(
             const std::string &frame_id, const builtin_interfaces::msg::Time &stamp,
-            int id, int type, const gtsam::Point3 &position
+            int id, int type, const gtsam::Point3 &position,
+            const std::string &ns = "rock_landmarks"
         ) {
             visualization_msgs::msg::Marker marker;
             marker.header.frame_id = frame_id;
             marker.header.stamp = stamp;
-            marker.ns = "rock_landmarks";
+            marker.ns = ns;
             marker.id = id;
             marker.type = type;
             marker.action = visualization_msgs::msg::Marker::ADD;
@@ -131,6 +132,36 @@ namespace urc_slam {
             label.scale.z = 0.3;
             label.color.r = label.color.g = label.color.b = label.color.a = 1.0F;
             array.markers.push_back(label);
+        }
+        return array;
+    }
+
+    visualization_msgs::msg::MarkerArray makeDetectionMarkers(
+        const std::vector<RockObservation> &observations,
+        const std::string &frame_id,
+        const builtin_interfaces::msg::Time &stamp
+    ) {
+        visualization_msgs::msg::MarkerArray array;
+        array.markers.reserve(observations.size() + 1);
+        visualization_msgs::msg::Marker clear;
+        clear.header.frame_id = frame_id;
+        clear.header.stamp = stamp;
+        clear.ns = "rock_detections";
+        clear.action = visualization_msgs::msg::Marker::DELETEALL;
+        array.markers.push_back(clear);
+
+        for (std::size_t i = 0; i < observations.size(); ++i) {
+            const RockObservation &rock = observations[i];
+            auto sphere = baseMarker(frame_id, stamp, static_cast<int>(i),
+                                     visualization_msgs::msg::Marker::SPHERE, rock.sensor_point,
+                                     "rock_detections");
+            sphere.scale.x = sphere.scale.y = sphere.scale.z =
+                2.0 * std::max(rock.radius_m, kMinimumMarkerRadiusM);
+            sphere.color.r = 0.0F;
+            sphere.color.g = 0.8F;
+            sphere.color.b = 1.0F;
+            sphere.color.a = 0.6F;
+            array.markers.push_back(sphere);
         }
         return array;
     }

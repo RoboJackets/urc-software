@@ -11,6 +11,7 @@
 #include <Eigen/Cholesky>
 
 #include <gtsam/geometry/Rot3.h>
+#include <gtsam/linear/NoiseModel.h>
 #include <gtsam/navigation/ImuBias.h>
 #include <gtsam/navigation/NavState.h>
 
@@ -24,6 +25,9 @@ namespace {
     //About 5 s of imu history at 100 Hz
     constexpr std::size_t kMaximumImuBufferSize = 500;
     constexpr double kUnitQuaternionTolerance = 1e-3;
+    // Sigma for factor dimensions a sensor does not observe: large enough
+    // that the factor does not constrain them.
+    constexpr double kUnobservedSigma = 1e3;
 }
 
 namespace urc_slam {
@@ -141,6 +145,10 @@ namespace urc_slam {
         landmark_pub = create_publisher<visualization_msgs::msg::MarkerArray>(
             declare_parameter<std::string>("landmark_topic", "/slam/landmarks"),
             rclcpp::QoS(1).reliable().transient_local()
+        );
+        rock_detection_pub = create_publisher<visualization_msgs::msg::MarkerArray>(
+            declare_parameter<std::string>("rock_detection_topic", "/slam/rock_detections"),
+            rclcpp::QoS(1)
         );
     }
 
@@ -297,7 +305,10 @@ namespace urc_slam {
         );
 
         if (!registration.converged) {
-            RCLCPP_WARN(get_logger(), "LiDAR registration did not converge");
+            RCLCPP_WARN(get_logger(),
+                "LiDAR registration did not converge (IMU guess: %.2f m, yaw %.1f deg)",
+                imu_relative_guess.translation().norm(),
+                imu_relative_guess.rotation().yaw() * 180.0 / M_PI);
             return;
         }
 
@@ -367,8 +378,12 @@ namespace urc_slam {
             return;
         }
 
-        const LandmarkGraphUpdate update = rock_pipeline->processSweep(
-            toPointCloud3d(raw_cloud), pose_index, backend.isamGraph());
+        const std::vector<RockObservation> observations = rock_pipeline->extract(toPointCloud3d(raw_cloud));
+        rock_detection_pub->publish(makeDetectionMarkers(
+            observations, raw_cloud.header.frame_id, pcl_conversions::fromPCL(raw_cloud.header).stamp));
+
+        const LandmarkGraphUpdate update = rock_pipeline->associate(
+            observations, pose_index, backend.isamGraph());
         backend.addLandmarkUpdate(update.factors, update.values);
 
         RCLCPP_DEBUG(get_logger(), "Rocks at keyframe %zu: %zu matched, %zu new, %zu ambiguous",
@@ -572,19 +587,21 @@ namespace urc_slam {
             const auto &previous_velocity = previous.measurement.twist.twist.linear;
             const auto &post_velocity = post.measurement.twist.twist.linear;
 
-            //Previous Pose
-            const gtsam::Pose3 previous_odom_pose(
-                gtsam::Point3(previous_pose.position.x, previous_pose.position.y, 0.0)
+            // Wheel odometry is planar: x, y and yaw (from quaternion z, w).
+            const double previous_yaw = 2.0 * std::atan2(previous_pose.orientation.z, previous_pose.orientation.w);
+            const double post_yaw = 2.0 * std::atan2(post_pose.orientation.z, post_pose.orientation.w);
+
+            // Displacement in the odometry frame, rotated into the previous
+            // keyframe's body frame (x forward, y left).
+            const double dx = post_pose.position.x - previous_pose.position.x;
+            const double dy = post_pose.position.y - previous_pose.position.y;
+            const double forward = std::cos(previous_yaw) * dx + std::sin(previous_yaw) * dy;
+            const double left = -std::sin(previous_yaw) * dx + std::cos(previous_yaw) * dy;
+
+            const gtsam::Pose3 pose_change(
+                gtsam::Rot3::Yaw(post_yaw - previous_yaw),
+                gtsam::Point3(forward, left, 0.0)
             );
-
-            //Post Pose
-            const gtsam::Pose3 post_odom_pose(
-                gtsam::Point3(post_pose.position.x, post_pose.position.y, 0.0)
-            );
-
-            //Change in pose
-            const gtsam::Pose3 pose_change = previous_odom_pose.between(post_odom_pose);
-
 
             const gtsam::Vector3 velocity_change(
                 post_velocity.x - previous_velocity.x,
@@ -592,11 +609,23 @@ namespace urc_slam {
                 0.0
             );
 
+            // Placeholder noise until wheel odometry is measured: the LiDAR
+            // sigmas for the dimensions wheel odometry observes (Pose3 tangent
+            // order roll, pitch, yaw, x, y, z), and effectively no constraint
+            // on the rest. The velocity sigmas reuse the x/y position sigmas.
+            const gtsam::Vector lidar_sigmas = backend.lidarNoise()->sigmas();
+            gtsam::Vector6 pose_sigmas;
+            pose_sigmas << kUnobservedSigma, kUnobservedSigma, lidar_sigmas(2),
+                           lidar_sigmas(3), lidar_sigmas(4), kUnobservedSigma;
+            const gtsam::Vector3 velocity_sigmas(lidar_sigmas(3), lidar_sigmas(4), kUnobservedSigma);
+
             backend.addOdometryPoseFactor(
-                previous.keyframe_index, post.keyframe_index, pose_change
+                previous.keyframe_index, post.keyframe_index, pose_change,
+                gtsam::noiseModel::Diagonal::Sigmas(pose_sigmas)
             );
             backend.addOdometryVelocityFactor(
-                previous.keyframe_index, post.keyframe_index, velocity_change
+                previous.keyframe_index, post.keyframe_index, velocity_change,
+                gtsam::noiseModel::Diagonal::Sigmas(velocity_sigmas)
             );
 
             matched_odom.pop_front();

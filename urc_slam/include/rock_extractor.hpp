@@ -9,7 +9,8 @@
 namespace urc_slam {
 
     // Finds rocks in one 3D sweep: ground removal -> Euclidean clustering ->
-    // size filtering -> sphere fit for the centre. Stateless between sweeps.
+    // size filtering -> sphere fit for the centre. Clusters without a
+    // trustworthy sphere fit are dropped. Stateless between sweeps.
     class RockExtractor {
         public:
             explicit RockExtractor(const RockExtractorParams &params);

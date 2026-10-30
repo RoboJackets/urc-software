@@ -35,11 +35,15 @@ namespace urc_slam {
         }
     }
 
+
+
+
     std::vector<LandmarkCandidate> LandmarkManager::gatherCandidates(
         const gtsam::ISAM2 &isam, std::size_t pose_index
     ) const {
         std::vector<LandmarkCandidate> candidates;
         candidates.reserve(landmarks_.size());
+
         for (const LandmarkRecord &record : landmarks_) {
             // Created by a previous scan whose update has not been applied yet.
             if (!isam.valueExists(record.key)) {
@@ -81,6 +85,8 @@ namespace urc_slam {
         );
         // Huber: down-weights residuals beyond the kernel width instead of
         // letting one wrong association pull the whole trajectory.
+
+        //This noise here should include the empirical covariance for rock detection/error in rock position/as well as the hubert model(or both)
         const gtsam::SharedNoiseModel noise = gtsam::noiseModel::Robust::Create(
             gtsam::noiseModel::mEstimator::Huber::Create(params_.huber_kernel_width),
             gtsam::noiseModel::Diagonal::Sigmas(sigmas)

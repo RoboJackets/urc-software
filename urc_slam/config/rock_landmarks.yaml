@@ -15,10 +15,9 @@ rock_landmarks:
     max_height_m: 1.5
     max_sphere_rms_m: 0.05
   noise:
-    # TODO(AJ): set from repo/measurement. Deliberately NaN: validate() rejects
-    # it, so the pipeline cannot run on an invented value.
-    range_sigma_m: .nan
-    bearing_sigma_rad: .nan
+    # From the simulated LiDAR Monte Carlo; see slam_params.yaml.
+    range_sigma_m: 0.085
+    bearing_sigma_rad: 0.028
   associator:
     gate_confidence: 0.99
     recently_seen_window_poses: 10

@@ -14,14 +14,13 @@ namespace urc_slam {
 
     // One rock seen in one sweep, in the SENSOR frame.
     struct RockObservation {
-        // Best estimate of the rock's centre: the fitted sphere centre when the
-        // fit was trustworthy, else the centroid of the visible points.
+        // Fitted sphere centre. Clusters without a trustworthy fit produce no
+        // observation at all.
         Eigen::Vector3d sensor_point = Eigen::Vector3d::Zero();
-        // Fitted radius, or half the horizontal extent when the fit was rejected.
         double radius_m = 0.0;
+        
         // Highest visible point above the locally estimated ground.
         double height_m = 0.0;
-        bool center_from_sphere_fit = false;
 
         double range_m() const { return sensor_point.norm(); }
         double azimuth_rad() const { return std::atan2(sensor_point.y(), sensor_point.x()); }

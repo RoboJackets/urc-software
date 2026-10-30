@@ -14,11 +14,13 @@ namespace urc_slam {
         double rms_residual_m;
     };
 
-    // Algebraic least-squares sphere fit: |p|^2 = 2 c.p + (r^2 - |c|^2) is
-    // linear in (c, r^2 - |c|^2). Minimises an algebraic, not geometric,
-    // error, which is biased for very small caps but needs no iteration.
+    // Geometric least-squares sphere fit: minimises the sum of squared
+    // point-to-surface distances (|p - c| - r)^2 by Levenberg-Marquardt,
+    // starting from the linear algebraic fit |p|^2 = 2 c.p + (r^2 - |c|^2).
+    // The refinement removes the algebraic fit's small-cap bias; iterations
+    // are capped, so the cost stays bounded per call.
     // Returns nullopt for fewer than 4 points or a degenerate (planar or
-    // collinear) set. Points are centred internally for conditioning.
+    // collinear) set.
     std::optional<SphereFit> fitSphere(const std::vector<Eigen::Vector3d> &points);
 
 }

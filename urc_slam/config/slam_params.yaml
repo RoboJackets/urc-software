@@ -14,16 +14,21 @@ slam_node:
 
     # Landmark positions as rviz markers (spheres + labels), in map_frame.
     landmark_topic: /slam/landmarks
+    # Rocks extracted from the latest keyframe sweep, in the LiDAR frame.
+    rock_detection_topic: /slam/rock_detections
 
-    # Rock landmark loop closure. Off by default: enabling it requires the
-    # measurement noise below, which has no default (see REVIEW_NOTES.md).
+    # Rock landmark loop closure. Off by default (see REVIEW_NOTES.md).
     rock_landmarks:
-      enabled: false
+      enabled: true
       noise:
-        # TODO(AJ): set from repo/measurement. Left unset on purpose; the node
-        # refuses to start with enabled: true until these are positive.
-        range_sigma_m: .nan
-        bearing_sigma_rad: .nan
+        # RMS centre error (bias included) of all sphere-fit detections in the
+        # simulated 16-beam LiDAR Monte Carlo (3.92 M sweeps, no centroid
+        # fallback). Error did not track rock size or range, so no scaling.
+        range_sigma_m: 0.085
+        # Azimuth and elevation share one sigma (Unit3 factor). Measured RMS:
+        # azimuth 0.0093 rad, elevation 0.028 rad; the larger is used so the
+        # vertical error is not over-trusted.
+        bearing_sigma_rad: 0.028
       # Remaining keys (extractor.*, associator.*, huber_kernel_width) use the
       # defaults in rock_landmark_params.hpp; override here to tune.
 

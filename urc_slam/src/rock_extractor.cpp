@@ -76,23 +76,21 @@ namespace urc_slam {
             return fit;
         }
 
-        RockObservation observe(const ClusterShape &shape, const RockExtractorParams &params) {
-            RockObservation rock;
-            rock.height_m = shape.height_m;
-
-            // TODO(AJ): A 3D LiDAR still sees only the near cap of a rock. The
-            // sphere fit removes most of the viewing-direction shift of the
-            // centroid for round rocks, but irregular rocks bias the fit toward
-            // the sensor, and the centroid fallback is biased as before. Work out
+        // No observation without a trustworthy sphere: the visible-point
+        // centroid sits on the near cap, biased toward the sensor by roughly
+        // 0.8 * radius, which would corrupt the landmark it is associated with.
+        std::optional<RockObservation> observe(const ClusterShape &shape, const RockExtractorParams &params) {
+            // TODO(AJ): A 3D LiDAR still sees only the near cap of a rock.
+            // Irregular rocks bias the sphere fit toward the sensor; work out
             // the effect on re-observation from the opposite side.
-            if (const auto fit = trustworthySphere(shape, params)) {
-                rock.sensor_point = fit->center;
-                rock.radius_m = fit->radius_m;
-                rock.center_from_sphere_fit = true;
-            } else {
-                rock.sensor_point = shape.centroid;
-                rock.radius_m = 0.5 * shape.horizontal_extent_m;
+            const std::optional<SphereFit> fit = trustworthySphere(shape, params);
+            if (!fit) {
+                return std::nullopt;
             }
+            RockObservation rock;
+            rock.sensor_point = fit->center;
+            rock.radius_m = fit->radius_m;
+            rock.height_m = shape.height_m;
             return rock;
         }
 
@@ -112,8 +110,11 @@ namespace urc_slam {
         std::vector<RockObservation> rocks;
         for (const std::vector<std::size_t> &indices : clusterPoints(elevated, params_.cluster_tolerance_m)) {
             const ClusterShape shape = describeCluster(elevated, indices);
-            if (isRockSized(shape, params_)) {
-                rocks.push_back(observe(shape, params_));
+            if (!isRockSized(shape, params_)) {
+                continue;
+            }
+            if (const std::optional<RockObservation> rock = observe(shape, params_)) {
+                rocks.push_back(*rock);
             }
         }
         return rocks;

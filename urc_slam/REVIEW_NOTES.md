@@ -75,9 +75,11 @@ sigmas (`Diagonal::Sigmas`).
 **Result: there is no range or bearing noise for raw LiDAR points or for an
 extracted feature anywhere in the repo.** The closest, `lidar_sigmas`, is the
 noise of an ICP relative pose and is unsuitable for a range/bearing factor.
-So the rock noise is a new parameter pair, left unset (NaN, rejected by
-`validate()`) with `TODO(AJ): set from repo/measurement`. The tests use
-clearly labelled test-only values.
+So the rock noise is a new parameter pair with no code default (NaN, rejected
+by `validate()`). `slam_params.yaml` sets it from a simulated-LiDAR Monte
+Carlo of the extractor: range 0.085 m, bearing 0.028 rad (RMS centre error,
+not scaled by rock size or range). The tests use clearly labelled test-only
+values.
 
 **GTSAM version / marginal APIs.** **Not verified: GTSAM is not installed on
 this machine.** The repo pins no version (`find_package(GTSAM REQUIRED)`,
@@ -99,8 +101,8 @@ lowest z in each point's 3x3 grid neighbourhood is "ground", and points more
 than `ground_clearance_m` above it survive), groups the survivors with
 Euclidean clustering (`clusterPoints`), keeps clusters of rock-like point
 count, width and height, and estimates each rock's centre by least-squares
-sphere fit (`fitSphere`), falling back to the visible-point centroid when the
-fit is implausible. `LandmarkManager::processScan` then reads the current pose
+sphere fit (`fitSphere`). Clusters whose fit is implausible are dropped: the
+visible-point centroid would be biased toward the sensor. `LandmarkManager::processScan` then reads the current pose
 estimate and marginal covariance from iSAM2, collects existing landmarks
 (position + marginal covariance), and calls `LandmarkAssociator::associate`.
 The associator predicts each landmark's position in the sensor frame, gates
@@ -117,7 +119,7 @@ into its pending iSAM2 update.
 ## 3. Reading order
 
 1. `include/rock_types.hpp`, `include/rock_landmark_params.hpp`: data types and
-   every tunable. Note the NaN noise.
+   every tunable. The noise has no code default; it comes from config.
 2. `src/rock_extractor.cpp` (orchestration, size filters, the centre TODO), then
    `src/ground_filter.cpp`, `src/point_clustering.cpp`, `src/sphere_fit.cpp`
    (each one idea; note what each assumes).
@@ -130,8 +132,8 @@ into its pending iSAM2 update.
    construction, landmark initialisation.
 6. `test/test_jcbb_vs_nearest_neighbor.cpp` (the clearest statement of why JCBB),
    `test_jcbb_search.cpp` (same example without GTSAM), `test_ambiguity.cpp`,
-   `test_loop_closure_graph.cpp`, `test_rock_extractor.cpp` (prints sphere-fit vs
-   centroid error).
+   `test_loop_closure_graph.cpp`, `test_rock_extractor.cpp` (prints sphere-fit
+   centre error).
 
 ## 4. Parameters added
 
@@ -144,9 +146,9 @@ into its pending iSAM2 update.
 | `extractor.min_points` / `max_points` | 20 / 20000 | Point-count filter |
 | `extractor.min_radius_m` / `max_radius_m` | 0.1 / 1.0 | Bounds sphere radius and (doubled) horizontal extent |
 | `extractor.max_height_m` | 1.5 | Rejects people/poles/walls |
-| `extractor.max_sphere_rms_m` | 0.05 | Larger: accepts rougher rocks for sphere-fit centres (less centroid fallback, riskier fits) |
-| `noise.range_sigma_m` | **unset (NaN)** | `TODO(AJ)`. Larger: wider gates, weaker range constraint. Should include sphere-fit error, not only sensor noise |
-| `noise.bearing_sigma_rad` | **unset (NaN)** | `TODO(AJ)`. Same, for azimuth and elevation (one shared sigma: the factor's Unit3 tangent has no preferred axis) |
+| `extractor.max_sphere_rms_m` | 0.05 | Larger: accepts rougher rocks (fewer dropped clusters, riskier fits) |
+| `noise.range_sigma_m` | 0.085 (config; no code default) | Measured in simulation. Larger: wider gates, weaker range constraint |
+| `noise.bearing_sigma_rad` | 0.028 (config; no code default) | Measured elevation RMS; azimuth was 0.0093 but the factor's Unit3 tangent shares one sigma |
 | `associator.gate_confidence` | 0.99 | Larger gate: more candidates, more JCBB work, more ambiguity |
 | `associator.recently_seen_window_poses` | 10 | Larger: more landmarks count as "recent", so single-pairing matches are allowed more often |
 | `associator.min_pairings_for_reassociation` | 2 | Larger: loop closures need more simultaneously visible rocks (safer, rarer) |
@@ -177,8 +179,8 @@ Made, all under `urc_slam/`:
   now `static constexpr`.
 
 Behaviour to know:
-- **Disabled by default.** With `rock_landmarks.enabled: true` and the noise
-  still NaN, the node throws at startup by design.
+- **Disabled by default.** If the noise is missing from config, the node
+  throws at startup by design.
 - **Keyframes only.** Non-keyframe sweeps return early in `lidarCallback` and
   have no pose node, so rocks are only processed at keyframes (>= 0.5 m or
   ~10 degrees apart), not literally every sweep. Processing every sweep would
@@ -186,7 +188,9 @@ Behaviour to know:
 - Visualization: `/slam/landmarks` (`visualization_msgs/MarkerArray`, frame
   `map_frame`, transient-local so rviz sees it on late join): an orange sphere
   sized by the fitted radius plus an `L<id>` label per landmark. Add it in rviz
-  as a MarkerArray display.
+  as a MarkerArray display. `/slam/rock_detections` (`rock_detection_topic`)
+  shows the rocks extracted at the latest keyframe as cyan spheres, in the
+  LiDAR frame.
 - **None of the wiring has been compiled** (no ROS, PCL or GTSAM on this
   machine). Expect to fix compile errors on first build.
 
@@ -253,9 +257,11 @@ Notes and limits:
   Landmark-landmark cross terms are ignored for the same reason.
 - **Centre bias** (the TODO in `rock_extractor.cpp`): the 3D sweep still sees
   only the near cap. The sphere fit removes most of the shift for round rocks
-  (synthetic test: ~0.4 mm vs ~0.2 m centroid error), but that test uses
-  perfect spheres. Real rocks are irregular, the algebraic fit is biased for
-  small caps, and the centroid fallback keeps the old bias. Unsolved by design;
+  (synthetic test: under 1 mm centre error), but that test uses
+  perfect spheres. Real rocks are irregular (the geometric refinement removes
+  the algebraic fit's small-cap bias, not shape mismatch). Clusters without a
+  trustworthy fit are dropped rather than reported at the biased centroid,
+  which costs detections at range. Unsolved by design;
   needs real data.
 - **Ground model is crude.** Lowest-z-in-3x3-cells assumes a roughly level
   sensor and gentle slope (slope x cell size < clearance); boulder fields and
