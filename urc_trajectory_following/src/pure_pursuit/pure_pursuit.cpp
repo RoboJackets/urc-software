@@ -1,6 +1,8 @@
 #include "urc_trajectory_following/pure_pursuit/pure_pursuit.hpp"
 #include "urc_trajectory_following/geometry_util.hpp"
 #include <algorithm>
+#include <stdexcept>
+#include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace pure_pursuit
@@ -16,6 +18,9 @@ PurePursuit::getLookaheadPose(
   const nav_msgs::msg::Path & path,
   double lookahead_distance)
 {
+  if (path.poses.empty()) {
+    throw std::invalid_argument("Pure Pursuit requires a non-empty path");
+  }
   // Find the closest pose in the path
   auto closestPoseIt =
     find_min_by(
@@ -23,6 +28,11 @@ PurePursuit::getLookaheadPose(
     [&](const geometry_msgs::msg::PoseStamped & pose) {
       return geometry_util::magnitude(pose.pose.position);
     });
+
+  // A localization correction can put the entire path outside the lookahead circle.
+  if (geometry_util::magnitude(closestPoseIt->pose.position) >= lookahead_distance) {
+    return *closestPoseIt;
+  }
 
   // Find the first point outside the lookahead distance, starting at the pose
   // closest to the current pose
@@ -68,19 +78,20 @@ trajectory_following::TrajectoryOutput PurePursuit::getCommandVelocity(
 
   nav_msgs::msg::Path transformed_path_;
 
-  // modify map_to_base_link to have zero z translation and zero x,y rotation
+  // Project the 3D SLAM transform onto the ground plane using a unit yaw rotation.
   geometry_msgs::msg::TransformStamped map_to_base_link_modified =
     map_to_base_link;
   map_to_base_link_modified.transform.translation.z = 0.0;
-  map_to_base_link_modified.transform.rotation.x = 0.0;
-  map_to_base_link_modified.transform.rotation.y = 0.0;
+  tf2::Quaternion planar_rotation;
+  planar_rotation.setRPY(0.0, 0.0, tf2::getYaw(map_to_base_link.transform.rotation));
+  map_to_base_link_modified.transform.rotation = tf2::toMsg(planar_rotation);
 
   for (const auto & pose : path_.poses) {
     geometry_msgs::msg::PoseStamped transformed_pose;
 
     tf2::doTransform(pose, transformed_pose, map_to_base_link_modified);
     transformed_path_.poses.push_back(transformed_pose);
-    RCLCPP_INFO(
+    RCLCPP_DEBUG(
       logger,
       "Current Pose: (%f, %f, w: %f, z: %f), map_to_base_link: (%f, %f, w: "
       "%f, z: %f), Transformed Path Pose: (%f, %f, w: %f, z: %f)",

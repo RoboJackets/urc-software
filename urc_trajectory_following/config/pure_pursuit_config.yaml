@@ -6,7 +6,8 @@ follower_action_server:
     max_angular_velocity: 1.0
     heading_alignment_tolerance: 0.2
     enable_swerve_motion: true
-    lethal_cost_threshold: 0.5
+    # Matches urc_perception, where 1.0 means lethal; compared with >=
+    lethal_cost_threshold: 1.0
     cmd_vel_stamped: false
     cmd_vel_topic: "/cmd_vel"
     map_frame: "map"

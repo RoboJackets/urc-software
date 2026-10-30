@@ -78,12 +78,15 @@ namespace urc_slam {
 
     }
 
-    std::unique_ptr<RockLandmarkPipeline> createRockPipeline(rclcpp::Node &node) {
+    std::unique_ptr<RockLandmarkPipeline> createRockPipeline(
+        rclcpp::Node &node, const gtsam::Pose3 &base_T_sensor
+    ) {
         const bool enabled = node.declare_parameter<bool>("rock_landmarks.enabled", false);
-        const RockLandmarkParams params = declareParams(node);
+        RockLandmarkParams params = declareParams(node);
         if (!enabled) {
             return nullptr;
         }
+        params.base_T_sensor = base_T_sensor;
 
         // Association diagnostics can fire every sweep; throttle so logging
         // never dominates the LiDAR callback.

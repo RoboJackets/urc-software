@@ -75,10 +75,10 @@ namespace urc_slam {
         const gtsam::Pose3 guess = earlier_pose.between(backend.poseAt(current_index));
 
         const LidarRegistrationResult registration =
-            frontend_.registerClouds(clouds[earlier_index], clouds[current_index], guess);
-        if (!registration.converged || registration.fitness_score > params_.max_fitness_score) {
+            frontend_.registerClouds(clouds[earlier_index], clouds[current_index], {guess});
+        if (!registration.converged || registration.fitness_score_m2 > params_.max_fitness_score) {
             log("loop candidate " + std::to_string(earlier_index) + " rejected: " +
-                (registration.converged ? "fitness " + std::to_string(registration.fitness_score)
+                (registration.converged ? "fitness " + std::to_string(registration.fitness_score_m2)
                                         : std::string("GICP did not converge")));
             return std::nullopt;
         }
@@ -108,7 +108,7 @@ namespace urc_slam {
         LoopClosure closure;
         closure.earlier_index = earlier_index;
         closure.relative_pose = registration.relative_pose;
-        closure.fitness_score = registration.fitness_score;
+        closure.fitness_score = registration.fitness_score_m2;
         closure.correction_distance_sq = gate.distance_sq;
         closure.huber_kernel_width = params_.huber_kernel_width;
         return closure;

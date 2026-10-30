@@ -23,9 +23,8 @@ namespace urc_slam {
 
     struct LoopClosureParams {
         LoopCandidateParams candidates;
-        // Mean squared nearest-neighbour distance after alignment, in m^2
-        // (PCL getFitnessScore). 0.5 is the default slam_node.cpp declares for
-        // lidar_frontend.maximum_fitness_score; slam_params.yaml uses 2.5.
+        // Mean squared inlier distance after alignment, in m^2. Defaults to
+        // the odometry gate, lidar_frontend.maximum_fitness_score_m2.
         double max_fitness_score = 0.5;
         // Probability mass of the chi-square (6 dof) test on the correction
         // GICP applies to the graph's own relative-pose estimate.

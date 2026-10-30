@@ -4,7 +4,9 @@ project(urc_nav_common)
 include(../cmake/default_settings.cmake)
 
 find_package(ament_cmake REQUIRED)
+find_package(grid_map_core REQUIRED)
 find_package(grid_map_msgs REQUIRED)
+find_package(grid_map_ros REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/grid_map_utils.cpp
@@ -16,7 +18,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 ament_target_dependencies(${PROJECT_NAME}
+  grid_map_core
   grid_map_msgs
+  grid_map_ros
 )
 
 install(
@@ -40,6 +44,6 @@ endif()
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(grid_map_msgs)
+ament_export_dependencies(grid_map_core grid_map_msgs grid_map_ros)
 
 ament_package()

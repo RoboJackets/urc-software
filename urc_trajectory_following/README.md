@@ -18,20 +18,25 @@ with neither flag is rejected.
 
 During execution, the server publishes distance, planning state, and replan count
 as action feedback. It checks the controller's tracking point against the
-configured costmap layer and requests a new A* path when the cost exceeds the
-lethal threshold.
+configured costmap layer and requests a new A* path when the cost reaches
+`lethal_cost_threshold` (1.0, matching `urc_perception`).
 
 ## Runtime contracts
 
 - The action name is `navigate_to_waypoint`; the planning service is `plan`.
 - The server requires the configured map-to-base TF throughout execution.
 - `/costmap` must contain the configured layer, normally
-  `traversability_inflated`. A missing or unreadable cost is currently treated as
-  zero and therefore does not trigger replanning.
+  `traversability_inflated`. Unobserved cells, points outside the costmap, and a
+  missing layer do not trigger replanning; the latter two log a throttled
+  warning.
 - Velocity output may be `Twist` or `TwistStamped`, selected by
   `cmd_vel_stamped`; its topic is configured by `cmd_vel_topic`.
 - Cancellation, completion, and handled planning failures publish a final
   zero-velocity command.
+- Costmap updates and collision checks are synchronized across callbacks and
+  navigation workers. Shutdown stops and joins workers before destroying the
+  action server.
+- Pure Pursuit projects 3D SLAM transforms onto planar yaw for path following.
 - Goal heading is enforced when requested by the action or enabled in the node
   configuration.
 

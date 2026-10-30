@@ -8,9 +8,9 @@
 #include <gtsam/geometry/Pose3.h>
 
 #include "landmark_manager.hpp"
-#include "lidar_frontend.hpp"
+#include "urc_slam/lidar_frontend.hpp"
 #include "loop_closure_params.hpp"
-#include "slam_backend.hpp"
+#include "urc_slam/slam_backend.hpp"
 
 namespace urc_slam {
 

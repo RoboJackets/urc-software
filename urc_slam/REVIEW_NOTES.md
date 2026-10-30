@@ -1,8 +1,43 @@
 # Rock landmark loop closure: review notes
 
-Branch `feature/rock-landmarks`. The algorithm is in new files; a later commit
-wired it into the existing node (section 5 lists exactly which existing files
-changed).
+## Status after the master merge
+
+The four SLAM node/backend conflicts are reconciled using master's formatting
+and retaining this branch's wheel-odometry subscription, buffering, and factors.
+The odometry buffer limit is now `static constexpr` so the header is valid C++17.
+The pose (`x`), velocity (`v`), and bias (`b`) key conventions, keyframe lifecycle,
+and backend ownership of iSAM2 remain unchanged; landmark keys (`l`) do not collide.
+
+The package library now compiles the eight rock-pipeline sources. With
+`BUILD_TESTING`, the package also registers the five existing rock tests against
+that library; the standalone test build remains available without ROS.
+Wheel odometry now retains yaw when calculating relative motion and uses
+planar pose factors plus body-velocity observation factors. The latter rotate
+graph velocities from map into base_link; the old velocity-difference factor
+has been removed. See README.md for the current wheel odometry contract.
+Historical wheel factor descriptions below are superseded by this behavior.
+
+Rock processing and terrain loop closure are wired into the restructured node
+in `SlamNode::commitKeyframe`, which runs once per keyframe (including keyframe
+0) after its pose is in iSAM2: loop closure first, then rock extraction on the
+raw sensor-frame cloud, association, and an immediate `optimize()` with a map
+and path refresh. The rock pipeline is created at initialization so it uses the
+LiDAR extrinsic from TF as `base_T_sensor`. `SlamBackend` exposes
+`isamGraph()`, `addLandmarkUpdate()` and `addLoopClosureFactor()`;
+`KeyframeMap::clouds()` supplies loop-closure clouds in each keyframe's
+base_link frame.
+
+On the merge-review host, direct C++17 builds and runs of `test_rock_extractor`
+and `test_jcbb_search` passed. Standalone CMake configuration stopped because
+GTSAM was unavailable. ROS was also unavailable and the Docker daemon was not
+running, so the full package and GTSAM-dependent tests remain unverified here.
+
+The notes below describe the original implementation and its historical
+verification status; statements about untouched files and missing build wiring
+are superseded by the status above.
+
+Branch `feature/rock-landmarks` (local only, never pushed). Everything here is
+new files under `urc_slam/`; no existing file was modified.
 
 **Verification status.** This machine has no GTSAM/Boost (WSL Ubuntu has none,
 no sudo, Docker daemon was off). So:

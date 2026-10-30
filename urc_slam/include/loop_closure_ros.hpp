@@ -4,7 +4,7 @@
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 
-#include "lidar_frontend.hpp"
+#include "urc_slam/lidar_frontend.hpp"
 #include "loop_closure_detector.hpp"
 
 namespace urc_slam {

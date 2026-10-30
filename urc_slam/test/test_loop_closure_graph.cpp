@@ -92,7 +92,9 @@ int main() {
     const Pose3 origin;
     const Pose3 before = isam.calculateEstimate<Pose3>(LandmarkManager::poseKey(kSquareSides));
     const double error_before = (before.translation() - origin.translation()).norm();
-    CHECK(error_before > 0.3);   // the scenario really does drift
+    // The scenario really does drift: 0.01 rad of extra yaw per 10.1 m side
+    // leaves about 0.29 m of closing error (the scale error cancels).
+    CHECK(error_before > 0.2);
 
     const auto closure = manager.processScan(observeFrom(true_pose, rocks), kSquareSides, isam);
     CHECK(closure.summary.matched == 2);

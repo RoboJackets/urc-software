@@ -30,7 +30,6 @@ std::unique_ptr<TrajectoryController> TrajectoryFactory::create(
     };
     return std::make_unique<pure_pursuit::PurePursuit>(params);
   }
-
   throw std::invalid_argument("Unsupported trajectory controller: " + controller_type);
 }
 }  // namespace trajectory_following

@@ -9,7 +9,7 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include "landmark_manager.hpp"
-#include "lidar_frontend.hpp"
+#include "urc_slam/lidar_frontend.hpp"
 #include "rock_landmark_pipeline.hpp"
 #include "rock_types.hpp"
 
@@ -19,8 +19,10 @@ namespace urc_slam {
     // rock_landmarks.enabled is false. Throws std::invalid_argument if enabled
     // with unset or inconsistent parameters (notably the measurement noise,
     // which has no default on purpose), so a misconfigured robot fails at
-    // startup instead of running on an invented value.
-    std::unique_ptr<RockLandmarkPipeline> createRockPipeline(rclcpp::Node &node);
+    // startup instead of running on an invented value. `base_T_sensor` is the
+    // LiDAR mounting pose in base_link.
+    std::unique_ptr<RockLandmarkPipeline> createRockPipeline(
+        rclcpp::Node &node, const gtsam::Pose3 &base_T_sensor);
 
     // Finite points only, copied into the extractor's ROS/PCL-free type.
     PointCloud3d toPointCloud3d(const LidarFrontend::Cloud &cloud);

@@ -1,23 +1,36 @@
 slam_node:
   ros__parameters:
     use_sim_time: true
+    wheel_odom_topic: /odom
+    wheel_odometry:
+      frame: odom
+      time_tolerance_sec: 0.1
+      translation_sigma_m: 1.0
+      yaw_sigma_rad: 1.0
+      velocity_sigmas_mps: [1.0, 1.0]
     imu_topic: /imu/fused
     lidar_topic: /scan/points
+    gps_topic: /slam/gps_odometry
     slam_odom_topic: /slam/odometry
+    path_topic: /slam/path
+    map_topic: /slam/map_points
 
     map_frame: map
     base_link_frame: base_link
+    # Disable if another node (e.g. an EKF) already parents base_link
+    publish_tf: true
 
     keyframe:
       translation_threshold_m: 0.5
       rotation_threshold_rad: 0.174533
+      maximum_interval_s: 2.0
 
     # Landmark positions as rviz markers (spheres + labels), in map_frame.
     landmark_topic: /slam/landmarks
     # Rocks extracted from the latest keyframe sweep, in the LiDAR frame.
     rock_detection_topic: /slam/rock_detections
 
-    # Rock landmark loop closure. Off by default (see REVIEW_NOTES.md).
+    # Rock landmark loop closure. Off in code unless enabled here (see REVIEW_NOTES.md).
     rock_landmarks:
       enabled: true
       noise:
@@ -45,7 +58,44 @@ slam_node:
       maximum_correspondence_distance_m: 2.0
       maximum_iterations: 64
       transformation_epsilon: 1.0e-6
-      maximum_fitness_score: 0.3
+      # Sparse 16-beam scans give correct alignments up to ~0.45 m^2; wrong
+      # alignments show up as a low inlier fraction (~0.4)
+      maximum_fitness_score_m2: 0.5
+      minimum_inlier_fraction: 0.8
+
+    registration:
+      submap_keyframes: 3
+      maximum_consecutive_failures: 3
+
+    lidar_factor:
+      rotation_sigma_rad: 0.05
+      translation_sigma_m: 0.1
+
+    prior:
+      pose_rotation_sigma_rad: 0.1
+      pose_translation_sigma_m: 0.1
+      velocity_sigma_mps: 1.0
+      accelerometer_bias_sigma_mps2: 0.1
+      gyroscope_bias_sigma_radps: 0.01
+
+    imu:
+      # Noise densities measured from chassis vibration in simulation; re-derive
+      # from logged data (e.g. Allan variance) on hardware
+      accelerometer_noise_sigma: 0.25
+      gyroscope_noise_sigma: 0.03
+      integration_noise_sigma: 1.0e-4
+      accelerometer_bias_random_walk_sigma: 1.0e-4
+      gyroscope_bias_random_walk_sigma: 1.0e-4
+      gravity_mps2: 9.8
+      maximum_gap_s: 0.1
+
+    gps:
+      # Half the GPS period, so every keyframe gets its nearest fix
+      time_tolerance_s: 0.25
+
+    map:
+      voxel_size_m: 0.2
+      publish_period_s: 1.0
 
 slam_navsat_transform:
   ros__parameters:

@@ -2,6 +2,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    ExecuteProcess,
     IncludeLaunchDescription,
     RegisterEventHandler,
     TimerAction,
@@ -177,6 +178,7 @@ def generate_launch_description():
                 "target_child_frame": "walli",
                 "odom_frame_id": "map",
                 "base_frame_id": "walli",
+                "relative_to_first_pose": True,
             }
         ],
         output="screen",
@@ -200,6 +202,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
         ),
+        launch_arguments={"use_sim_time": "true"}.items(),
         condition=IfCondition(LaunchConfiguration("autonomy")),
     )
 
