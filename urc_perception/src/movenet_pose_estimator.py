@@ -95,8 +95,8 @@ class MoveNetPoseEstimator(PoseEstimator):
         )
         model_input[
             0,
-            pad_top : pad_top + resized_height,
-            pad_left : pad_left + resized_width,
+            pad_top:pad_top + resized_height,
+            pad_left:pad_left + resized_width,
         ] = resized
         return model_input, scale, pad_left, pad_top
 
