@@ -1,0 +1,29 @@
+# Goal
+# A zero timeout delegates timeout selection to the action server configuration.
+builtin_interfaces/Duration recognition_timeout
+---
+# Result
+uint16 SUCCESS=0
+uint16 INVALID_REQUEST=1
+uint16 RECOGNITION_TIMEOUT=2
+uint16 CAMERA_UNAVAILABLE=3
+uint16 INFERENCE_FAILED=4
+uint16 CANCELED=5
+
+uint16 error_code
+string message
+
+bool has_astronaut_detection
+urc_msgs/DetectionBoundingBox astronaut_detection
+---
+# Feedback
+uint8 STATE_WAITING_FOR_IMAGE=0
+uint8 STATE_EVALUATING=1
+uint8 STATE_GESTURE_CONFIRMED=2
+
+uint8 state
+uint32 processed_frames
+uint16 matching_frames
+uint16 required_frames
+float32 detection_confidence
+float32 inference_milliseconds
