@@ -90,8 +90,6 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_include_directories(msg)
-
 ament_export_include_directories(include)
 
 ament_export_libraries(${PROJECT_NAME})

@@ -70,7 +70,6 @@ private:
   uint8_t buffer[TeensyMessage_size];
   size_t message_length;
 
-  uint8_t lightStates[3];   // current state of each light (red, green, blue).
 };
 
 } // namespace urc_hardware::hardware_interfaces

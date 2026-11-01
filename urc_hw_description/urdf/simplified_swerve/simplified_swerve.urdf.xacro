@@ -9,6 +9,9 @@
   <!-- Include the robot structure macro -->
   <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_macro.xacro" />
   
+  <!-- Include the status light -->
+  <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_status_light.xacro" />
+
   <!-- Include the ROS2 control interfaces -->
   <xacro:include filename="$(find urc_hw_description)/urdf/simplified_swerve/simplified_swerve_ros2_control.xacro" />
 
@@ -20,6 +23,9 @@
 
   <!-- Create the robot structure -->
   <xacro:simplified_swerve />
+
+  <!-- Add the status light -->
+  <xacro:simplified_swerve_status_light />
 
   <!-- Add ROS2 control interfaces -->
   <xacro:simplified_swerve_ros2_control use_sim="$(arg use_sim)" />

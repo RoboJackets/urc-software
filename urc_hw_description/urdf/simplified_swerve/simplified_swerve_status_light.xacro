@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Simplified Swerve Status Light
+  Rear status light required by the URC autonomy mission rules
+  (red: autonomous, blue: teleoperation, flashing green: arrived at target)
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="simplified_swerve_status_light">
+
+    <xacro:property name="status_light_size_x" value="0.04" />
+    <xacro:property name="status_light_size_y" value="0.12" />
+    <xacro:property name="status_light_size_z" value="0.06" />
+
+    <link name="status_light_link">
+      <inertial>
+        <mass value="0.05" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${status_light_size_x} ${status_light_size_y} ${status_light_size_z}" />
+        </geometry>
+        <material name="status_light_off">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+    </link>
+
+    <!-- Back edge of the chassis top (base_link spans x = -0.308 to 0.308, top at z = 0) -->
+    <joint name="status_light_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="status_light_link" />
+      <origin xyz="${-0.308 - status_light_size_x / 2} 0 -0.1" rpy="0 0 0" />
+    </joint>
+
+    <!-- Keep the light as its own link in Gazebo so its color can be changed by name -->
+    <gazebo reference="status_light_joint">
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

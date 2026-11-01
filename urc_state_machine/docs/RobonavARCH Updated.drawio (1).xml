@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" pages="4">
+  <diagram name="OVERVIEW" id="s2EltxzyaMrlVGXd1A_2">
+    <mxGraphModel dx="1670" dy="1574" grid="0" gridSize="1" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="1296" background="#111111" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=30;align=left;verticalAlign=middle;" value="&lt;b&gt;URC autonomy architecture&lt;/b&gt;" vertex="1">
+          <mxGeometry height="55" width="850" x="78" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="o_legend" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=18;align=center;verticalAlign=middle;" value="SOLID = EXISTS IN REPO&lt;br&gt;DASHED = PROPOSED" vertex="1">
+          <mxGeometry height="60" width="300" x="1242" y="42" as="geometry" />
+        </mxCell>
+        <mxCell id="o_select" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="Mission selection" vertex="1">
+          <mxGeometry height="70" width="320" x="644" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="o_supervisor" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="Overall mission supervisor&lt;br&gt;one active sub-mission" vertex="1">
+          <mxGeometry height="95" width="360" x="624" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="o_1" edge="1" parent="1" source="o_select" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_supervisor" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_astronaut" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="ExecuteAstronautMission&lt;br&gt;proposed action" vertex="1">
+          <mxGeometry height="100" width="360" x="336" y="516" as="geometry" />
+        </mxCell>
+        <mxCell id="o_route" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="ExecuteAutonomousMission&lt;br&gt;existing action in NavCoordinator" vertex="1">
+          <mxGeometry height="100" width="360" x="1032" y="516" as="geometry" />
+        </mxCell>
+        <mxCell id="o_2" edge="1" parent="1" source="o_supervisor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_astronaut" value="astronaut goal">
+          <mxGeometry relative="1" x="-0.2021" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="516" y="341.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o_3" edge="1" parent="1" source="o_supervisor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_route" value="route target goal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_command" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=20;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=8;" value="FOLLOW: gesture&lt;br&gt;Other commands: remote&lt;br&gt;→ /command" vertex="1">
+          <mxGeometry height="110" width="230" x="18" y="511" as="geometry" />
+        </mxCell>
+        <mxCell id="o_4" edge="1" parent="1" source="o_command" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_astronaut" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_marker" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=20;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=8;" value="ArUco&lt;br&gt;detections" vertex="1">
+          <mxGeometry height="90" width="145" x="1488" y="521" as="geometry" />
+        </mxCell>
+        <mxCell id="o_5" edge="1" parent="1" source="o_marker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_route" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_nav" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="NavCoordinator&lt;br&gt;shared navigation ownership: planned extension" vertex="1">
+          <mxGeometry height="100" width="380" x="612" y="774" as="geometry" />
+        </mxCell>
+        <mxCell id="o_6" edge="1" parent="1" source="o_astronaut" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_nav" value="navigation requests">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_7" edge="1" parent="1" source="o_route" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_nav" value="navigation leg">
+          <mxGeometry relative="1" x="0.3187" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="1212" y="694.5" />
+              <mxPoint x="802" y="694.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o_follower" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="FollowerActionServer&lt;br&gt;NavigateToWaypoint" vertex="1">
+          <mxGeometry height="95" width="370" x="618" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="o_planner" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="PlannerServer&lt;br&gt;GeneratePlan / A*" vertex="1">
+          <mxGeometry height="95" width="340" x="1164" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="o_8" edge="1" parent="1" source="o_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_follower" value="action goal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_9" edge="1" parent="1" source="o_follower" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_planner" value="plan request">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_cmdvel" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="/cmd_vel" vertex="1">
+          <mxGeometry height="55" width="150" x="728" y="1188" as="geometry" />
+        </mxCell>
+        <mxCell id="o_10" edge="1" parent="1" source="o_follower" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="o_cmdvel" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o_waypoint_note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=18;align=left;verticalAlign=middle;spacing=10;dashed=1;" value="Direct inputs: /nav/waypoint and /waypoint (existing).&lt;br&gt;Only SEARCH_NONE runs today; ArUco modes are declared." vertex="1">
+          <mxGeometry height="115" width="385" x="72" y="978" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="ASTRONAUT MISSION" id="astronaut-mission-states">
+    <mxGraphModel grid="0" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1704" pageHeight="1416" background="#111111" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="a_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=30;align=left;verticalAlign=middle;" value="&lt;b&gt;ExecuteAstronautMission · proposed state machine&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="1180" x="78" y="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a_input" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="Command input node&lt;br&gt;FOLLOW gesture + astronaut remote → /command" vertex="1">
+          <mxGeometry height="95" width="340" x="84" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="a_goal" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="One action goal&lt;br&gt;initial astronaut waypoint in map frame" vertex="1">
+          <mxGeometry height="95" width="340" x="648" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="a_nav" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="Shared navigation path&lt;br&gt;NavCoordinator → NavigateToWaypoint" vertex="1">
+          <mxGeometry height="95" width="340" x="1206" y="162" as="geometry" />
+        </mxCell>
+        <mxCell id="a_0" edge="1" parent="1" source="a_input" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_goal" value="/command events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_00" edge="1" parent="1" source="a_goal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_nav" value="navigation requests">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_follow_note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=18;align=left;verticalAlign=middle;spacing=10;dashed=1;" value="FOLLOWING: tracker pose → map-frame trailing goal → throttled follower-goal replacement.&lt;br&gt;Current NavCoordinator supports static waypoint replacement; moving-target follow needs an extension.&lt;br&gt;Stale or lost target: cancel navigation and stop." vertex="1">
+          <mxGeometry height="115" width="1275" x="84" y="312" as="geometry" />
+        </mxCell>
+        <mxCell id="a_go" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="1 · GO_TO_ASTRONAUT" vertex="1">
+          <mxGeometry height="90" width="265" x="84" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="a_wf" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="2 · WAIT_FOLLOW" vertex="1">
+          <mxGeometry height="90" width="265" x="480" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="a_follow" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="3 · FOLLOWING" vertex="1">
+          <mxGeometry height="90" width="265" x="973" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ws" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="4 · WAIT_STAY" vertex="1">
+          <mxGeometry height="90" width="265" x="1492" y="534" as="geometry" />
+        </mxCell>
+        <mxCell id="a_stay" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="5 · STAYING" vertex="1">
+          <mxGeometry height="90" width="265" x="1492" y="822" as="geometry" />
+        </mxCell>
+        <mxCell id="a_fetch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="6 · FETCHING" vertex="1">
+          <mxGeometry height="90" width="265" x="973" y="822" as="geometry" />
+        </mxCell>
+        <mxCell id="a_hold" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="7 · HOLDING_HAMMER" vertex="1">
+          <mxGeometry height="90" width="265" x="480" y="822" as="geometry" />
+        </mxCell>
+        <mxCell id="a_come" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="8 · COMING" vertex="1">
+          <mxGeometry height="90" width="265" x="-8" y="822" as="geometry" />
+        </mxCell>
+        <mxCell id="a_wg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="9 · WAIT_GIVE" vertex="1">
+          <mxGeometry height="90" width="265" x="-8" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_give" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="10 · GIVING" vertex="1">
+          <mxGeometry height="90" width="265" x="567" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_success" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="11 · SUCCEEDED" vertex="1">
+          <mxGeometry height="90" width="265" x="1063" y="1110" as="geometry" />
+        </mxCell>
+        <mxCell id="a_1" edge="1" parent="1" source="a_go" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_wf" value="within 3 m">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_2" edge="1" parent="1" source="a_wf" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_follow" value="FOLLOW gesture">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_3" edge="1" parent="1" source="a_follow" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_ws" value="stopped within 3 m">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_4" edge="1" parent="1" source="a_ws" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_stay" value="remote: STAY">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_5" edge="1" parent="1" source="a_stay" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_fetch" value="remote: FETCH">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_6" edge="1" parent="1" source="a_fetch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_hold" value="grasp confirmed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_7" edge="1" parent="1" source="a_hold" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_come" value="remote: COME">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_8" edge="1" parent="1" source="a_come" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_wg" value="within 3 m">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_9" edge="1" parent="1" source="a_wg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_give" value="remote: GIVE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_10" edge="1" parent="1" source="a_give" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="a_success" value="hammer released">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_footer" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=18;align=left;verticalAlign=middle;spacing=10;dashed=1;" value="STAYING holds zero motion while the astronaut moves &gt;20 m. FETCHING picks up the nearby hammer. COMING tracks the visible astronaut. Any active phase can cancel into a safe stop." vertex="1">
+          <mxGeometry height="70" width="1255" x="84" y="1278" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="ROUTE MISSION" id="route-mission-states">
+    <mxGraphModel grid="0" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1680" pageHeight="1080" background="#111111" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="r_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=30;align=left;verticalAlign=middle;" value="&lt;b&gt;ExecuteAutonomousMission · route target&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="1050" x="78" y="36" as="geometry" />
+        </mxCell>
+        <mxCell id="r_status" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=18;align=center;verticalAlign=middle;" value="SOLID = CURRENT&lt;br&gt;DASHED = PROPOSED" vertex="1">
+          <mxGeometry height="60" width="215" x="1344" y="36" as="geometry" />
+        </mxCell>
+        <mxCell id="r_goal" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="Goal: map PoseStamped&lt;br&gt;SEARCH_NONE&lt;br&gt;SEARCH_ARUCO_1 / SEARCH_ARUCO_2" vertex="1">
+          <mxGeometry height="110" width="270" x="-142" y="202.5" as="geometry" />
+        </mxCell>
+        <mxCell id="r_nav" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="NAVIGATING" vertex="1">
+          <mxGeometry height="95" width="245" x="415" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="r_search" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="SEARCHING_ARUCO" vertex="1">
+          <mxGeometry height="95" width="270" x="852" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="r_calc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="CALCULATING_APPROACH" vertex="1">
+          <mxGeometry height="95" width="285" x="1344" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="r_none" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="SUCCEEDED&lt;br&gt;SEARCH_NONE only today" vertex="1">
+          <mxGeometry height="95" width="245" x="415" y="486" as="geometry" />
+        </mxCell>
+        <mxCell id="r_approach" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="NAVIGATING_TO_ARUCO" vertex="1">
+          <mxGeometry height="95" width="285" x="1344" y="486" as="geometry" />
+        </mxCell>
+        <mxCell id="r_verify" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="VERIFY_ARRIVAL&lt;br&gt;within 1 m" vertex="1">
+          <mxGeometry height="95" width="270" x="852" y="486" as="geometry" />
+        </mxCell>
+        <mxCell id="r_success" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;dashed=1;align=center;verticalAlign=middle;spacing=9;" value="SUCCEEDED&lt;br&gt;marker pose in result" vertex="1">
+          <mxGeometry height="95" width="270" x="852" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="r_1" edge="1" parent="1" source="r_goal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_nav" value="NavigateToWaypoint">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_2" edge="1" parent="1" source="r_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_none" value="SEARCH_NONE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_3" edge="1" parent="1" source="r_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_search" value="ArUco mode">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_4" edge="1" parent="1" source="r_search" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_calc" value="marker ID 1 or 2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_5" edge="1" parent="1" source="r_calc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_approach" value="safe goal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_6" edge="1" parent="1" source="r_approach" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_verify" value="follower success">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_7" edge="1" parent="1" source="r_verify" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="r_success" value="measured arrival">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r_note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=18;align=left;verticalAlign=middle;spacing=10;dashed=1;" value="2027 rules: 4x4_50 tags; start ID 0, Post 1 ID 1, Post 2 ID 2. Target score requires stopping within 1 m. Current interface documentation says 2 m, so the final approach contract must change." vertex="1">
+          <mxGeometry height="135" width="560" x="84" y="762" as="geometry" />
+        </mxCell>
+        <mxCell id="r_map" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=18;align=left;verticalAlign=middle;spacing=10;dashed=1;" value="Current local costmap is 10 × 10 m. Hill-scale routing needs safe intermediate goals; the tag search should begin near the GNSS target." vertex="1">
+          <mxGeometry height="70" width="1260" x="84" y="954" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="OUTCOMES + RECOVERY" id="mission-outcomes-recovery">
+    <mxGraphModel grid="0" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1900" pageHeight="1530" background="#111111" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=31;align=left;verticalAlign=middle;" value="&lt;b&gt;Mission outcomes and recovery&lt;/b&gt;" vertex="1">
+          <mxGeometry height="65" width="1400" x="65" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="f_legend" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=23;align=left;verticalAlign=middle;" value="SOLID = CURRENT CODE&lt;br&gt;DASHED = PROPOSED" vertex="1">
+          <mxGeometry height="65" width="320" x="1510" y="25" as="geometry" />
+        </mxCell>
+        <mxCell id="f_current_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=23;align=left;verticalAlign=middle;" value="&lt;b&gt;ExecuteAutonomousMission · SEARCH_NONE today&lt;/b&gt;" vertex="1">
+          <mxGeometry height="70" width="810" x="80" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="f_proposed_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=23;align=left;verticalAlign=middle;" value="&lt;b&gt;ExecuteAstronautMission · proposed contract&lt;/b&gt;" vertex="1">
+          <mxGeometry height="70" width="820" x="1000" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="Ohu84zt7RHenu2rqjYVq-4" edge="1" parent="1" source="c_goal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=light-dark(#000000,#000000);strokeWidth=2;" target="c_validate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_goal" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="Receive mission goal" vertex="1">
+          <mxGeometry height="100" width="310" x="35" y="183" as="geometry" />
+        </mxCell>
+        <mxCell id="c_validate" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="Validate mode, pose,&lt;br&gt;availability, and ownership" vertex="1">
+          <mxGeometry height="100" width="310" x="520" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="c_nav" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="NAVIGATING&lt;br&gt;send NavigateToWaypoint" vertex="1">
+          <mxGeometry height="105" width="310" x="95" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="c_reject" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="REJECT goal&lt;br&gt;no mission starts" vertex="1">
+          <mxGeometry height="105" width="310" x="520" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="c_result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="Follower action result?" vertex="1">
+          <mxGeometry height="100" width="310" x="95" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="c_success" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="SUCCEEDED&lt;br&gt;mission SUCCESS" vertex="1">
+          <mxGeometry height="105" width="240" x="70" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="c_failed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="FAILED&lt;br&gt;NAVIGATION_FAILED" vertex="1">
+          <mxGeometry height="105" width="240" x="345" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="c_canceled" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;" value="CANCELED&lt;br&gt;mission CANCELED" vertex="1">
+          <mxGeometry height="105" width="240" x="620" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="ce_2" edge="1" parent="1" source="c_validate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_nav" value="accepted">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce_3" edge="1" parent="1" source="c_validate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_reject" value="invalid / busy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce_4" edge="1" parent="1" source="c_nav" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_result" value="goal result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce_5" edge="1" parent="1" source="c_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_success" value="SUCCESS">
+          <mxGeometry relative="1" x="-0.0175" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="250" y="877.5" />
+              <mxPoint x="132.3" y="877.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ce_6" edge="1" parent="1" source="c_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_failed" value="rejected / aborted / error">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ce_7" edge="1" parent="1" source="c_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="c_canceled" value="cancel confirmed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=20;strokeWidth=2;align=left;verticalAlign=middle;spacing=14;" value="&lt;b&gt;Current retry and reach behavior&lt;/b&gt;&lt;br&gt;Follower succeeds when distance is below its goal_tolerance (default 0.5 m; heading not enforced for mission goals).&lt;br&gt;On an obstacle, FollowerActionServer replans the same goal and increments replan_count. A failed replan aborts the goal. NavCoordinator does not retry a failed mission leg or set a replan limit." vertex="1">
+          <mxGeometry height="255" width="810" x="80" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="p_phase" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Start astronaut phase" vertex="1">
+          <mxGeometry height="100" width="310" x="952" y="177" as="geometry" />
+        </mxCell>
+        <mxCell id="p_guard" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Validate command, target&lt;br&gt;and phase prerequisites" vertex="1">
+          <mxGeometry height="100" width="310" x="1440" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="p_execute" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Execute phase action&lt;br&gt;navigation / follow / arm" vertex="1">
+          <mxGeometry height="105" width="310" x="1015" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="p_hold" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="HOLD + SAFE STOP&lt;br&gt;wait for valid input / target" vertex="1">
+          <mxGeometry height="105" width="310" x="1440" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="p_result" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Phase completion check" vertex="1">
+          <mxGeometry height="100" width="310" x="1015" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="p_next" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Advance to next phase" vertex="1">
+          <mxGeometry height="105" width="240" x="985" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="Ohu84zt7RHenu2rqjYVq-3" edge="1" parent="1" source="p_retry" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=light-dark(#000000,#000000);strokeWidth=2;" target="p_result">
+          <mxGeometry relative="1" x="-0.0927" as="geometry">
+            <Array as="points">
+              <mxPoint x="1390" y="1116.4" />
+              <mxPoint x="952.1" y="1116.4" />
+              <mxPoint x="952.1" y="755" />
+            </Array>
+            <mxPoint x="1374.296296296296" y="1127.5185185185182" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p_retry" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="Stop + bounded retry&lt;br&gt;same phase" vertex="1">
+          <mxGeometry height="105" width="240" x="1270" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="p_failed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=21;strokeWidth=2;align=center;verticalAlign=middle;spacing=9;dashed=1;" value="FAILED / CANCELED&lt;br&gt;report reason" vertex="1">
+          <mxGeometry height="105" width="240" x="1555" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="pe_1" edge="1" parent="1" source="p_phase" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_guard" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pe_2" edge="1" parent="1" source="p_guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_execute" value="valid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pe_3" edge="1" parent="1" source="p_guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_hold" value="invalid / stale">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pe_4" edge="1" parent="1" source="p_execute" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_result" value="action result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pe_5" edge="1" parent="1" source="p_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_next" value="verified complete">
+          <mxGeometry relative="1" x="0.5819" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pe_6" edge="1" parent="1" source="p_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_retry" value="recoverable + budget left">
+          <mxGeometry relative="1" x="0.7892" y="19" as="geometry">
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pe_7" edge="1" parent="1" source="p_result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#FFFFFF;strokeWidth=2;fontColor=#FFFFFF;fontSize=18;labelBackgroundColor=#111111;" target="p_failed" value="fatal / exhausted">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p_note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#111111;strokeColor=#FFFFFF;fontColor=#FFFFFF;fontSize=20;strokeWidth=2;align=left;verticalAlign=middle;spacing=14;" value="&lt;b&gt;Proposed phase guards&lt;/b&gt;&lt;br&gt;GO_TO_ASTRONAUT and COMING: follower success plus measured distance ≤ 3 m. FOLLOWING: astronaut stopped and distance ≤ 3 m. FETCHING / GIVING: confirm grasp / release before advancing.&lt;br&gt;STAY cancels motion and holds position. A lost person or stale pose stops the rover; reacquire within a deadline or fail. Retry budgets, timeouts, and error reasons become explicit mission parameters." vertex="1">
+          <mxGeometry height="255" width="810" x="1000" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="f_footer" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontSize=23;align=left;verticalAlign=middle;" value="Design rule: only the mission layer advances phases. Navigation, detection, and arm actions report outcomes; they do not silently declare mission success." vertex="1">
+          <mxGeometry height="60" width="1730" x="80" y="1450" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

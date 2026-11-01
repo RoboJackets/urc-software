@@ -1,100 +1,120 @@
-#ifndef NAV_COORDINATOR_HPP_
-#define NAV_COORDINATOR_HPP_
-
+#ifndef URC_STATE_MACHINE__NAV_COORDINATOR_HPP_
+#define URC_STATE_MACHINE__NAV_COORDINATOR_HPP_
+#include <cstdint>
 #include <memory>
-#include <string>
-
+#include <optional>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
+#include <urc_msgs/action/execute_astronaut_mission.hpp>
 #include <urc_msgs/action/execute_autonomous_mission.hpp>
-#include <urc_msgs/action/navigate_to_waypoint.hpp>
+#include <urc_msgs/msg/aruco_detection.hpp>
+#include <urc_msgs/msg/astronaut_command.hpp>
+#include <urc_msgs/msg/status_light_command.hpp>
 #include <urc_msgs/msg/waypoint.hpp>
 #include "urc_state_machine/active_mission.hpp"
-#include "urc_state_machine/mission_state.hpp"
+#include "urc_state_machine/astronaut_tracking.hpp"
+#include "urc_state_machine/mission_parameters.hpp"
+#include "urc_state_machine/navigation_client.hpp"
+#include "urc_state_machine/spiral_search_client.hpp"
 
 namespace nav_coordinator
 {
+// ROS boundary and mission owner. All mission callbacks share the default mutually
+// exclusive callback group; TF owns its own thread-safe observation buffer.
 class NavCoordinator : public rclcpp::Node
 {
 public:
   explicit NavCoordinator(const rclcpp::NodeOptions & options);
-  ~NavCoordinator() override = default;
 
 private:
-  using NavigateToWaypoint = urc_msgs::action::NavigateToWaypoint;
-  using GoalHandleNavigate = rclcpp_action::ClientGoalHandle<NavigateToWaypoint>;
-  using ExecuteMission = urc_msgs::action::ExecuteAutonomousMission;
-  using MissionGoalHandle = rclcpp_action::ServerGoalHandle<ExecuteMission>;
+  using State = urc_state_machine::State;
+  using Event = urc_state_machine::Event;
+  using Kind = urc_state_machine::MissionKind;
+  using Route = urc_msgs::action::ExecuteAutonomousMission;
+  using Astronaut = urc_msgs::action::ExecuteAstronautMission;
+  using RouteHandle = rclcpp_action::ServerGoalHandle<Route>;
+  using AstronautHandle = rclcpp_action::ServerGoalHandle<Astronaut>;
+  using Pose = geometry_msgs::msg::PoseStamped;
+  using Command = urc_msgs::msg::AstronautCommand;
 
-  enum class ErrorType
-  {
-    NONE,
-    PLANNER_FAILURE,
-    OBSTACLE_DETECTED,
-    PLANNING_FAILED_IN_FOLLOWER,
-    FOLLOWER_FAILURE,
-    SERVER_UNAVAILABLE,
-    UNKNOWN_ERROR
-  };
-
-  void handleWaypoint(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-  void handleGpsWaypoint(const urc_msgs::msg::Waypoint::SharedPtr msg);
-  void sendFollowerGoal(const geometry_msgs::msg::PoseStamped & waypoint);
-
-  void initializeMissionActionServer();
-
-  void handleGoalResponse(const GoalHandleNavigate::SharedPtr & goal_handle);
-  void handleFeedback(
-    GoalHandleNavigate::SharedPtr,
-    const std::shared_ptr<const NavigateToWaypoint::Feedback> feedback);
-  void handleResult(const GoalHandleNavigate::WrappedResult & result);
-  rclcpp_action::GoalResponse handleMissionGoal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const ExecuteMission::Goal> goal);
-
-  rclcpp_action::CancelResponse handleMissionCancel(
-    std::shared_ptr<MissionGoalHandle> goal_handle);
-
-  void handleMissionAccepted(
-    std::shared_ptr<MissionGoalHandle> goal_handle);
-  void sendMissionNavigation();
-  void finishMissionNavigation(
-    const GoalHandleNavigate::WrappedResult & result);
-  void finishCanceledMission();
-  void failMissionNavigation(const std::string & reason);
-
-  void transitionTo(urc_state_machine::MissionState new_state, const std::string & reason);
-  void handleError(ErrorType error_type, const std::string & details);
+  void initializeRouteAction();
+  void initializeAstronautAction();
+  void initializeInputs();
+  void initializeStatusLight();
+  void initializeDriveControl();
+  void abortMission(const std::string & reason);
+  bool resumeMission(State state);
+  bool phaseInputsReady(State state) const;
+  void beginResume(State state);
+  void setAutonomousMode(bool autonomous);
+  void updateResume();
+  void publishStatusLight();
+  bool canAccept(const Pose & waypoint) const;
+  void begin(Kind kind, const Pose & waypoint);
+  void command(const Command & input);
+  void waypoint(const Pose & input);
+  void gpsWaypoint(const urc_msgs::msg::Waypoint & input);
+  void updateMission();
+  void updateCurrentState();
+  void updateStopping();
+  void transitionOn(Event event);
+  void changeState(State state);
+  void driveToWaypoint(const Pose & rover);
+  void searchForMarker();
+  Pose routeNavigationGoal(const Pose & rover) const;
+  void driveToAstronaut(const Pose & rover);
+  void followAstronaut(const Pose & rover);
+  void waitForStay(const Pose & rover);
+  void returnToAstronaut(const Pose & rover);
+  bool requireAstronautObservation();
+  void updateAstronautNavigation(const Pose & rover);
+  void completeToolPlaceholder();
+  void updateRecovery();
+  void updateNavigationOutcome(urc_state_machine::NavigationResult result);
+  void startNavigation(const Pose & goal);
+  void retryStateOrPause(State resume, uint16_t code, const std::string & reason);
+  void stopMission(State next, uint16_t code, const std::string & reason);
+  void finishMission();
   void publishState();
-  std::string errorTypeToString(ErrorType error_type) const;
-  std::string stateToString(urc_state_machine::MissionState state) const;
+  void publishFeedback();
+  double phaseElapsed() const;
+  bool fresh(const builtin_interfaces::msg::Time & stamp, double max_age) const;
+  std::optional<Pose> mapPose(const Pose & input) const;
+  std::optional<Pose> roverPose() const;
+  bool astronautFresh() const;
+  bool markerFresh() const;
 
-  urc_state_machine::MissionState state_{urc_state_machine::MissionState::IDLE};
-  std::shared_ptr<urc_state_machine::ActiveMission> active_mission_;
-  std::string follower_action_name_;
-  bool cancel_on_new_waypoint_;
-  std::string map_frame_id_;
-  std::string utm_frame_id_;
-
-  geometry_msgs::msg::PoseStamped active_waypoint_;
-  GoalHandleNavigate::SharedPtr active_goal_handle_;
-
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_subscriber_;
-  rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_waypoint_subscriber_;
-  rclcpp_action::Client<NavigateToWaypoint>::SharedPtr follower_client_;
-  rclcpp_action::Server<ExecuteMission>::SharedPtr mission_server_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_publisher_;
-  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  urc_state_machine::MissionParameters parameters_;
+  urc_state_machine::ActiveMission mission_;
+  urc_state_machine::AstronautTracking tracking_;
+  std::unique_ptr<urc_state_machine::NavigationClient> navigation_;
+  std::unique_ptr<urc_state_machine::SpiralSearchClient> spiral_search_;
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
-
-  ErrorType last_error_{ErrorType::NONE};
-  std::string last_error_details_;
+  rclcpp_action::Server<Route>::SharedPtr route_server_;
+  rclcpp_action::Server<Astronaut>::SharedPtr astronaut_server_;
+  std::shared_ptr<RouteHandle> route_handle_;
+  std::shared_ptr<AstronautHandle> astronaut_handle_;
+  rclcpp::Subscription<Command>::SharedPtr command_sub_;
+  rclcpp::Subscription<Pose>::SharedPtr astronaut_sub_, waypoint_sub_;
+  rclcpp::Subscription<urc_msgs::msg::ArucoDetection>::SharedPtr aruco_sub_;
+  rclcpp::Subscription<urc_msgs::msg::Waypoint>::SharedPtr gps_sub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub_;
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::Time last_command_stamp_{0, 0, RCL_ROS_TIME};
+  rclcpp::Publisher<urc_msgs::msg::StatusLightCommand>::SharedPtr status_light_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr drive_mode_pub_;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr drive_mode_sub_;
+  rclcpp::TimerBase::SharedPtr status_light_timer_;
+  bool autonomous_{false};
+  bool teleop_available_{false};
+  bool arrival_indicated_{false};
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr abort_service_, resume_service_;
 };
-
-}
-
+}  // namespace nav_coordinator
 #endif

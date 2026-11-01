@@ -13,15 +13,19 @@ contains no runtime nodes.
 | `OrientationPoses` | Header and named pose collection |
 | `RoverPoses` | Header and named rover-pose collection |
 | `StatusLightCommand` | Status-light color and off/on/blink state |
+| `AstronautCommand` | Timestamped gesture/remote task command or operator abort/resume |
+| `ArucoDetection` | Marker ID and stamped pose from one observation |
 | `Waypoint` | Latitude and longitude for a navigation target |
 
 ## Service and Action
 
 | Interface | Purpose |
 | --- | --- |
+| `GenerateSpiralSearch` service | Returns a traversability-routed spiral path; compatible with spiral-search PR #342 |
 | `GeneratePlan` service | Requests a path between start and goal poses and returns a `nav_msgs/Path` with a success or failure code |
+| `ExecuteAutonomousMission` action | Navigates to a target waypoint with optional ArUco refinement |
+| `ExecuteAstronautMission` action | Runs rendezvous, follow, stay, fetch, come, and give |
 | `AstronautFollow` action | Runs the astronaut-follow sub-mission from gesture recognition through follow behavior |
-| `ExecuteAutonomousMission` action | Navigates to a waypoint and optionally performs a YOLO or ArUco search while retaining mission context across replans |
 | `NavigateToWaypoint` action | Follows a supplied path or plans to a goal, with optional final-heading enforcement and progress feedback |
 | `RecognizeFollowGesture` action | Arms camera-based follow-gesture recognition and returns the confirmed astronaut detection |
 
@@ -59,7 +63,7 @@ ros2 action send_goal --feedback astronaut_follow \
   "{recognition_timeout: {sec: 30, nanosec: 0}}"
 ```
 
-## Autonomous mission contract
+## Mission contracts
 
 `ExecuteAutonomousMission` is the mission-level interface consumed by the
 navigation coordinator. Its `search_mode` has these behaviors:
@@ -104,8 +108,6 @@ types, constants, and result codes. Inspect an installed interface with:
 
 ```bash
 ros2 interface show urc_msgs/action/NavigateToWaypoint
-ros2 interface show urc_msgs/action/AstronautFollow
-ros2 interface show urc_msgs/action/RecognizeFollowGesture
 ros2 interface show urc_msgs/action/ExecuteAutonomousMission
 ros2 interface show urc_msgs/msg/DetectionBoundingBox
 ```
