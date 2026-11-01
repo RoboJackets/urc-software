@@ -1,8 +1,9 @@
 # URC Trajectory Following
 
 `urc_trajectory_following` owns the `NavigateToWaypoint` action that turns a
-planned path into rover velocity commands. The current controller implementation
-is [Pure Pursuit](src/pure_pursuit/README.md).
+planned path into rover velocity commands. The controller is chosen with the
+`trajectory_controller` parameter: `pure_pursuit` ([Pure Pursuit](src/pure_pursuit/README.md))
+or `lqr` (see [LQR tracking](#lqr-tracking)).
 
 ## Action behavior
 
@@ -52,6 +53,20 @@ ros2 launch urc_trajectory_following trajectory_following.launch.py
 
 The standalone launch still requires TF and, for goal-based requests, the
 planner and traversability map. Runtime settings live in
-[`config/pure_pursuit_config.yaml`](config/pure_pursuit_config.yaml). Although
-the controller is selected through `TrajectoryFactory`, `pure_pursuit` is the
-only supported selection today.
+[`config/pure_pursuit_config.yaml`](config/pure_pursuit_config.yaml).
+
+## LQR tracking
+
+With `trajectory_controller: "lqr"`, the rover drives forward at
+`desired_linear_velocity` and steers with
+`omega = v * curvature - K [lateral_error, heading_error]`, measured at the
+closest point on the path. `K` comes from a discrete LQR solved once per goal
+for `control_period`, which also sets the follower loop rate.
+
+The weights use Bryson's rule, so each is the largest value accepted:
+`lqr_max_lateral_error` (m), `lqr_max_heading_error` (rad) and
+`lqr_max_angular_correction` (rad/s). Smaller values make the tracker react
+harder to that error or allow less correction. The controller also uses
+`max_angular_velocity`, `heading_alignment_tolerance` (turn in place above it)
+and `lookahead_distance` (tracking point for the costmap check). It does not
+strafe.
