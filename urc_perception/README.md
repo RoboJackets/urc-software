@@ -63,13 +63,34 @@ matching frames, model confidence, and inference latency. A successful result
 contains the timestamped astronaut bounding box. Cancellation, missing camera
 frames, recognition timeout, and inference failure are distinct outcomes.
 
-Install the non-ROS Python runtime dependencies in the environment used to run
-ROS:
+Build the packages from the workspace root, then create a Python environment
+with access to the ROS Python packages. The following CPU installation matches
+the validated Ubuntu 22.04 / Python 3.10 amd64 environment:
 
 ```bash
-python3 -m pip install -r \
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install --packages-up-to urc_perception
+source install/setup.bash
+sudo apt install python3.10-venv
+python3 -m venv --system-site-packages .venv
+touch .venv/COLCON_IGNORE
+source .venv/bin/activate
+python -m pip install torch==2.14.1 torchvision==0.29.2 \
+  --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r \
   "$(ros2 pkg prefix --share urc_perception)/requirements.txt"
 ```
+
+The pinned NumPy, OpenCV, ONNX, and `ml-dtypes` versions preserve Humble
+`cv_bridge` compatibility. Installing the CPU PyTorch wheels first avoids pulling
+CUDA dependencies. The recognition launch disables Ultralytics automatic package
+installation so inference cannot silently replace these versions. Activate this
+environment in each recognition terminal; model artifacts are supplied
+separately and are not installed by this package.
+
+Download the exact validated ONNX model and verify its checksum using
+[`docs/follow_gesture_model.md`](docs/follow_gesture_model.md). This uses an
+immutable URL from the earlier published commit; no re-export is necessary.
 
 Start the camera and recognition node in separate sourced terminals. The model
 path must be absolute because model artifacts are not installed by this package:
@@ -100,5 +121,10 @@ ros2 action send_goal --feedback recognize_follow_gesture \
 Runtime defaults are in
 [`config/follow_gesture_recognition.yaml`](config/follow_gesture_recognition.yaml).
 Override `image_topic` at launch when the RealSense wrapper publishes a different
-name. `AstronautFollow` remains the outer sub-mission contract; state-machine
-orchestration will invoke this recognition action and then start rover behavior.
+name. Pass `use_sim_time:=true` when using simulated camera timestamps and the
+simulation ROS clock.
+
+[`docs/follow_gesture_integration.md`](docs/follow_gesture_integration.md)
+documents the coordinator handoff, result handling, cancellation, validation,
+and remaining camera/tracking work. `ExecuteAstronautMission` owns the mission;
+the coordinator does not yet invoke recognition.

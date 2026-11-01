@@ -22,7 +22,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GeneratePlan.srv"
   "srv/GenerateSpiralSearch.srv"
   "msg/RoverPoses.msg"
-  "action/AstronautFollow.action"
   "action/ExecuteAutonomousMission.action"
   "action/NavigateToWaypoint.action"
   "action/ExecuteAstronautMission.action"

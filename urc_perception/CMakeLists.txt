@@ -95,7 +95,7 @@ install(
 
 # Install launch files.
 install(
-  DIRECTORY config launch
+  DIRECTORY config docs launch
   DESTINATION share/${PROJECT_NAME}/
 )
 
