@@ -7,6 +7,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <algorithm>
 #include <stdexcept>
+#include <string>
 
 namespace follower_action_server
 {
@@ -18,7 +19,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("lookahead_distance", 2.0);
   declare_parameter("desired_linear_velocity", 0.2);
   declare_parameter("max_angular_velocity", 1.0);
-  declare_parameter("heading_alignment_tolerance", 0.2);
+  declare_parameter("heading_alignment_tolerance", 0.6);
   declare_parameter("enable_swerve_motion", true);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
   declare_parameter("map_frame", "map");
@@ -30,10 +31,21 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("goal_heading_tolerance", 0.1);
   declare_parameter("costmap_layer", "traversability_inflated");
   declare_parameter("trajectory_controller", "pure_pursuit");
+  declare_parameter("control_period", 0.1);
+  declare_parameter("lqr_max_lateral_error", 0.1);
+  declare_parameter("lqr_max_heading_error", 0.2);
+  declare_parameter("lqr_max_angular_correction", 0.5);
 
   const auto controller_type = get_parameter("trajectory_controller").as_string();
   if (!trajectory_following::TrajectoryFactory::supports(controller_type)) {
     throw std::invalid_argument("Unsupported trajectory controller: " + controller_type);
+  }
+  for (const char * name : {"control_period", "lqr_max_lateral_error", "lqr_max_heading_error",
+      "lqr_max_angular_correction"})
+  {
+    if (get_parameter(name).as_double() <= 0.0) {
+      throw std::invalid_argument(std::string(name) + " must be positive");
+    }
   }
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -304,7 +316,7 @@ void FollowerActionServer::execute_navigate(
     path.poses.size());
 
   trajectory_following::TrajectoryOutput output;
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(1.0 / get_parameter("control_period").as_double());
 
   while (rclcpp::ok()) {
     // Get current pose in map frame from TF

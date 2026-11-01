@@ -26,6 +26,7 @@
   <depend>tf2_ros</depend>
   <depend>sensor_msgs</depend>
   <depend>diagnostic_updater</depend>
+  <depend>eigen</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
