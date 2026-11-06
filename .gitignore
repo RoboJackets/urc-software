@@ -177,3 +177,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/external/AMENT_IGNORE
 _codeql_detected_source_root
+urc_state_machine/.DS_Store
+yolo26n-pose.onnx
+yolo26n-pose.pt
