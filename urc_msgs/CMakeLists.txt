@@ -27,6 +27,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "action/ExecuteAstronautMission.action"
   "msg/AstronautCommand.msg"
   "msg/ArucoDetection.msg"
+  "action/RecognizeFollowGesture.action"
 
   DEPENDENCIES
   rclcpp

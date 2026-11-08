@@ -1,4 +1,7 @@
 .devcontainer/
+.DS_Store
+/yolo26n-pose.onnx
+/yolo26n-pose.pt
 
 # JetBrains Clion
 */.idea/

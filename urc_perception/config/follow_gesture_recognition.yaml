@@ -1,0 +1,15 @@
+follow_gesture_recognition:
+  ros__parameters:
+    action_name: "recognize_follow_gesture"
+    image_topic: "/camera/camera/color/image_raw"
+    device: "cpu"
+    detection_confidence: 0.25
+    confirmation_frames: 5
+    default_timeout_sec: 30.0
+    inference_rate_hz: 10.0
+    min_keypoint_confidence: 0.5
+    min_elbow_angle_degrees: 120.0
+    min_wrist_span_ratio: 2.0
+    min_outward_margin_ratio: 0.05
+    min_arm_elevation_degrees: -10.0
+    max_arm_elevation_degrees: 75.0

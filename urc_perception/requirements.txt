@@ -1,0 +1,9 @@
+numpy==1.26.4
+opencv-python==4.11.0.86
+onnx==1.23.2
+onnxruntime==1.23.2
+ml-dtypes==0.5.4
+torch==2.14.1
+torchvision==0.29.2
+ultralytics==8.4.197
+setuptools>=77.0.3,<80

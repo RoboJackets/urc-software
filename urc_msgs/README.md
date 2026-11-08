@@ -25,6 +25,7 @@ contains no runtime nodes.
 | `GeneratePlan` service | Requests a path between start and goal poses and returns a `nav_msgs/Path` with a success or failure code |
 | `ExecuteAutonomousMission` action | Navigates to a target waypoint with optional ArUco refinement |
 | `ExecuteAstronautMission` action | Runs rendezvous, follow, stay, fetch, come, and give |
+| `RecognizeFollowGesture` action | Requests bounded camera-based gesture recognition and returns the confirmed person detection |
 | `NavigateToWaypoint` action | Follows a supplied path or plans to a goal, with optional final-heading enforcement and progress feedback |
 
 ## Mission contracts
@@ -64,3 +65,17 @@ route field and fixed ID constants were also removed. Use a target `waypoint` fo
 `ExecuteAstronautMission` for astronaut assistance, and direct waypoint inputs
 for standalone navigation. Rebuild all producers and consumers after interface
 changes. `NavigateToWaypoint` and `GeneratePlan` remain unchanged.
+
+## Follow-gesture perception contract
+
+`RecognizeFollowGesture` is served by `urc_perception` on
+`recognize_follow_gesture` by default. Zero `recognition_timeout` selects the
+server's configured timeout. Feedback reports image availability, frame counts,
+confirmation progress, confidence, and inference latency. Success returns an
+image-space detection with the camera header; it does not provide 3D tracking
+or command motion.
+
+The coordinator integration is pending. See the
+[perception integration contract](../urc_perception/docs/follow_gesture_integration.md)
+for activation, cancellation, result handling, and validation evidence.
+`ExecuteAstronautMission` remains the mission owner.
