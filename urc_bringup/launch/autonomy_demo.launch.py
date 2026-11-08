@@ -4,7 +4,10 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.conditions import IfCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import (
+    AnyLaunchDescriptionSource,
+    PythonLaunchDescriptionSource,
+)
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -12,9 +15,18 @@ from launch_ros.actions import Node
 def generate_launch_description():
     bringup_share = get_package_share_directory("urc_bringup")
     slam_share = get_package_share_directory("urc_slam")
+    rosbridge_share = get_package_share_directory("rosbridge_server")
 
     rviz_arg = DeclareLaunchArgument(
         "rviz", default_value="true", description="Open RViz with the demo layout"
+    )
+    waypoint_mission_arg = DeclareLaunchArgument(
+        "waypoint_mission", default_value="true",
+        description="Drive the demo route; disable to send missions from the dashboard instead",
+    )
+    rosbridge_arg = DeclareLaunchArgument(
+        "rosbridge", default_value="false",
+        description="Start rosbridge on port 9090 for the base-station dashboard",
     )
 
     simulation = IncludeLaunchDescription(
@@ -41,6 +53,18 @@ def generate_launch_description():
         name="waypoint_mission",
         output="screen",
         parameters=[os.path.join(bringup_share, "config", "autonomy_demo.yaml")],
+        condition=IfCondition(LaunchConfiguration("waypoint_mission")),
+    )
+    # Goals and abort must not block the socket or later service calls (dashboard RUNBOOK)
+    rosbridge = IncludeLaunchDescription(
+        AnyLaunchDescriptionSource(
+            os.path.join(rosbridge_share, "launch", "rosbridge_websocket_launch.xml")
+        ),
+        launch_arguments={
+            "send_action_goals_in_new_thread": "true",
+            "call_services_in_new_thread": "true",
+        }.items(),
+        condition=IfCondition(LaunchConfiguration("rosbridge")),
     )
     rviz = Node(
         package="rviz2",
@@ -51,4 +75,14 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("rviz")),
     )
 
-    return LaunchDescription([rviz_arg, simulation, autonomy, slam, mission, rviz])
+    return LaunchDescription([
+        rviz_arg,
+        waypoint_mission_arg,
+        rosbridge_arg,
+        simulation,
+        autonomy,
+        slam,
+        mission,
+        rosbridge,
+        rviz,
+    ])

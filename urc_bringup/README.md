@@ -27,6 +27,14 @@ ros2 launch urc_bringup sim.launch.py autonomy:=true
 Use `ros2 launch urc_bringup sim.launch.py --show-args` for the complete set of
 world, robot, controller, and simulation options.
 
+`autonomy_demo.launch.py` adds SLAM (which provides `map → base_link`,
+`/fromLL` and the costmap input) and drives a demo route. To run missions from
+the base-station dashboard instead, disable the demo route and start rosbridge:
+
+```bash
+ros2 launch urc_bringup autonomy_demo.launch.py waypoint_mission:=false rosbridge:=true rviz:=false
+```
+
 ## Configuration
 
 - `config/sim_config.yaml` defines the Gazebo-to-ROS bridges for clock, laser,
