@@ -1,11 +1,11 @@
 #ifndef PATH_PLANNING_HPP_
 #define PATH_PLANNING_HPP_
 
-#include <string>
+#include <cstdint>
 #include <queue>
+#include <string>
 #include <unordered_map>
 #include <vector>
-
 #include <geometry_msgs/msg/pose.hpp>
 #include <grid_map_msgs/msg/grid_map.hpp>
 
@@ -42,6 +42,7 @@ struct AStarNode
     geometry_msgs::msg::Pose pose;
     pose.position.x = x;
     pose.position.y = y;
+    pose.orientation.w = 1.0;
     return pose;
   }
 };

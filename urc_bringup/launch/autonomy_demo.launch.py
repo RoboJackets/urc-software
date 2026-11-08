@@ -19,7 +19,14 @@ def generate_launch_description():
 
     simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(bringup_share, "launch", "sim.launch.py")),
-        launch_arguments={"autonomy": "true"}.items(),
+        launch_arguments={"autonomy": "false"}.items(),
+    )
+    # The demo route has no ArUco markers, so route missions complete on the coordinate
+    autonomy = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(bringup_share, "launch", "autonomy.launch.py")
+        ),
+        launch_arguments={"use_sim_time": "true", "aruco_refinement": "false"}.items(),
     )
     # Scoped so SLAM's rviz:=false neither opens nor overrides the demo's RViz
     slam = GroupAction([
@@ -44,4 +51,4 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration("rviz")),
     )
 
-    return LaunchDescription([rviz_arg, simulation, slam, mission, rviz])
+    return LaunchDescription([rviz_arg, simulation, autonomy, slam, mission, rviz])

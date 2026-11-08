@@ -36,7 +36,7 @@ PurePursuit::getLookaheadPose(
 
   // If no point is found, return the last pose in the path
   if (pose == path.poses.end()) {
-    RCLCPP_INFO(logger, "Lookahead point is the last point in the path.");
+    RCLCPP_DEBUG(logger, "Lookahead point is the last point in the path.");
     return path.poses.back();
   }
 
@@ -45,11 +45,6 @@ PurePursuit::getLookaheadPose(
   // Find the intersection of the lookahead circle and the line segment between
   // prev_pose and pose, where prev_pose is guaranteed to be within the
   // lookahead circle.
-  /* RCLCPP_INFO(logger, "Closest Pt (%f, %f), Previous Pt: (%f, %f),  Lookahead
-    Pt: (%f, %f)", closestPoseIt->pose.position.x,
-    closestPoseIt->pose.position.y, prev_pose->pose.position.x,
-    prev_pose->pose.position.y, pose->pose.position.x, pose->pose.position.y);
-  */
   auto point = geometry_util::circleSegmentIntersection(
     prev_pose->pose.position, pose->pose.position, lookahead_distance);
 
@@ -80,19 +75,7 @@ trajectory_following::TrajectoryOutput PurePursuit::getCommandVelocity(
 
     tf2::doTransform(pose, transformed_pose, map_to_base_link_modified);
     transformed_path_.poses.push_back(transformed_pose);
-    RCLCPP_INFO(
-      logger,
-      "Current Pose: (%f, %f, w: %f, z: %f), map_to_base_link: (%f, %f, w: "
-      "%f, z: %f), Transformed Path Pose: (%f, %f, w: %f, z: %f)",
-      pose.pose.position.x, pose.pose.position.y, pose.pose.orientation.w,
-      pose.pose.orientation.z,
-      map_to_base_link_modified.transform.translation.x,
-      map_to_base_link_modified.transform.translation.y,
-      map_to_base_link_modified.transform.rotation.w,
-      map_to_base_link_modified.transform.rotation.z,
-      transformed_pose.pose.position.x, transformed_pose.pose.position.y,
-      transformed_pose.pose.orientation.w,
-      transformed_pose.pose.orientation.z);
+
   }
 
   auto lookahead_pose =
