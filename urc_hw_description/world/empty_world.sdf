@@ -4,7 +4,7 @@
     <spherical_coordinates>
       <surface_model>EARTH_WGS84</surface_model>
       <latitude_deg>38.3730</latitude_deg>
-      <longitude_deg>110.7140</longitude_deg>
+      <longitude_deg>-110.7140</longitude_deg>
       <elevation>0.0</elevation>
       <heading_deg>0.0</heading_deg>
     </spherical_coordinates>
