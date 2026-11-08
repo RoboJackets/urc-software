@@ -25,12 +25,6 @@ def generate_launch_description():
         default_value="false",
         description="Use the simulation clock (set by sim.launch.py)",
     )
-    trajectory_controller_arg = DeclareLaunchArgument(
-        "trajectory_controller",
-        default_value="pure_pursuit",
-        description="Path-following controller: pure_pursuit or lqr",
-    )
-    controller = {"trajectory_controller": LaunchConfiguration("trajectory_controller")}
     sim_time = {
         "use_sim_time": ParameterValue(LaunchConfiguration("use_sim_time"), value_type=bool)
     }
@@ -55,7 +49,7 @@ def generate_launch_description():
         package="urc_trajectory_following",
         executable="urc_trajectory_following_FollowerActionServer",
         name="follower_action_server",
-        parameters=[trajectory_config, sim_time, controller],
+        parameters=[trajectory_config, sim_time],
         output="screen",
     )
 
@@ -78,7 +72,6 @@ def generate_launch_description():
     return LaunchDescription(
         [
             use_sim_time_arg,
-            trajectory_controller_arg,
             state_machine_node,
             path_planning_node,
             trajectory_following_node,
