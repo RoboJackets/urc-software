@@ -21,8 +21,9 @@ Smoothing the Path
 
 #pragma once //prevents #include duplications in future headers that reference this one
 
-#include <nav_msgs/msg/path.hpp> //references and allows this header to use the types (path specifically) from the other file
 #include <cstddef> //for std::size_t
+#include <nav_msgs/msg/path.hpp> //references and allows this header to use the types (path specifically) from the other file
+
 
 
 namespace urc_path_planning { //gives a consolidated naming for the implementation--this has access to these types and these methods, just in case another file has a similar name
