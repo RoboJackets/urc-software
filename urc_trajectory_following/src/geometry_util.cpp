@@ -36,68 +36,31 @@ double calcCurvature(
   }
 }
 
-geometry_msgs::msg::Point circleSegmentIntersection(
+std::optional<geometry_msgs::msg::Point> circleSegmentIntersection(
   const geometry_msgs::msg::Point & a,
   const geometry_msgs::msg::Point & b, double r)
 {
-  double dy, dx, dr, D, discriminant, x1, x2, y1, y2;
-
-  dy = b.y - a.y;
-  dx = b.x - a.x;
-  dr = std::sqrt(dy * dy + dx * dx);
-  D = a.x * b.y - b.x * a.y;
-
-  discriminant = r * r * dr * dr - D * D;
-
-  if (discriminant < 0) {
-    throw std::runtime_error(
-            "No intersection found, discriminant is zero or negative.\nPoint a: (" +
-            std::to_string(a.x) + ", " + std::to_string(a.y) + "), Point b: (" +
-            std::to_string(b.x) + ", " + std::to_string(b.y) + "), radius: " + std::to_string(r));
-    // throw std::runtime_error("No intersection found, discriminant is zero or negative.");
+  // Solve |a + t (b - a)| = r for t in [0, 1].
+  const double dx = b.x - a.x;
+  const double dy = b.y - a.y;
+  const double qa = dx * dx + dy * dy;
+  const double qb = 2.0 * (a.x * dx + a.y * dy);
+  const double qc = a.x * a.x + a.y * a.y - r * r;
+  const double discriminant = qb * qb - 4.0 * qa * qc;
+  if (qa <= 0.0 || discriminant < 0.0) {
+    return std::nullopt;
   }
 
-  x1 = (D * dy + std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
-  x2 = (D * dy - std::copysign(1.0, dy) * dx * std::sqrt(discriminant)) / (dr * dr);
-
-  y1 = (-D * dx + std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
-  y2 = (-D * dx - std::abs(dy) * std::sqrt(discriminant)) / (dr * dr);
-
-  bool p1_in_segment =
-    std::min(
-    a.x,
-    b.x) <= x1 &&
-    x1 <= std::max(a.x, b.x) && std::min(a.y, b.y) <= y1 && y1 <= std::max(a.y, b.y);
-  bool p2_in_segment =
-    std::min(
-    a.x,
-    b.x) <= x2 &&
-    x2 <= std::max(a.x, b.x) && std::min(a.y, b.y) <= y2 && y2 <= std::max(a.y, b.y);
-
-  geometry_msgs::msg::Point intersection;
-
-  if (p1_in_segment && !p2_in_segment) {
-    intersection.x = x1;
-    intersection.y = y1;
-  } else if (p2_in_segment && !p1_in_segment) {
-    intersection.x = x2;
-    intersection.y = y2;
-  } else if (p1_in_segment && p2_in_segment) {
-    double d1 = distSquared2D(b, intersection);
-    double d2 = distSquared2D(b, intersection);
-
-    if (d1 < d2) {
-      intersection.x = x1;
-      intersection.y = y1;
-    } else {
-      intersection.x = x2;
-      intersection.y = y2;
+  const double root = std::sqrt(discriminant);
+  for (const double t : {(-qb + root) / (2.0 * qa), (-qb - root) / (2.0 * qa)}) {
+    if (t >= 0.0 && t <= 1.0) {
+      geometry_msgs::msg::Point intersection;
+      intersection.x = a.x + t * dx;
+      intersection.y = a.y + t * dy;
+      return intersection;
     }
-  } else {
-    throw std::runtime_error("No intersection found between the segment end points.");
   }
-
-  return intersection;
+  return std::nullopt;
 }
 
 double angularDistance(

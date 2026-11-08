@@ -40,18 +40,23 @@ PurePursuit::getLookaheadPose(
     return path.poses.back();
   }
 
-  auto prev_pose = std::prev(pose);
+  // The closest pose is itself outside the lookahead circle when the rover is off the
+  // path; steer toward it to rejoin instead of intersecting a segment that cannot reach.
+  if (pose == closestPoseIt) {
+    RCLCPP_DEBUG(logger, "Rover is off the path; steering to the closest path pose.");
+    return *pose;
+  }
 
-  // Find the intersection of the lookahead circle and the line segment between
-  // prev_pose and pose, where prev_pose is guaranteed to be within the
-  // lookahead circle.
-  auto point = geometry_util::circleSegmentIntersection(
-    prev_pose->pose.position, pose->pose.position, lookahead_distance);
+  const auto point = geometry_util::circleSegmentIntersection(
+    std::prev(pose)->pose.position, pose->pose.position, lookahead_distance);
+  if (!point) {
+    return *pose;
+  }
 
   geometry_msgs::msg::PoseStamped lookahead_point;
   lookahead_point.header.frame_id = pose->header.frame_id;
   lookahead_point.header.stamp = pose->header.stamp;
-  lookahead_point.pose.position = point;
+  lookahead_point.pose.position = *point;
 
   return lookahead_point;
 }
