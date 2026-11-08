@@ -18,6 +18,11 @@ namespace
 {
 constexpr double kPathSmoothingWindow = 0.4;
 constexpr double kHeadingAlignmentGain = 2.0;
+// Within this distance of the path end (m), drive straight at the end point instead of
+// tracking the line, so the rover cannot overshoot the goal and keep going.
+constexpr double kEndApproachDistance = 0.3;
+// Speed near the end point is this gain times the distance to it (1/s).
+constexpr double kEndApproachGain = 1.0;
 
 /**
  * Small-error path tracking model, state [lateral_error, heading_error], input extra yaw rate:
@@ -93,8 +98,10 @@ trajectory_following::TrajectoryOutput LqrTracker::getCommandVelocity(
     return output;
   }
 
-  const PathTrackingError error = geometry_->trackingError(roverPoseInMap(map_to_base_link));
-  output.cmd_vel.twist = steer(error);
+  const PlanarPose rover = roverPoseInMap(map_to_base_link);
+  const PathTrackingError error = geometry_->trackingError(rover);
+  const bool near_end = geometry_->length() - error.arc_length < kEndApproachDistance;
+  output.cmd_vel.twist = near_end ? approachEnd(rover) : steer(error);
 
   const Eigen::Vector2d tracking_point =
     geometry_->pointAt(error.arc_length + params_.lookahead_distance);
@@ -119,6 +126,21 @@ geometry_msgs::msg::Twist LqrTracker::steer(const PathTrackingError & error) con
   twist.angular.z = std::clamp(
     speed * error.curvature - feedback,
     -params_.max_angular_velocity, params_.max_angular_velocity);
+  return twist;
+}
+
+geometry_msgs::msg::Twist LqrTracker::approachEnd(const PlanarPose & rover) const
+{
+  const Eigen::Vector2d to_end = geometry_->pointAt(geometry_->length()) - rover.position;
+  const double heading_error =
+    std::remainder(rover.heading - std::atan2(to_end.y(), to_end.x()), 2.0 * M_PI);
+  geometry_msgs::msg::Twist twist;
+  twist.angular.z = std::clamp(
+    -kHeadingAlignmentGain * heading_error,
+    -params_.max_angular_velocity, params_.max_angular_velocity);
+  if (std::abs(heading_error) <= params_.heading_alignment_tolerance) {
+    twist.linear.x = std::min(params_.desired_linear_velocity, kEndApproachGain * to_end.norm());
+  }
   return twist;
 }
 }  // namespace lqr

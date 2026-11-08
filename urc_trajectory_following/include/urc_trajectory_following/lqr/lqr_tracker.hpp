@@ -47,6 +47,9 @@ public:
 private:
   geometry_msgs::msg::Twist steer(const PathTrackingError & error) const;
 
+  /** Drives straight at the path end, slowing down near it; turns in place if it is behind. */
+  geometry_msgs::msg::Twist approachEnd(const PlanarPose & rover) const;
+
   LqrParams params_;
   Eigen::Vector2d gain_;
   std_msgs::msg::Header path_header_;
