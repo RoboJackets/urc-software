@@ -109,6 +109,8 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS scripts/aruco_detector.py DESTINATION lib/${PROJECT_NAME})
+
 # Install library
 install(TARGETS
   ${PROJECT_NAME}
@@ -116,6 +118,14 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
+install(
+  DIRECTORY config launch models
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

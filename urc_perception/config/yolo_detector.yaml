@@ -1,0 +1,13 @@
+yolo_detector:
+  ros__parameters:
+    # model_path is supplied by yolo_detector.launch.py.
+    image_topic: /camera/image_raw
+    detections_topic: /yolo/detections
+    debug_topic: /yolo/image_debug
+    # Annotated images are rendered only while something subscribes to debug_topic.
+    publish_debug: true
+    confidence_threshold: 0.25
+    iou_threshold: 0.45
+    max_detections: 100
+    # Requires onnxruntime-gpu; falls back to CPU otherwise.
+    use_cuda: false
