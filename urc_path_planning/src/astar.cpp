@@ -8,7 +8,10 @@
 namespace astar
 {
 
-AStar::AStar() {}
+AStar::AStar()
+{
+  grid_map_utils_.setLayer("traversability_inflated");
+}
 
 Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 {
@@ -22,24 +25,14 @@ Coordinate AStar::getCoordinateByPose(const geometry_msgs::msg::Pose & pose)
 
 void AStar::setMap(const grid_map_msgs::msg::GridMap & costmap)
 {
-  costmap_ = costmap;
-  grid_map_utils_.setMap(costmap);
+  if (!grid_map_utils_.setMap(costmap)) {
+    throw std::runtime_error("Costmap message could not be converted");
+  }
 }
 
 void AStar::setCostmapLayer(const std::string & layer)
 {
-  costmap_layer_ = layer;
   grid_map_utils_.setLayer(layer);
-}
-
-int AStar::getLayerIndex() const
-{
-  return grid_map_utils_.getLayerIndex();
-}
-
-bool AStar::getMapDimensions(int & width, int & height) const
-{
-  return grid_map_utils_.getMapDimensions(width, height);
 }
 
 bool AStar::worldToGrid(double x, double y, int & map_x, int & map_y) const
@@ -54,7 +47,12 @@ double AStar::getCellCost(double x, double y) const
     throw std::runtime_error("Unable to get cell cost");
   }
 
-  return cost;
+  return std::isnan(cost) ? cost_policy_.unknown_cost : cost;
+}
+
+bool AStar::isLethal(double x, double y) const
+{
+  return getCellCost(x, y) >= cost_policy_.lethal_cost;
 }
 
 bool AStar::clipGoalToCostmapBoundary(
@@ -62,7 +60,7 @@ bool AStar::clipGoalToCostmapBoundary(
   const geometry_msgs::msg::Pose & goal_pose,
   geometry_msgs::msg::Pose & clipped_goal) const
 {
-  double resolution = costmap_.info.resolution;
+  const double resolution = grid_map_utils_.resolution();
   if (resolution <= 0.0) {
     return false;
   }
@@ -99,7 +97,7 @@ void AStar::appendStraightLineSegment(
   const geometry_msgs::msg::Pose & from_pose,
   const geometry_msgs::msg::Pose & to_pose)
 {
-  double resolution = costmap_.info.resolution;
+  const double resolution = grid_map_utils_.resolution();
   if (resolution <= 0.0) {
     return;
   }
@@ -125,8 +123,7 @@ void AStar::createPlan(
   const geometry_msgs::msg::Pose & start_pose,
   const geometry_msgs::msg::Pose & goal_pose)
 {
-  int width, height;
-  if (costmap_.info.resolution <= 0.0 || getLayerIndex() < 0 || !getMapDimensions(width, height)) {
+  if (grid_map_utils_.resolution() <= 0.0 || !grid_map_utils_.hasLayer()) {
     throw std::runtime_error("Costmap is invalid");
   }
 
@@ -145,14 +142,20 @@ void AStar::createPlan(
   {
     throw std::runtime_error("Unable to project goal onto costmap boundary");
   }
+  if (isLethal(planning_goal.position.x, planning_goal.position.y)) {
+    throw std::runtime_error("Goal lies in a lethal costmap cell");
+  }
+
+  int goal_cell_x, goal_cell_y;
+  if (!worldToGrid(planning_goal.position.x, planning_goal.position.y, goal_cell_x, goal_cell_y)) {
+    throw std::runtime_error("Planning goal is outside costmap bounds");
+  }
 
   closed_set_.clear();
   path_.clear();
 
   start_pose_ = start_pose;
   goal_pose_ = planning_goal;
-
-  const auto goal_coord = getCoordinateByPose(planning_goal);
 
   AStarNodeQueue open_set;
 
@@ -169,10 +172,14 @@ void AStar::createPlan(
     open_set.pop();
     current_node->status = NodeStatus::Visited;
 
-    const auto current_coord = getCoordinateByPose(current_node->getPose());
-    if (current_coord.x == goal_coord.x && current_coord.y == goal_coord.y) {
+    int cell_x, cell_y;
+    if (worldToGrid(current_node->x, current_node->y, cell_x, cell_y) &&
+      cell_x == goal_cell_x && cell_y == goal_cell_y)
+    {
+      // Nodes sit on a grid offset from the start, so end exactly at the goal;
+      // the follower measures success against the goal itself
       reconstructPath(current_node);
-      appendStraightLineSegment(current_node->getPose(), planning_goal);
+      appendStraightLineSegment(path_.back().getPose(), planning_goal);
       if (!goal_inside_costmap) {
         appendStraightLineSegment(planning_goal, requested_goal);
       }
@@ -227,11 +234,11 @@ std::vector<AStarNode *> AStar::getNeighbors(const AStarNode * node)
         continue;
       }
 
-      double x = node->x + (i * costmap_.info.resolution);
-      double y = node->y + (j * costmap_.info.resolution);
+      double x = node->x + (i * grid_map_utils_.resolution());
+      double y = node->y + (j * grid_map_utils_.resolution());
 
       int map_x, map_y;
-      if (!worldToGrid(x, y, map_x, map_y)) {
+      if (!worldToGrid(x, y, map_x, map_y) || isLethal(x, y)) {
         continue;
       }
 

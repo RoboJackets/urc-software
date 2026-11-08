@@ -200,6 +200,7 @@ def generate_launch_description():
                 "target_child_frame": "walli",
                 "odom_frame_id": "map",
                 "base_frame_id": "walli",
+                "relative_to_first_pose": True,
             }
         ],
         output="screen",

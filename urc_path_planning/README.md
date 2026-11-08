@@ -19,7 +19,9 @@ package's planning service before commanding motion.
 ## Planner server
 
 `urc_path_planning_PlannerServer` is also registered as a composable ROS 2
-component. It uses these fixed interfaces:
+component. Its parameters are in
+[`config/planner_params.yaml`](config/planner_params.yaml). It uses these fixed
+interfaces:
 
 | Interface | Type | Purpose |
 | --- | --- | --- |
@@ -27,10 +29,11 @@ component. It uses these fixed interfaces:
 | `plan` service | `urc_msgs/srv/GeneratePlan` | Start and goal poses in; path and result code out |
 | `/path` publisher | `nav_msgs/msg/Path` | Successful plans for visualization |
 
-The planner reads the `traversability_inflated` costmap layer and searches an
-eight-connected grid. Each move is weighted by its distance and destination-cell
-cost, so higher-cost terrain is discouraged but is not treated as an impassable
-obstacle.
+The planner reads the `costmap_layer` (default `traversability_inflated`) and
+searches an eight-connected grid. Each move is weighted by its distance and the
+destination cell's cost. Cells at or above `lethal_cost` are never entered.
+Unobserved (NaN) cells cost `unknown_cost`, so known ground is preferred but
+unseen ground is not forbidden.
 
 ## Usage
 
@@ -58,5 +61,6 @@ requests can succeed.
 - When a goal lies outside the rolling costmap, A* plans to the map boundary and
   appends a straight segment to the requested goal. Terrain beyond the costmap
   is not validated.
-- Invalid maps, out-of-bounds starts, inaccessible cells, and failed searches
-  return `GeneratePlan::FAILURE`.
+- Invalid maps, out-of-bounds starts, goals in lethal cells, and failed
+  searches return `GeneratePlan::FAILURE`. A clipped goal on the map boundary
+  can also land in a lethal cell.

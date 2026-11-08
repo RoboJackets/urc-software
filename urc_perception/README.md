@@ -7,27 +7,44 @@ grid map used by path planning and trajectory following.
 
 `TraversabilityMapping`:
 
-1. Filters non-finite points and points outside the configured sensor radius.
-2. Transforms the cloud into the `map` frame.
-3. Extracts an elevation grid and applies the configured Grid Map filter chain.
-4. Computes slope and roughness, combines them into traversability cost, and
-   inflates that cost with the package's Gaussian filter plugin.
-5. Merges the result into a rolling cache centered on the latest odometry pose.
+1. Transforms the input cloud into the `map` frame and crops it to the cache
+   window plus `crop_margin_m`.
+2. Extracts an elevation grid and applies the configured Grid Map filter chain.
+3. Computes slope, roughness and step height, scores each cell against the
+   rover's limits, and inflates lethal cells by the rover footprint.
+4. Merges the result into a rolling cache centered on the latest odometry pose.
 
-With the default configuration, the node consumes `/scan/points` and
-`/odometry/filtered_global`, then publishes `/costmap` as
+With the default configuration, the node consumes the SLAM map
+(`/slam/map_points`) and `/slam/odometry`, then publishes `/costmap` as
 `grid_map_msgs/msg/GridMap`. Navigation consumes its
 `traversability_inflated` layer.
+
+## Cost contract
+
+- Cost runs from 0 (easy) to 1 (lethal). `TraversabilityCostFilter` takes the
+  worst of slope ÷ `max_slope_rad`, roughness ÷ `max_roughness_m` and
+  step height ÷ `max_step_height_m`, capped at 1. Step height is the height
+  change to a neighboring cell beyond what the local slope explains.
+- `FootprintInflationFilter` makes every cell within `inscribed_radius_m` of a
+  lethal cell lethal, then decays cost below lethal out to
+  `inflation_radius_m`.
+- NaN means the cell has not been observed. Unknown cells are never reported
+  as 0.
+- The roughness and step limits are provisional and should be set from what
+  the rover can actually climb. At 0.25 m resolution, a step near the limit is
+  hard to tell apart from a slope near the limit.
 
 ## Configuration
 
 - [`config/traversability_params.yaml`](config/traversability_params.yaml)
-  defines topics, frames, cache geometry, point filtering, and the Grid Map
-  filter chain.
+  defines topics, frames, cache geometry, cropping, rover limits, and the Grid
+  Map filter chain.
 - [`config/pcl_grid_map_params.yaml`](config/pcl_grid_map_params.yaml) controls
-  point-cloud preprocessing and elevation-grid extraction.
+  elevation-grid extraction. It is tuned for the 0.2 m voxel SLAM map and is
+  read once at startup.
 - [`filter_plugins.xml`](filter_plugins.xml) exports
-  `urcPerception/GaussianFilter` for use in Grid Map filter chains.
+  `urcPerception/TraversabilityCostFilter` and
+  `urcPerception/FootprintInflationFilter`.
 
 ## Usage
 

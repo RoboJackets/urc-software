@@ -21,6 +21,9 @@
   <depend>ros_gz</depend>
   <depend>effort_controllers</depend>
   <depend>grid_map_rviz_plugin</depend>
+  <depend>urc_slam</depend>
+
+  <exec_depend>rviz2</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -1,0 +1,40 @@
+# Demo route around marsyard2020, counterclockwise from the spawn point.
+# Waypoints sit on ground under 10 deg and legs are at most ~5 m, so every goal
+# lies inside the 10 m costmap window. Marked legs cross 20-24 deg terrain in a
+# straight line, so the planner has to route around it on gentler ground.
+waypoint_mission:
+  ros__parameters:
+    use_sim_time: true
+    frame_id: map
+    base_frame_id: base_link
+    laps: 1
+    max_attempts_per_waypoint: 3
+    start_delay_s: 10.0
+    retry_delay_s: 2.0
+    # Flat list of map-frame x, y pairs (m); map is the SLAM start pose
+    waypoints: [
+        4.5, 3.5,  # straight line from previous crosses steep ground
+        5.5, 4.5,
+        4.5, 8.5,  # straight line from previous crosses steep ground
+        1.5, 11.5,
+        -2.5, 14.5,
+        -6.5, 14.5,
+        -9.5, 11.5,
+        -9.5, 7.5,
+        -10.5, 3.5,
+        -10.5, -0.5,
+        -9.5, -2.5,
+        -6.5, -6.5,  # straight line from previous crosses steep ground
+        -1.5, -7.5,
+        -2.5, -11.5,  # straight line from previous crosses steep ground
+        0.5, -14.5,
+        4.5, -14.5,
+        8.5, -13.5,
+        10.5, -9.5,
+        12.5, -5.5,
+        11.5, -3.5,
+        8.5, 0.5,  # straight line from previous crosses steep ground
+        4.5, 2.5,
+        0.5, 2.5,
+        0.5, 0.5
+    ]

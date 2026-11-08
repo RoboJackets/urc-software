@@ -1,0 +1,137 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Reference Frame: <Fixed Frame>
+      Cell Size: 1
+      Plane Cell Count: 50
+      Color: 160; 160; 164
+      Alpha: 0.25
+    - Class: grid_map_rviz_plugin/GridMap
+      Name: Costmap (traversability_inflated)
+      Enabled: true
+      Topic:
+        Value: /costmap
+        Depth: 1
+        Reliability Policy: Reliable
+      Alpha: 0.75
+      History Length: 1
+      Show Grid Lines: false
+      Height Transformer: Layer
+      Height Layer: elevation
+      Color Transformer: IntensityLayer
+      Color Layer: traversability_inflated
+    - Class: rviz_default_plugins/PointCloud2
+      Name: SLAM map points
+      Enabled: true
+      Topic:
+        Value: /slam/map_points
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Style: Points
+      Size (Pixels): 1
+      Alpha: 0.35
+      Color Transformer: FlatColor
+      Color: 200; 200; 210
+      Decay Time: 0
+    - Class: rviz_default_plugins/Path
+      Name: A* plan
+      Enabled: true
+      Topic:
+        Value: /path
+        Reliability Policy: Reliable
+      Color: 0; 220; 255
+      Line Style: Billboards
+      Line Width: 0.08
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Mission waypoints
+      Enabled: true
+      Topic:
+        Value: /mission_waypoints
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/Path
+      Name: SLAM keyframe path
+      Enabled: true
+      Topic:
+        Value: /slam/path
+      Color: 255; 200; 0
+      Line Style: Lines
+    - Class: rviz_default_plugins/Odometry
+      Name: SLAM odometry
+      Enabled: true
+      Topic:
+        Value: /slam/odometry
+        Reliability Policy: Reliable
+      Keep: 100
+      Position Tolerance: 0.25
+      Angle Tolerance: 0.2
+      Shape:
+        Value: Arrow
+        Color: 230; 60; 40
+        Shaft Length: 0.4
+        Shaft Radius: 0.03
+        Head Length: 0.12
+        Head Radius: 0.07
+      Covariance:
+        Value: true
+        Position:
+          Value: true
+          Scale: 1
+        Orientation:
+          Value: false
+    - Class: rviz_default_plugins/Odometry
+      Name: Ground truth
+      Enabled: false
+      Topic:
+        Value: /ground_truth/odom
+        Reliability Policy: Reliable
+      Keep: 100
+      Position Tolerance: 0.25
+      Angle Tolerance: 0.2
+      Shape:
+        Value: Arrow
+        Color: 40; 180; 90
+        Shaft Length: 0.4
+        Shaft Radius: 0.03
+        Head Length: 0.12
+        Head Radius: 0.07
+      Covariance:
+        Value: false
+    - Class: rviz_default_plugins/RobotModel
+      Name: Rover
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+        Durability Policy: Transient Local
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+  Global Options:
+    Fixed Frame: map
+    Background Color: 30; 33; 40
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Measure
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 42
+      Pitch: 1.1
+      Yaw: 3.14
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+Window Geometry:
+  Width: 1500
+  Height: 950

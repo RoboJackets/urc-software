@@ -1,0 +1,97 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Reference Frame: <Fixed Frame>
+      Cell Size: 1
+      Plane Cell Count: 100
+      Color: 160; 160; 164
+    - Class: rviz_default_plugins/PointCloud2
+      Name: SLAM map
+      Enabled: true
+      Topic:
+        Value: /slam/map_points
+        Depth: 1
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Style: Points
+      Size (Pixels): 2
+      Color Transformer: AxisColor
+      Axis: Z
+      Decay Time: 0
+    - Class: rviz_default_plugins/Path
+      Name: SLAM keyframe path
+      Enabled: true
+      Topic:
+        Value: /slam/path
+      Color: 255; 200; 0
+      Line Style: Lines
+    - Class: rviz_default_plugins/Odometry
+      Name: SLAM odometry
+      Enabled: true
+      Topic:
+        Value: /slam/odometry
+        Reliability Policy: Reliable
+      Keep: 200
+      Position Tolerance: 0.1
+      Angle Tolerance: 0.1
+      Shape:
+        Value: Arrow
+        Color: 230; 60; 40
+        Shaft Length: 0.4
+        Shaft Radius: 0.03
+        Head Length: 0.12
+        Head Radius: 0.07
+      Covariance:
+        Value: true
+        Position:
+          Value: true
+          Scale: 1
+        Orientation:
+          Value: false
+    - Class: rviz_default_plugins/Odometry
+      Name: Ground truth
+      Enabled: true
+      Topic:
+        Value: /ground_truth/odom
+        Reliability Policy: Reliable
+      Keep: 200
+      Position Tolerance: 0.1
+      Angle Tolerance: 0.1
+      Shape:
+        Value: Arrow
+        Color: 40; 180; 90
+        Shaft Length: 0.4
+        Shaft Radius: 0.03
+        Head Length: 0.12
+        Head Radius: 0.07
+      Covariance:
+        Value: false
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+  Global Options:
+    Fixed Frame: map
+    Background Color: 40; 44; 52
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 25
+      Pitch: 0.9
+      Yaw: 3.9
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+Window Geometry:
+  Width: 1400
+  Height: 900

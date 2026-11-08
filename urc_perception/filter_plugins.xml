@@ -1,10 +1,19 @@
 <class_libraries>
-    <library path="gaussian_filter">
-        <class name="urcPerception/GaussianFilter"
-            type="urc_perception::GaussianFilter&lt;grid_map::GridMap&gt;"
+    <library path="urc_perception_filters">
+        <class name="urcPerception/TraversabilityCostFilter"
+            type="urc_perception::TraversabilityCostFilter"
             base_class_type="filters::FilterBase&lt;grid_map::GridMap&gt;">
             <description>
-                Apply a gaussian filter to inflate the obstacles in the grid map.
+                Scores cells from 0 to 1 (lethal) from slope, roughness and step height
+                against the rover's limits.
+            </description>
+        </class>
+        <class name="urcPerception/FootprintInflationFilter"
+            type="urc_perception::FootprintInflationFilter"
+            base_class_type="filters::FilterBase&lt;grid_map::GridMap&gt;">
+            <description>
+                Marks cells within the rover's inscribed radius of a lethal cell as lethal
+                and decays cost beyond it.
             </description>
         </class>
     </library>
