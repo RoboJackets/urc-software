@@ -1,0 +1,7 @@
+planner_server:
+  ros__parameters:
+    smoothing:
+      data_weight: 0.5
+      smoothness_weight: 0.1
+      tolerance: 0.001
+      maximum_iterations: 1000

@@ -29,6 +29,7 @@ include_directories(
 add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
+  src/gradient_descent_smoother.cpp
 )
 
 set(dependencies
@@ -62,6 +63,7 @@ rclcpp_components_register_node(
 install(
   DIRECTORY
   launch
+  config
   DESTINATION share/${PROJECT_NAME}/
 )
 

@@ -1,8 +1,11 @@
+#include <cstdint>
+#include <stdexcept>
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 #include "urc_path_planning/planner_server.hpp"
 #include "urc_path_planning/astar.hpp"
+#include "urc_path_planning/gradient_descent_smoother.hpp"
 
 namespace planner_server
 {
@@ -10,6 +13,11 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
 : rclcpp::Node("planner_server", options)
 {
   RCLCPP_INFO(get_logger(), "Planner server started.");
+
+  declare_parameter<double>("smoothing.data_weight", 0.5);
+  declare_parameter<double>("smoothing.smoothness_weight", 0.1);
+  declare_parameter<double>("smoothing.tolerance", 0.001);
+  declare_parameter<int64_t>("smoothing.maximum_iterations", 1000);
 
   // Create the service
   plan_service_ = create_service<urc_msgs::srv::GeneratePlan>(
@@ -49,6 +57,16 @@ void PlannerServer::generatePlan(
     auto goal = request->goal.pose;
 
     astar.createPlan(start, goal);
+
+    const double data_weight = get_parameter("smoothing.data_weight").as_double();
+    const double smoothness_weight = get_parameter("smoothing.smoothness_weight").as_double();
+    const double tolerance = get_parameter("smoothing.tolerance").as_double();
+    const int64_t maximum_iterations = get_parameter("smoothing.maximum_iterations").as_int();
+
+    if (maximum_iterations <= 0) {
+      throw std::invalid_argument("smoothing.maximum_iterations must be positive");
+    }
+
     std::vector<astar::AStarNode> path = astar.getPath();
 
     std::vector<geometry_msgs::msg::PoseStamped> poses;
@@ -67,6 +85,17 @@ void PlannerServer::generatePlan(
     plan.header.frame_id = "map";
     plan.header.stamp = get_clock()->now();
     plan.poses = poses;
+
+    urc_path_planning::SmoothingParameters smoothing_parameters {
+      data_weight,
+      smoothness_weight,
+      tolerance,
+      static_cast<std::size_t>(maximum_iterations)
+    };
+
+    const urc_path_planning::GradientDescentSmoother smoother(smoothing_parameters);
+
+    plan = smoother.smooth(plan);
 
     response->path = plan;
     response->error_code = urc_msgs::srv::GeneratePlan::Response::SUCCESS;
