@@ -106,6 +106,14 @@ def generate_launch_description():
         description="Incline slope in degrees (used when add_incline is true)",
     )
 
+    spawn_x_arg = DeclareLaunchArgument(
+        "spawn_x", default_value="0", description="Rover spawn x in the world (m)"
+    )
+
+    spawn_y_arg = DeclareLaunchArgument(
+        "spawn_y", default_value="0", description="Rover spawn y in the world (m)"
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
     cube_x = LaunchConfiguration("cube_x")
@@ -228,8 +236,8 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-name", "walli",
-            "-x", "0",
-            "-y", "0",
+            "-x", LaunchConfiguration("spawn_x"),
+            "-y", LaunchConfiguration("spawn_y"),
             "-z", "2.0",
             "-R", "0",
             "-P", "0",
@@ -346,6 +354,8 @@ def generate_launch_description():
             incline_x_arg,
             incline_y_arg,
             incline_slope_arg,
+            spawn_x_arg,
+            spawn_y_arg,
             gz_sim,
             bridge,
             robot_state_publisher_node,

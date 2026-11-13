@@ -12,12 +12,14 @@ namespace urc_slam {
 
     namespace {
 
-        PointCloud3d withinRangeBand(const PointCloud3d &cloud, const RockExtractorParams &params) {
+        PointCloud3d withinSensorWindow(const PointCloud3d &cloud, const RockExtractorParams &params) {
             PointCloud3d kept;
             kept.reserve(cloud.size());
             for (const Eigen::Vector3d &point : cloud) {
                 const double range = point.norm();
-                if (range >= params.min_range_m && range <= params.max_range_m) {
+                const double elevation_rad = std::atan2(point.z(), point.head<2>().norm());
+                if (range >= params.min_range_m && range <= params.max_range_m &&
+                    elevation_rad <= params.max_elevation_rad) {
                     kept.push_back(point);
                 }
             }
@@ -56,6 +58,22 @@ namespace urc_slam {
                    shape.height_m <= params.max_height_m &&
                    shape.horizontal_extent_m >= params.min_radius_m &&
                    shape.horizontal_extent_m <= 2.0 * params.max_radius_m;
+        }
+
+        // Metres to the nearest window limit; the elevation limit is measured
+        // as arc length at the point's range.
+        double distanceToWindowEdge(const Eigen::Vector3d &point, const RockExtractorParams &params) {
+            const double range = point.norm();
+            const double elevation_rad = std::atan2(point.z(), point.head<2>().norm());
+            return std::min({range - params.min_range_m, params.max_range_m - range,
+                             (params.max_elevation_rad - elevation_rad) * range});
+        }
+
+        bool isClippedByWindow(const ClusterShape &shape, const RockExtractorParams &params) {
+            return std::any_of(shape.points.begin(), shape.points.end(),
+                [&](const Eigen::Vector3d &point) {
+                    return distanceToWindowEdge(point, params) < params.window_edge_margin_m;
+                });
         }
 
         // Accepts a sphere only if it looks like a round object seen from outside.
@@ -105,12 +123,13 @@ namespace urc_slam {
 
     std::vector<RockObservation> RockExtractor::extract(const PointCloud3d &cloud) const {
         const std::vector<ElevatedPoint> elevated = removeGround(
-            withinRangeBand(cloud, params_), params_.ground_cell_size_m, params_.ground_clearance_m);
+            withinSensorWindow(cloud, params_), params_.ground_cell_size_m, params_.ground_clearance_m,
+            params_.ground_max_slope);
 
         std::vector<RockObservation> rocks;
         for (const std::vector<std::size_t> &indices : clusterPoints(elevated, params_.cluster_tolerance_m)) {
             const ClusterShape shape = describeCluster(elevated, indices);
-            if (!isRockSized(shape, params_)) {
+            if (!isRockSized(shape, params_) || isClippedByWindow(shape, params_)) {
                 continue;
             }
             if (const std::optional<RockObservation> rock = observe(shape, params_)) {

@@ -32,7 +32,7 @@ slam_node:
 
     # Rock landmark loop closure. Off in code unless enabled here (see REVIEW_NOTES.md).
     rock_landmarks:
-      enabled: true
+      enabled: false
       noise:
         # RMS centre error (bias included) of all sphere-fit detections in the
         # simulated 16-beam LiDAR Monte Carlo (3.92 M sweeps, no centroid
@@ -42,6 +42,43 @@ slam_node:
         # azimuth 0.0093 rad, elevation 0.028 rad; the larger is used so the
         # vertical error is not over-trusted.
         bearing_sigma_rad: 0.028
+      extractor:
+        # Applied to every point first. Beyond 2 m too few LiDAR rings land on
+        # a rock for a reliable fit, so farther rocks never reach the graph.
+        max_range_m: 2.0
+        # 15 deg above the rover's horizontal: upward beams hit overhangs and
+        # far terrain, which showed up as landmarks above the rover.
+        max_elevation_rad: 0.2618
+        # Clusters with a point within this of the range or elevation limits
+        # are cut off by the window and dropped: a partial cap gives a centre
+        # biased along the line of sight. 5x the 0.01 m LiDAR noise; untuned.
+        window_edge_margin_m: 0.00
+        # 15 deg at 2 m reaches 0.54 m above the sensor, so 0.5 m is the
+        # largest rock the window can sample from top to bottom.
+        max_radius_m: 0.5
+        # Local terrain slope (rise/run) the ground filter compensates for.
+        # tan(0.5 rad): the traversability costmap's lethal slope, so drivable
+        # terrain is never kept as a rock.
+        ground_max_slope: 0.55
+      associator:
+        # Base association search radius around the robot: max_range_m +
+        # max_radius_m, the farthest a detected rock's centre can be. Each
+        # keyframe it grows by candidate_pose_sigma_scale x the pose's largest
+        # 1-sigma position error, capped at max_candidate_radius_m.
+        candidate_radius_m: 2.5
+        candidate_pose_sigma_scale: 3.0
+        max_candidate_radius_m: 10.0
+      # A new landmark closer than max(this, sum of both radii) to a mapped
+      # one would overlap a rock already in the map, so it is not created.
+      # TEMPORARY 3.0 m (default 0.3) to test whether a stronger gate stops
+      # duplicate landmarks; also blocks distinct rocks within 3 m. Retune.
+      min_landmark_separation_m: 3.0
+      # A re-sighting adds a factor only from a new viewpoint: line of sight
+      # turned >= 15 deg or robot moved >= 1 m since the landmark's last
+      # factor (or more than recently_seen_window_poses keyframes ago).
+      # Untuned starting values.
+      min_factor_view_change_rad: 0.26
+      min_factor_travel_m: 1.0
       # Remaining keys (extractor.*, associator.*, huber_kernel_width) use the
       # defaults in rock_landmark_params.hpp; override here to tune.
 

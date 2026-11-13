@@ -5,7 +5,7 @@
 #include <vector>
 #include <Eigen/Core>
 
-#include "loop_closure_params.hpp"
+#include "urc_slam/loop_closure_params.hpp"
 
 namespace urc_slam {
 

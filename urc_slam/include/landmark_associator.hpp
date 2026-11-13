@@ -8,6 +8,7 @@
 #include <gtsam/geometry/Point3.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/inference/Key.h>
+#include <gtsam/nonlinear/ISAM2.h>
 
 #include "jcbb_search.hpp"
 #include "rock_landmark_params.hpp"
@@ -15,18 +16,20 @@
 
 namespace urc_slam {
 
-    // Current best guess of the pose that took the scan: map_T_base, with the
-    // 6x6 covariance in GTSAM's Pose3 tangent order (rotation, then translation).
-    struct BasePoseEstimate {
-        gtsam::Pose3 pose;
-        gtsam::Matrix6 covariance = gtsam::Matrix6::Identity();
-    };
-
     struct LandmarkCandidate {
         gtsam::Key key = 0;
         gtsam::Point3 position;          // map frame
-        gtsam::Matrix3 covariance = gtsam::Matrix3::Identity();
         bool recently_seen = false;
+    };
+
+    // Map-frame state one scan is associated against. `covariance` is the joint
+    // marginal of [pose, candidates[0], candidates[1], ...]: a 6x6 pose block in
+    // GTSAM's Pose3 tangent order (rotation, then translation), then a 3x3 block
+    // per candidate, cross-covariances included.
+    struct AssociationState {
+        gtsam::Pose3 pose;               // map_T_base
+        std::vector<LandmarkCandidate> candidates;
+        gtsam::Matrix covariance;
     };
 
     enum class Disposition { kMatched, kNewLandmark, kAmbiguous };
@@ -57,11 +60,12 @@ namespace urc_slam {
                 const gtsam::Pose3 &base_T_sensor
             );
 
-            // Result is index-aligned with `observations`.
+            // Result is index-aligned with `observations`. Throws
+            // std::invalid_argument if `state.covariance` does not match the
+            // candidate count.
             std::vector<ObservationAssociation> associate(
                 const std::vector<RockObservation> &observations,
-                const BasePoseEstimate &pose,
-                const std::vector<LandmarkCandidate> &candidates
+                const AssociationState &state
             ) const;
 
             // Baseline for comparison only (not used by the pipeline): each
@@ -70,20 +74,18 @@ namespace urc_slam {
             // all observations, which is exactly what JCBB models.
             std::vector<std::optional<std::size_t>> nearestNeighbor(
                 const std::vector<RockObservation> &observations,
-                const BasePoseEstimate &pose,
-                const std::vector<LandmarkCandidate> &candidates
+                const AssociationState &state
             ) const;
 
         private:
             JcbbProblem buildProblem(
                 const std::vector<RockObservation> &observations,
-                const BasePoseEstimate &pose,
-                const std::vector<LandmarkCandidate> &candidates
+                const AssociationState &state
             ) const;
 
             PairTerm pairTerm(
                 const RockObservation &observation,
-                const BasePoseEstimate &pose,
+                const gtsam::Pose3 &pose,
                 const LandmarkCandidate &candidate
             ) const;
 
@@ -91,6 +93,12 @@ namespace urc_slam {
             RockMeasurementNoise noise_;
             gtsam::Pose3 base_T_sensor_;
     };
+
+    // Exact joint marginal covariance of `keys` from iSAM2's Bayes tree, at its
+    // current linearization point. Blocks follow the order of `keys`, each the
+    // variable's tangent dimension (6 for Pose3, 3 for Point3). The keys must
+    // be in one connected graph.
+    gtsam::Matrix jointCovariance(const gtsam::ISAM2 &isam, const gtsam::KeyVector &keys);
 
 }
 

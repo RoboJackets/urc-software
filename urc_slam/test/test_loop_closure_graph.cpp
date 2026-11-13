@@ -49,6 +49,8 @@ int main() {
     // Make the first-seen landmarks count as "not seen recently" by the end of
     // the loop, so the real loop-closure rule (>= 2 pairings) is what is tested.
     params.associator.recently_seen_window_poses = 2;
+    // The synthetic rocks sit up to 6.3 m from the start pose.
+    params.associator.candidate_radius_m = 10.0;
     LandmarkManager manager(params);
 
     const std::vector<gtsam::Point3> rocks{gtsam::Point3(3.0, 2.0, 0.0), gtsam::Point3(6.0, -2.0, 0.0)};

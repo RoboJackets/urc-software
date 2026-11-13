@@ -1,4 +1,4 @@
-#include "loop_closure_detector.hpp"
+#include "urc_slam/loop_closure_detector.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -6,7 +6,7 @@
 #include <Eigen/Eigenvalues>
 #include <gtsam/inference/Symbol.h>
 
-#include "loop_closure_screening.hpp"
+#include "urc_slam/loop_closure_screening.hpp"
 
 namespace urc_slam {
 

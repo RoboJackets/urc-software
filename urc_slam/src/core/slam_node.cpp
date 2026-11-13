@@ -11,7 +11,7 @@
 #include <tf2/exceptions.hpp>
 #include <tf2/time.hpp>
 
-#include "loop_closure_ros.hpp"
+#include "urc_slam/loop_closure_ros.hpp"
 #include "rock_landmark_ros.hpp"
 
 namespace urc_slam
@@ -471,8 +471,11 @@ void SlamNode::processRocks(const sensor_msgs::msg::PointCloud2 & msg)
   }
 
   RCLCPP_DEBUG(
-    get_logger(), "Rocks at keyframe %zu: %zu matched, %zu new, %zu ambiguous",
-    pose_index, update.summary.matched, update.summary.created, update.summary.ambiguous);
+    get_logger(),
+    "Rocks at keyframe %zu: %zu matched, %zu redundant, %zu new, %zu ambiguous, "
+    "%zu colliding (candidate radius %.2f m)",
+    pose_index, update.summary.matched, update.summary.redundant, update.summary.created,
+    update.summary.ambiguous, update.summary.colliding, update.summary.candidate_radius_m);
 }
 
 void SlamNode::publishLandmarks(const rclcpp::Time & stamp)

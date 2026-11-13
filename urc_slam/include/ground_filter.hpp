@@ -15,14 +15,16 @@ namespace urc_slam {
 
     // Keeps points that stand more than `clearance_m` above the local ground.
     //
-    // Local ground = the lowest z in the point's grid cell or any of its 8
-    // neighbours (cells are `cell_size_m` wide). Searching the neighbours
-    // matters: a rock wider than one cell has no bare ground inside its own cell.
-    // Weakness: on a slope the uphill cell's "ground" is taken from the lower
-    // neighbour, so slope * cell_size_m should stay below clearance_m. Rougher
-    // terrain needs a real ground model.
+    // Ground references are the lowest point of the point's grid cell and of its
+    // 8 neighbours (cells are `cell_size_m` wide), so a rock wider than one cell
+    // still sees bare ground. Height above a reference q is
+    //   p.z - q.z - s * |p.xy - q.xy|
+    // where s is the local terrain slope (rise/run) from a plane fit through
+    // those lowest points, capped at `max_slope`. The point's height is the
+    // largest over its references. `max_slope` = 0 gives plain lowest-neighbour
+    // filtering.
     std::vector<ElevatedPoint> removeGround(
-        const PointCloud3d &cloud, double cell_size_m, double clearance_m);
+        const PointCloud3d &cloud, double cell_size_m, double clearance_m, double max_slope);
 
 }
 

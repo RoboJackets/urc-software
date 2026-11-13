@@ -4,14 +4,17 @@
 rock_landmarks:
   extractor:
     min_range_m: 1.0
-    max_range_m: 30.0
+    max_range_m: 2.0
+    max_elevation_rad: 0.2618
+    window_edge_margin_m: 0.05
     ground_cell_size_m: 0.5
     ground_clearance_m: 0.10
+    ground_max_slope: 0.55
     cluster_tolerance_m: 0.15
     min_points: 20
     max_points: 20000
     min_radius_m: 0.1
-    max_radius_m: 1.0
+    max_radius_m: 0.5
     max_height_m: 1.5
     max_sphere_rms_m: 0.05
   noise:
@@ -24,4 +27,11 @@ rock_landmarks:
     min_pairings_for_reassociation: 2
     ambiguity_margin: 2.0
     max_search_nodes: 20000
+    # max_range_m + max_radius_m; grows with pose uncertainty up to the cap.
+    candidate_radius_m: 2.5
+    candidate_pose_sigma_scale: 3.0
+    max_candidate_radius_m: 10.0
   huber_kernel_width: 1.345
+  min_landmark_separation_m: 0.3
+  min_factor_view_change_rad: 0.26
+  min_factor_travel_m: 1.0

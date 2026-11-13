@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "loop_closure_screening.hpp"
+#include "urc_slam/loop_closure_screening.hpp"
 #include "mini_check.hpp"
 
 namespace {

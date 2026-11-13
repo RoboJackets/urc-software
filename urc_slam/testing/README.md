@@ -46,6 +46,22 @@ Each leg ends on distance measured from ground truth, so the route is the same
 regardless of the simulator's speed. It avoids the slope in +x of the spawn
 point and turning in place, where the sim rover tends to flip.
 
+### Sphere route
+
+`--route sphere` runs on flat ground (`urc_hw_description/world/sphere_test.sdf`)
+with one 0.5 m-radius sphere 8 m ahead of the spawn point:
+
+1. 10 s at rest
+2. forward until 2.5 m from the sphere's centre
+3. turn in place onto the orbit
+4. half orbit at 2.5 m to the far side
+5. turn in place to face the sphere
+6. forward until 1.5 m from its centre
+
+```bash
+src/urc_slam/testing/run_sim_trial.sh --rviz --route sphere sphere_trial
+```
+
 ## Reading the output
 
 - **Leg errors:** each one is the horizontal distance between SLAM's

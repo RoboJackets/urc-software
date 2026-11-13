@@ -43,19 +43,30 @@ namespace urc_slam {
                         return;
                     }
 
+
+                    //for each possible landmark to associate to 
                     for (std::size_t candidate = 0; candidate < problem_.num_candidates; ++candidate) {
+                        //have you already been to that canditate or the obverstaion or landmark are not invidually comptabile skip
                         if (candidate_used_[candidate] ||
                             !term(observation, candidate).individually_compatible) {
                             continue;
                         }
+
+                        //the observation can be explained by a landmark, keep track of them
                         pairings_.emplace_back(observation, candidate);
+                        
+
+                        //if there is a distance we can calculate, mark candidate as used and goto the next observation
                         if (jointDistanceSq(problem_, pairings_).has_value()) {
                             candidate_used_[candidate] = true;
+
+                            //keep track of association
                             assignment_[observation] = static_cast<int>(candidate);
                             descend(observation + 1);
                             assignment_[observation] = -1;
                             candidate_used_[candidate] = false;
                         }
+                        //remove
                         pairings_.pop_back();
                     }
 
@@ -124,22 +135,36 @@ namespace urc_slam {
         Eigen::VectorXd innovation(3 * n);
         Eigen::MatrixXd covariance(3 * n, 3 * n);
 
+        // State layout: pose (6), then 3 per candidate; see JcbbProblem.
+        constexpr Eigen::Index kPoseDim = 6;
+        constexpr Eigen::Index kLandmarkDim = 3;
+        const Eigen::MatrixXd &sigma = problem.state_covariance;
+
         for (Eigen::Index a = 0; a < n; ++a) {
             const PairTerm &term_a =
                 problem.terms[pairings[a].first * problem.num_candidates + pairings[a].second];
+            const Eigen::Index landmark_a = kPoseDim + kLandmarkDim * static_cast<Eigen::Index>(pairings[a].second);
             innovation.segment<3>(3 * a) = term_a.innovation;
 
             for (Eigen::Index b = 0; b < n; ++b) {
                 const PairTerm &term_b =
                     problem.terms[pairings[b].first * problem.num_candidates + pairings[b].second];
-                // All pairings observe from the same pose, so its covariance couples
-                // every pair of innovations. This off-diagonal block is what
-                // distinguishes joint from individual compatibility.
+                const Eigen::Index landmark_b = kPoseDim + kLandmarkDim * static_cast<Eigen::Index>(pairings[b].second);
+                // J_a * Sigma * J_b^T, each J touching only the pose and its own
+                // landmark. Every pairing shares the pose, and landmarks are
+                // correlated with it and with each other, so these off-diagonal
+                // blocks are what distinguish joint from individual compatibility.
                 covariance.block<3, 3>(3 * a, 3 * b) =
-                    term_a.pose_jacobian * problem.pose_covariance *
-                    term_b.pose_jacobian.transpose();
+                    term_a.pose_jacobian * sigma.block<kPoseDim, kPoseDim>(0, 0) *
+                        term_b.pose_jacobian.transpose() +
+                    term_a.pose_jacobian * sigma.block<kPoseDim, kLandmarkDim>(0, landmark_b) *
+                        term_b.landmark_jacobian.transpose() +
+                    term_a.landmark_jacobian * sigma.block<kLandmarkDim, kPoseDim>(landmark_a, 0) *
+                        term_b.pose_jacobian.transpose() +
+                    term_a.landmark_jacobian * sigma.block<kLandmarkDim, kLandmarkDim>(landmark_a, landmark_b) *
+                        term_b.landmark_jacobian.transpose();
             }
-            covariance.block<3, 3>(3 * a, 3 * a) += term_a.independent_covariance;
+            covariance.block<3, 3>(3 * a, 3 * a) += term_a.measurement_covariance;
         }
 
         const Eigen::LDLT<Eigen::MatrixXd> factorization(covariance);

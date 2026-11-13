@@ -9,7 +9,7 @@
 
 #include "landmark_manager.hpp"
 #include "urc_slam/lidar_frontend.hpp"
-#include "loop_closure_params.hpp"
+#include "urc_slam/loop_closure_params.hpp"
 #include "urc_slam/slam_backend.hpp"
 
 namespace urc_slam {

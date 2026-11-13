@@ -17,8 +17,12 @@ namespace urc_slam {
             const std::string prefix = "rock_landmarks.extractor.";
             p.min_range_m = node.declare_parameter<double>(prefix + "min_range_m", p.min_range_m);
             p.max_range_m = node.declare_parameter<double>(prefix + "max_range_m", p.max_range_m);
+            p.max_elevation_rad = node.declare_parameter<double>(prefix + "max_elevation_rad", p.max_elevation_rad);
+            p.window_edge_margin_m = node.declare_parameter<double>(
+                prefix + "window_edge_margin_m", p.window_edge_margin_m);
             p.ground_cell_size_m = node.declare_parameter<double>(prefix + "ground_cell_size_m", p.ground_cell_size_m);
             p.ground_clearance_m = node.declare_parameter<double>(prefix + "ground_clearance_m", p.ground_clearance_m);
+            p.ground_max_slope = node.declare_parameter<double>(prefix + "ground_max_slope", p.ground_max_slope);
             p.cluster_tolerance_m = node.declare_parameter<double>(prefix + "cluster_tolerance_m", p.cluster_tolerance_m);
             p.min_points = static_cast<std::size_t>(node.declare_parameter<int>(prefix + "min_points", static_cast<int>(p.min_points)));
             p.max_points = static_cast<std::size_t>(node.declare_parameter<int>(prefix + "max_points", static_cast<int>(p.max_points)));
@@ -40,6 +44,11 @@ namespace urc_slam {
             p.ambiguity_margin = node.declare_parameter<double>(prefix + "ambiguity_margin", p.ambiguity_margin);
             p.max_search_nodes = static_cast<std::size_t>(node.declare_parameter<int>(
                 prefix + "max_search_nodes", static_cast<int>(p.max_search_nodes)));
+            p.candidate_radius_m = node.declare_parameter<double>(prefix + "candidate_radius_m", p.candidate_radius_m);
+            p.candidate_pose_sigma_scale = node.declare_parameter<double>(
+                prefix + "candidate_pose_sigma_scale", p.candidate_pose_sigma_scale);
+            p.max_candidate_radius_m = node.declare_parameter<double>(
+                prefix + "max_candidate_radius_m", p.max_candidate_radius_m);
             return p;
         }
 
@@ -54,6 +63,12 @@ namespace urc_slam {
                 "rock_landmarks.noise.bearing_sigma_rad", std::numeric_limits<double>::quiet_NaN());
             params.huber_kernel_width = node.declare_parameter<double>(
                 "rock_landmarks.huber_kernel_width", params.huber_kernel_width);
+            params.min_landmark_separation_m = node.declare_parameter<double>(
+                "rock_landmarks.min_landmark_separation_m", params.min_landmark_separation_m);
+            params.min_factor_view_change_rad = node.declare_parameter<double>(
+                "rock_landmarks.min_factor_view_change_rad", params.min_factor_view_change_rad);
+            params.min_factor_travel_m = node.declare_parameter<double>(
+                "rock_landmarks.min_factor_travel_m", params.min_factor_travel_m);
             return params;
         }
 

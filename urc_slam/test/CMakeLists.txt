@@ -22,10 +22,10 @@ else()
     ${SLAM_DIR}/src/point_clustering.cpp
     ${SLAM_DIR}/src/sphere_fit.cpp
     ${SLAM_DIR}/src/jcbb_search.cpp
-    ${SLAM_DIR}/src/loop_closure_screening.cpp
+    ${SLAM_DIR}/src/core/loop_closure_screening.cpp
     ${SLAM_DIR}/src/landmark_associator.cpp
     ${SLAM_DIR}/src/landmark_manager.cpp
-    ${SLAM_DIR}/src/wheel_odometry_factors.cpp
+    ${SLAM_DIR}/src/core/wheel_odometry_factors.cpp
   )
   target_include_directories(rock_landmarks PUBLIC ${SLAM_DIR}/include)
   target_link_libraries(rock_landmarks PUBLIC gtsam Eigen3::Eigen)
@@ -33,15 +33,18 @@ else()
 endif()
 
 enable_testing()
-foreach(test_name
-    test_wheel_odometry_factors
-    test_rock_extractor
-    test_jcbb_search
-    test_loop_closure_screening
-    test_jcbb_vs_nearest_neighbor
-    test_ambiguity
-    test_loop_closure_graph)
-  add_executable(${test_name} ${test_name}.cpp)
+foreach(test_source
+    core/test_wheel_odometry_factors.cpp
+    core/test_loop_closure_screening.cpp
+    test_rock_extractor.cpp
+    test_jcbb_search.cpp
+    test_jcbb_vs_nearest_neighbor.cpp
+    test_ambiguity.cpp
+    test_loop_closure_graph.cpp)
+  get_filename_component(test_name ${test_source} NAME_WE)
+  add_executable(${test_name} ${test_source})
+  # Shared test helpers (mini_check.hpp) live in this directory
+  target_include_directories(${test_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${test_name} ${ROCK_LANDMARK_LIBRARY})
   add_test(NAME ${test_name} COMMAND ${test_name})
 endforeach()

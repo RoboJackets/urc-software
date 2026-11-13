@@ -132,8 +132,9 @@ too slow per scan, hence the approximation in section 6.
 
 A sensor-frame point cloud (`PointCloud3d`) goes into `RockExtractor::extract`.
 It drops points outside a range band, removes ground (`removeGround`: the
-lowest z in each point's 3x3 grid neighbourhood is "ground", and points more
-than `ground_clearance_m` above it survive), groups the survivors with
+lowest points of each point's 3x3 grid neighbourhood are ground references,
+heights are corrected by the locally fitted slope, and points more than
+`ground_clearance_m` above them survive), groups the survivors with
 Euclidean clustering (`clusterPoints`), keeps clusters of rock-like point
 count, width and height, and estimates each rock's centre by least-squares
 sphere fit (`fitSphere`). Clusters whose fit is implausible are dropped: the
@@ -147,7 +148,13 @@ largest set that is jointly compatible; the shared pose uncertainty correlates
 the innovations. Each observation comes back as *matched* (add a Huber-wrapped
 `BearingRangeFactor<Pose3,Point3>` from the pose to that landmark), *new* (no
 gated candidate at all: add a landmark node initialised from pose plus
-measurement, and its factor), or *ambiguous* (log and add nothing). The manager
+measurement, and its factor), or *ambiguous* (log and add nothing). A *new*
+observation is then checked against every mapped landmark (and those created
+earlier in the same scan) and dropped if its centre is closer than
+`max(min_landmark_separation_m, r_new + r_mapped)`, where `r_mapped` is the
+mean fitted radius over the landmark's matched sightings: the Mahalanobis gate can
+reject a re-observation when the covariance is over-confident, but two rocks
+cannot physically overlap. The manager
 returns the factors/values as a `LandmarkGraphUpdate` for the backend to merge
 into its pending iSAM2 update.
 
@@ -174,12 +181,15 @@ into its pending iSAM2 update.
 
 | Parameter | Default | Effect of raising it |
 |---|---|---|
-| `extractor.min_range_m` / `max_range_m` | 1.0 / 30.0 | Wider band: more points, but far returns are too sparse to cluster |
-| `extractor.ground_cell_size_m` | 0.5 | Larger: tolerates wider rocks and more slope error, but the ground estimate gets coarser. Keep slope x cell < clearance |
+| `extractor.min_range_m` / `max_range_m` | 1.0 / 2.0 | Wider band: more points, but beyond 2 m too few LiDAR rings land on a rock for a reliable fit |
+| `extractor.max_elevation_rad` | 0.2618 (15 deg) | Larger: taller rocks fully sampled, but upward beams add overhangs and far terrain as false rocks |
+| `extractor.window_edge_margin_m` | 0.05 | Clusters with a point this close to a range or elevation limit are dropped as cut off. Larger: fewer biased fits, but the usable window shrinks. Untuned |
+| `extractor.ground_cell_size_m` | 0.5 | Larger: tolerates wider rocks, but the ground estimate gets coarser |
 | `extractor.ground_clearance_m` | 0.10 | Larger: low rocks vanish; smaller: uneven ground leaks in as false rocks |
+| `extractor.ground_max_slope` | 0.55 | Cap on the fitted local slope (rise/run). Larger: steeper terrain filtered, but rock tops among the cell minima can tilt the ground model and hide low rocks |
 | `extractor.cluster_tolerance_m` | 0.15 | Larger: rocks merge with neighbours. Must exceed point spacing at max range |
 | `extractor.min_points` / `max_points` | 20 / 20000 | Point-count filter |
-| `extractor.min_radius_m` / `max_radius_m` | 0.1 / 1.0 | Bounds sphere radius and (doubled) horizontal extent |
+| `extractor.min_radius_m` / `max_radius_m` | 0.1 / 0.5 | Bounds sphere radius and (doubled) horizontal extent |
 | `extractor.max_height_m` | 1.5 | Rejects people/poles/walls |
 | `extractor.max_sphere_rms_m` | 0.05 | Larger: accepts rougher rocks (fewer dropped clusters, riskier fits) |
 | `noise.range_sigma_m` | 0.085 (config; no code default) | Measured in simulation. Larger: wider gates, weaker range constraint |
@@ -189,6 +199,11 @@ into its pending iSAM2 update.
 | `associator.min_pairings_for_reassociation` | 2 | Larger: loop closures need more simultaneously visible rocks (safer, rarer) |
 | `associator.ambiguity_margin` | 2.0 (chi-square units) | Larger: more scans declared ambiguous. Heuristic, not derived |
 | `associator.max_search_nodes` | 20000 | JCBB budget; exceeding it marks the scan ambiguous |
+| `associator.candidate_radius_m` | 2.5 | Base search radius; must be >= `max_range_m + max_radius_m` |
+| `associator.candidate_pose_sigma_scale` | 3.0 | Larger: searches wider when the pose is uncertain (more candidates, more cost) |
+| `associator.max_candidate_radius_m` | 10.0 | Cap on the grown radius; bounds joint covariance and JCBB cost |
+| `min_landmark_separation_m` | 0.3 | Floor on the centre spacing of two landmarks (the radius sum is used when larger). Larger: fewer duplicates, but close distinct rocks are never mapped |
+| `min_factor_view_change_rad` / `min_factor_travel_m` | 0.26 / 1.0 | A matched sighting adds a factor only once the view turned or the robot moved this much since the landmark's last factor. Larger: fewer correlated factors, but fewer constraints. Untuned |
 | `huber_kernel_width` | 1.345 | Larger: behaves more like plain Gaussian (less outlier protection) |
 | `base_T_sensor` | identity | Same placeholder the repo uses (`addKeyframeToMap`) |
 
@@ -283,13 +298,15 @@ Notes and limits:
 
 ## 6. Approximations, assumptions, known weaknesses
 
-- **Pose-landmark cross-covariance is ignored** (block-diagonal joint covariance;
-  `landmark_associator.cpp`, `pairTerm`). The innovation depends on pose error
-  minus landmark error; for a landmark mapped from a nearby pose these are
-  positively correlated, so the true innovation covariance is *smaller* than
-  what is used. Consequence: the gate is **too loose**, never too tight. More
-  false candidates reach JCBB, and a wrong match is less likely to be refused.
-  Landmark-landmark cross terms are ignored for the same reason.
+- **Joint covariance is exact but gated by distance.** `LandmarkManager`
+  computes iSAM2's joint marginal over the pose and every candidate
+  (`jointCovariance`), so pose-landmark and landmark-landmark cross terms enter
+  both the individual and the JCBB gates. Only landmarks within a search
+  radius of the robot are candidates: `associator.candidate_radius_m` (2.5 m,
+  the farthest a detected rock's centre can be) plus
+  `candidate_pose_sigma_scale` times the pose's largest 1-sigma position
+  error, capped at `max_candidate_radius_m`. A drifted robot therefore
+  searches wider, but drift the covariance does not reflect is still missed.
 - **Centre bias** (the TODO in `rock_extractor.cpp`): the 3D sweep still sees
   only the near cap. The sphere fit removes most of the shift for round rocks
   (synthetic test: under 1 mm centre error), but that test uses

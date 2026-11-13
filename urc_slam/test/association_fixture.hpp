@@ -2,6 +2,7 @@
 #define ASSOCIATION_FIXTURE_HPP_
 
 #include <cmath>
+#include <utility>
 #include <vector>
 #include <gtsam/inference/Symbol.h>
 
@@ -27,20 +28,25 @@ namespace fixture {
         return gtsam::Symbol('l', id).key();
     }
 
-    // Pose at the origin whose only meaningful uncertainty is `sigma_x_m` in x.
-    inline urc_slam::BasePoseEstimate poseUncertainInX(double sigma_x_m) {
-        urc_slam::BasePoseEstimate pose;
-        pose.covariance = gtsam::Matrix6::Zero();
-        pose.covariance.diagonal() << 1e-6, 1e-6, 1e-6,    // rotation
-                                      sigma_x_m * sigma_x_m, 1e-4, 1e-4;  // translation
-        return pose;
+    // Pose at the origin whose only meaningful uncertainty is `sigma_x_m` in x,
+    // with each candidate independent of the pose and of each other.
+    inline urc_slam::AssociationState stateUncertainInX(
+        double sigma_x_m, std::vector<urc_slam::LandmarkCandidate> candidates
+    ) {
+        urc_slam::AssociationState state;
+        state.candidates = std::move(candidates);
+        const Eigen::Index landmark_dim = 3 * static_cast<Eigen::Index>(state.candidates.size());
+        state.covariance = gtsam::Matrix::Zero(6 + landmark_dim, 6 + landmark_dim);
+        state.covariance.diagonal().head<6>() << 1e-6, 1e-6, 1e-6,    // rotation
+                                                 sigma_x_m * sigma_x_m, 1e-4, 1e-4;  // translation
+        state.covariance.diagonal().tail(landmark_dim).setConstant(1e-4);
+        return state;
     }
 
     inline urc_slam::LandmarkCandidate landmarkAt(std::size_t id, double x, double y) {
         urc_slam::LandmarkCandidate candidate;
         candidate.key = landmarkKey(id);
         candidate.position = gtsam::Point3(x, y, 0.0);
-        candidate.covariance = gtsam::Matrix3::Identity() * 1e-4;
         candidate.recently_seen = true;
         return candidate;
     }

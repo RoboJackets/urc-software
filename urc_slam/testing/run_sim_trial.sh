@@ -3,22 +3,31 @@
 # fresh sim -> SLAM + navsat_transform (+ optional RViz) -> route_trial.py and
 # odom_drift_benchmark.py -> summary -> shutdown of everything it started.
 #
-# Usage: run_sim_trial.sh [--rviz] [--override params.yaml] [label]
+# Usage: run_sim_trial.sh [--rviz] [--override params.yaml] [--route default|sphere] [label]
 # Logs go to ./slam_trial_logs/<label>/. Source the workspace before running.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RVIZ=false
 OVERRIDE=""
+ROUTE="default"
 LABEL="trial"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --rviz) RVIZ=true; shift ;;
     --override) OVERRIDE="$(realpath "$2")"; shift 2 ;;
+    --route) ROUTE="$2"; shift 2 ;;
     -h|--help) sed -n '2,8p' "$0"; exit 0 ;;
     *) LABEL="$1"; shift ;;
   esac
 done
+
+SIM_ARGS=(autonomy:=false)
+if [[ "$ROUTE" == sphere ]]; then
+  # Sphere at the world origin, rover 8 m behind it (route_trial.py SPHERE_AHEAD_M).
+  # The world is read from source so it needs no reinstall.
+  SIM_ARGS+=("world:=$SCRIPT_DIR/../../urc_hw_description/world/sphere_test.sdf" spawn_x:=-8.0)
+fi
 
 SLAM_SHARE="$(ros2 pkg prefix urc_slam)/share/urc_slam"
 PARAMS="$SLAM_SHARE/config/slam_params.yaml"
@@ -41,7 +50,7 @@ cleanup() {
 trap cleanup EXIT
 
 echo "Starting simulation (logs in $LOG_DIR)"
-start_group "$LOG_DIR/sim.log" ros2 launch urc_bringup sim.launch.py autonomy:=false
+start_group "$LOG_DIR/sim.log" ros2 launch urc_bringup sim.launch.py "${SIM_ARGS[@]}"
 timeout 120 bash -c 'until ros2 topic list 2>/dev/null | grep -q "^/scan/points$"; do sleep 2; done'
 sleep 8
 
@@ -62,7 +71,7 @@ sleep 5
 echo "=== trial $LABEL${OVERRIDE:+ (override $(basename "$OVERRIDE"))}"
 python3 "$SCRIPT_DIR/odom_drift_benchmark.py" > "$LOG_DIR/drift.log" 2>&1 &
 BENCHMARK_PID=$!
-python3 "$SCRIPT_DIR/route_trial.py" 2>&1 | tee "$LOG_DIR/route.log" | grep -v RTPS || true
+python3 "$SCRIPT_DIR/route_trial.py" "$ROUTE" 2>&1 | tee "$LOG_DIR/route.log" | grep -v RTPS || true
 kill -USR1 "$BENCHMARK_PID" 2>/dev/null || true
 wait "$BENCHMARK_PID" || true
 

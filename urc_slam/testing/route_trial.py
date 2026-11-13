@@ -1,13 +1,17 @@
 """Drive a fixed route in simulation and compare /slam/odometry with ground truth.
 
-The route is closed-loop on /ground_truth/odom, so it covers the same distances
+Routes are closed-loop on /ground_truth/odom, so they cover the same distances
 regardless of the simulator's real-time factor:
 
-    rest 10 s -> reverse 3 m -> sideways 1.5 m -> forward arc 3 m -> sideways back 1.5 m
+    default: rest 10 s -> reverse 3 m -> sideways 1.5 m -> forward arc 3 m
+             -> sideways back 1.5 m
+    sphere:  (world sphere_test.sdf, sphere SPHERE_AHEAD_M straight ahead of
+             the spawn) rest 10 s -> approach to STAND_OFF_M -> turn -> half
+             orbit at STAND_OFF_M -> turn to face it -> close to RETURN_STOP_M
 
 Errors compare displacement from the first SLAM odometry message, so they are
 independent of where each frame's origin is. Requires the simulation and SLAM
-to be running.
+to be running. Usage: route_trial.py [default|sphere]
 """
 import math
 import sys
@@ -26,7 +30,15 @@ LATERAL_SPEED_MPS = 0.25
 ARC_TURN_RATE_RADPS = 0.15
 LEG_TIMEOUT_S = 90.0
 SETTLE_AFTER_LEG_S = 1.5
-STARTUP_TIMEOUT_S = 30.0
+# Generous: a cold sim start in the container can take minutes before SLAM publishes
+STARTUP_TIMEOUT_S = 300.0
+# Must match run_sim_trial.sh's spawn offset for the sphere route
+SPHERE_AHEAD_M = 8.0
+# Far enough from the sphere (radius 0.5 m) that the rover can turn in place
+STAND_OFF_M = 2.5
+RETURN_STOP_M = 1.5
+TURN_RATE_RADPS = 0.4
+TURN_TOLERANCE_RAD = 0.05
 
 
 def yaw(q):
@@ -107,6 +119,32 @@ class RouteTrial(Node):
         origin = self.truth
         self.drive(twist, lambda: self.distance_from(origin) >= metres)
 
+    def distance_to(self, point):
+        return math.hypot(point[0] - self.truth[0], point[1] - self.truth[1])
+
+    def turn_to(self, target_yaw):
+        direction = 1.0 if wrap(target_yaw - self.truth[2]) > 0 else -1.0
+        twist = Twist()
+        twist.angular.z = direction * TURN_RATE_RADPS
+        # Stops on reaching the heading or on overshooting it
+        self.drive(twist, lambda: direction * wrap(target_yaw - self.truth[2]) < TURN_TOLERANCE_RAD)
+
+    def orbit_half(self, centre, radius):
+        """Counter-clockwise half circle around centre, ending on its far side."""
+        bearing = lambda: math.atan2(self.truth[1] - centre[1], self.truth[0] - centre[0])
+        state = {'last': bearing(), 'swept': 0.0}
+
+        def done():
+            now = bearing()
+            state['swept'] += wrap(now - state['last'])
+            state['last'] = now
+            return state['swept'] >= math.pi
+
+        twist = Twist()
+        twist.linear.x = SPEED_MPS
+        twist.angular.z = SPEED_MPS / radius
+        self.drive(twist, done)
+
     def report(self, label):
         slam, truth = self.displacements()
         print(
@@ -116,7 +154,45 @@ class RouteTrial(Node):
             flush=True)
 
 
+def default_route(trial):
+    trial.drive_distance(LEG_M, vx=-SPEED_MPS)
+    trial.report('reverse')
+    trial.drive_distance(LATERAL_LEG_M, vy=LATERAL_SPEED_MPS)
+    trial.report('sideways')
+    start_yaw = trial.truth[2]
+    trial.drive_distance(LEG_M, vx=SPEED_MPS, wz=ARC_TURN_RATE_RADPS)
+    print(f'  arc turned {math.degrees(wrap(trial.truth[2] - start_yaw)):.0f} deg (truth)')
+    trial.report('arc')
+    trial.drive_distance(LATERAL_LEG_M, vy=-LATERAL_SPEED_MPS)
+    trial.report('sideways back')
+
+
+def sphere_route(trial):
+    x, y, heading, _ = trial.truth
+    sphere = (x + SPHERE_AHEAD_M * math.cos(heading), y + SPHERE_AHEAD_M * math.sin(heading))
+    twist = Twist()
+    twist.linear.x = SPEED_MPS
+    trial.drive(twist, lambda: trial.distance_to(sphere) <= STAND_OFF_M)
+    trial.report('approach')
+    # Counter-clockwise orbit: tangent heading is the bearing from the sphere + 90 deg
+    trial.turn_to(wrap(math.atan2(trial.truth[1] - sphere[1], trial.truth[0] - sphere[0]) + math.pi / 2))
+    trial.report('turn')
+    trial.orbit_half(sphere, STAND_OFF_M)
+    trial.report('half orbit')
+    trial.turn_to(math.atan2(sphere[1] - trial.truth[1], sphere[0] - trial.truth[0]))
+    trial.report('face sphere')
+    trial.drive(twist, lambda: trial.distance_to(sphere) <= RETURN_STOP_M)
+    trial.report('return')
+
+
+ROUTES = {'default': default_route, 'sphere': sphere_route}
+
+
 def main():
+    route = sys.argv[1] if len(sys.argv) > 1 else 'default'
+    if route not in ROUTES:
+        print(f'Unknown route {route}; choose from {", ".join(ROUTES)}')
+        return 1
     rclpy.init()
     trial = RouteTrial()
     deadline = time.time() + STARTUP_TIMEOUT_S
@@ -128,17 +204,7 @@ def main():
 
     trial.hold_still(REST_S)
     trial.report('after rest')
-
-    trial.drive_distance(LEG_M, vx=-SPEED_MPS)
-    trial.report('reverse')
-    trial.drive_distance(LATERAL_LEG_M, vy=LATERAL_SPEED_MPS)
-    trial.report('sideways')
-    start_yaw = trial.truth[2]
-    trial.drive_distance(LEG_M, vx=SPEED_MPS, wz=ARC_TURN_RATE_RADPS)
-    print(f'  arc turned {math.degrees(wrap(trial.truth[2] - start_yaw)):.0f} deg (truth)')
-    trial.report('arc')
-    trial.drive_distance(LATERAL_LEG_M, vy=-LATERAL_SPEED_MPS)
-    trial.report('sideways back')
+    ROUTES[route](trial)
 
     print(f'horizontal error RMS {rms(trial.errors):.2f} m  max {max(trial.errors):.2f} m  '
           f'samples {len(trial.errors)}')

@@ -26,7 +26,7 @@
 #include "urc_slam/slam_backend.hpp"
 #include "urc_slam/slam_messages.hpp"
 #include "urc_slam/slam_parameters.hpp"
-#include "loop_closure_detector.hpp"
+#include "urc_slam/loop_closure_detector.hpp"
 #include "rock_landmark_pipeline.hpp"
 
 namespace urc_slam

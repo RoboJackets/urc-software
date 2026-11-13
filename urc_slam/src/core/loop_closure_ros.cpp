@@ -1,4 +1,4 @@
-#include "loop_closure_ros.hpp"
+#include "urc_slam/loop_closure_ros.hpp"
 
 #include <string>
 #include <utility>

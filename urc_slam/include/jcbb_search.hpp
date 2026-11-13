@@ -21,18 +21,21 @@ namespace urc_slam {
         bool individually_compatible = false;
         // Observed minus predicted rock centre (3D, sensor frame).
         Eigen::Vector3d innovation = Eigen::Vector3d::Zero();
-        // d(predicted observation)/d(pose). Observations share ONE pose, so
-        // this is what correlates the innovations of different pairings.
+        // d(predicted observation)/d(pose) and d(predicted observation)/d(landmark).
+        // Together with the joint state covariance they couple the innovations
+        // of different pairings through the shared pose and correlated landmarks.
         Eigen::Matrix<double, 3, 6> pose_jacobian = Eigen::Matrix<double, 3, 6>::Zero();
-        // Landmark-uncertainty + measurement-noise contribution, which is
-        // independent between pairings (see REVIEW_NOTES: cross terms ignored).
-        Eigen::Matrix3d independent_covariance = Eigen::Matrix3d::Identity();
+        Eigen::Matrix3d landmark_jacobian = Eigen::Matrix3d::Zero();
+        // Measurement noise, independent between pairings.
+        Eigen::Matrix3d measurement_covariance = Eigen::Matrix3d::Identity();
     };
 
     struct JcbbProblem {
         std::size_t num_observations = 0;
         std::size_t num_candidates = 0;
-        Eigen::Matrix<double, 6, 6> pose_covariance = Eigen::Matrix<double, 6, 6>::Identity();
+        // Joint covariance of [pose (6), candidate 0 (3), candidate 1 (3), ...],
+        // so it is (6 + 3 * num_candidates) square, cross terms included.
+        Eigen::MatrixXd state_covariance;
         // Row-major [observation * num_candidates + candidate].
         std::vector<PairTerm> terms;
         double gate_confidence = 0.99;

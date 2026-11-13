@@ -13,7 +13,7 @@ namespace {
         t.innovation = Eigen::Vector3d(observed_x - landmark_x, 0.0, 0.0);
         t.pose_jacobian.setZero();
         t.pose_jacobian.block<3, 3>(0, 3) = -Eigen::Matrix3d::Identity();
-        t.independent_covariance = Eigen::Matrix3d::Identity() * independent_sigma * independent_sigma;
+        t.measurement_covariance = Eigen::Matrix3d::Identity() * independent_sigma * independent_sigma;
         return t;
     }
 
@@ -24,8 +24,10 @@ namespace {
         urc_slam::JcbbProblem problem;
         problem.num_observations = observed.size();
         problem.num_candidates = landmarks.size();
-        problem.pose_covariance.setZero();
-        problem.pose_covariance.diagonal() << 1e-6, 1e-6, 1e-6, pose_sigma * pose_sigma, 1e-4, 1e-4;
+        // Landmark Jacobians are zero, so only the pose block matters.
+        const Eigen::Index state_dim = 6 + 3 * static_cast<Eigen::Index>(landmarks.size());
+        problem.state_covariance = Eigen::MatrixXd::Zero(state_dim, state_dim);
+        problem.state_covariance.diagonal().head<6>() << 1e-6, 1e-6, 1e-6, pose_sigma * pose_sigma, 1e-4, 1e-4;
         for (double o : observed) {
             for (double l : landmarks) {
                 urc_slam::PairTerm t = term(o, l, 0.05);

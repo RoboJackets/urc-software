@@ -19,8 +19,13 @@ namespace urc_slam {
     // Metadata only; the landmark's position lives in iSAM2 under `key`.
     struct LandmarkRecord {
         gtsam::Symbol key;
+        // Mean fitted radius over every matched sighting, so the collision
+        // gate does not hinge on the one fit that created the landmark.
         double radius_m = 0.0;
+        std::size_t radius_samples = 1;
         std::size_t last_seen_pose_index = 0;
+        // Pose that added this landmark's most recent factor.
+        std::size_t last_factor_pose_index = 0;
     };
 
     // A landmark's current optimized state, for visualization and logging.
@@ -35,6 +40,13 @@ namespace urc_slam {
         std::size_t matched = 0;
         std::size_t created = 0;
         std::size_t ambiguous = 0;
+        // New-landmark observations dropped for overlapping a mapped rock.
+        std::size_t colliding = 0;
+        // Matched sightings that added no factor (viewpoint barely changed).
+        std::size_t redundant = 0;
+        // Association search radius used for this scan (grows with pose
+        // uncertainty); 0 when the scan had no observations.
+        double candidate_radius_m = 0.0;
     };
 
     // New factors/values for the caller to merge into its pending iSAM2 update.
@@ -71,8 +83,40 @@ namespace urc_slam {
             static gtsam::Symbol landmarkKey(std::size_t id) { return gtsam::Symbol('l', id); }
 
         private:
+            // candidate_radius_m grown by the pose's position uncertainty,
+            // capped at max_candidate_radius_m.
+            double candidateRadius(const gtsam::ISAM2 &isam, std::size_t pose_index) const;
+
+            // Landmarks of `mapped` within `radius_m` of the robot.
             std::vector<LandmarkCandidate> gatherCandidates(
-                const gtsam::ISAM2 &isam, std::size_t pose_index) const;
+                const std::vector<LandmarkSnapshot> &mapped,
+                std::size_t pose_index,
+                const gtsam::Point3 &robot_position,
+                double radius_m) const;
+
+            AssociationState associationState(
+                const gtsam::ISAM2 &isam,
+                std::size_t pose_index,
+                const std::vector<LandmarkSnapshot> &mapped,
+                double candidate_radius_m) const;
+
+            // Adds a factor only for a sighting from a new viewpoint.
+            void recordMatch(
+                const RockObservation &observation,
+                std::size_t pose_index,
+                gtsam::Key landmark,
+                const gtsam::ISAM2 &isam,
+                LandmarkGraphUpdate &update);
+
+            bool isNewViewpoint(
+                const LandmarkRecord &record, std::size_t pose_index, const gtsam::ISAM2 &isam) const;
+
+            // Adds the landmark node and its first factor to `update`.
+            LandmarkSnapshot createLandmark(
+                const RockObservation &observation,
+                std::size_t pose_index,
+                const gtsam::Point3 &position,
+                LandmarkGraphUpdate &update);
 
             gtsam::NonlinearFactor::shared_ptr makeFactor(
                 const RockObservation &observation,
