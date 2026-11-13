@@ -46,6 +46,7 @@ protected:
 
   std::string costmap_layer_;
   astar::TraversalCostPolicy cost_policy_;
+  astar::GoalSnapPolicy snap_policy_;
   grid_map_msgs::msg::GridMap current_costmap_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;

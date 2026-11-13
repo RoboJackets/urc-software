@@ -119,6 +119,44 @@ void AStar::appendStraightLineSegment(
   }
 }
 
+geometry_msgs::msg::Pose AStar::resolvePlanningGoal(
+  const geometry_msgs::msg::Pose & start_pose,
+  const geometry_msgs::msg::Pose & goal_pose,
+  bool goal_inside_costmap)
+{
+  goal_snap_distance_ = 0.0;
+  goal_acceptance_radius_ = 0.0;
+  geometry_msgs::msg::Pose planning_goal = goal_pose;
+  if (!goal_inside_costmap &&
+    !clipGoalToCostmapBoundary(start_pose, goal_pose, planning_goal))
+  {
+    throw std::runtime_error("Unable to project goal onto costmap boundary");
+  }
+  if (!isLethal(planning_goal.position.x, planning_goal.position.y)) {
+    return planning_goal;
+  }
+
+  // Accept any reachable traversable cell near a lethal goal, so the search
+  // cannot settle on a traversable pocket that is cut off from the rover
+  goal_acceptance_radius_ =
+    goal_inside_costmap ? snap_policy_.goal_radius : snap_policy_.boundary_radius;
+  if (goal_acceptance_radius_ <= 0.0) {
+    throw std::runtime_error("Goal lies in a lethal costmap cell");
+  }
+  return planning_goal;
+}
+
+bool AStar::isGoalReached(const AStarNode * node, int goal_cell_x, int goal_cell_y) const
+{
+  if (goal_acceptance_radius_ > 0.0) {
+    return std::hypot(node->x - goal_pose_.position.x, node->y - goal_pose_.position.y) <=
+           goal_acceptance_radius_;
+  }
+  int cell_x, cell_y;
+  return worldToGrid(node->x, node->y, cell_x, cell_y) &&
+         cell_x == goal_cell_x && cell_y == goal_cell_y;
+}
+
 void AStar::createPlan(
   const geometry_msgs::msg::Pose & start_pose,
   const geometry_msgs::msg::Pose & goal_pose)
@@ -134,17 +172,10 @@ void AStar::createPlan(
   }
 
   const geometry_msgs::msg::Pose requested_goal = goal_pose;
-  geometry_msgs::msg::Pose planning_goal = goal_pose;
-  bool goal_inside_costmap =
+  const bool goal_inside_costmap =
     worldToGrid(goal_pose.position.x, goal_pose.position.y, goal_x, goal_y);
-  if (!goal_inside_costmap &&
-    !clipGoalToCostmapBoundary(start_pose, goal_pose, planning_goal))
-  {
-    throw std::runtime_error("Unable to project goal onto costmap boundary");
-  }
-  if (isLethal(planning_goal.position.x, planning_goal.position.y)) {
-    throw std::runtime_error("Goal lies in a lethal costmap cell");
-  }
+  const geometry_msgs::msg::Pose planning_goal =
+    resolvePlanningGoal(start_pose, goal_pose, goal_inside_costmap);
 
   int goal_cell_x, goal_cell_y;
   if (!worldToGrid(planning_goal.position.x, planning_goal.position.y, goal_cell_x, goal_cell_y)) {
@@ -172,16 +203,18 @@ void AStar::createPlan(
     open_set.pop();
     current_node->status = NodeStatus::Visited;
 
-    int cell_x, cell_y;
-    if (worldToGrid(current_node->x, current_node->y, cell_x, cell_y) &&
-      cell_x == goal_cell_x && cell_y == goal_cell_y)
-    {
-      // Nodes sit on a grid offset from the start, so end exactly at the goal;
-      // the follower measures success against the goal itself
+    if (isGoalReached(current_node, goal_cell_x, goal_cell_y)) {
       reconstructPath(current_node);
-      appendStraightLineSegment(path_.back().getPose(), planning_goal);
+      if (goal_acceptance_radius_ > 0.0) {
+        goal_snap_distance_ = std::hypot(
+          current_node->x - planning_goal.position.x, current_node->y - planning_goal.position.y);
+      } else {
+        // Nodes sit on a grid offset from the start, so end exactly at the goal;
+        // the follower measures success against the end of the path
+        appendStraightLineSegment(path_.back().getPose(), planning_goal);
+      }
       if (!goal_inside_costmap) {
-        appendStraightLineSegment(planning_goal, requested_goal);
+        appendStraightLineSegment(path_.back().getPose(), requested_goal);
       }
       return;
     }
@@ -210,11 +243,12 @@ void AStar::createPlan(
 
 double AStar::estimateCostToGoal(const geometry_msgs::msg::Pose & pose)
 {
-  return std::sqrt(
+  const double distance = std::sqrt(
     std::pow(
       goal_pose_.position.x - pose.position.x,
       2) +
     std::pow(goal_pose_.position.y - pose.position.y, 2));
+  return std::max(0.0, distance - goal_acceptance_radius_);
 }
 
 double AStar::cost(const AStarNode * from, const AStarNode * to)

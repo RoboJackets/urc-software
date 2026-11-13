@@ -5,3 +5,8 @@ planner_server:
     lethal_cost: 1.0
     # Cost of unobserved (NaN) cells: discouraged versus known flat ground, never forbidden
     unknown_cost: 0.5
+    # Radius (m) around a lethal goal inside the costmap where the path may end instead (0 rejects).
+    # Keep below the coordinator's route_arrival_radius (1.0) minus the follower goal_tolerance.
+    goal_snap_radius: 0.75
+    # Same for a goal clipped to the costmap edge; it is only an intermediate target
+    boundary_snap_radius: 2.0

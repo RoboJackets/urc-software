@@ -301,6 +301,9 @@ void FollowerActionServer::execute_navigate(
     goal_pose.pose = path.poses.back().pose;
   }
 
+  // The planner may end the path on a traversable cell near a lethal goal
+  geometry_msgs::msg::Point arrival_point = path.poses.back().pose.position;
+
   auto trajectory_controller = trajectory_following::TrajectoryFactory::create(
     get_parameter("trajectory_controller").as_string(), *this);
   trajectory_controller->setPath(path);
@@ -342,7 +345,7 @@ void FollowerActionServer::execute_navigate(
 
     // Update feedback distance
     feedback->distance_to_goal = geometry_util::dist2D(
-      current_pose_map_frame_.pose.position, goal_pose.pose.position);
+      current_pose_map_frame_.pose.position, arrival_point);
 
     if (feedback->distance_to_goal <
       get_parameter("goal_tolerance").as_double())
@@ -475,6 +478,7 @@ void FollowerActionServer::execute_navigate(
 
       // Update the path and continue
       path = new_path;
+      arrival_point = path.poses.back().pose.position;
       trajectory_controller->setPath(path);
       RCLCPP_INFO(
         this->get_logger(),

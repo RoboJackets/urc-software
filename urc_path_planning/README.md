@@ -61,6 +61,11 @@ requests can succeed.
 - When a goal lies outside the rolling costmap, A* plans to the map boundary and
   appends a straight segment to the requested goal. Terrain beyond the costmap
   is not validated.
-- Invalid maps, out-of-bounds starts, goals in lethal cells, and failed
-  searches return `GeneratePlan::FAILURE`. A clipped goal on the map boundary
-  can also land in a lethal cell.
+- When the goal cell is lethal, A* ends at the first reachable traversable cell
+  within `goal_snap_radius` of it (goals inside the costmap) or
+  `boundary_snap_radius` (goals clipped to its boundary). For in-costmap goals
+  that cell is the end of the path, so keep `goal_snap_radius` inside the
+  coordinator's arrival radii. Each such plan logs a warning; a radius of 0
+  rejects lethal goals.
+- Invalid maps, out-of-bounds starts, and searches that reach neither the goal
+  nor its snap radius return `GeneratePlan::FAILURE`.

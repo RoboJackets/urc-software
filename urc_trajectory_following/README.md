@@ -31,6 +31,9 @@ configured costmap layer and requests a new A* path when the cost reaches
   warning.
 - Velocity output may be `Twist` or `TwistStamped`, selected by
   `cmd_vel_stamped`; its topic is configured by `cmd_vel_topic`.
+- The goal succeeds within `goal_tolerance` of the current path's final pose.
+  For goal requests this is the planned end, which the planner may move off a
+  lethal goal cell (see `urc_path_planning`); feedback distance uses the same point.
 - Cancellation, completion, and handled planning failures publish a final
   zero-velocity command.
 - Goal heading is enforced when requested by the action or enabled in the node

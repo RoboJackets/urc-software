@@ -1,6 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include <cmath>
 #include <stdexcept>
 
 #include "urc_path_planning/planner_server.hpp"
@@ -19,6 +20,14 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
   }
   if (cost_policy_.unknown_cost < 0.0 || cost_policy_.unknown_cost >= cost_policy_.lethal_cost) {
     throw std::invalid_argument("unknown_cost must be in [0, lethal_cost)");
+  }
+  snap_policy_.goal_radius = declare_parameter("goal_snap_radius", snap_policy_.goal_radius);
+  snap_policy_.boundary_radius =
+    declare_parameter("boundary_snap_radius", snap_policy_.boundary_radius);
+  if (!std::isfinite(snap_policy_.goal_radius) || snap_policy_.goal_radius < 0.0 ||
+    !std::isfinite(snap_policy_.boundary_radius) || snap_policy_.boundary_radius < 0.0)
+  {
+    throw std::invalid_argument("Goal snap radii must be finite and nonnegative");
   }
 
   RCLCPP_INFO(get_logger(), "Planner server started.");
@@ -55,12 +64,18 @@ void PlannerServer::generatePlan(
     astar::AStar astar;
     astar.setCostmapLayer(costmap_layer_);
     astar.setCostPolicy(cost_policy_);
+    astar.setGoalSnapPolicy(snap_policy_);
     astar.setMap(current_costmap_);
 
     auto start = request->start.pose;
     auto goal = request->goal.pose;
 
     astar.createPlan(start, goal);
+    if (astar.getGoalSnapDistance() > 0.0) {
+      RCLCPP_WARN(
+        get_logger(), "Goal cell is lethal; path ends on a traversable cell %.2f m from it",
+        astar.getGoalSnapDistance());
+    }
     std::vector<astar::AStarNode> path = astar.getPath();
 
     std::vector<geometry_msgs::msg::PoseStamped> poses;
