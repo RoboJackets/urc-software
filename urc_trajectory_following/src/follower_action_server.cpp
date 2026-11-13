@@ -6,7 +6,9 @@
 #include <tf2/utils.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <algorithm>
+#include <cmath>
 #include <stdexcept>
+#include <string>
 
 namespace follower_action_server
 {
@@ -18,7 +20,7 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("lookahead_distance", 2.0);
   declare_parameter("desired_linear_velocity", 0.2);
   declare_parameter("max_angular_velocity", 1.0);
-  declare_parameter("heading_alignment_tolerance", 0.2);
+  declare_parameter("heading_alignment_tolerance", 0.6);
   declare_parameter("enable_swerve_motion", true);
   declare_parameter("cmd_vel_topic", "/cmd_vel");
   declare_parameter("map_frame", "map");
@@ -30,10 +32,21 @@ FollowerActionServer::FollowerActionServer(const rclcpp::NodeOptions & options)
   declare_parameter("goal_heading_tolerance", 0.1);
   declare_parameter("costmap_layer", "traversability_inflated");
   declare_parameter("trajectory_controller", "pure_pursuit");
+  declare_parameter("control_period", 0.1);
+  declare_parameter("lqr_max_lateral_error", 0.1);
+  declare_parameter("lqr_max_heading_error", 0.2);
+  declare_parameter("lqr_max_angular_correction", 0.5);
 
   const auto controller_type = get_parameter("trajectory_controller").as_string();
   if (!trajectory_following::TrajectoryFactory::supports(controller_type)) {
     throw std::invalid_argument("Unsupported trajectory controller: " + controller_type);
+  }
+  for (const char * name : {"control_period", "lqr_max_lateral_error", "lqr_max_heading_error",
+      "lqr_max_angular_correction"})
+  {
+    if (get_parameter(name).as_double() <= 0.0) {
+      throw std::invalid_argument(std::string(name) + " must be positive");
+    }
   }
 
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -309,7 +322,10 @@ void FollowerActionServer::execute_navigate(
     path.poses.size());
 
   trajectory_following::TrajectoryOutput output;
-  rclcpp::Rate rate(10);
+  rclcpp::Rate rate(1.0 / get_parameter("control_period").as_double());
+  // Once inside goal_tolerance, only the final heading is left: pose jitter while turning in
+  // place must not send the rover back to the path controller.
+  bool position_reached = false;
 
   while (rclcpp::ok()) {
     if (goal_handle->is_canceling()) {
@@ -344,40 +360,33 @@ void FollowerActionServer::execute_navigate(
     feedback->distance_to_goal = geometry_util::dist2D(
       current_pose_map_frame_.pose.position, goal_pose.pose.position);
 
-    if (feedback->distance_to_goal <
+    if (position_reached || feedback->distance_to_goal <
       get_parameter("goal_tolerance").as_double())
     {
+      position_reached = true;
       bool heading_satisfied = true;
 
       if (enforce_heading) {
-        double heading_error = geometry_util::angularDistance(
-          current_pose_map_frame_.pose.orientation,
-          goal_pose.pose.orientation);
+        // Compare yaw only: on uneven ground the rover's roll and pitch never match the goal's.
+        tf2::Quaternion current_quat, goal_quat;
+        tf2::fromMsg(current_pose_map_frame_.pose.orientation, current_quat);
+        tf2::fromMsg(goal_pose.pose.orientation, goal_quat);
+        double signed_error = tf2::getYaw(goal_quat) - tf2::getYaw(current_quat);
+
+        // Normalize to [-pi, pi]
+        while (signed_error > M_PI) {
+          signed_error -= 2.0 * M_PI;
+        }
+        while (signed_error < -M_PI) {
+          signed_error += 2.0 * M_PI;
+        }
+        const double heading_error = std::abs(signed_error);
         heading_satisfied =
           heading_error < get_parameter("goal_heading_tolerance").as_double();
 
         if (!heading_satisfied) {
           // For swerve drive, perform in-place turning to align heading
           if (get_parameter("enable_swerve_motion").as_bool()) {
-            // Calculate signed heading error for proper turn direction
-            tf2::Quaternion current_quat, goal_quat;
-            tf2::fromMsg(
-              current_pose_map_frame_.pose.orientation,
-              current_quat);
-            tf2::fromMsg(goal_pose.pose.orientation, goal_quat);
-
-            double current_yaw = tf2::getYaw(current_quat);
-            double goal_yaw = tf2::getYaw(goal_quat);
-            double signed_error = goal_yaw - current_yaw;
-
-            // Normalize to [-pi, pi]
-            while (signed_error > M_PI) {
-              signed_error -= 2.0 * M_PI;
-            }
-            while (signed_error < -M_PI) {
-              signed_error += 2.0 * M_PI;
-            }
-
             geometry_msgs::msg::TwistStamped align_cmd;
             align_cmd.header.stamp = get_clock()->now();
             align_cmd.twist.linear.x = 0.0;
