@@ -13,7 +13,6 @@ namespace urc_slam
 
 struct SlamTopics
 {
-  std::string wheel_odometry;
   std::string imu;
   std::string lidar;
   std::string gps;
@@ -25,7 +24,6 @@ struct SlamTopics
 struct SlamFrames
 {
   std::string map;
-  std::string wheel_odometry;
   std::string base_link;
   bool publish_tf;
 };

@@ -31,9 +31,6 @@ struct SlamBackendParameters
   double accelerometer_bias_prior_sigma_mps2;
   double gyroscope_bias_prior_sigma_radps;
 
-  double wheel_translation_sigma_m;
-  double wheel_yaw_sigma_rad;
-
   double lidar_rotation_sigma_rad;
   double lidar_translation_sigma_m;
 

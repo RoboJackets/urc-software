@@ -24,6 +24,8 @@ std::string parseState(const std::string & message)
   const auto value_start = start + prefix.size();
   return message.substr(value_start, message.find(' ', value_start) - value_start);
 }
+// NavCoordinator keeps a paused mission open until teleop resumes or cancels it
+constexpr char kPausedState[] = "PAUSED";
 
 std_msgs::msg::ColorRGBA color(float r, float g, float b)
 {
@@ -57,14 +59,11 @@ WaypointMission::WaypointMission(const rclcpp::NodeOptions & options)
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-  waypoint_publisher_ = create_publisher<geometry_msgs::msg::PoseStamped>(
-    declare_parameter("waypoint_topic", "/nav/waypoint"), 10);
+  route_client_ = rclcpp_action::create_client<Route>(
+    this, declare_parameter("mission_action_name", "execute_autonomous_mission"));
   marker_publisher_ = create_publisher<visualization_msgs::msg::MarkerArray>(
     declare_parameter("marker_topic", "mission_waypoints"),
     rclcpp::QoS(1).transient_local());
-  state_subscriber_ = create_subscription<std_msgs::msg::String>(
-    declare_parameter("coordinator_state_topic", "nav_coordinator_state"), 10,
-    std::bind(&WaypointMission::handleCoordinatorState, this, std::placeholders::_1));
   timer_ = create_wall_timer(kStepPeriod, std::bind(&WaypointMission::step, this));
 
   publishMarkers();
@@ -87,7 +86,7 @@ void WaypointMission::loadRoute()
 
 bool WaypointMission::startupReady()
 {
-  return waypoint_publisher_->get_subscription_count() > 0 &&
+  return route_client_->action_server_is_ready() &&
          tf_buffer_->canTransform(frame_id_, base_frame_id_, tf2::TimePointZero);
 }
 
@@ -110,61 +109,88 @@ void WaypointMission::step()
 
 void WaypointMission::sendCurrentWaypoint()
 {
-  geometry_msgs::msg::PoseStamped goal;
-  goal.header.frame_id = frame_id_;
-  goal.header.stamp = get_clock()->now();
-  goal.pose.position = route_[current_index_];
-  goal.pose.orientation.w = 1.0;
+  Route::Goal goal;
+  goal.waypoint.header.frame_id = frame_id_;
+  goal.waypoint.header.stamp = get_clock()->now();
+  goal.waypoint.pose.position = route_[current_index_];
+  goal.waypoint.pose.orientation.w = 1.0;
   ++attempts_;
-  phase_ = Phase::AwaitingAcceptance;
-  waypoint_publisher_->publish(goal);
+  phase_ = Phase::Active;
+  goal_handle_.reset();
+  cancel_requested_ = false;
+  const std::uint64_t generation = ++goal_generation_;
+
+  rclcpp_action::Client<Route>::SendGoalOptions options;
+  options.goal_response_callback = [this, generation](RouteGoalHandle::SharedPtr handle) {
+      handleGoalResponse(generation, handle);
+    };
+  options.feedback_callback = [this, generation](
+    RouteGoalHandle::SharedPtr, const std::shared_ptr<const Route::Feedback> feedback) {
+      handleFeedback(generation, feedback->state);
+    };
+  options.result_callback = [this, generation](const RouteGoalHandle::WrappedResult & result) {
+      handleResult(generation, result);
+    };
+  route_client_->async_send_goal(goal, options);
   publishMarkers();
   RCLCPP_INFO(
     get_logger(), "Waypoint %zu/%zu (%.1f, %.1f), attempt %d", current_index_ + 1, route_.size(),
-    goal.pose.position.x, goal.pose.position.y, attempts_);
+    goal.waypoint.pose.position.x, goal.waypoint.pose.position.y, attempts_);
 }
 
-void WaypointMission::handleCoordinatorState(const std_msgs::msg::String::SharedPtr msg)
+void WaypointMission::handleGoalResponse(
+  std::uint64_t generation, const RouteGoalHandle::SharedPtr & handle)
 {
-  const std::string state = parseState(msg->data);
-  // Terminal states are only trusted after this waypoint was accepted, so a
-  // result left over from the previous waypoint cannot advance the route
-  if (phase_ == Phase::AwaitingAcceptance) {
-    if (state == "NAVIGATING") {
-      phase_ = Phase::Tracking;
-    } else if (state == "FAILED") {
-      handleFailure(msg->data);
-    }
+  if (generation != goal_generation_) {
     return;
   }
-  if (phase_ != Phase::Tracking) {
+  if (!handle) {
+    handleFailure("coordinator rejected the mission");
     return;
   }
-  if (state == "SUCCEEDED") {
-    handleSuccess();
-  } else if (state == "FAILED" || state == "CANCELED") {
-    handleFailure(msg->data);
-  }
+  goal_handle_ = handle;
 }
 
-void WaypointMission::handleSuccess()
+void WaypointMission::handleFeedback(std::uint64_t generation, const std::string & state)
 {
-  RCLCPP_INFO(get_logger(), "Reached waypoint %zu/%zu", current_index_ + 1, route_.size());
-  advance();
+  if (generation != goal_generation_ || state != kPausedState || cancel_requested_ ||
+    !goal_handle_)
+  {
+    return;
+  }
+  RCLCPP_WARN(
+    get_logger(), "Coordinator paused waypoint %zu; canceling the mission", current_index_ + 1);
+  cancel_requested_ = true;
+  route_client_->async_cancel_goal(goal_handle_);
 }
 
-void WaypointMission::handleFailure(const std::string & state)
+void WaypointMission::handleResult(
+  std::uint64_t generation, const RouteGoalHandle::WrappedResult & result)
+{
+  if (generation != goal_generation_) {
+    return;
+  }
+  goal_handle_.reset();
+  if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
+    RCLCPP_INFO(get_logger(), "Reached waypoint %zu/%zu", current_index_ + 1, route_.size());
+    advance();
+    return;
+  }
+  handleFailure(result.result ? result.result->message : "mission ended without a result");
+}
+
+void WaypointMission::handleFailure(const std::string & reason)
 {
   if (attempts_ < max_attempts_) {
     RCLCPP_WARN(
-      get_logger(), "Waypoint %zu failed (%s); retrying", current_index_ + 1, state.c_str());
+      get_logger(), "Waypoint %zu failed (%s); retrying", current_index_ + 1, reason.c_str());
     phase_ = Phase::RetryPending;
     retry_at_ = get_clock()->now() + rclcpp::Duration::from_seconds(retry_delay_s_);
     return;
   }
   RCLCPP_ERROR(
     get_logger(), "Skipping waypoint %zu after %d attempts (%s)", current_index_ + 1, attempts_,
-    state.c_str());
+    reason.c_str());
   advance();
 }
 

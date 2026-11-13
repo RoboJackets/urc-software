@@ -39,8 +39,6 @@ public:
 
   const Cloud & mapCloud() const;
   const std::vector<rclcpp::Time> & stamps() const;
-  // Keyframe clouds by index, each in its own base_link frame
-  const std::vector<Cloud::ConstPtr> & clouds() const;
   std::size_t size() const;
 
   // Union of the newest keyframe_count keyframes, expressed in the

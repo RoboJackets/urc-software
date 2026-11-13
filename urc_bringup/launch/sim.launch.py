@@ -9,7 +9,7 @@ from launch.actions import (
 )
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import (
     LaunchConfiguration,
     Command,
@@ -166,6 +166,36 @@ def generate_launch_description():
         package="urc_localization",
         executable="urc_localization_CovariancesOnImu",
         name="covariances_on_imu",
+    sim_status_light = Node(
+        package="urc_hw_description",
+        executable="urc_hw_description_SimStatusLight",
+        name="sim_status_light",
+        parameters=[
+            {
+                "use_sim_time": True,
+                "imu_input_topic": "/imu/data_raw",
+                "imu_output_topic": "/imu/fused",
+            }
+        ],
+        output="screen",
+    )
+
+    # Rear status light starts blue (teleoperation), per the URC rules
+    initial_status_light = ExecuteProcess(
+        condition=UnlessCondition(LaunchConfiguration("autonomy")),
+        cmd=[
+            "ros2", "topic", "pub", "--once",
+            "/command/status_light",
+            "urc_msgs/msg/StatusLightCommand",
+            "{color: 0, state: 1}",
+        ],
+        output="screen",
+    )
+
+    covariances_on_imu = Node(
+        package="urc_localization",
+        executable="urc_localization_CovariancesOnImu",
+        name="covariances_on_imu",
         parameters=[
             {
                 "use_sim_time": True,
@@ -210,8 +240,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(path_urc_bringup, "launch", "autonomy.launch.py")
         ),
-        launch_arguments={"use_sim_time": "true"}.items(),
         condition=IfCondition(LaunchConfiguration("autonomy")),
+        launch_arguments={"use_sim_time": "true"}.items(),
     )
 
     rocker_tf_broadcaster = Node(
@@ -236,8 +266,8 @@ def generate_launch_description():
         output="screen",
         arguments=[
             "-name", "walli",
-            "-x", LaunchConfiguration("spawn_x"),
-            "-y", LaunchConfiguration("spawn_y"),
+            "-x", "0",
+            "-y", "0",
             "-z", "2.0",
             "-R", "0",
             "-P", "0",
@@ -359,6 +389,8 @@ def generate_launch_description():
             gz_sim,
             bridge,
             robot_state_publisher_node,
+            sim_status_light,
+            initial_status_light,
             covariances_on_imu,
             covariances_on_gps,
             launch_autonomy,

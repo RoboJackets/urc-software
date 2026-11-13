@@ -30,29 +30,14 @@ find_package(PCL REQUIRED COMPONENTS
 find_package(GTSAM REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/core/gps_keyframe_matcher.cpp
-  src/core/imu_buffer.cpp
-  src/core/keyframe_map.cpp
-  src/core/lidar_frontend.cpp
-  src/core/slam_backend.cpp
-  src/core/slam_messages.cpp
-  src/core/slam_node.cpp
-  src/core/slam_parameters.cpp
-  src/core/slam_wheel_odometry.cpp
-  src/core/wheel_odometry_factors.cpp
-  src/rock_landmark_params.cpp
-  src/rock_extractor.cpp
-  src/ground_filter.cpp
-  src/point_clustering.cpp
-  src/sphere_fit.cpp
-  src/jcbb_search.cpp
-  src/landmark_associator.cpp
-  src/landmark_manager.cpp
-  src/rock_landmark_pipeline.cpp
-  src/rock_landmark_ros.cpp
-  src/core/loop_closure_screening.cpp
-  src/core/loop_closure_detector.cpp
-  src/core/loop_closure_ros.cpp
+  src/gps_keyframe_matcher.cpp
+  src/imu_buffer.cpp
+  src/keyframe_map.cpp
+  src/lidar_frontend.cpp
+  src/slam_backend.cpp
+  src/slam_messages.cpp
+  src/slam_node.cpp
+  src/slam_parameters.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

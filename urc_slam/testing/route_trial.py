@@ -1,17 +1,13 @@
 """Drive a fixed route in simulation and compare /slam/odometry with ground truth.
 
-Routes are closed-loop on /ground_truth/odom, so they cover the same distances
+The route is closed-loop on /ground_truth/odom, so it covers the same distances
 regardless of the simulator's real-time factor:
 
-    default: rest 10 s -> reverse 3 m -> sideways 1.5 m -> forward arc 3 m
-             -> sideways back 1.5 m
-    sphere:  (world sphere_test.sdf, sphere SPHERE_AHEAD_M straight ahead of
-             the spawn) rest 10 s -> approach to STAND_OFF_M -> turn -> half
-             orbit at STAND_OFF_M -> turn to face it -> close to RETURN_STOP_M
+    rest 10 s -> reverse 3 m -> sideways 1.5 m -> forward arc 3 m -> sideways back 1.5 m
 
 Errors compare displacement from the first SLAM odometry message, so they are
 independent of where each frame's origin is. Requires the simulation and SLAM
-to be running. Usage: route_trial.py [default|sphere]
+to be running.
 """
 import math
 import sys
@@ -31,7 +27,7 @@ ARC_TURN_RATE_RADPS = 0.15
 LEG_TIMEOUT_S = 90.0
 SETTLE_AFTER_LEG_S = 1.5
 # Generous: a cold sim start in the container can take minutes before SLAM publishes
-STARTUP_TIMEOUT_S = 300.0
+
 # Must match run_sim_trial.sh's spawn offset for the sphere route
 SPHERE_AHEAD_M = 8.0
 # Far enough from the sphere (radius 0.5 m) that the rover can turn in place
@@ -39,6 +35,7 @@ STAND_OFF_M = 2.5
 RETURN_STOP_M = 1.5
 TURN_RATE_RADPS = 0.4
 TURN_TOLERANCE_RAD = 0.05
+STARTUP_TIMEOUT_S = 30.0
 
 
 def yaw(q):
@@ -204,7 +201,17 @@ def main():
 
     trial.hold_still(REST_S)
     trial.report('after rest')
-    ROUTES[route](trial)
+
+    trial.drive_distance(LEG_M, vx=-SPEED_MPS)
+    trial.report('reverse')
+    trial.drive_distance(LATERAL_LEG_M, vy=LATERAL_SPEED_MPS)
+    trial.report('sideways')
+    start_yaw = trial.truth[2]
+    trial.drive_distance(LEG_M, vx=SPEED_MPS, wz=ARC_TURN_RATE_RADPS)
+    print(f'  arc turned {math.degrees(wrap(trial.truth[2] - start_yaw)):.0f} deg (truth)')
+    trial.report('arc')
+    trial.drive_distance(LATERAL_LEG_M, vy=-LATERAL_SPEED_MPS)
+    trial.report('sideways back')
 
     print(f'horizontal error RMS {rms(trial.errors):.2f} m  max {max(trial.errors):.2f} m  '
           f'samples {len(trial.errors)}')

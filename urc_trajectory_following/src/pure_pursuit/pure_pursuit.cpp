@@ -46,7 +46,7 @@ PurePursuit::getLookaheadPose(
 
   // If no point is found, return the last pose in the path
   if (pose == path.poses.end()) {
-    RCLCPP_INFO(logger, "Lookahead point is the last point in the path.");
+    RCLCPP_DEBUG(logger, "Lookahead point is the last point in the path.");
     return path.poses.back();
   }
 
@@ -55,11 +55,6 @@ PurePursuit::getLookaheadPose(
   // Find the intersection of the lookahead circle and the line segment between
   // prev_pose and pose, where prev_pose is guaranteed to be within the
   // lookahead circle.
-  /* RCLCPP_INFO(logger, "Closest Pt (%f, %f), Previous Pt: (%f, %f),  Lookahead
-    Pt: (%f, %f)", closestPoseIt->pose.position.x,
-    closestPoseIt->pose.position.y, prev_pose->pose.position.x,
-    prev_pose->pose.position.y, pose->pose.position.x, pose->pose.position.y);
-  */
   auto point = geometry_util::circleSegmentIntersection(
     prev_pose->pose.position, pose->pose.position, lookahead_distance);
 
@@ -104,6 +99,7 @@ trajectory_following::TrajectoryOutput PurePursuit::getCommandVelocity(
       transformed_pose.pose.position.x, transformed_pose.pose.position.y,
       transformed_pose.pose.orientation.w,
       transformed_pose.pose.orientation.z);
+
   }
 
   auto lookahead_pose =

@@ -3,7 +3,7 @@
 # fresh sim -> SLAM + navsat_transform (+ optional RViz) -> route_trial.py and
 # odom_drift_benchmark.py -> summary -> shutdown of everything it started.
 #
-# Usage: run_sim_trial.sh [--rviz] [--override params.yaml] [--route default|sphere] [label]
+# Usage: run_sim_trial.sh [--rviz] [--override params.yaml] [label]
 # Logs go to ./slam_trial_logs/<label>/. Source the workspace before running.
 set -euo pipefail
 
@@ -50,7 +50,7 @@ cleanup() {
 trap cleanup EXIT
 
 echo "Starting simulation (logs in $LOG_DIR)"
-start_group "$LOG_DIR/sim.log" ros2 launch urc_bringup sim.launch.py "${SIM_ARGS[@]}"
+start_group "$LOG_DIR/sim.log" ros2 launch urc_bringup sim.launch.py autonomy:=false
 timeout 120 bash -c 'until ros2 topic list 2>/dev/null | grep -q "^/scan/points$"; do sleep 2; done'
 sleep 8
 
@@ -71,7 +71,7 @@ sleep 5
 echo "=== trial $LABEL${OVERRIDE:+ (override $(basename "$OVERRIDE"))}"
 python3 "$SCRIPT_DIR/odom_drift_benchmark.py" > "$LOG_DIR/drift.log" 2>&1 &
 BENCHMARK_PID=$!
-python3 "$SCRIPT_DIR/route_trial.py" "$ROUTE" 2>&1 | tee "$LOG_DIR/route.log" | grep -v RTPS || true
+python3 "$SCRIPT_DIR/route_trial.py" 2>&1 | tee "$LOG_DIR/route.log" | grep -v RTPS || true
 kill -USR1 "$BENCHMARK_PID" 2>/dev/null || true
 wait "$BENCHMARK_PID" || true
 

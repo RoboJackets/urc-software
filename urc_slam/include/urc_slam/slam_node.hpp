@@ -17,7 +17,6 @@
 #include <tf2_ros/buffer.hpp>
 #include <tf2_ros/transform_broadcaster.hpp>
 #include <tf2_ros/transform_listener.hpp>
-#include <visualization_msgs/msg/marker_array.hpp>
 
 #include "urc_slam/gps_keyframe_matcher.hpp"
 #include "urc_slam/imu_buffer.hpp"
@@ -72,6 +71,7 @@ private:
   void tryLoopClosure();
   void processRocks(const sensor_msgs::msg::PointCloud2 & msg);
   void publishLandmarks(const rclcpp::Time & stamp);
+  void commitKeyframe(const rclcpp::Time & stamp, const LidarFrontend::Cloud::Ptr & cloud);
   bool applyGpsMatches();
   void publishState(const gtsam::NavState & state, const rclcpp::Time & stamp);
   void rebuildPath();
