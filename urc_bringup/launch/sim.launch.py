@@ -5,6 +5,7 @@ from launch.actions import (
     ExecuteProcess,
     IncludeLaunchDescription,
     RegisterEventHandler,
+    SetEnvironmentVariable,
     TimerAction,
 )
 from launch.event_handlers import OnProcessExit
@@ -106,6 +107,70 @@ def generate_launch_description():
         description="Incline slope in degrees (used when add_incline is true)",
     )
 
+    add_aruco_tag_arg = DeclareLaunchArgument(
+        "add_aruco_tag",
+        default_value="false",
+        description="Spawn an ArUco test tag in simulation",
+    )
+
+    aruco_tag_x_arg = DeclareLaunchArgument(
+        "aruco_tag_x",
+        # The camera on this rover looks toward negative X at rover_yaw=0.
+        default_value="4.0",
+        description="X position for ArUco tag",
+    )
+
+    aruco_tag_y_arg = DeclareLaunchArgument(
+        "aruco_tag_y",
+        default_value="0.0",
+        description="Y position for ArUco tag",
+    )
+
+    aruco_tag_z_arg = DeclareLaunchArgument(
+        "aruco_tag_z",
+        # Keep the visual above the uneven Marsyard surface. It is still in
+        # the camera's vertical field of view at the default 4 m distance.
+        default_value="2.0",
+        description="Z position for the marker base above the terrain",
+    )
+
+    aruco_tag_yaw_arg = DeclareLaunchArgument(
+        "aruco_tag_yaw",
+        # Face the marker toward the camera looking from negative X.
+        default_value="1.57079632679",
+        description="Yaw of the ArUco tag in radians",
+    )
+
+    add_rock_pick_arg = DeclareLaunchArgument(
+        "add_rock_pick",
+        default_value="false",
+        description="Drop a rock pick hammer in front of the camera for YOLO testing",
+    )
+
+    rock_pick_x_arg = DeclareLaunchArgument(
+        "rock_pick_x",
+        default_value="2.0",
+        description="X position for the rock pick",
+    )
+
+    rock_pick_y_arg = DeclareLaunchArgument(
+        "rock_pick_y",
+        default_value="0.0",
+        description="Y position for the rock pick",
+    )
+
+    rock_pick_yaw_arg = DeclareLaunchArgument(
+        "rock_pick_yaw",
+        default_value="0.785",
+        description="Yaw of the rock pick in radians",
+    )
+
+    rover_yaw_arg = DeclareLaunchArgument(
+        "rover_yaw",
+        default_value="0.0",
+        description="Yaw of the rover at spawn",
+    )
+
     world_filename = LaunchConfiguration("world")
     walli_xacro_config = LaunchConfiguration("walli_xacro")
     cube_x = LaunchConfiguration("cube_x")
@@ -113,17 +178,49 @@ def generate_launch_description():
     incline_x = LaunchConfiguration("incline_x")
     incline_y = LaunchConfiguration("incline_y")
     incline_slope = LaunchConfiguration("incline_slope")
+    aruco_tag_x = LaunchConfiguration("aruco_tag_x")
+    aruco_tag_y = LaunchConfiguration("aruco_tag_y")
+    aruco_tag_z = LaunchConfiguration("aruco_tag_z")
+    aruco_tag_yaw = LaunchConfiguration("aruco_tag_yaw")
+    rover_yaw = LaunchConfiguration("rover_yaw")
+    rock_pick_x = LaunchConfiguration("rock_pick_x")
+    rock_pick_y = LaunchConfiguration("rock_pick_y")
+    rock_pick_yaw = LaunchConfiguration("rock_pick_yaw")
     cube_sdf_path = os.path.join(
         path_urc_hw_description, "world", "obstacles", "large_cube.sdf"
     )
     incline_sdf_path = os.path.join(
         path_urc_hw_description, "world", "obstacles", "incline_plane.sdf"
     )
+    aruco_tag_sdf_path = os.path.join(path_urc_bringup, "models", "aruco_tag_0", "model.sdf")
+    rock_pick_sdf_path = os.path.join(path_urc_bringup, "models", "rock_pick", "model.sdf")
     incline_pitch_rad = PythonExpression(
         ["-float(", incline_slope, ") * 3.141592653589793 / 180.0"]
     )
 
     world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
+    gazebo_resource_path = os.pathsep.join(
+        [
+            os.path.join(path_urc_bringup, "models"),
+            os.path.join(path_urc_hw_description, "models"),
+            os.path.join(path_urc_hw_description, "world"),
+            os.environ.get("GZ_SIM_RESOURCE_PATH", ""),
+        ]
+    )
+
+    set_gz_resource_path = SetEnvironmentVariable(
+        name="GZ_SIM_RESOURCE_PATH",
+        value=gazebo_resource_path,
+    )
+    set_ign_resource_path = SetEnvironmentVariable(
+        name="IGN_GAZEBO_RESOURCE_PATH",
+        value=gazebo_resource_path,
+    )
+
+    set_display = SetEnvironmentVariable(
+        name="DISPLAY",
+        value=os.environ.get("DISPLAY") or ":1",
+    )
 
     robot_urdf_file = ParameterValue(
         Command(["xacro ", walli_xacro_config, " use_sim:=", "true"]),
@@ -144,6 +241,19 @@ def generate_launch_description():
         name="ros_gz_bridge",
         output="screen",
         parameters=[{"config_file": LaunchConfiguration("bridge_yaml")}],
+    )
+
+    aruco_detector_node = Node(
+        package="urc_bringup",
+        executable="aruco_detector.py",
+        name="aruco_detector",
+        output="log",
+        parameters=[
+            {
+                "marker_size": 0.375,
+                "use_sim_time": True,
+            }
+        ],
     )
 
     robot_state_publisher_node = Node(
@@ -254,7 +364,7 @@ def generate_launch_description():
             "-z", "2.0",
             "-R", "0",
             "-P", "0",
-            "-Y", "0",
+            "-Y", rover_yaw,
             "-topic", "robot_description",
         ],
     )
@@ -275,6 +385,45 @@ def generate_launch_description():
             "-file", cube_sdf_path,
         ],
     )
+
+    spawn_aruco_tag = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_aruco_tag")),
+        arguments=[
+            "-name", "aruco_tag_0",
+            "-x", aruco_tag_x,
+            "-y", aruco_tag_y,
+            "-z", aruco_tag_z,
+            "-R", "0.0",
+            "-P", "0.0",
+            "-Y", aruco_tag_yaw,
+            "-file", aruco_tag_sdf_path,
+        ],
+    )
+
+    delayed_spawn_aruco = TimerAction(period=5.0, actions=[spawn_aruco_tag])
+
+    # Dropped from above the terrain so it comes to rest on the uneven ground.
+    spawn_rock_pick = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("add_rock_pick")),
+        arguments=[
+            "-name", "rock_pick",
+            "-x", rock_pick_x,
+            "-y", rock_pick_y,
+            "-z", "2.0",
+            "-R", "0.0",
+            "-P", "0.0",
+            "-Y", rock_pick_yaw,
+            "-file", rock_pick_sdf_path,
+        ],
+    )
+
+    delayed_spawn_rock_pick = TimerAction(period=5.0, actions=[spawn_rock_pick])
 
     spawn_incline = Node(
         package="ros_gz_sim",
@@ -367,9 +516,23 @@ def generate_launch_description():
             incline_x_arg,
             incline_y_arg,
             incline_slope_arg,
+            add_aruco_tag_arg,
+            aruco_tag_x_arg,
+            aruco_tag_y_arg,
+            aruco_tag_z_arg,
+            aruco_tag_yaw_arg,
+            rover_yaw_arg,
+            add_rock_pick_arg,
+            rock_pick_x_arg,
+            rock_pick_y_arg,
+            rock_pick_yaw_arg,
+            set_gz_resource_path,
+            set_ign_resource_path,
+            set_display,
             gz_sim,
             bridge,
             robot_state_publisher_node,
+            aruco_detector_node,
             sim_status_light,
             initial_status_light,
             covariances_on_imu,
@@ -379,6 +542,8 @@ def generate_launch_description():
             rocker_effort_pid_node,
             spawn,
             spawn_cube,
+            delayed_spawn_aruco,
+            delayed_spawn_rock_pick,
             spawn_incline,
 
             # After robot spawn, start controller spawners on a fixed schedule

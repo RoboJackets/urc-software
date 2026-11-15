@@ -9,13 +9,14 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    config = os.path.join(
-        get_package_share_directory('urc_perception'), 'config', 'yolo_detector.yaml')
+    share_dir = get_package_share_directory('urc_perception')
+    config = os.path.join(share_dir, 'config', 'yolo_detector.yaml')
+    model = os.path.join(share_dir, 'models', 'model.onnx')
 
     return LaunchDescription([
 
         DeclareLaunchArgument('config', default_value=config),
-        DeclareLaunchArgument('model_path'),
+        DeclareLaunchArgument('model_path', default_value=model),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
 
         Node(
