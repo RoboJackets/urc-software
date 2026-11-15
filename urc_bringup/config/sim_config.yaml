@@ -38,7 +38,12 @@
   gz_type_name: "ignition.msgs.Pose_V"
   direction: GZ_TO_ROS
 - ros_topic_name: "/camera/image_raw"
-  gz_topic_name: "/camera/image_raw"
+  gz_topic_name: "/camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "ignition.msgs.Image"
+  direction: GZ_TO_ROS
+- ros_topic_name: "/camera/depth_image"
+  gz_topic_name: "/camera/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "ignition.msgs.Image"
   direction: GZ_TO_ROS
@@ -47,3 +52,4 @@
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "ignition.msgs.CameraInfo"
   direction: GZ_TO_ROS
+
