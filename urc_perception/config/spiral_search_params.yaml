@@ -15,9 +15,9 @@ spiral_search_server:
     # radius of any cell the slope filters flagged, so 0.05 keeps that whole margin clear.
     traversability_cost_layer: traversability_inflated
     max_traversability_cost: 0.05
-    # The inflated layer is 0 rather than NaN on unobserved cells, so unknown terrain is read
-    # from the un-inflated layer.
-    traversability_validity_layer: traversability
+    # traversability_mapping publishes only elevation and traversability_inflated, and leaves
+    # unobserved cells NaN in the inflated layer.
+    traversability_validity_layer: traversability_inflated
     allow_unknown_terrain: false
 
     max_map_age: 2.0

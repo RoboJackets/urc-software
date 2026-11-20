@@ -86,7 +86,7 @@ SpiralSearchServer::SpiralSearchServer(const rclcpp::NodeOptions & options)
   traversability_criteria_.cost_layer =
     declare_parameter<std::string>("traversability_cost_layer", "traversability_inflated");
   traversability_criteria_.validity_layer =
-    declare_parameter<std::string>("traversability_validity_layer", "traversability");
+    declare_parameter<std::string>("traversability_validity_layer", "traversability_inflated");
   traversability_criteria_.max_cost = declare_parameter<double>("max_traversability_cost", 0.05);
   traversability_criteria_.allow_unknown =
     declare_parameter<bool>("allow_unknown_terrain", false);
