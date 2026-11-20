@@ -103,7 +103,7 @@ def generate_launch_description():
 
     aruco_tag_x_arg = DeclareLaunchArgument(
         "aruco_tag_x",
-        # The camera on this rover looks toward negative X at rover_yaw=0.
+        # The camera optical frame points toward positive X at rover_yaw=0.
         default_value="4.0",
         description="X position for ArUco tag",
     )
@@ -221,6 +221,14 @@ def generate_launch_description():
         parameters=[
             {
                 "marker_size": 0.375,
+                "target_frame": "base_link",
+                "world_frame": "map",
+                "robot_world_frame": "base_link",
+                # Set if base_link is not the rover's physical center
+                # (center position expressed in base_link: x fwd, y left, z up).
+                "center_offset_xyz": [0.0, 0.0, 0.0],
+                # "auto", "optical" (z-forward) or "ros" (x-forward)
+                "camera_frame_convention": "auto",
                 "use_sim_time": True,
             }
         ],
