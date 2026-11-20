@@ -1,12 +1,17 @@
 import os
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
+    use_sim_time = ParameterValue(LaunchConfiguration("use_sim_time"), value_type=bool)
     pkg_urc_perception = get_package_share_directory("urc_perception")
     pkg_trajectory_following = get_package_share_directory("urc_trajectory_following")
+    pkg_path_planning = get_package_share_directory("urc_path_planning")
 
     traversability_config = os.path.join(
         pkg_urc_perception, "config", "traversability_params.yaml"
@@ -14,11 +19,36 @@ def generate_launch_description():
     trajectory_config = os.path.join(
         pkg_trajectory_following, "config", "pure_pursuit_config.yaml"
     )
+    planner_config = os.path.join(pkg_path_planning, "config", "planner_params.yaml")
+
+    mission_config = os.path.join(
+        get_package_share_directory("urc_state_machine"), "config", "mission.yaml"
+    )
+
+    drive_config = os.path.join(
+        get_package_share_directory("urc_bringup"), "config", "autonomy_drive.yaml"
+    )
+    drive_mux_node = Node(
+        package="urc_platform",
+        executable="urc_platform_TwistMux",
+        name="twist_mux",
+        parameters=[drive_config, {"use_sim_time": use_sim_time}],
+        output="screen",
+    )
 
     state_machine_node = Node(
         package="urc_state_machine",
         executable="urc_state_machine_NavCoordinator",
         name="nav_coordinator",
+        parameters=[mission_config, {
+            "use_sim_time": use_sim_time,
+            "tool_placeholder_success": ParameterValue(
+                LaunchConfiguration("tool_placeholder_success"), value_type=bool
+            ),
+            "aruco_refinement": ParameterValue(
+                LaunchConfiguration("aruco_refinement"), value_type=bool
+            ),
+        }],
         output="screen",
     )
 
@@ -26,6 +56,7 @@ def generate_launch_description():
         package="urc_path_planning",
         executable="urc_path_planning_PlannerServer",
         name="planner_server",
+        parameters=[planner_config, {"use_sim_time": use_sim_time}],
         output="screen",
     )
 
@@ -33,7 +64,7 @@ def generate_launch_description():
         package="urc_trajectory_following",
         executable="urc_trajectory_following_FollowerActionServer",
         name="follower_action_server",
-        parameters=[trajectory_config],
+        parameters=[trajectory_config, drive_config, {"use_sim_time": use_sim_time}],
         output="screen",
     )
 
@@ -41,7 +72,7 @@ def generate_launch_description():
         package="urc_perception",
         executable="urc_perception_TraversabilityMapping",
         name="traversability_mapping",
-        parameters=[traversability_config],
+        parameters=[traversability_config, {"use_sim_time": use_sim_time}],
         output="screen",
     )
 
@@ -50,11 +81,24 @@ def generate_launch_description():
         executable="grid_map_visualization",
         name="grid_map_visualization",
         output="screen",
-        parameters=[traversability_config],
+        parameters=[traversability_config, {"use_sim_time": use_sim_time}],
     )
 
     return LaunchDescription(
         [
+            DeclareLaunchArgument(
+                "use_sim_time", default_value="false",
+                description="Use the simulation clock (set by sim.launch.py)",
+            ),
+            DeclareLaunchArgument(
+                "tool_placeholder_success", default_value="false",
+                description="TEST ONLY: simulate FETCH/GIVE completion without moving an arm",
+            ),
+            DeclareLaunchArgument(
+                "aruco_refinement", default_value="true",
+                description="Require an ArUco marker (with spiral search) to complete route missions",
+            ),
+            drive_mux_node,
             state_machine_node,
             path_planning_node,
             trajectory_following_node,

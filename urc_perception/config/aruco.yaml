@@ -1,0 +1,14 @@
+aruco_detector:
+  ros__parameters:
+    image_topic: /camera/image_raw
+    camera_info_topic: /camera/camera_info
+    detections_topic: /aruco/detections
+    poses_topic: /aruco/poses
+    pose_topic: /aruco/pose
+    ids_topic: /aruco/ids
+    debug_topic: /aruco/image_debug
+    dictionary: DICT_4X4_50
+    expected_marker_id: -1
+    # Preserved simulation size from the camera branch; set to the measured physical tag size.
+    marker_size: 0.05
+    publish_debug: false

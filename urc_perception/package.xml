@@ -32,6 +32,12 @@
   <depend>grid_map_pcl</depend>
   <depend>grid_map_cv</depend>
 
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+  <exec_depend>urc_msgs</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
     <filters plugin="${prefix}/filter_plugins.xml" />

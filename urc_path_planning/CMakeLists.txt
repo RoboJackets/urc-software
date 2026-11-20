@@ -59,9 +59,10 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_PlannerServer
 )
 
-# Install launch files.
+# Install launch and config files.
 install(
   DIRECTORY
+  config
   launch
   config
   DESTINATION share/${PROJECT_NAME}/
@@ -89,8 +90,6 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-ament_export_include_directories(msg)
 
 ament_export_include_directories(include)
 

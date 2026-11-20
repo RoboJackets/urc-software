@@ -45,3 +45,10 @@ This package does not install its own launch files. System composition belongs i
 
 The `config/` directory contains controller, upstream twist-mux, and VectorNav
 settings. Higher-level system compositions load the relevant configuration.
+
+The autonomy launch uses `urc_bringup/config/autonomy_drive.yaml` to route stamped
+`/cmd_vel_autonomous` and `/cmd_vel_teleop` inputs through `TwistMux` to `/cmd_vel`.
+`/cmd_vel_mode` selects `teleop` or `autonomous`; retained `/drive_mode` reports
+actual selection or `disabled`. Mode changes stop output and discard earlier
+commands. The configurable `command_timeout` defaults to 0.5 seconds.
+Standalone mux output remains stamped; `cmd_out_stamped=false` selects `Twist`.

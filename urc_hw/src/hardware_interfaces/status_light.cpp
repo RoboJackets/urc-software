@@ -12,6 +12,7 @@
 #include <pb_decode.h>
 #include <string>
 #include <urc_nanopb/urc.pb.h>
+#include <urc_msgs/msg/status_light_command.hpp>
 
 PLUGINLIB_EXPORT_CLASS(
   urc_hardware::hardware_interfaces::StatusLight,
@@ -127,19 +128,20 @@ hardware_interface::return_type StatusLight::write(const rclcpp::Time &, const r
   TeensyMessage message = TeensyMessage_init_zero;
   pb_ostream_t stream = pb_ostream_from_buffer(buffer, sizeof(buffer));
 
-  uint8_t selected_color = static_cast<uint8_t>(signals[0]);
-  uint8_t selected_state = static_cast<uint8_t>(signals[1]);
-  if (selected_color >= 0 && selected_color <= 2 && selected_state >= 0 && selected_state <= 2) {
-    lightStates[selected_color] = selected_state;
-  }
+  using Command = urc_msgs::msg::StatusLightCommand;
+  const bool enabled = signals[1] == Command::ON || signals[1] == Command::BLINK;
+  const bool blinking = signals[1] == Command::BLINK;
+  const bool red = enabled && signals[0] == Command::RED;
+  const bool green = enabled && signals[0] == Command::GREEN;
+  const bool blue = enabled && signals[0] == Command::BLUE;
 
   message.which_messageType = TeensyMessage_statusLightMessage_tag;
-  message.messageType.statusLightMessage.redEnabled = (lightStates[0] != 0);
-  message.messageType.statusLightMessage.redBlink = (lightStates[0] == 2);
-  message.messageType.statusLightMessage.greenEnabled = (lightStates[1] != 0);
-  message.messageType.statusLightMessage.greenBlink = (lightStates[1] == 2);
-  message.messageType.statusLightMessage.blueEnabled = (lightStates[2] != 0);
-  message.messageType.statusLightMessage.blueBlink = (lightStates[2] == 2);
+  message.messageType.statusLightMessage.redEnabled = red;
+  message.messageType.statusLightMessage.redBlink = red && blinking;
+  message.messageType.statusLightMessage.greenEnabled = green;
+  message.messageType.statusLightMessage.greenBlink = green && blinking;
+  message.messageType.statusLightMessage.blueEnabled = blue;
+  message.messageType.statusLightMessage.blueBlink = blue && blinking;
 
   bool status = pb_encode(&stream, TeensyMessage_fields, &message);
   message_length = stream.bytes_written;

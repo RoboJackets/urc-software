@@ -1,0 +1,15 @@
+twist_mux:
+  ros__parameters:
+    autonomous_cmd_vel_topic: /cmd_vel_autonomous
+    teleop_cmd_vel_topic: /cmd_vel_teleop
+    enabled_topic: /cmd_vel_enabled
+    mode_topic: /cmd_vel_mode
+    mode_state_topic: /drive_mode
+    cmd_out_topic: /cmd_vel
+    cmd_out_stamped: false
+    command_timeout: 0.5
+
+follower_action_server:
+  ros__parameters:
+    cmd_vel_stamped: true
+    cmd_vel_topic: /cmd_vel_autonomous
