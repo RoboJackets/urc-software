@@ -11,6 +11,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(urc_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(grid_map_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
@@ -30,6 +31,7 @@ add_library(${PROJECT_NAME} SHARED
   src/planner_server.cpp
   src/astar.cpp
   src/gradient_descent_smoother.cpp
+  src/bspline_smoother.cpp
 )
 
 set(dependencies
@@ -38,6 +40,7 @@ set(dependencies
   urc_nav_common
   urc_msgs
   std_msgs
+  geometry_msgs
   grid_map_msgs
   sensor_msgs
   diagnostic_updater

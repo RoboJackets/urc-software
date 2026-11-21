@@ -35,6 +35,11 @@ destination cell's cost. Cells at or above `lethal_cost` are never entered.
 Unobserved (NaN) cells cost `unknown_cost`, so known ground is preferred but
 unseen ground is not forbidden.
 
+After A* completes, the planner applies gradient-descent smoothing and can then
+fit a clamped cubic B-spline through the smoothed points. The B-spline is
+resampled at `smoothing.bspline.sample_spacing` meter intervals and can be
+enabled with `smoothing.bspline.enabled` for comparison testing.
+
 ## Usage
 
 The normal entry point is the full autonomy stack:

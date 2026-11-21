@@ -5,6 +5,9 @@ planner_server:
       smoothness_weight: 0.1
       tolerance: 0.001
       maximum_iterations: 1000
+      bspline:
+        enabled: true
+        sample_spacing: 0.1
     costmap_layer: traversability_inflated
     # Cells at or above this cost are never entered (urc_perception scores lethal as 1.0)
     lethal_cost: 1.0

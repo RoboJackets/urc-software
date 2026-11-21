@@ -7,6 +7,7 @@
 
 #include "urc_path_planning/planner_server.hpp"
 #include "urc_path_planning/astar.hpp"
+#include "urc_path_planning/bspline_smoother.hpp"
 #include "urc_path_planning/gradient_descent_smoother.hpp"
 
 namespace planner_server
@@ -30,6 +31,8 @@ PlannerServer::PlannerServer(const rclcpp::NodeOptions & options)
   declare_parameter<double>("smoothing.smoothness_weight", 0.1);
   declare_parameter<double>("smoothing.tolerance", 0.001);
   declare_parameter<int64_t>("smoothing.maximum_iterations", 1000);
+  declare_parameter<bool>("smoothing.bspline.enabled", false);
+  declare_parameter<double>("smoothing.bspline.sample_spacing", 0.1);
 
   // Create the service
   plan_service_ = create_service<urc_msgs::srv::GeneratePlan>(
@@ -74,6 +77,9 @@ void PlannerServer::generatePlan(
     const double smoothness_weight = get_parameter("smoothing.smoothness_weight").as_double();
     const double tolerance = get_parameter("smoothing.tolerance").as_double();
     const int64_t maximum_iterations = get_parameter("smoothing.maximum_iterations").as_int();
+    const bool bspline_enabled = get_parameter("smoothing.bspline.enabled").as_bool();
+    const double bspline_sample_spacing =
+      get_parameter("smoothing.bspline.sample_spacing").as_double();
 
     if (maximum_iterations <= 0) {
       throw std::invalid_argument("smoothing.maximum_iterations must be positive");
@@ -108,6 +114,13 @@ void PlannerServer::generatePlan(
     const urc_path_planning::GradientDescentSmoother smoother(smoothing_parameters);
 
     plan = smoother.smooth(plan);
+    if (bspline_enabled) {
+      const urc_path_planning::BSplineParameters bspline_parameters {
+        bspline_sample_spacing
+      };
+      const urc_path_planning::BSplineSmoother bspline_smoother(bspline_parameters);
+      plan = bspline_smoother.smooth(plan);
+    }
 
     response->path = plan;
     response->error_code = urc_msgs::srv::GeneratePlan::Response::SUCCESS;
