@@ -25,6 +25,40 @@ find_package(grid_map_cv REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(filters REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core)
+find_package(cv_bridge REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(urc_msgs REQUIRED)
+
+add_library(detection_localizer SHARED
+  src/detection_projection.cpp
+  src/detection_localizer.cpp
+)
+target_include_directories(detection_localizer PUBLIC include)
+ament_target_dependencies(detection_localizer
+  rclcpp
+  rclcpp_components
+  sensor_msgs
+  geometry_msgs
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  cv_bridge
+  urc_msgs
+)
+target_link_libraries(detection_localizer ${OpenCV_LIBS})
+
+rclcpp_components_register_node(
+  detection_localizer
+  PLUGIN "urc_perception::DetectionLocalizer"
+  EXECUTABLE ${PROJECT_NAME}_DetectionLocalizer
+)
+
+install(TARGETS detection_localizer
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 
 add_compile_options(-Wno-enum-constexpr-conversion)
@@ -110,6 +144,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  scripts/aruco_detector.py
+  scripts/yolo_detector.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Install library
 install(TARGETS
   ${PROJECT_NAME}
@@ -117,6 +157,14 @@ install(TARGETS
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+
+install(
+  DIRECTORY config launch models
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -134,6 +182,5 @@ ament_export_include_directories(include)
 ament_export_libraries(urc_perception_filters)
 ament_export_dependencies(${dependencies})
 pluginlib_export_plugin_description_file(filters filter_plugins.xml)
-install(PROGRAMS scripts/aruco_detector.py DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

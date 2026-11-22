@@ -9,8 +9,17 @@ install(
   DIRECTORY
   launch
   config
+  models
   rviz
   DESTINATION share/${PROJECT_NAME}/
+)
+
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/gz_sim_resource_path.dsv")
+
+install(PROGRAMS
+  scripts/aruco_detector.py
+  scripts/aruco_test_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
