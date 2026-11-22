@@ -19,6 +19,7 @@ find_package(diagnostic_updater REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(
   include
@@ -27,6 +28,9 @@ include_directories(
 # Library creation
 add_library(${PROJECT_NAME} SHARED
   src/pure_pursuit/pure_pursuit.cpp
+  src/lqr/discrete_lqr.cpp
+  src/lqr/path_geometry.cpp
+  src/lqr/lqr_tracker.cpp
   src/trajectory_factory.cpp
   src/geometry_util.cpp
   src/follower_action_server.cpp
@@ -51,6 +55,10 @@ set(dependencies
 
 ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  Eigen3::Eigen
 )
 
 rclcpp_components_register_node(
