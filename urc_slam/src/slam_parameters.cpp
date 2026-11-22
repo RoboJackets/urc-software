@@ -122,6 +122,7 @@ SlamNodeParameters declareSlamParameters(rclcpp::Node & node)
 
   p.lidar_frontend = declareLidarFrontend(node);
   p.backend = declareBackend(node);
+  p.lidar_reliable = node.declare_parameter<bool>("lidar_reliable", false);
 
   p.registration_submap_keyframes =
     declarePositiveInt(node, "registration.submap_keyframes", 3);
