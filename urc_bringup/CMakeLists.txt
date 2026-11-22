@@ -9,7 +9,11 @@ install(
   DIRECTORY
   launch
   config
+<<<<<<< HEAD
   models
+=======
+  rviz
+>>>>>>> origin/master
   DESTINATION share/${PROJECT_NAME}/
 )
 

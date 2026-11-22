@@ -85,3 +85,21 @@ following accepts a fresh FOLLOW gesture or remote command. `/resume_mission`
 (`std_srvs/Trigger`) retries the saved phase, including route navigation. Resume
 waits for valid inputs and confirmed autonomous mux mode. Abort never
 initiates a return to the astronaut. See [abort and resume](docs/integration.md#abort-teleoperation-and-resume).
+
+## Waypoint mission
+
+`urc_state_machine_WaypointMission` drives a fixed route through the
+coordinator. It waits for the `map` to `base_link` transform and the
+`/execute_autonomous_mission` action server, then sends one map-frame waypoint
+at a time as a route mission. It advances when a mission succeeds, retries a
+failed waypoint up to `max_attempts_per_waypoint` times before skipping it, and
+repeats the route `laps` times (0 repeats forever). A mission the coordinator
+pauses for teleop is canceled and counts as a failed attempt. The route and the
+current target are published as markers on `mission_waypoints`.
+
+The simulation demo in `urc_bringup` uses it, with `aruco_refinement:=false`
+because the demo route has no markers:
+
+```bash
+ros2 launch urc_bringup autonomy_demo.launch.py
+```

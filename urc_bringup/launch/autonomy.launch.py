@@ -2,8 +2,8 @@ import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
-from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -11,6 +11,7 @@ def generate_launch_description():
     use_sim_time = ParameterValue(LaunchConfiguration("use_sim_time"), value_type=bool)
     pkg_urc_perception = get_package_share_directory("urc_perception")
     pkg_trajectory_following = get_package_share_directory("urc_trajectory_following")
+    pkg_path_planning = get_package_share_directory("urc_path_planning")
 
     traversability_config = os.path.join(
         pkg_urc_perception, "config", "traversability_params.yaml"
@@ -18,6 +19,7 @@ def generate_launch_description():
     trajectory_config = os.path.join(
         pkg_trajectory_following, "config", "pure_pursuit_config.yaml"
     )
+    planner_config = os.path.join(pkg_path_planning, "config", "planner_params.yaml")
 
     mission_config = os.path.join(
         get_package_share_directory("urc_state_machine"), "config", "mission.yaml"
@@ -43,6 +45,9 @@ def generate_launch_description():
             "tool_placeholder_success": ParameterValue(
                 LaunchConfiguration("tool_placeholder_success"), value_type=bool
             ),
+            "aruco_refinement": ParameterValue(
+                LaunchConfiguration("aruco_refinement"), value_type=bool
+            ),
         }],
         output="screen",
     )
@@ -51,7 +56,7 @@ def generate_launch_description():
         package="urc_path_planning",
         executable="urc_path_planning_PlannerServer",
         name="planner_server",
-        parameters=[{"use_sim_time": use_sim_time}],
+        parameters=[planner_config, {"use_sim_time": use_sim_time}],
         output="screen",
     )
 
@@ -81,10 +86,17 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            DeclareLaunchArgument("use_sim_time", default_value="false"),
+            DeclareLaunchArgument(
+                "use_sim_time", default_value="false",
+                description="Use the simulation clock (set by sim.launch.py)",
+            ),
             DeclareLaunchArgument(
                 "tool_placeholder_success", default_value="false",
                 description="TEST ONLY: simulate FETCH/GIVE completion without moving an arm",
+            ),
+            DeclareLaunchArgument(
+                "aruco_refinement", default_value="true",
+                description="Require an ArUco marker (with spiral search) to complete route missions",
             ),
             drive_mux_node,
             state_machine_node,

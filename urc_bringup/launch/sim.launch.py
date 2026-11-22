@@ -199,6 +199,7 @@ def generate_launch_description():
     )
 
     world_path = PathJoinSubstitution([path_urc_hw_description, "world", world_filename])
+<<<<<<< HEAD
     gazebo_resource_path = os.pathsep.join(
         [
             os.path.join(path_urc_bringup, "models"),
@@ -221,6 +222,8 @@ def generate_launch_description():
         name="DISPLAY",
         value=os.environ.get("DISPLAY") or ":1",
     )
+=======
+>>>>>>> origin/master
 
     robot_urdf_file = ParameterValue(
         Command(["xacro ", walli_xacro_config, " use_sim:=", "true"]),
@@ -243,6 +246,7 @@ def generate_launch_description():
         parameters=[{"config_file": LaunchConfiguration("bridge_yaml")}],
     )
 
+<<<<<<< HEAD
     aruco_detector_node = Node(
         package="urc_bringup",
         executable="aruco_detector.py",
@@ -256,6 +260,8 @@ def generate_launch_description():
         ],
     )
 
+=======
+>>>>>>> origin/master
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -310,6 +316,10 @@ def generate_launch_description():
                 "target_child_frame": "walli",
                 "odom_frame_id": "map",
                 "base_frame_id": "walli",
+<<<<<<< HEAD
+=======
+                "relative_to_first_pose": True,
+>>>>>>> origin/master
             }
         ],
         output="screen",
@@ -364,7 +374,11 @@ def generate_launch_description():
             "-z", "2.0",
             "-R", "0",
             "-P", "0",
+<<<<<<< HEAD
             "-Y", rover_yaw,
+=======
+            "-Y", "0",
+>>>>>>> origin/master
             "-topic", "robot_description",
         ],
     )

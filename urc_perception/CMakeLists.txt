@@ -77,8 +77,9 @@ add_library(${PROJECT_NAME} SHARED
   src/traversability_mapping.cpp
 )
 
-add_library(gaussian_filter SHARED
-  src/gaussian_filter.cpp
+add_library(urc_perception_filters SHARED
+  src/footprint_inflation_filter.cpp
+  src/traversability_cost_filter.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -110,7 +111,7 @@ ament_target_dependencies(${PROJECT_NAME}
   ${dependencies}
 )
 
-ament_target_dependencies(gaussian_filter
+ament_target_dependencies(urc_perception_filters
   ${dependencies}
 )
 
@@ -121,7 +122,7 @@ rclcpp_components_register_node(
 )
 
 install(
-  TARGETS gaussian_filter
+  TARGETS urc_perception_filters
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -178,7 +179,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_export_include_directories(include)
-ament_export_libraries(gaussian_filter)
+ament_export_libraries(urc_perception_filters)
 ament_export_dependencies(${dependencies})
 pluginlib_export_plugin_description_file(filters filter_plugins.xml)
 

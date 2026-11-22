@@ -1,8 +1,9 @@
 # URC Trajectory Following
 
 `urc_trajectory_following` owns the `NavigateToWaypoint` action that turns a
-planned path into rover velocity commands. The current controller implementation
-is [Pure Pursuit](src/pure_pursuit/README.md).
+planned path into rover velocity commands. The controller is chosen with the
+`trajectory_controller` parameter: `pure_pursuit` ([Pure Pursuit](src/pure_pursuit/README.md))
+or `lqr` (see [LQR tracking](#lqr-tracking)).
 
 ## Action behavior
 
@@ -18,16 +19,17 @@ with neither flag is rejected.
 
 During execution, the server publishes distance, planning state, and replan count
 as action feedback. It checks the controller's tracking point against the
-configured costmap layer and requests a new A* path when the cost exceeds the
-lethal threshold.
+configured costmap layer and requests a new A* path when the cost reaches
+`lethal_cost_threshold` (1.0, matching `urc_perception`).
 
 ## Runtime contracts
 
 - The action name is `navigate_to_waypoint`; the planning service is `plan`.
 - The server requires the configured map-to-base TF throughout execution.
 - `/costmap` must contain the configured layer, normally
-  `traversability_inflated`. A missing or unreadable cost is currently treated as
-  zero and therefore does not trigger replanning.
+  `traversability_inflated`. Unobserved cells, points outside the costmap, and a
+  missing layer do not trigger replanning; the latter two log a throttled
+  warning.
 - Velocity output may be `Twist` or `TwistStamped`, selected by
   `cmd_vel_stamped`; its topic is configured by `cmd_vel_topic`.
 - Cancellation, completion, and handled planning failures publish a final
@@ -51,6 +53,20 @@ ros2 launch urc_trajectory_following trajectory_following.launch.py
 
 The standalone launch still requires TF and, for goal-based requests, the
 planner and traversability map. Runtime settings live in
-[`config/pure_pursuit_config.yaml`](config/pure_pursuit_config.yaml). Although
-the controller is selected through `TrajectoryFactory`, `pure_pursuit` is the
-only supported selection today.
+[`config/pure_pursuit_config.yaml`](config/pure_pursuit_config.yaml).
+
+## LQR tracking
+
+With `trajectory_controller: "lqr"`, the rover drives forward at
+`desired_linear_velocity` and steers with
+`omega = v * curvature - K [lateral_error, heading_error]`, measured at the
+closest point on the path. `K` comes from a discrete LQR solved once per goal
+for `control_period`, which also sets the follower loop rate.
+
+The weights use Bryson's rule, so each is the largest value accepted:
+`lqr_max_lateral_error` (m), `lqr_max_heading_error` (rad) and
+`lqr_max_angular_correction` (rad/s). Smaller values make the tracker react
+harder to that error or allow less correction. The controller also uses
+`max_angular_velocity`, `heading_alignment_tolerance` (turn in place above it)
+and `lookahead_distance` (tracking point for the costmap check). It does not
+strafe.

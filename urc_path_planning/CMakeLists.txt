@@ -58,9 +58,10 @@ rclcpp_components_register_node(
   EXECUTABLE ${PROJECT_NAME}_PlannerServer
 )
 
-# Install launch files.
+# Install launch and config files.
 install(
   DIRECTORY
+  config
   launch
   DESTINATION share/${PROJECT_NAME}/
 )

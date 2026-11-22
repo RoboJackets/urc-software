@@ -54,9 +54,8 @@ private:
    */
   void handleCostmap(const grid_map_msgs::msg::GridMap::SharedPtr msg);
 
-  float getCost(double x, double y);
+  bool isLethal(double x, double y);
 
-  grid_map_msgs::msg::GridMap current_costmap_;
   grid_map_utils::GridMapUtils grid_map_utils_;
   rclcpp::Subscription<grid_map_msgs::msg::GridMap>::SharedPtr costmap_subscriber_;
   std::string costmap_layer_;

@@ -1,0 +1,7 @@
+planner_server:
+  ros__parameters:
+    costmap_layer: traversability_inflated
+    # Cells at or above this cost are never entered (urc_perception scores lethal as 1.0)
+    lethal_cost: 1.0
+    # Cost of unobserved (NaN) cells: discouraged versus known flat ground, never forbidden
+    unknown_cost: 0.5
