@@ -88,9 +88,13 @@ SlamNode::SlamNode(const rclcpp::NodeOptions & options)
     parameters.topics.imu,
     rclcpp::SensorDataQoS().keep_last(kImuSubscriptionDepth),
     std::bind(&SlamNode::imuCallback, this, std::placeholders::_1));
+  auto lidar_qos = rclcpp::SensorDataQoS();
+  if (parameters.lidar_reliable) {
+    lidar_qos.reliable();
+  }
   lidar_sub = create_subscription<sensor_msgs::msg::PointCloud2>(
     parameters.topics.lidar,
-    rclcpp::SensorDataQoS(),
+    lidar_qos,
     std::bind(&SlamNode::lidarCallback, this, std::placeholders::_1));
   gps_sub = create_subscription<nav_msgs::msg::Odometry>(
     parameters.topics.gps,

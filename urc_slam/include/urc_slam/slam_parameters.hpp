@@ -35,6 +35,7 @@ struct SlamNodeParameters
   LidarFrontendParameters lidar_frontend;
   SlamBackendParameters backend;
 
+  bool lidar_reliable;
   int registration_submap_keyframes;
   int registration_maximum_consecutive_failures;
   double imu_maximum_gap_s;

@@ -6,6 +6,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -22,6 +23,13 @@ def generate_launch_description():
         "rviz",
         default_value="false",
         description="Open RViz with SLAM and ground-truth odometry",
+    )
+    lidar_reliable_arg = DeclareLaunchArgument(
+        "lidar_reliable",
+        default_value="true",
+        choices=["true", "false"],
+        description="Use reliable LiDAR delivery with the Gazebo bridge. "
+        "Set false for a best-effort LiDAR publisher.",
     )
 
     navsat_node = Node(
@@ -43,7 +51,11 @@ def generate_launch_description():
         executable="SlamNode",
         name="slam_node",
         output="screen",
-        parameters=[parameters_file],
+        parameters=[parameters_file, {
+            "lidar_reliable": ParameterValue(
+                LaunchConfiguration("lidar_reliable"), value_type=bool
+            ),
+        }],
     )
 
     rviz_node = Node(
@@ -58,6 +70,7 @@ def generate_launch_description():
     return LaunchDescription([
         gps_fix_topic_arg,
         rviz_arg,
+        lidar_reliable_arg,
         slam_node,
         navsat_node,
         rviz_node,
